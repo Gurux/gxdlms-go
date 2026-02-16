@@ -122,8 +122,11 @@ func (g *GXDLMSPrimeDataConcentrator) String() string {
 	default:
 		return "GXDLMSPrimeDataConcentrator"
 	}
+	/*TODO:
 	t := GXDLMSTranslator{}
 	return t.PduToXml(&bb, enums.InterfaceTypePrimeDcWrapper)
+	*/
+	return "GXDLMSPrimeDataConcentrator"
 }
 
 // GenerateNewDeviceNotification returns the this method generates new device notification message.
