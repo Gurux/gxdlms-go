@@ -1,0 +1,4 @@
+github.com/Gurux/gxcommon-go v1.0.6 h1:pCSGL5xI/Ru60rWMKyHEXRlUsy8iw1J+YN4ipJh4Kns=
+github.com/Gurux/gxcommon-go v1.0.6/go.mod h1:2E4HpirtcqWEoYOV5FKsm6qKoN4a9ElVkL+UwtQjUMo=
+golang.org/x/text v0.34.0 h1:oL/Qq0Kdaqxa1KbNeMKwQq0reLCCaFtqu2eNuSeNHbk=
+golang.org/x/text v0.34.0/go.mod h1:homfLqTYRFyVYemLBFl5GgL/DWEiH5wcsQ5gSh1yziA=

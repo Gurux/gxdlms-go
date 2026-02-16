@@ -1,0 +1,17 @@
+linters:
+  enable:
+    - revive
+  disable:
+    - stylecheck
+
+linters-settings:
+  revive:
+    rules:
+      - name: exported 
+        severity: warning
+
+issues:
+  exclude-use-default: false
+
+run:
+  tests: true

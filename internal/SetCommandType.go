@@ -1,0 +1,101 @@
+﻿package internal
+
+//
+// --------------------------------------------------------------------------
+//  Gurux Ltd
+//
+//
+//
+// Filename:        $HeadURL$
+//
+// Version:         $Revision$,
+//                  $Date$
+//                  $Author$
+//
+// Copyright (c) Gurux Ltd
+//
+//---------------------------------------------------------------------------
+//
+//  DESCRIPTION
+//
+// This file is a part of Gurux Device Framework.
+//
+// Gurux Device Framework is Open Source software; you can redistribute it
+// and/or modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; version 2 of the License.
+// Gurux Device Framework is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// More information of Gurux products: https://www.gurux.org
+//
+// This code is licensed under the GNU General Public License v2.
+// Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
+//---------------------------------------------------------------------------
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/Gurux/gxcommon-go"
+)
+
+// Enumerates Set request types.
+type SetCommandType int
+
+const (
+	// SetCommandTypeNormal defines that the // Normal Get.
+	SetCommandTypeNormal SetCommandType = 1
+	// SetCommandTypeFirstBlock defines that the // First data block.
+	SetCommandTypeFirstBlock SetCommandType = 2
+	// SetCommandTypeWIthDataBlock defines that the // With data block.
+	SetCommandTypeWIthDataBlock SetCommandType = 3
+	// SetCommandTypeWithList defines that the // Set request with list.
+	SetCommandTypeWithList SetCommandType = 4
+	// SetCommandTypeFirstBlockWithList defines that the // Set request with list and first data block.
+	SetCommandTypeFirstBlockWithList SetCommandType = 5
+)
+
+// SetCommandTypeParse converts the given string into a SetCommandType value.
+//
+// It returns the corresponding SetCommandType constant if the string matches
+// a known level name, or an error if the input is invalid.
+func SetCommandTypeParse(value string) (SetCommandType, error) {
+	var ret SetCommandType
+	var err error
+	switch strings.ToUpper(value) {
+	case "NORMAL":
+		ret = SetCommandTypeNormal
+	case "FIRSTBLOCK":
+		ret = SetCommandTypeFirstBlock
+	case "WITHDATABLOCK":
+		ret = SetCommandTypeWIthDataBlock
+	case "WITHLIST":
+		ret = SetCommandTypeWithList
+	case "FIRSTBLOCKWITHLIST":
+		ret = SetCommandTypeFirstBlockWithList
+	default:
+		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
+	}
+	return ret, err
+}
+
+// String returns the canonical name of the SetCommandType.
+// It satisfies fmt.Stringer.
+func (g SetCommandType) String() string {
+	var ret string
+	switch g {
+	case SetCommandTypeNormal:
+		ret = "NORMAL"
+	case SetCommandTypeFirstBlock:
+		ret = "FIRSTBLOCK"
+	case SetCommandTypeWIthDataBlock:
+		ret = "WITHDATABLOCK"
+	case SetCommandTypeWithList:
+		ret = "WITHLIST"
+	case SetCommandTypeFirstBlockWithList:
+		ret = "FIRSTBLOCKWITHLIST"
+	}
+	return ret
+}

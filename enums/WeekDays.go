@@ -1,0 +1,119 @@
+package enums
+
+//
+// --------------------------------------------------------------------------
+//  Gurux Ltd
+//
+//
+//
+// Filename:        $HeadURL$
+//
+// Version:         $Revision$,
+//                  $Date$
+//                  $Author$
+//
+// Copyright (c) Gurux Ltd
+//
+//---------------------------------------------------------------------------
+//
+//  DESCRIPTION
+//
+// This file is a part of Gurux Device Framework.
+//
+// Gurux Device Framework is Open Source software; you can redistribute it
+// and/or modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; version 2 of the License.
+// Gurux Device Framework is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// More information of Gurux products: https://www.gurux.org
+//
+// This code is licensed under the GNU General Public License v2.
+// Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
+//---------------------------------------------------------------------------
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/Gurux/gxcommon-go"
+)
+
+// Weekdays Defines the weekdays.
+type Weekdays int
+
+const (
+	// WeekdaysNone defines that no day of week is selected bit is set.
+	WeekdaysNone Weekdays = iota
+	// WeekdaysMonday defines that indicates Monday bit is set.
+	WeekdaysMonday Weekdays = 0x1
+	// WeekdaysTuesday defines that indicates Tuesday bit is set.
+	WeekdaysTuesday Weekdays = 0x2
+	// WeekdaysWednesday defines that indicates Wednesday bit is set.
+	WeekdaysWednesday Weekdays = 0x4
+	// WeekdaysThursday defines that indicates Thursday bit is set.
+	WeekdaysThursday Weekdays = 0x8
+	// WeekdaysFriday defines that indicates Friday bit is set.
+	WeekdaysFriday Weekdays = 0x10
+	// WeekdaysSaturday defines that indicates Saturday bit is set.
+	WeekdaysSaturday Weekdays = 0x20
+	// WeekdaysSunday defines that indicates Sunday bit is set.
+	WeekdaysSunday Weekdays = 0x40
+)
+
+// WeekdaysParse converts the given string into a Weekdays value.
+//
+// It returns the corresponding Weekdays constant if the string matches
+// a known level name, or an error if the input is invalid.
+func WeekdaysParse(value string) (Weekdays, error) {
+	var ret Weekdays
+	var err error
+	switch strings.ToUpper(value) {
+	case "NONE":
+		ret = WeekdaysNone
+	case "MONDAY":
+		ret = WeekdaysMonday
+	case "TUESDAY":
+		ret = WeekdaysTuesday
+	case "WEDNESDAY":
+		ret = WeekdaysWednesday
+	case "THURSDAY":
+		ret = WeekdaysThursday
+	case "FRIDAY":
+		ret = WeekdaysFriday
+	case "SATURDAY":
+		ret = WeekdaysSaturday
+	case "SUNDAY":
+		ret = WeekdaysSunday
+	default:
+		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
+	}
+	return ret, err
+}
+
+// String returns the canonical name of the Weekdays.
+// It satisfies fmt.Stringer.
+func (g Weekdays) String() string {
+	var ret string
+	switch g {
+	case WeekdaysNone:
+		ret = "NONE"
+	case WeekdaysMonday:
+		ret = "MONDAY"
+	case WeekdaysTuesday:
+		ret = "TUESDAY"
+	case WeekdaysWednesday:
+		ret = "WEDNESDAY"
+	case WeekdaysThursday:
+		ret = "THURSDAY"
+	case WeekdaysFriday:
+		ret = "FRIDAY"
+	case WeekdaysSaturday:
+		ret = "SATURDAY"
+	case WeekdaysSunday:
+		ret = "SUNDAY"
+	}
+	return ret
+}
