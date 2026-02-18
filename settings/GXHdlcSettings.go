@@ -50,12 +50,12 @@ type GXHdlcSettings struct {
 }
 
 // MaxInfoTX returns the the maximum information field length in transmit.
-func (g GXHdlcSettings) MaxInfoTX() uint16 {
+func (g *GXHdlcSettings) MaxInfoTX() uint16 {
 	return g.maxInfoTX
 }
 
 // SetMaxInfoTX sets the the maximum information field length in transmit.
-func (g GXHdlcSettings) SetMaxInfoTX(value uint16) error {
+func (g *GXHdlcSettings) SetMaxInfoTX(value uint16) error {
 	if value < 32 || value > 2030 {
 		return fmt.Errorf("MaxInfoTX")
 	}
@@ -64,12 +64,12 @@ func (g GXHdlcSettings) SetMaxInfoTX(value uint16) error {
 }
 
 // MaxInfoRX returns the the maximum information field length in receive.
-func (g GXHdlcSettings) MaxInfoRX() uint16 {
+func (g *GXHdlcSettings) MaxInfoRX() uint16 {
 	return g.maxInfoRX
 }
 
 // SetMaxInfoRX sets the the maximum information field length in receive.
-func (g GXHdlcSettings) SetMaxInfoRX(value uint16) error {
+func (g *GXHdlcSettings) SetMaxInfoRX(value uint16) error {
 	if value < 32 || value > 2030 {
 		return fmt.Errorf("MaxInfoRX")
 	}
@@ -78,12 +78,12 @@ func (g GXHdlcSettings) SetMaxInfoRX(value uint16) error {
 }
 
 // WindowSizeTX returns the the window size in transmit.
-func (g GXHdlcSettings) WindowSizeTX() uint8 {
+func (g *GXHdlcSettings) WindowSizeTX() uint8 {
 	return g.windowSizeTX
 }
 
 // SetWindowSizeTX sets the the window size in transmit.
-func (g GXHdlcSettings) SetWindowSizeTX(value uint8) error {
+func (g *GXHdlcSettings) SetWindowSizeTX(value uint8) error {
 	if value > 7 {
 		return fmt.Errorf("WindowSizeTX")
 	}
@@ -92,12 +92,12 @@ func (g GXHdlcSettings) SetWindowSizeTX(value uint8) error {
 }
 
 // WindowSizeRX returns the the window size in receive.
-func (g GXHdlcSettings) WindowSizeRX() uint8 {
+func (g *GXHdlcSettings) WindowSizeRX() uint8 {
 	return g.windowSizeRX
 }
 
 // SetWindowSizeRX sets the the window size in receive.
-func (g GXHdlcSettings) SetWindowSizeRX(value uint8) error {
+func (g *GXHdlcSettings) SetWindowSizeRX(value uint8) error {
 	if value > 7 {
 		return fmt.Errorf("WindowSizeRX")
 	}

@@ -90,7 +90,7 @@ type GXDLMSClient struct {
 	initializeWindowSizeRX uint8
 
 	// Gets the DLMS settings object containing all communication parameters.
-	settings settings.GXDLMSSettings
+	settings *settings.GXDLMSSettings
 
 	// Is authentication Required.
 	isAuthenticationRequired bool
@@ -118,7 +118,7 @@ type GXDLMSClient struct {
 
 // Gets the DLMS settings object containing all communication parameters.
 func (g *GXDLMSClient) Settings() *settings.GXDLMSSettings {
-	return &g.settings
+	return g.settings
 }
 
 // ManufacturerID returns the gets or sets the manufacturer ID (FLAG ID).
@@ -626,7 +626,7 @@ func (g *GXDLMSClient) SetOverwriteAttributeAccessRights(value bool) error {
 	return nil
 }
 
-func createDLMSObject(settings settings.GXDLMSSettings, ClassID uint16, Version any, baseName any, LN any, accessRights any, lnVersion uint8) objects.IGXDLMSBase {
+func createDLMSObject(settings *settings.GXDLMSSettings, ClassID uint16, Version any, baseName any, LN any, accessRights any, lnVersion uint8) objects.IGXDLMSBase {
 	type_ := enums.ObjectType(ClassID)
 	obj := objects.CreateObject(type_)
 	if obj != nil {
@@ -760,7 +760,7 @@ func (g *GXDLMSClient) parseSNObjects(buff *types.GXByteBuffer,
 		if buff.Position() == buff.Size() {
 			break
 		}
-		ret, err := internal.GetData(&g.settings, buff, &info)
+		ret, err := internal.GetData(g.settings, buff, &info)
 		if err != nil {
 			return nil, err
 		}
@@ -807,7 +807,7 @@ func (g *GXDLMSClient) parseLNObjects(buff *types.GXByteBuffer,
 	pos := buff.Position()
 	for buff.Position() != buff.Size() && cnt != objectCnt {
 		info.Clear()
-		d, err := internal.GetData(&g.settings, buff, &info)
+		d, err := internal.GetData(g.settings, buff, &info)
 		if err != nil {
 			return nil, err
 		}
@@ -831,7 +831,7 @@ func (g *GXDLMSClient) parseLNObjects(buff *types.GXByteBuffer,
 	buff.SetPosition(pos)
 	for buff.Position() != buff.Size() && cnt != objectCnt {
 		info.Clear()
-		ret, err := internal.GetData(&g.settings, buff, &info)
+		ret, err := internal.GetData(g.settings, buff, &info)
 		if err != nil {
 			return nil, err
 		}
@@ -891,7 +891,7 @@ func (g *GXDLMSClient) Method2(name any,
 	}
 	attributeDescriptor := types.GXByteBuffer{}
 	data := types.GXByteBuffer{}
-	err = internal.SetData(&g.settings, &data, type_, value)
+	err = internal.SetData(g.settings, &data, type_, value)
 	if err != nil {
 		return nil, err
 	}
@@ -924,7 +924,7 @@ func (g *GXDLMSClient) Method2(name any,
 				return nil, err
 			}
 		}
-		p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandMethodRequest, byte(enums.ActionRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandMethodRequest, byte(enums.ActionRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		// GBT Window size or streaming is not used with method because there is no information available from theGBT block number and client doesn't know when ACK is expected.
 		return getLnMessages(p)
@@ -949,7 +949,7 @@ func (g *GXDLMSClient) Method2(name any,
 				return nil, err
 			}
 		}
-		return getSnMessages(NewGXDLMSSNParameters(&g.settings, enums.CommandWriteRequest, 1, byte(enums.VariableAccessSpecificationVariableName), &attributeDescriptor, &data))
+		return getSnMessages(NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, 1, byte(enums.VariableAccessSpecificationVariableName), &attributeDescriptor, &data))
 	}
 	return nil, nil
 }
@@ -968,7 +968,7 @@ func (g *GXDLMSClient) Write2(name any, value any, type_ enums.DataType, objectT
 	attributeDescriptor := types.GXByteBuffer{}
 	data := types.GXByteBuffer{}
 	var reply [][]byte
-	err := internal.SetData(&g.settings, &data, type_, value)
+	err := internal.SetData(g.settings, &data, type_, value)
 	if err != nil {
 		return nil, err
 	}
@@ -990,7 +990,7 @@ func (g *GXDLMSClient) Write2(name any, value any, type_ enums.DataType, objectT
 		if err != nil {
 			return nil, err
 		}
-		p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandSetRequest, byte(enums.SetRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandSetRequest, byte(enums.SetRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		p.blockIndex = g.settings.BlockIndex
 		p.blockNumberAck = g.settings.BlockNumberAck
@@ -1011,7 +1011,7 @@ func (g *GXDLMSClient) Write2(name any, value any, type_ enums.DataType, objectT
 		if err != nil {
 			return nil, err
 		}
-		p := NewGXDLMSSNParameters(&g.settings, enums.CommandWriteRequest, 1, byte(enums.VariableAccessSpecificationVariableName), &attributeDescriptor, &data)
+		p := NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, 1, byte(enums.VariableAccessSpecificationVariableName), &attributeDescriptor, &data)
 		reply, err = getSnMessages(p)
 	}
 	return reply, err
@@ -1053,7 +1053,7 @@ func (g *GXDLMSClient) Read2(name any, objectType enums.ObjectType, attributeOrd
 				return nil, err
 			}
 		}
-		p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandGetRequest, byte(enums.GetCommandTypeNormal), &attributeDescriptor, data, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandGetRequest, byte(enums.GetCommandTypeNormal), &attributeDescriptor, data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		reply, err = getLnMessages(p)
 	} else {
@@ -1070,7 +1070,7 @@ func (g *GXDLMSClient) Read2(name any, objectType enums.ObjectType, attributeOrd
 		} else {
 			requestType = uint8(enums.VariableAccessSpecificationVariableName)
 		}
-		p := NewGXDLMSSNParameters(&g.settings, enums.CommandReadRequest, 1, requestType, &attributeDescriptor, data)
+		p := NewGXDLMSSNParameters(g.settings, enums.CommandReadRequest, 1, requestType, &attributeDescriptor, data)
 		reply, err = getSnMessages(p)
 	}
 	return reply, err
@@ -1131,7 +1131,7 @@ func (g *GXDLMSClient) SNRMRequestForce(forceParameters bool) ([]byte, error) {
 	g.settings.ResetFrameSequence()
 	// SNRM request is not used for all communication channels.
 	if g.InterfaceType() == enums.InterfaceTypePlcHdlc {
-		return getMacHdlcFrame(&g.settings, uint8(enums.CommandSnrm), 0, nil)
+		return getMacHdlcFrame(g.settings, uint8(enums.CommandSnrm), 0, nil)
 	}
 	if g.InterfaceType() != enums.InterfaceTypeHDLC && g.InterfaceType() != enums.InterfaceTypeHdlcWithModeE {
 		return nil, nil
@@ -1198,7 +1198,7 @@ func (g *GXDLMSClient) SNRMRequestForce(forceParameters bool) ([]byte, error) {
 	} else {
 		data = nil
 	}
-	return getHdlcFrame(&g.settings, uint8(enums.CommandSnrm), data, true)
+	return getHdlcFrame(g.settings, uint8(enums.CommandSnrm), data, true)
 }
 
 // ParseUAResponse returns the parses UAResponse from byte array.
@@ -1206,7 +1206,7 @@ func (g *GXDLMSClient) ParseUAResponse(data *types.GXByteBuffer) error {
 	if g.settings.InterfaceType == enums.InterfaceTypeHDLC ||
 		g.settings.InterfaceType == enums.InterfaceTypeHdlcWithModeE ||
 		g.settings.InterfaceType == enums.InterfaceTypePlcHdlc {
-		ret := parseSnrmUaResponse(data, &g.settings)
+		ret := parseSnrmUaResponse(data, g.settings)
 		if ret != nil {
 			return ret
 		}
@@ -1236,7 +1236,7 @@ func (g *GXDLMSClient) AARQRequest() ([][]byte, error) {
 	g.settings.ServerPublicKeyCertificate = nil
 	g.settings.Connected &= ^enums.ConnectionStateDlms
 	buff := types.NewGXByteBufferWithCapacity(20)
-	err := checkInit(&g.settings)
+	err := checkInit(g.settings)
 	if err != nil {
 		return nil, err
 	}
@@ -1258,16 +1258,16 @@ func (g *GXDLMSClient) AARQRequest() ([][]byte, error) {
 	} else {
 		g.settings.SetCtoSChallenge(nil)
 	}
-	err = generateAarq(&g.settings, g.settings.Cipher, nil, buff)
+	err = generateAarq(g.settings, g.settings.Cipher, nil, buff)
 	if err != nil {
 		return nil, err
 	}
 	var reply [][]byte
 	if g.UseLogicalNameReferencing() {
-		p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandAarq, 0, buff, nil, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandAarq, 0, buff, nil, 0xff, enums.CommandNone)
 		reply, err = getLnMessages(p)
 	} else {
-		reply, err = getSnMessages(NewGXDLMSSNParameters(&g.settings, enums.CommandAarq, 0, 0, nil, buff))
+		reply, err = getSnMessages(NewGXDLMSSNParameters(g.settings, enums.CommandAarq, 0, 0, nil, buff))
 	}
 	return reply, err
 }
@@ -1285,7 +1285,7 @@ func (g *GXDLMSClient) AARQRequest() ([][]byte, error) {
 //
 //	The AARE response
 func (g *GXDLMSClient) ParseAAREResponse(reply *types.GXByteBuffer) error {
-	ret, err := parsePDU(&g.settings, g.settings.Cipher, reply, nil)
+	ret, err := parsePDU(g.settings, g.settings.Cipher, reply, nil)
 	if err != nil {
 		return err
 	}
@@ -1391,7 +1391,7 @@ func (g *GXDLMSClient) GetApplicationAssociationRequestWithLogicalName(ln string
 	} else {
 		pw = g.settings.Password
 	}
-	challenge, err = settings.Secure(&g.settings, g.settings.Cipher, g.settings.Cipher.InvocationCounter(),
+	challenge, err = settings.Secure(g.settings, g.settings.Cipher, g.settings.Cipher.InvocationCounter(),
 		g.settings.StoCChallenge(), pw)
 	if err != nil {
 		return nil, err
@@ -1417,7 +1417,7 @@ func (g *GXDLMSClient) ParseApplicationAssociationResponse(reply *types.GXByteBu
 	} else {
 		info := internal.GXDataInfo{}
 		equals := false
-		value, err := internal.GetData(&g.settings, reply, &info)
+		value, err := internal.GetData(g.settings, reply, &info)
 		if value != nil {
 			if g.settings.Authentication == enums.AuthenticationHighECDSA {
 				if g.settings.Cipher.SigningKeyPair() == nil {
@@ -1486,7 +1486,7 @@ func (g *GXDLMSClient) ParseApplicationAssociationResponse(reply *types.GXByteBu
 				} else {
 					secret = g.settings.Password
 				}
-				tmp, err := settings.Secure(&g.settings, g.settings.Cipher, ic, g.settings.CtoSChallenge(), secret)
+				tmp, err := settings.Secure(g.settings, g.settings.Cipher, ic, g.settings.CtoSChallenge(), secret)
 				if err != nil {
 					return err
 				}
@@ -1563,7 +1563,7 @@ func (g *GXDLMSClient) ReleaseRequest2(force bool) ([][]byte, error) {
 		}
 		g.settings.SetMaxPduSize(g.initializePduSize)
 		g.settings.NegotiatedConformance = g.settings.ProposedConformance
-		err = GenerateUserInformation(&g.settings, g.settings.Cipher, nil, &buff)
+		err = GenerateUserInformation(g.settings, g.settings.Cipher, nil, &buff)
 		if err != nil {
 			return nil, err
 		}
@@ -1578,10 +1578,10 @@ func (g *GXDLMSClient) ReleaseRequest2(force bool) ([][]byte, error) {
 	}
 	var reply [][]byte
 	if g.UseLogicalNameReferencing() {
-		p := GXDLMSLNParameters{settings: &g.settings, requestType: enums.CommandReleaseRequest, attributeDescriptor: &buff, status: 0xff}
+		p := GXDLMSLNParameters{settings: g.settings, requestType: enums.CommandReleaseRequest, attributeDescriptor: &buff, status: 0xff}
 		reply, err = getLnMessages(&p)
 	} else {
-		reply, err = getSnMessages(NewGXDLMSSNParameters(&g.settings, enums.CommandReleaseRequest, 0xFF, 0xFF, nil, &buff))
+		reply, err = getSnMessages(NewGXDLMSSNParameters(g.settings, enums.CommandReleaseRequest, 0xFF, 0xFF, nil, &buff))
 	}
 	if err != nil {
 		return nil, err
@@ -1628,7 +1628,7 @@ func (g *GXDLMSClient) ParseRelease(value *types.GXByteBuffer) error {
 		if ret != 0xBE {
 			return errors.New("Invalid release response.")
 		}
-		_, err = parsePDU2(&g.settings, g.settings.Cipher, value, nil)
+		_, err = parsePDU2(g.settings, g.settings.Cipher, value, nil)
 		if err != nil {
 			return err
 		}
@@ -1665,9 +1665,9 @@ func (g *GXDLMSClient) DisconnectRequest2(force bool) ([]byte, error) {
 	var ret []byte
 	if useHdlc(g.settings.InterfaceType) {
 		if g.settings.InterfaceType == enums.InterfaceTypePlcHdlc {
-			ret, err = getMacHdlcFrame(&g.settings, uint8(enums.CommandDisconnectRequest), 0, nil)
+			ret, err = getMacHdlcFrame(g.settings, uint8(enums.CommandDisconnectRequest), 0, nil)
 		} else {
-			ret, err = getHdlcFrame(&g.settings, uint8(enums.CommandDisconnectRequest), nil, true)
+			ret, err = getHdlcFrame(g.settings, uint8(enums.CommandDisconnectRequest), nil, true)
 		}
 	} else if force || g.settings.Connected == enums.ConnectionStateDlms {
 		ret2, err := g.ReleaseRequest2(force)
@@ -1808,10 +1808,10 @@ func (g *GXDLMSClient) UpdateValue(target objects.IGXDLMSBase,
 			}
 		}
 	}
-	e := internal.NewValueEventArgs(&g.settings, target, byte(attributeIndex))
+	e := internal.NewValueEventArgs(g.settings, target, byte(attributeIndex))
 	e.Parameters = columns
 	e.Value = value
-	err = target.SetValue(&g.settings, e)
+	err = target.SetValue(g.settings, e)
 	if err != nil {
 		return nil, err
 	}
@@ -1828,7 +1828,7 @@ func (g *GXDLMSClient) UpdateValues(list []types.GXKeyValuePair[objects.IGXDLMSB
 	var err error
 	pos := 0
 	for _, it := range list {
-		e := internal.NewValueEventArgs(&g.settings, it.Key, byte(it.Value))
+		e := internal.NewValueEventArgs(g.settings, it.Key, byte(it.Value))
 		e.Value = values[pos]
 		var type_ enums.DataType
 		if v, ok := e.Value.([]byte); ok {
@@ -1840,7 +1840,7 @@ func (g *GXDLMSClient) UpdateValues(list []types.GXKeyValuePair[objects.IGXDLMSB
 				}
 			}
 		}
-		err := it.Key.SetValue(&g.settings, e)
+		err := it.Key.SetValue(g.settings, e)
 		if err != nil {
 			return err
 		}
@@ -1867,7 +1867,7 @@ func (g *GXDLMSClient) ParseAccessResponse(list []GXDLMSAccessItem, data *types.
 	}
 	for _, it := range list {
 		info.Clear()
-		ret, err := internal.GetData(&g.settings, data, &info)
+		ret, err := internal.GetData(g.settings, data, &info)
 		if err != nil {
 			return err
 		}
@@ -2000,8 +2000,8 @@ func (g *GXDLMSClient) Write(item objects.IGXDLMSBase, index int) ([][]byte, err
 	if item == nil || index < 1 {
 		return nil, gxcommon.ErrInvalidArgument
 	}
-	a := internal.NewValueEventArgs(&g.settings, item, uint8(index))
-	value, err := item.GetValue(&g.settings, a)
+	a := internal.NewValueEventArgs(g.settings, item, uint8(index))
+	value, err := item.GetValue(g.settings, a)
 	if err != nil {
 		return nil, err
 	}
@@ -2070,7 +2070,7 @@ func (g *GXDLMSClient) ReadList(list []types.GXKeyValuePair[objects.IGXDLMSBase,
 				mode = m
 			}
 		}
-		p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandGetRequest, byte(enums.GetCommandTypeWithList), &data,
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandGetRequest, byte(enums.GetCommandTypeWithList), &data,
 			nil, 0xff, enums.CommandNone)
 
 		p.AccessMode = mode
@@ -2130,7 +2130,7 @@ func (g *GXDLMSClient) ReadList(list []types.GXKeyValuePair[objects.IGXDLMSBase,
 		if len(list) == 1 {
 			return g.Read(list[0].Key, list[0].Value)
 		}
-		p := GXDLMSSNParameters{Settings: &g.settings, Command: enums.CommandReadRequest, Count: len(list), RequestType: 0xFF, AttributeDescriptor: &data}
+		p := GXDLMSSNParameters{Settings: g.settings, Command: enums.CommandReadRequest, Count: len(list), RequestType: 0xFF, AttributeDescriptor: &data}
 		for _, it := range list {
 			err = data.SetUint8(byte(enums.VariableAccessSpecificationBlockNumberAccess))
 			if err != nil {
@@ -2189,7 +2189,7 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 	var messages [][]byte
 	data := types.GXByteBuffer{}
 	if g.UseLogicalNameReferencing() {
-		p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandSetRequest, byte(internal.SetCommandTypeWithList),
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandSetRequest, byte(internal.SetCommandTypeWithList),
 			nil, &data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		err = types.SetObjectCount(len(list), &data)
@@ -2220,8 +2220,8 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 			return nil, err
 		}
 		for _, it := range list {
-			a := internal.NewValueEventArgs(&g.settings, it.Key, uint8(it.Value))
-			value, err := it.Key.GetValue(&g.settings, a)
+			a := internal.NewValueEventArgs(g.settings, it.Key, uint8(it.Value))
+			value, err := it.Key.GetValue(g.settings, a)
 			if err != nil {
 				return nil, err
 			}
@@ -2242,7 +2242,7 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 					value = []byte(v)
 				}
 			}
-			err = internal.SetData(&g.settings, &data, type_, value)
+			err = internal.SetData(g.settings, &data, type_, value)
 		}
 		if err != nil {
 			return nil, err
@@ -2253,7 +2253,7 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 		}
 		messages = append(messages, ret...)
 	} else {
-		p := NewGXDLMSSNParameters(&g.settings, enums.CommandWriteRequest, len(list), 0xFF, nil, &data)
+		p := NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, len(list), 0xFF, nil, &data)
 		for _, it := range list {
 			err = data.SetUint8(byte(enums.VariableAccessSpecificationBlockNumberAccess))
 			if err != nil {
@@ -2273,7 +2273,7 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 		}
 		p.Count = len(list)
 		for _, it := range list {
-			value, err := it.Key.GetValue(&g.settings, internal.NewValueEventArgs(&g.settings, it.Key, uint8(it.Value)))
+			value, err := it.Key.GetValue(g.settings, internal.NewValueEventArgs(g.settings, it.Key, uint8(it.Value)))
 			if err != nil {
 				return nil, err
 			}
@@ -2294,7 +2294,7 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 					value = []byte(v)
 				}
 			}
-			err = internal.SetData(&g.settings, &data, type_, value)
+			err = internal.SetData(g.settings, &data, type_, value)
 			if err != nil {
 				return nil, err
 			}
@@ -2456,21 +2456,21 @@ func (g *GXDLMSClient) ReadRowsByEntryWithColumns2(pg *objects.GXDLMSProfileGene
 	if err != nil {
 		return nil, err
 	}
-	internal.SetData(&g.settings, buff, enums.DataTypeUint32, index)
+	internal.SetData(g.settings, buff, enums.DataTypeUint32, index)
 	// Add Count
 	if count == 0 {
-		err = internal.SetData(&g.settings, buff, enums.DataTypeUint32, count)
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, count)
 	} else {
-		err = internal.SetData(&g.settings, buff, enums.DataTypeUint32, index+count-1)
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, index+count-1)
 	}
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(&g.settings, buff, enums.DataTypeUint16, columnStart)
+	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, columnStart)
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(&g.settings, buff, enums.DataTypeUint16, columnEnd)
+	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, columnEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -2581,7 +2581,7 @@ func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGener
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(&g.settings, buff, enums.DataTypeUint16, type_)
+	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, type_)
 	if err != nil {
 		return nil, err
 	}
@@ -2589,33 +2589,33 @@ func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGener
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(&g.settings, buff, enums.DataTypeOctetString, ln2)
+	err = internal.SetData(g.settings, buff, enums.DataTypeOctetString, ln2)
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(&g.settings, buff, enums.DataTypeInt8, 2)
+	err = internal.SetData(g.settings, buff, enums.DataTypeInt8, 2)
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(&g.settings, buff, enums.DataTypeUint16, 0)
+	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, 0)
 	if clockType == ClockTypeClock {
-		err = internal.SetData(&g.settings, buff, enums.DataTypeOctetString, start)
+		err = internal.SetData(g.settings, buff, enums.DataTypeOctetString, start)
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(&g.settings, buff, enums.DataTypeOctetString, end)
+		err = internal.SetData(g.settings, buff, enums.DataTypeOctetString, end)
 	} else if clockType == ClockTypeUnix {
-		err = internal.SetData(&g.settings, buff, enums.DataTypeUint32, start.ToUnixTime())
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, start.ToUnixTime())
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(&g.settings, buff, enums.DataTypeUint32, end.ToUnixTime())
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, end.ToUnixTime())
 	} else if clockType == ClockTypeHighResolution {
-		err = internal.SetData(&g.settings, buff, enums.DataTypeUint64, start.ToHighResolutionTime())
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint64, start.ToHighResolutionTime())
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(&g.settings, buff, enums.DataTypeUint64, end.ToHighResolutionTime())
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint64, end.ToHighResolutionTime())
 	}
 	if err != nil {
 		return nil, err
@@ -2647,19 +2647,19 @@ func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGener
 			if err != nil {
 				return nil, err
 			}
-			err = internal.SetData(&g.settings, buff, enums.DataTypeUint16, int(it.Key.Base().ObjectType()))
+			err = internal.SetData(g.settings, buff, enums.DataTypeUint16, int(it.Key.Base().ObjectType()))
 			if err != nil {
 				return nil, err
 			}
-			err = internal.SetData(&g.settings, buff, enums.DataTypeOctetString, ln)
+			err = internal.SetData(g.settings, buff, enums.DataTypeOctetString, ln)
 			if err != nil {
 				return nil, err
 			}
-			err = internal.SetData(&g.settings, buff, enums.DataTypeInt8, it.Value.AttributeIndex)
+			err = internal.SetData(g.settings, buff, enums.DataTypeInt8, it.Value.AttributeIndex)
 			if err != nil {
 				return nil, err
 			}
-			err = internal.SetData(&g.settings, buff, enums.DataTypeUint16, it.Value.DataIndex)
+			err = internal.SetData(g.settings, buff, enums.DataTypeUint16, it.Value.DataIndex)
 			if err != nil {
 				return nil, err
 			}
@@ -2680,7 +2680,7 @@ func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGener
 //
 //	Acknowledgment message as byte array.
 func (g *GXDLMSClient) ReceiverReady(reply *GXReplyData) ([]byte, error) {
-	return receiverReady(&g.settings, reply)
+	return receiverReady(g.settings, reply)
 }
 
 // GetData returns the removes the frame from the packet, and returns DLMS PDU.
@@ -2711,7 +2711,7 @@ func (g *GXDLMSClient) GetDataFromByteArray(reply []byte, data *GXReplyData, not
 //	Is frame complete.
 func (g *GXDLMSClient) GetData(reply *types.GXByteBuffer, data *GXReplyData, notify *GXReplyData) (bool, error) {
 	data.xml = nil
-	ret, err := getData(&g.settings, reply, data, notify)
+	ret, err := getData(g.settings, reply, data, notify)
 	if err != nil {
 		if g.translator == nil || g.throwExceptions {
 			return false, err
@@ -2850,7 +2850,7 @@ func (g *GXDLMSClient) GetValue(data *types.GXByteBuffer, useUtc bool) (any, err
 //	Parsed value.
 func (g *GXDLMSClient) GetValueWithType(data *types.GXByteBuffer, type_ enums.DataType, useUtc bool) (any, error) {
 	info := internal.GXDataInfo{}
-	value, err := internal.GetData(&g.settings, data, &info)
+	value, err := internal.GetData(g.settings, data, &info)
 	if err != nil {
 		return nil, err
 	}
@@ -3018,7 +3018,7 @@ func (g *GXDLMSClient) AccessRequest(time_ *time.Time, list []GXDLMSAccessItem) 
 				return nil, err
 			}
 		} else if it.Command == enums.AccessServiceCommandTypeSet {
-			value, err := it.Target.GetValue(&g.settings, internal.NewValueEventArgs(&g.settings, it.Target, it.Index))
+			value, err := it.Target.GetValue(g.settings, internal.NewValueEventArgs(g.settings, it.Target, it.Index))
 			if err != nil {
 				return nil, err
 			}
@@ -3032,7 +3032,7 @@ func (g *GXDLMSClient) AccessRequest(time_ *time.Time, list []GXDLMSAccessItem) 
 					return nil, err
 				}
 			}
-			err = internal.SetData(&g.settings, bb, type_, value)
+			err = internal.SetData(g.settings, bb, type_, value)
 			if err != nil {
 				return nil, err
 			}
@@ -3040,7 +3040,7 @@ func (g *GXDLMSClient) AccessRequest(time_ *time.Time, list []GXDLMSAccessItem) 
 			return nil, errors.New("Invalid command.")
 		}
 	}
-	p := NewGXDLMSLNParameters(&g.settings, 0, enums.CommandAccessRequest, 0xFF, nil, bb, 0xff, enums.CommandNone)
+	p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandAccessRequest, 0xFF, nil, bb, 0xff, enums.CommandNone)
 	p.AccessMode = mode
 	p.time = types.NewGXDateTimeFromTime(dt)
 	return getLnMessages(p)
@@ -3058,10 +3058,10 @@ func (g *GXDLMSClient) AccessRequest(time_ *time.Time, list []GXDLMSAccessItem) 
 func (g *GXDLMSClient) ParseReport(reply *GXReplyData, list []*types.GXKeyValuePair[objects.IGXDLMSBase, int]) (any, error) {
 	var err error
 	if reply.Command() == enums.CommandEventNotification {
-		err = handleEventNotification(&g.settings, reply, list)
+		err = handleEventNotification(g.settings, reply, list)
 		return nil, err
 	} else if reply.Command() == enums.CommandInformationReport {
-		err = handleInformationReport(&g.settings, reply, list)
+		err = handleInformationReport(g.settings, reply, list)
 		return nil, err
 	} else if reply.Command() == enums.CommandDataNotification {
 		return reply.Value, nil
@@ -3084,7 +3084,7 @@ func (g *GXDLMSClient) CustomHdlcFrameRequest(command uint8, data *types.GXByteB
 	if !useHdlc(g.settings.InterfaceType) {
 		return nil, errors.New("This method can be used only to generate HDLC custom frames")
 	}
-	return getHdlcFrame(&g.settings, command, data, true)
+	return getHdlcFrame(g.settings, command, data, true)
 }
 
 // GetFrameSize returns the get size of the frame.
@@ -3328,9 +3328,8 @@ func (g *GXDLMSClient) CanInvoke(target *objects.GXDLMSObject, index int) bool {
 func NewGXDLMSClient(useLogicalNameReferencing bool, clientAddress int, serverAddress int, authentication enums.Authentication,
 	password []byte, interfaceType enums.InterfaceType) (*GXDLMSClient, error) {
 	ret := &GXDLMSClient{}
-	ret.settings = *settings.NewGXDLMSSettingsWithParams(false, useLogicalNameReferencing, interfaceType)
+	ret.settings = settings.NewGXDLMSSettingsWithParams(false, useLogicalNameReferencing, interfaceType)
 	ret.settings.Cipher = &secure.GXCiphering{}
-
 	err := ret.SetClientAddress(clientAddress)
 	if err != nil {
 		return nil, err
