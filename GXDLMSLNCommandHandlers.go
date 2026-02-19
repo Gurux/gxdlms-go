@@ -44,6 +44,7 @@ import (
 
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
+	"github.com/Gurux/gxdlms-go/internal/constants"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
 	"github.com/Gurux/gxdlms-go/objects"
 	"github.com/Gurux/gxdlms-go/settings"
@@ -720,7 +721,7 @@ func hanleSetRequestWithList(settings *settings.GXDLMSSettings,
 			di := internal.GXDataInfo{}
 			di.Xml = xml
 			if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-				xml.AppendStartTag(int(enums.CommandWriteRequest<<8|enums.SingleReadResponseData), "", "", true)
+				xml.AppendStartTag(int(enums.CommandWriteRequest<<8|constants.SingleReadResponseData), "", "", true)
 			}
 			value, err := internal.GetData(settings, data, &di)
 			if err != nil {
@@ -732,7 +733,7 @@ func hanleSetRequestWithList(settings *settings.GXDLMSSettings,
 				value = types.ToHex(value.([]byte), false)
 			}
 			if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-				xml.AppendEndTag(int(enums.CommandWriteRequest<<8|enums.SingleReadResponseData), false)
+				xml.AppendEndTag(int(enums.CommandWriteRequest<<8|constants.SingleReadResponseData), false)
 			}
 		}
 	}
@@ -748,7 +749,7 @@ func hanleSetRequestWithList(settings *settings.GXDLMSSettings,
 	for _, it := range status {
 		p.attributeDescriptor.SetUint8(it)
 	}
-	p.requestType = uint8(enums.SetResponseTypeWithList)
+	p.requestType = uint8(constants.SetResponseTypeWithList)
 	return nil
 }
 
@@ -787,7 +788,7 @@ func methodRequestNextDataBlock(settings *settings.GXDLMSSettings,
 	if streaming {
 		cmd = enums.CommandGeneralBlockTransfer
 	}
-	p := NewGXDLMSLNParameters(settings, uint32(invokeID), cmd, byte(enums.ActionResponseTypeWithBlock), nil, bb, byte(enums.ErrorCodeOk), cipheredCommand)
+	p := NewGXDLMSLNParameters(settings, uint32(invokeID), cmd, byte(constants.ActionResponseTypeWithBlock), nil, bb, byte(enums.ErrorCodeOk), cipheredCommand)
 	p.streaming = streaming
 	p.gbtWindowSize = settings.GbtWindowSize()
 	// If transaction is not in progress.
@@ -1034,21 +1035,21 @@ func handleGetRequest(settings *settings.GXDLMSSettings,
 		return replyData.Set(GenerateConfirmedServiceError(enums.ConfirmedServiceErrorInitiateError, enums.ServiceErrorService, uint8(enums.ServiceUnsupported)))
 	}
 	invokeID := 0
-	type_ := enums.GetCommandTypeNormal
+	type_ := constants.GetCommandTypeNormal
 	// If GBT is used data is empty.
 	if data.Size() != 0 {
 		ret, err := data.Uint8()
 		if err != nil {
 			return err
 		}
-		type_ = enums.GetCommandType(ret)
+		type_ = constants.GetCommandType(ret)
 		invokeID, err := data.Uint8()
 		if err != nil {
 			return err
 		}
 		settings.UpdateInvokeID(invokeID)
 		if xml != nil {
-			if type_ <= enums.GetCommandTypeWithList {
+			if type_ <= constants.GetCommandTypeWithList {
 				addInvokeId(xml, enums.CommandGetRequest, int(type_), uint32(invokeID))
 			} else {
 				xml.AppendStartTag(int(enums.CommandGetRequest), "", "", true)
@@ -1058,22 +1059,22 @@ func handleGetRequest(settings *settings.GXDLMSSettings,
 		}
 	}
 	// GetRequest normal
-	if type_ == enums.GetCommandTypeNormal {
+	if type_ == constants.GetCommandTypeNormal {
 		err = getRequestNormal(settings, uint8(invokeID), server, data, replyData, xml, cipheredCommand)
-	} else if type_ == enums.GetCommandTypeNextDataBlock {
+	} else if type_ == constants.GetCommandTypeNextDataBlock {
 		err = GetRequestNextDataBlock(settings, uint8(invokeID), server, data, replyData, xml, false, cipheredCommand)
-	} else if type_ == enums.GetCommandTypeWithList {
+	} else if type_ == constants.GetCommandTypeWithList {
 		err = GetRequestWithList(settings, uint8(invokeID), server, data, replyData, xml, cipheredCommand)
 	} else if xml == nil {
 		log.Println("HandleGetRequest failed. Invalid command type.")
 		settings.ResetBlockIndex()
-		type_ = enums.GetCommandTypeNormal
+		type_ = constants.GetCommandTypeNormal
 		data.Clear()
 		err = getLNPdu(NewGXDLMSLNParameters(settings, uint32(invokeID), enums.CommandGetResponse, byte(type_), nil, nil,
 			byte(enums.ErrorCodeReadWriteDenied), cipheredCommand), replyData)
 	}
 	if xml != nil {
-		if type_ <= enums.GetCommandTypeWithList {
+		if type_ <= constants.GetCommandTypeWithList {
 			xml.AppendEndTag(int(enums.CommandGetRequest<<8|type_), false)
 		}
 		xml.AppendEndTag(int(enums.CommandGetRequest), false)
@@ -1119,15 +1120,15 @@ func handleSetRequest(settings *settings.GXDLMSSettings,
 		}
 	}
 	switch type_ {
-	case uint8(enums.SetRequestTypeNormal):
-	case uint8(enums.SetRequestTypeFirstDataBlock):
-		if type_ == uint8(enums.SetRequestTypeNormal) {
+	case uint8(constants.SetRequestTypeNormal):
+	case uint8(constants.SetRequestTypeFirstDataBlock):
+		if type_ == uint8(constants.SetRequestTypeNormal) {
 			p.status = 0
 		}
 		err = handleSetRequestNormal(settings, server, data, byte(type_), p, replyData, xml)
-	case byte(enums.SetRequestTypeWithDataBlock):
+	case byte(constants.SetRequestTypeWithDataBlock):
 		err = hanleSetRequestWithDataBlock(settings, server, data, p, replyData, xml)
-	case byte(enums.SetRequestTypeWithList):
+	case byte(constants.SetRequestTypeWithList):
 		err = hanleSetRequestWithList(settings, invoke, server, data, p, replyData, xml)
 	default:
 		log.Println("HandleSetRequest failed. Unknown command.")
@@ -1146,7 +1147,7 @@ func handleSetRequest(settings *settings.GXDLMSSettings,
 }
 
 func methodRequest(settings *settings.GXDLMSSettings,
-	type_ enums.ActionRequestType,
+	type_ constants.ActionRequestType,
 	invokeId uint8,
 	server *GXDLMSServer,
 	data *types.GXByteBuffer,
@@ -1174,8 +1175,8 @@ func methodRequest(settings *settings.GXDLMSSettings,
 	}
 	var parameters any
 	p := NewGXDLMSLNParameters(settings, uint32(invokeId), enums.CommandMethodResponse,
-		byte(enums.ActionResponseTypeNormal), nil, bb, 0, cipheredCommand)
-	if type_ == enums.ActionRequestTypeNormal {
+		byte(constants.ActionResponseTypeNormal), nil, bb, 0, cipheredCommand)
+	if type_ == constants.ActionRequestTypeNormal {
 		// Get parameters.
 		selection, err := data.Uint8()
 		if err != nil {
@@ -1196,8 +1197,8 @@ func methodRequest(settings *settings.GXDLMSSettings,
 			info := internal.GXDataInfo{}
 			parameters, err = internal.GetData(settings, data, &info)
 		}
-	} else if type_ == enums.ActionRequestTypeWithFirstBlock {
-		p.requestType = uint8(enums.ActionResponseTypeNextBlock)
+	} else if type_ == constants.ActionRequestTypeWithFirstBlock {
+		p.requestType = uint8(constants.ActionResponseTypeNextBlock)
 		p.status = 0xFF
 		lastBlock, err := data.Uint8()
 		if err != nil {
@@ -1271,7 +1272,7 @@ func methodRequest(settings *settings.GXDLMSSettings,
 				server.transaction = newGXDLMSLongTransaction([]*internal.ValueEventArgs{e}, enums.CommandMethodRequest, data)
 			} else if server.Transaction() == nil {
 				//Check transaction so invoke is not called multiple times.This might happen when all data can't fit to one PDU.
-				p.requestType = uint8(enums.ActionResponseTypeNormal)
+				p.requestType = uint8(constants.ActionResponseTypeNormal)
 				server.NotifyPreAction([]*internal.ValueEventArgs{e})
 				var actionReply []byte
 				if e.Handled {
@@ -1387,7 +1388,7 @@ func methodRequestNextBlock(settings *settings.GXDLMSSettings,
 			log.Printf("MethodRequestNextBlock failed. Invalid block number %d/%d. ", settings.BlockIndex, blockNumber)
 			settings.ResetBlockIndex()
 			err := getLNPdu(NewGXDLMSLNParameters(settings, 0, enums.CommandMethodResponse,
-				byte(enums.ActionResponseTypeNormal), nil, bb, byte(enums.ErrorCodeDataBlockNumberInvalid), cipheredCommand), replyData)
+				byte(constants.ActionResponseTypeNormal), nil, bb, byte(enums.ErrorCodeDataBlockNumberInvalid), cipheredCommand), replyData)
 			return err
 		}
 		if size < data.Available() {
@@ -1395,7 +1396,7 @@ func methodRequestNextBlock(settings *settings.GXDLMSSettings,
 			settings.ResetBlockIndex()
 			log.Printf("MethodRequestNextBlock failed. Not enough data. Actual: %d. Expected: %d", data.Available(), size)
 			err := getLNPdu(NewGXDLMSLNParameters(settings, 0, enums.CommandMethodResponse,
-				byte(enums.ActionResponseTypeNormal), nil, bb, byte(enums.ErrorCodeDataBlockNumberInvalid), cipheredCommand), replyData)
+				byte(constants.ActionResponseTypeNormal), nil, bb, byte(enums.ErrorCodeDataBlockNumberInvalid), cipheredCommand), replyData)
 			return err
 		}
 	}
@@ -1404,7 +1405,7 @@ func methodRequestNextBlock(settings *settings.GXDLMSSettings,
 		cmd = enums.CommandGeneralBlockTransfer
 	}
 	p := NewGXDLMSLNParameters(settings, 0, cmd,
-		byte(enums.ActionResponseTypeNormal), nil, bb, byte(enums.ErrorCodeOk), cipheredCommand)
+		byte(constants.ActionResponseTypeNormal), nil, bb, byte(enums.ErrorCodeOk), cipheredCommand)
 	p.multipleBlocks = lastBlock == 0
 	p.streaming = streaming
 	p.gbtWindowSize = settings.GbtWindowSize()
@@ -1477,7 +1478,7 @@ func methodRequestNextBlock(settings *settings.GXDLMSSettings,
 			settings.ResetBlockIndex()
 			p.blockIndex = 1
 		} else {
-			p.requestType = uint8(enums.ActionResponseTypeNextBlock)
+			p.requestType = uint8(constants.ActionResponseTypeNextBlock)
 			p.status = 0xFF
 		}
 	}
@@ -1506,14 +1507,14 @@ func handleMethodRequest(settings *settings.GXDLMSSettings,
 	if err != nil {
 		return err
 	}
-	type_ := enums.ActionRequestType(ret)
+	type_ := constants.ActionRequestType(ret)
 	invokeID, err = data.Uint8()
 	if err != nil {
 		return err
 	}
 	settings.UpdateInvokeID(invokeID)
 	if xml != nil {
-		if type_ > 0 && type_ <= enums.ActionRequestTypeWithBlock {
+		if type_ > 0 && type_ <= constants.ActionRequestTypeWithBlock {
 			addInvokeId(xml, enums.CommandMethodRequest, int(type_), uint32(invokeID))
 		} else {
 			xml.AppendStartTag(int(enums.CommandMethodRequest), "", "", true)
@@ -1522,24 +1523,24 @@ func handleMethodRequest(settings *settings.GXDLMSSettings,
 		}
 	}
 	switch type_ {
-	case enums.ActionRequestTypeNormal:
-	case enums.ActionRequestTypeWithFirstBlock:
+	case constants.ActionRequestTypeNormal:
+	case constants.ActionRequestTypeWithFirstBlock:
 		err = methodRequest(settings, type_, invokeID, server, data, connectionInfo, replyData, xml, cipheredCommand)
-	case enums.ActionRequestTypeNextBlock:
+	case constants.ActionRequestTypeNextBlock:
 		err = methodRequestNextDataBlock(settings, server, data, invokeID, replyData, xml, false, cipheredCommand)
-	case enums.ActionRequestTypeWithBlock:
+	case constants.ActionRequestTypeWithBlock:
 		err = methodRequestNextBlock(settings, server, data, connectionInfo, replyData, xml, false, cipheredCommand)
 	default:
 		if xml == nil {
 			log.Println("HandleMethodRequest failed. Invalid command type_.")
 			settings.ResetBlockIndex()
-			type_ = enums.ActionRequestTypeNormal
+			type_ = constants.ActionRequestTypeNormal
 			data.Clear()
 			err = getLNPdu(NewGXDLMSLNParameters(settings, uint32(invokeID), enums.CommandMethodResponse, byte(type_), nil, nil, byte(enums.ErrorCodeReadWriteDenied), cipheredCommand), replyData)
 		}
 	}
 	if xml != nil {
-		if type_ > 0 && type_ <= enums.ActionRequestTypeWithBlock {
+		if type_ > 0 && type_ <= constants.ActionRequestTypeWithBlock {
 			xml.AppendEndTag(int(enums.CommandMethodRequest<<8|type_), false)
 		} else {
 			xml.AppendEndTag(int(enums.CommandMethodRequest), false)
@@ -1680,7 +1681,7 @@ func handleAccessRequest(settings *settings.GXDLMSSettings,
 		di := internal.GXDataInfo{}
 		di.Xml = xml
 		if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-			xml.AppendStartTag(int(enums.CommandWriteRequest<<8|enums.SingleReadResponseData), "", "", true)
+			xml.AppendStartTag(int(enums.CommandWriteRequest<<8|constants.SingleReadResponseData), "", "", true)
 		}
 		value, err := internal.GetData(settings, data, &di)
 		if err != nil {
@@ -1772,7 +1773,7 @@ func handleAccessRequest(settings *settings.GXDLMSSettings,
 			}
 		}
 		if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-			xml.AppendEndTag(int(enums.CommandWriteRequest<<8|enums.SingleReadResponseData), false)
+			xml.AppendEndTag(int(enums.CommandWriteRequest<<8|constants.SingleReadResponseData), false)
 		}
 	}
 	if xml != nil {

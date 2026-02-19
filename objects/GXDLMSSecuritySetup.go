@@ -329,7 +329,7 @@ func (g *GXDLMSSecuritySetup) removeCertificate(e *internal.ValueEventArgs) erro
 	if cert == nil {
 		e.Error = enums.ErrorCodeInconsistentClass
 	} else {
-		g.serverCertificates.Remove(cert)
+		internal.Remove(g.serverCertificates, cert)
 	}
 	return err
 }
@@ -354,7 +354,7 @@ func (g *GXDLMSSecuritySetup) importCertificate(settings *settings.GXDLMSSetting
 		for _, it := range list {
 			isServer := strings.Contains(it.Subject, serverSubject)
 			if isServer == isServerCert {
-				g.serverCertificates.Remove(it)
+				internal.Remove(g.serverCertificates, it)
 			}
 		}
 	}
@@ -1212,7 +1212,7 @@ func (g *GXDLMSSecuritySetup) ApplyKeys(settings *settings.GXDLMSSettings, e *in
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSSecuritySetup) GetValues() []any {
-	return []any{g.LogicalName, g.securityPolicy, g.SecuritySuite, g.ClientSystemTitle, g.ServerSystemTitle, g.Certificates}
+	return []any{g.LogicalName(), g.securityPolicy, g.SecuritySuite, g.ClientSystemTitle, g.ServerSystemTitle, g.Certificates}
 }
 
 // Activate returns the activates and strengthens the security policy.

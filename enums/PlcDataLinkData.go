@@ -55,8 +55,8 @@ const (
 func PlcDataLinkDataParse(value string) (PlcDataLinkData, error) {
 	var ret PlcDataLinkData
 	var err error
-	switch strings.ToUpper(value) {
-	case "REQUEST":
+	switch {
+	case strings.EqualFold(value, "Request"):
 		ret = PlcDataLinkDataRequest
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -70,7 +70,14 @@ func (g PlcDataLinkData) String() string {
 	var ret string
 	switch g {
 	case PlcDataLinkDataRequest:
-		ret = "REQUEST"
+		ret = "Request"
 	}
 	return ret
+}
+
+// AllPlcDataLinkData returns a slice containing all defined PlcDataLinkData values.
+func AllPlcDataLinkData() []PlcDataLinkData {
+	return []PlcDataLinkData{
+	PlcDataLinkDataRequest,
+	}
 }

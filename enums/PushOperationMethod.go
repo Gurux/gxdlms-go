@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func PushOperationMethodParse(value string) (PushOperationMethod, error) {
 	var ret PushOperationMethod
 	var err error
-	switch strings.ToUpper(value) {
-	case "UNCONFIRMEDFAILURE":
+	switch {
+	case strings.EqualFold(value, "UnconfirmedFailure"):
 		ret = PushOperationMethodUnconfirmedFailure
-	case "UNCONFIRMEDMISSING":
+	case strings.EqualFold(value, "UnconfirmedMissing"):
 		ret = PushOperationMethodUnconfirmedMissing
-	case "CONFIRMED":
+	case strings.EqualFold(value, "Confirmed"):
 		ret = PushOperationMethodConfirmed
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g PushOperationMethod) String() string {
 	var ret string
 	switch g {
 	case PushOperationMethodUnconfirmedFailure:
-		ret = "UNCONFIRMEDFAILURE"
+		ret = "UnconfirmedFailure"
 	case PushOperationMethodUnconfirmedMissing:
-		ret = "UNCONFIRMEDMISSING"
+		ret = "UnconfirmedMissing"
 	case PushOperationMethodConfirmed:
-		ret = "CONFIRMED"
+		ret = "Confirmed"
 	}
 	return ret
+}
+
+// AllPushOperationMethod returns a slice containing all defined PushOperationMethod values.
+func AllPushOperationMethod() []PushOperationMethod {
+	return []PushOperationMethod{
+		PushOperationMethodUnconfirmedFailure,
+		PushOperationMethodUnconfirmedMissing,
+		PushOperationMethodConfirmed,
+	}
 }

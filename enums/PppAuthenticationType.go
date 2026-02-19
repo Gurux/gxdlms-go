@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func PppAuthenticationTypeParse(value string) (PppAuthenticationType, error) {
 	var ret PppAuthenticationType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = PppAuthenticationTypeNone
-	case "PAP":
+	case strings.EqualFold(value, "PAP"):
 		ret = PppAuthenticationTypePAP
-	case "CHAP":
+	case strings.EqualFold(value, "CHAP"):
 		ret = PppAuthenticationTypeCHAP
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g PppAuthenticationType) String() string {
 	var ret string
 	switch g {
 	case PppAuthenticationTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case PppAuthenticationTypePAP:
 		ret = "PAP"
 	case PppAuthenticationTypeCHAP:
 		ret = "CHAP"
 	}
 	return ret
+}
+
+// AllPppAuthenticationType returns a slice containing all defined PppAuthenticationType values.
+func AllPppAuthenticationType() []PppAuthenticationType {
+	return []PppAuthenticationType{
+		PppAuthenticationTypeNone,
+		PppAuthenticationTypePAP,
+		PppAuthenticationTypeCHAP,
+	}
 }

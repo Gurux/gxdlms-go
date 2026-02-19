@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -68,20 +68,20 @@ const (
 func ClockStatusParse(value string) (ClockStatus, error) {
 	var ret ClockStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "OK":
+	switch {
+	case strings.EqualFold(value, "Ok"):
 		ret = ClockStatusOk
-	case "INVALIDVALUE":
+	case strings.EqualFold(value, "InvalidValue"):
 		ret = ClockStatusInvalidValue
-	case "DOUBTFULVALUE":
+	case strings.EqualFold(value, "DoubtfulValue"):
 		ret = ClockStatusDoubtfulValue
-	case "DIFFERENTCLOCKBASE":
+	case strings.EqualFold(value, "DifferentClockBase"):
 		ret = ClockStatusDifferentClockBase
-	case "INVALIDCLOCKSTATUS":
+	case strings.EqualFold(value, "InvalidClockStatus"):
 		ret = ClockStatusInvalidClockStatus
-	case "DAYLIGHTSAVINGACTIVE":
+	case strings.EqualFold(value, "DaylightSavingActive"):
 		ret = ClockStatusDaylightSavingActive
-	case "SKIP":
+	case strings.EqualFold(value, "Skip"):
 		ret = ClockStatusSkip
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -95,19 +95,32 @@ func (g ClockStatus) String() string {
 	var ret string
 	switch g {
 	case ClockStatusOk:
-		ret = "OK"
+		ret = "Ok"
 	case ClockStatusInvalidValue:
-		ret = "INVALIDVALUE"
+		ret = "InvalidValue"
 	case ClockStatusDoubtfulValue:
-		ret = "DOUBTFULVALUE"
+		ret = "DoubtfulValue"
 	case ClockStatusDifferentClockBase:
-		ret = "DIFFERENTCLOCKBASE"
+		ret = "DifferentClockBase"
 	case ClockStatusInvalidClockStatus:
-		ret = "INVALIDCLOCKSTATUS"
+		ret = "InvalidClockStatus"
 	case ClockStatusDaylightSavingActive:
-		ret = "DAYLIGHTSAVINGACTIVE"
+		ret = "DaylightSavingActive"
 	case ClockStatusSkip:
-		ret = "SKIP"
+		ret = "Skip"
 	}
 	return ret
+}
+
+// AllClockStatus returns a slice containing all defined ClockStatus values.
+func AllClockStatus() []ClockStatus {
+	return []ClockStatus{
+	ClockStatusOk,
+	ClockStatusInvalidValue,
+	ClockStatusDoubtfulValue,
+	ClockStatusDifferentClockBase,
+	ClockStatusInvalidClockStatus,
+	ClockStatusDaylightSavingActive,
+	ClockStatusSkip,
+	}
 }

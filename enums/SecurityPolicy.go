@@ -1,3 +1,5 @@
+﻿package enums
+
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
@@ -31,8 +33,6 @@
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
-
-package enums
 
 import (
 	"fmt"
@@ -74,26 +74,26 @@ const (
 func SecurityPolicyParse(value string) (SecurityPolicy, error) {
 	var ret SecurityPolicy
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = SecurityPolicyNone
-	case "AUTHENTICATED":
+	case strings.EqualFold(value, "Authenticated"):
 		ret = SecurityPolicyAuthenticated
-	case "ENCRYPTED":
+	case strings.EqualFold(value, "Encrypted"):
 		ret = SecurityPolicyEncrypted
-	case "AUTHENTICATEDENCRYPTED":
+	case strings.EqualFold(value, "AuthenticatedEncrypted"):
 		ret = SecurityPolicyAuthenticatedEncrypted
-	case "AUTHENTICATEDREQUEST":
+	case strings.EqualFold(value, "AuthenticatedRequest"):
 		ret = SecurityPolicyAuthenticatedRequest
-	case "ENCRYPTEDREQUEST":
+	case strings.EqualFold(value, "EncryptedRequest"):
 		ret = SecurityPolicyEncryptedRequest
-	case "DIGITALLYSIGNEDREQUEST":
+	case strings.EqualFold(value, "DigitallySignedRequest"):
 		ret = SecurityPolicyDigitallySignedRequest
-	case "AUTHENTICATEDRESPONSE":
+	case strings.EqualFold(value, "AuthenticatedResponse"):
 		ret = SecurityPolicyAuthenticatedResponse
-	case "ENCRYPTEDRESPONSE":
+	case strings.EqualFold(value, "EncryptedResponse"):
 		ret = SecurityPolicyEncryptedResponse
-	case "DIGITALLYSIGNEDRESPONSE":
+	case strings.EqualFold(value, "DigitallySignedResponse"):
 		ret = SecurityPolicyDigitallySignedResponse
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -107,25 +107,41 @@ func (g SecurityPolicy) String() string {
 	var ret string
 	switch g {
 	case SecurityPolicyNone:
-		ret = "NONE"
+		ret = "None"
 	case SecurityPolicyAuthenticated:
-		ret = "AUTHENTICATED"
+		ret = "Authenticated"
 	case SecurityPolicyEncrypted:
-		ret = "ENCRYPTED"
+		ret = "Encrypted"
 	case SecurityPolicyAuthenticatedEncrypted:
-		ret = "AUTHENTICATEDENCRYPTED"
+		ret = "AuthenticatedEncrypted"
 	case SecurityPolicyAuthenticatedRequest:
-		ret = "AUTHENTICATEDREQUEST"
+		ret = "AuthenticatedRequest"
 	case SecurityPolicyEncryptedRequest:
-		ret = "ENCRYPTEDREQUEST"
+		ret = "EncryptedRequest"
 	case SecurityPolicyDigitallySignedRequest:
-		ret = "DIGITALLYSIGNEDREQUEST"
+		ret = "DigitallySignedRequest"
 	case SecurityPolicyAuthenticatedResponse:
-		ret = "AUTHENTICATEDRESPONSE"
+		ret = "AuthenticatedResponse"
 	case SecurityPolicyEncryptedResponse:
-		ret = "ENCRYPTEDRESPONSE"
+		ret = "EncryptedResponse"
 	case SecurityPolicyDigitallySignedResponse:
-		ret = "DIGITALLYSIGNEDRESPONSE"
+		ret = "DigitallySignedResponse"
 	}
 	return ret
+}
+
+// AllSecurityPolicy returns a slice containing all defined SecurityPolicy values.
+func AllSecurityPolicy() []SecurityPolicy {
+	return []SecurityPolicy{
+		SecurityPolicyNone,
+		SecurityPolicyAuthenticated,
+		SecurityPolicyEncrypted,
+		SecurityPolicyAuthenticatedEncrypted,
+		SecurityPolicyAuthenticatedRequest,
+		SecurityPolicyEncryptedRequest,
+		SecurityPolicyDigitallySignedRequest,
+		SecurityPolicyAuthenticatedResponse,
+		SecurityPolicyEncryptedResponse,
+		SecurityPolicyDigitallySignedResponse,
+	}
 }

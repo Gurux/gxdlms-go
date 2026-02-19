@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func DateTimeExtraInfoParse(value string) (DateTimeExtraInfo, error) {
 	var ret DateTimeExtraInfo
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = DateTimeExtraInfoNone
-	case "DSTBEGIN":
+	case strings.EqualFold(value, "DstBegin"):
 		ret = DateTimeExtraInfoDstBegin
-	case "DSTEND":
+	case strings.EqualFold(value, "DstEnd"):
 		ret = DateTimeExtraInfoDstEnd
-	case "LASTDAY":
+	case strings.EqualFold(value, "LastDay"):
 		ret = DateTimeExtraInfoLastDay
-	case "LASTDAY2":
+	case strings.EqualFold(value, "LastDay2"):
 		ret = DateTimeExtraInfoLastDay2
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g DateTimeExtraInfo) String() string {
 	var ret string
 	switch g {
 	case DateTimeExtraInfoNone:
-		ret = "NONE"
+		ret = "None"
 	case DateTimeExtraInfoDstBegin:
-		ret = "DSTBEGIN"
+		ret = "DstBegin"
 	case DateTimeExtraInfoDstEnd:
-		ret = "DSTEND"
+		ret = "DstEnd"
 	case DateTimeExtraInfoLastDay:
-		ret = "LASTDAY"
+		ret = "LastDay"
 	case DateTimeExtraInfoLastDay2:
-		ret = "LASTDAY2"
+		ret = "LastDay2"
 	}
 	return ret
+}
+
+// AllDateTimeExtraInfo returns a slice containing all defined DateTimeExtraInfo values.
+func AllDateTimeExtraInfo() []DateTimeExtraInfo {
+	return []DateTimeExtraInfo{
+	DateTimeExtraInfoNone,
+	DateTimeExtraInfoDstBegin,
+	DateTimeExtraInfoDstEnd,
+	DateTimeExtraInfoLastDay,
+	DateTimeExtraInfoLastDay2,
+	}
 }

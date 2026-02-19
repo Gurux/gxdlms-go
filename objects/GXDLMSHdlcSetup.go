@@ -376,7 +376,7 @@ func (g *GXDLMSHdlcSetup) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSHdlcSetup) GetValues() []any {
-	return []any{g.LogicalName, g.CommunicationSpeed, g.windowSizeTransmit, g.windowSizeReceive,
+	return []any{g.LogicalName(), g.CommunicationSpeed, g.windowSizeTransmit, g.windowSizeReceive,
 		g.maximumInfoLengthTransmit, g.maximumInfoLengthReceive,
 		g.InterCharachterTimeout, g.InactivityTimeout, g.DeviceAddress}
 }

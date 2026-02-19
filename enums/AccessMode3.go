@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// AccessMode3 The AccessMode3 enumerates the access modes for Logical Name Association version 3.
+// AccessMode3 enumerates the access modes for Logical Name Association version 3.
 type AccessMode3 int
 
 const (
@@ -73,24 +73,24 @@ const (
 func AccessMode3Parse(value string) (AccessMode3, error) {
 	var ret AccessMode3
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOACCESS":
+	switch {
+	case strings.EqualFold(value, "NoAccess"):
 		ret = AccessMode3NoAccess
-	case "READ":
+	case strings.EqualFold(value, "Read"):
 		ret = AccessMode3Read
-	case "WRITE":
+	case strings.EqualFold(value, "Write"):
 		ret = AccessMode3Write
-	case "AUTHENTICATEDREQUEST":
+	case strings.EqualFold(value, "AuthenticatedRequest"):
 		ret = AccessMode3AuthenticatedRequest
-	case "ENCRYPTEDREQUEST":
+	case strings.EqualFold(value, "EncryptedRequest"):
 		ret = AccessMode3EncryptedRequest
-	case "DIGITALLYSIGNEDREQUEST":
+	case strings.EqualFold(value, "DigitallySignedRequest"):
 		ret = AccessMode3DigitallySignedRequest
-	case "AUTHENTICATEDRESPONSE":
+	case strings.EqualFold(value, "AuthenticatedResponse"):
 		ret = AccessMode3AuthenticatedResponse
-	case "ENCRYPTEDRESPONSE":
+	case strings.EqualFold(value, "EncryptedResponse"):
 		ret = AccessMode3EncryptedResponse
-	case "DIGITALLYSIGNEDRESPONSE":
+	case strings.EqualFold(value, "DigitallySignedResponse"):
 		ret = AccessMode3DigitallySignedResponse
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -104,23 +104,38 @@ func (g AccessMode3) String() string {
 	var ret string
 	switch g {
 	case AccessMode3NoAccess:
-		ret = "NOACCESS"
+		ret = "NoAccess"
 	case AccessMode3Read:
-		ret = "READ"
+		ret = "Read"
 	case AccessMode3Write:
-		ret = "WRITE"
+		ret = "Write"
 	case AccessMode3AuthenticatedRequest:
-		ret = "AUTHENTICATEDREQUEST"
+		ret = "AuthenticatedRequest"
 	case AccessMode3EncryptedRequest:
-		ret = "ENCRYPTEDREQUEST"
+		ret = "EncryptedRequest"
 	case AccessMode3DigitallySignedRequest:
-		ret = "DIGITALLYSIGNEDREQUEST"
+		ret = "DigitallySignedRequest"
 	case AccessMode3AuthenticatedResponse:
-		ret = "AUTHENTICATEDRESPONSE"
+		ret = "AuthenticatedResponse"
 	case AccessMode3EncryptedResponse:
-		ret = "ENCRYPTEDRESPONSE"
+		ret = "EncryptedResponse"
 	case AccessMode3DigitallySignedResponse:
-		ret = "DIGITALLYSIGNEDRESPONSE"
+		ret = "DigitallySignedResponse"
 	}
 	return ret
+}
+
+// AllAccessMode3 returns a slice containing all defined AccessMode3 values.
+func AllAccessMode3() []AccessMode3 {
+	return []AccessMode3{
+		AccessMode3NoAccess,
+		AccessMode3Read,
+		AccessMode3Write,
+		AccessMode3AuthenticatedRequest,
+		AccessMode3EncryptedRequest,
+		AccessMode3DigitallySignedRequest,
+		AccessMode3AuthenticatedResponse,
+		AccessMode3EncryptedResponse,
+		AccessMode3DigitallySignedResponse,
+	}
 }

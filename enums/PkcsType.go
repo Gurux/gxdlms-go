@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func PkcsTypeParse(value string) (PkcsType, error) {
 	var ret PkcsType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = PkcsTypeNone
-	case "PKCS8":
+	case strings.EqualFold(value, "Pkcs8"):
 		ret = PkcsTypePkcs8
-	case "PKCS10":
+	case strings.EqualFold(value, "Pkcs10"):
 		ret = PkcsTypePkcs10
-	case "X509CERTIFICATE":
+	case strings.EqualFold(value, "x509Certificate"):
 		ret = PkcsTypex509Certificate
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g PkcsType) String() string {
 	var ret string
 	switch g {
 	case PkcsTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case PkcsTypePkcs8:
-		ret = "PKCS8"
+		ret = "Pkcs8"
 	case PkcsTypePkcs10:
-		ret = "PKCS10"
+		ret = "Pkcs10"
 	case PkcsTypex509Certificate:
-		ret = "X509CERTIFICATE"
+		ret = "x509Certificate"
 	}
 	return ret
+}
+
+// AllPkcsType returns a slice containing all defined PkcsType values.
+func AllPkcsType() []PkcsType {
+	return []PkcsType{
+		PkcsTypeNone,
+		PkcsTypePkcs8,
+		PkcsTypePkcs10,
+		PkcsTypex509Certificate,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -115,130 +115,130 @@ const (
 func X9ObjectIdentifierParse(value string) (X9ObjectIdentifier, error) {
 	var ret X9ObjectIdentifier
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = X9ObjectIdentifierNone
-	case "IDFIELDTYPE":
+	case strings.EqualFold(value, "IdFieldType"):
 		ret = X9ObjectIdentifierIdFieldType
-	case "PRIMEFIELD":
+	case strings.EqualFold(value, "PrimeField"):
 		ret = X9ObjectIdentifierPrimeField
-	case "CHARACTERISTICTWOFIELD":
+	case strings.EqualFold(value, "CharacteristicTwoField"):
 		ret = X9ObjectIdentifierCharacteristicTwoField
-	case "GNBASIS":
+	case strings.EqualFold(value, "GNBasis"):
 		ret = X9ObjectIdentifierGNBasis
-	case "TPBASIS":
+	case strings.EqualFold(value, "TPBasis"):
 		ret = X9ObjectIdentifierTPBasis
-	case "PPBASIS":
+	case strings.EqualFold(value, "PPBasis"):
 		ret = X9ObjectIdentifierPPBasis
-	case "ECDSAWITHSHA1":
+	case strings.EqualFold(value, "ECDsaWithSha1"):
 		ret = X9ObjectIdentifierECDsaWithSha1
-	case "IDECPUBLICKEY":
+	case strings.EqualFold(value, "IdECPublicKey"):
 		ret = X9ObjectIdentifierIdECPublicKey
-	case "ECDSAWITHSHA2":
+	case strings.EqualFold(value, "ECDsaWithSha2"):
 		ret = X9ObjectIdentifierECDsaWithSha2
-	case "ECDSAWITHSHA224":
+	case strings.EqualFold(value, "ECDsaWithSha224"):
 		ret = X9ObjectIdentifierECDsaWithSha224
-	case "ECDSAWITHSHA256":
+	case strings.EqualFold(value, "ECDsaWithSha256"):
 		ret = X9ObjectIdentifierECDsaWithSha256
-	case "ECDSAWITHSHA384":
+	case strings.EqualFold(value, "ECDsaWithSha384"):
 		ret = X9ObjectIdentifierECDsaWithSha384
-	case "ECDSAWITHSHA512":
+	case strings.EqualFold(value, "ECDsaWithSha512"):
 		ret = X9ObjectIdentifierECDsaWithSha512
-	case "ELLIPTICCURVE":
+	case strings.EqualFold(value, "EllipticCurve"):
 		ret = X9ObjectIdentifierEllipticCurve
-	case "CTWOCURVE":
+	case strings.EqualFold(value, "CTwoCurve"):
 		ret = X9ObjectIdentifierCTwoCurve
-	case "C2PNB163V1":
+	case strings.EqualFold(value, "C2Pnb163v1"):
 		ret = X9ObjectIdentifierC2Pnb163v1
-	case "C2PNB163V2":
+	case strings.EqualFold(value, "C2Pnb163v2"):
 		ret = X9ObjectIdentifierC2Pnb163v2
-	case "C2PNB163V3":
+	case strings.EqualFold(value, "C2Pnb163v3"):
 		ret = X9ObjectIdentifierC2Pnb163v3
-	case "C2PNB176W1":
+	case strings.EqualFold(value, "C2Pnb176w1"):
 		ret = X9ObjectIdentifierC2Pnb176w1
-	case "C2TNB191V1":
+	case strings.EqualFold(value, "C2Tnb191v1"):
 		ret = X9ObjectIdentifierC2Tnb191v1
-	case "C2TNB191V2":
+	case strings.EqualFold(value, "C2Tnb191v2"):
 		ret = X9ObjectIdentifierC2Tnb191v2
-	case "C2TNB191V3":
+	case strings.EqualFold(value, "C2Tnb191v3"):
 		ret = X9ObjectIdentifierC2Tnb191v3
-	case "C2ONB191V4":
+	case strings.EqualFold(value, "C2Onb191v4"):
 		ret = X9ObjectIdentifierC2Onb191v4
-	case "C2ONB191V5":
+	case strings.EqualFold(value, "C2Onb191v5"):
 		ret = X9ObjectIdentifierC2Onb191v5
-	case "C2PNB208W1":
+	case strings.EqualFold(value, "C2Pnb208w1"):
 		ret = X9ObjectIdentifierC2Pnb208w1
-	case "C2TNB239V1":
+	case strings.EqualFold(value, "C2Tnb239v1"):
 		ret = X9ObjectIdentifierC2Tnb239v1
-	case "C2TNB239V2":
+	case strings.EqualFold(value, "C2Tnb239v2"):
 		ret = X9ObjectIdentifierC2Tnb239v2
-	case "C2TNB239V3":
+	case strings.EqualFold(value, "C2Tnb239v3"):
 		ret = X9ObjectIdentifierC2Tnb239v3
-	case "C2ONB239V4":
+	case strings.EqualFold(value, "C2Onb239v4"):
 		ret = X9ObjectIdentifierC2Onb239v4
-	case "C2ONB239V5":
+	case strings.EqualFold(value, "C2Onb239v5"):
 		ret = X9ObjectIdentifierC2Onb239v5
-	case "C2PNB272W1":
+	case strings.EqualFold(value, "C2Pnb272w1"):
 		ret = X9ObjectIdentifierC2Pnb272w1
-	case "C2PNB304W1":
+	case strings.EqualFold(value, "C2Pnb304w1"):
 		ret = X9ObjectIdentifierC2Pnb304w1
-	case "C2TNB359V1":
+	case strings.EqualFold(value, "C2Tnb359v1"):
 		ret = X9ObjectIdentifierC2Tnb359v1
-	case "C2PNB368W1":
+	case strings.EqualFold(value, "C2Pnb368w1"):
 		ret = X9ObjectIdentifierC2Pnb368w1
-	case "C2TNB431R1":
+	case strings.EqualFold(value, "C2Tnb431r1"):
 		ret = X9ObjectIdentifierC2Tnb431r1
-	case "PRIMECURVE":
+	case strings.EqualFold(value, "PrimeCurve"):
 		ret = X9ObjectIdentifierPrimeCurve
-	case "PRIME192V1":
+	case strings.EqualFold(value, "Prime192v1"):
 		ret = X9ObjectIdentifierPrime192v1
-	case "PRIME192V2":
+	case strings.EqualFold(value, "Prime192v2"):
 		ret = X9ObjectIdentifierPrime192v2
-	case "PRIME192V3":
+	case strings.EqualFold(value, "Prime192v3"):
 		ret = X9ObjectIdentifierPrime192v3
-	case "PRIME239V1":
+	case strings.EqualFold(value, "Prime239v1"):
 		ret = X9ObjectIdentifierPrime239v1
-	case "PRIME239V2":
+	case strings.EqualFold(value, "Prime239v2"):
 		ret = X9ObjectIdentifierPrime239v2
-	case "PRIME239V3":
+	case strings.EqualFold(value, "Prime239v3"):
 		ret = X9ObjectIdentifierPrime239v3
-	case "PRIME256V1":
+	case strings.EqualFold(value, "Prime256v1"):
 		ret = X9ObjectIdentifierPrime256v1
-	case "IDDSA":
+	case strings.EqualFold(value, "IdDsa"):
 		ret = X9ObjectIdentifierIdDsa
-	case "IDDSAWITHSHA1":
+	case strings.EqualFold(value, "IdDsaWithSha1"):
 		ret = X9ObjectIdentifierIdDsaWithSha1
-	case "X9X63SCHEME":
+	case strings.EqualFold(value, "X9x63Scheme"):
 		ret = X9ObjectIdentifierX9x63Scheme
-	case "DHSINGLEPASSSTDDHSHA1KDFSCHEME":
+	case strings.EqualFold(value, "DHSinglePassStdDHSha1KdfScheme"):
 		ret = X9ObjectIdentifierDHSinglePassStdDHSha1KdfScheme
-	case "DHSINGLEPASSCOFACTORDHSHA1KDFSCHEME":
+	case strings.EqualFold(value, "DHSinglePassCofactorDHSha1KdfScheme"):
 		ret = X9ObjectIdentifierDHSinglePassCofactorDHSha1KdfScheme
-	case "MQVSINGLEPASSSHA1KDFSCHEME":
+	case strings.EqualFold(value, "MqvSinglePassSha1KdfScheme"):
 		ret = X9ObjectIdentifierMqvSinglePassSha1KdfScheme
-	case "ANSI_X9_42":
+	case strings.EqualFold(value, "ansi_x9_42"):
 		ret = X9ObjectIdentifieransi_x9_42
-	case "DHPUBLICNUMBER":
+	case strings.EqualFold(value, "DHPublicNumber"):
 		ret = X9ObjectIdentifierDHPublicNumber
-	case "X9X42SCHEMES":
+	case strings.EqualFold(value, "X9x42Schemes"):
 		ret = X9ObjectIdentifierX9x42Schemes
-	case "DHSTATIC":
+	case strings.EqualFold(value, "DHStatic"):
 		ret = X9ObjectIdentifierDHStatic
-	case "DHEPHEM":
+	case strings.EqualFold(value, "DHEphem"):
 		ret = X9ObjectIdentifierDHEphem
-	case "DHONEFLOW":
+	case strings.EqualFold(value, "DHOneFlow"):
 		ret = X9ObjectIdentifierDHOneFlow
-	case "DHHYBRID1":
+	case strings.EqualFold(value, "DHHybrid1"):
 		ret = X9ObjectIdentifierDHHybrid1
-	case "DHHYBRID2":
+	case strings.EqualFold(value, "DHHybrid2"):
 		ret = X9ObjectIdentifierDHHybrid2
-	case "DHHYBRIDONEFLOW":
+	case strings.EqualFold(value, "DHHybridOneFlow"):
 		ret = X9ObjectIdentifierDHHybridOneFlow
-	case "MQV2":
+	case strings.EqualFold(value, "Mqv2"):
 		ret = X9ObjectIdentifierMqv2
-	case "MQV1":
+	case strings.EqualFold(value, "Mqv1"):
 		ret = X9ObjectIdentifierMqv1
-	case "SECP384R1":
+	case strings.EqualFold(value, "Secp384r1"):
 		ret = X9ObjectIdentifierSecp384r1
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -252,129 +252,197 @@ func (g X9ObjectIdentifier) String() string {
 	var ret string
 	switch g {
 	case X9ObjectIdentifierNone:
-		ret = "NONE"
+		ret = "None"
 	case X9ObjectIdentifierIdFieldType:
-		ret = "IDFIELDTYPE"
+		ret = "IdFieldType"
 	case X9ObjectIdentifierPrimeField:
-		ret = "PRIMEFIELD"
+		ret = "PrimeField"
 	case X9ObjectIdentifierCharacteristicTwoField:
-		ret = "CHARACTERISTICTWOFIELD"
+		ret = "CharacteristicTwoField"
 	case X9ObjectIdentifierGNBasis:
-		ret = "GNBASIS"
+		ret = "GNBasis"
 	case X9ObjectIdentifierTPBasis:
-		ret = "TPBASIS"
+		ret = "TPBasis"
 	case X9ObjectIdentifierPPBasis:
-		ret = "PPBASIS"
+		ret = "PPBasis"
 	case X9ObjectIdentifierECDsaWithSha1:
-		ret = "ECDSAWITHSHA1"
+		ret = "ECDsaWithSha1"
 	case X9ObjectIdentifierIdECPublicKey:
-		ret = "IDECPUBLICKEY"
+		ret = "IdECPublicKey"
 	case X9ObjectIdentifierECDsaWithSha2:
-		ret = "ECDSAWITHSHA2"
+		ret = "ECDsaWithSha2"
 	case X9ObjectIdentifierECDsaWithSha224:
-		ret = "ECDSAWITHSHA224"
+		ret = "ECDsaWithSha224"
 	case X9ObjectIdentifierECDsaWithSha256:
-		ret = "ECDSAWITHSHA256"
+		ret = "ECDsaWithSha256"
 	case X9ObjectIdentifierECDsaWithSha384:
-		ret = "ECDSAWITHSHA384"
+		ret = "ECDsaWithSha384"
 	case X9ObjectIdentifierECDsaWithSha512:
-		ret = "ECDSAWITHSHA512"
+		ret = "ECDsaWithSha512"
 	case X9ObjectIdentifierEllipticCurve:
-		ret = "ELLIPTICCURVE"
+		ret = "EllipticCurve"
 	case X9ObjectIdentifierCTwoCurve:
-		ret = "CTWOCURVE"
+		ret = "CTwoCurve"
 	case X9ObjectIdentifierC2Pnb163v1:
-		ret = "C2PNB163V1"
+		ret = "C2Pnb163v1"
 	case X9ObjectIdentifierC2Pnb163v2:
-		ret = "C2PNB163V2"
+		ret = "C2Pnb163v2"
 	case X9ObjectIdentifierC2Pnb163v3:
-		ret = "C2PNB163V3"
+		ret = "C2Pnb163v3"
 	case X9ObjectIdentifierC2Pnb176w1:
-		ret = "C2PNB176W1"
+		ret = "C2Pnb176w1"
 	case X9ObjectIdentifierC2Tnb191v1:
-		ret = "C2TNB191V1"
+		ret = "C2Tnb191v1"
 	case X9ObjectIdentifierC2Tnb191v2:
-		ret = "C2TNB191V2"
+		ret = "C2Tnb191v2"
 	case X9ObjectIdentifierC2Tnb191v3:
-		ret = "C2TNB191V3"
+		ret = "C2Tnb191v3"
 	case X9ObjectIdentifierC2Onb191v4:
-		ret = "C2ONB191V4"
+		ret = "C2Onb191v4"
 	case X9ObjectIdentifierC2Onb191v5:
-		ret = "C2ONB191V5"
+		ret = "C2Onb191v5"
 	case X9ObjectIdentifierC2Pnb208w1:
-		ret = "C2PNB208W1"
+		ret = "C2Pnb208w1"
 	case X9ObjectIdentifierC2Tnb239v1:
-		ret = "C2TNB239V1"
+		ret = "C2Tnb239v1"
 	case X9ObjectIdentifierC2Tnb239v2:
-		ret = "C2TNB239V2"
+		ret = "C2Tnb239v2"
 	case X9ObjectIdentifierC2Tnb239v3:
-		ret = "C2TNB239V3"
+		ret = "C2Tnb239v3"
 	case X9ObjectIdentifierC2Onb239v4:
-		ret = "C2ONB239V4"
+		ret = "C2Onb239v4"
 	case X9ObjectIdentifierC2Onb239v5:
-		ret = "C2ONB239V5"
+		ret = "C2Onb239v5"
 	case X9ObjectIdentifierC2Pnb272w1:
-		ret = "C2PNB272W1"
+		ret = "C2Pnb272w1"
 	case X9ObjectIdentifierC2Pnb304w1:
-		ret = "C2PNB304W1"
+		ret = "C2Pnb304w1"
 	case X9ObjectIdentifierC2Tnb359v1:
-		ret = "C2TNB359V1"
+		ret = "C2Tnb359v1"
 	case X9ObjectIdentifierC2Pnb368w1:
-		ret = "C2PNB368W1"
+		ret = "C2Pnb368w1"
 	case X9ObjectIdentifierC2Tnb431r1:
-		ret = "C2TNB431R1"
+		ret = "C2Tnb431r1"
 	case X9ObjectIdentifierPrimeCurve:
-		ret = "PRIMECURVE"
+		ret = "PrimeCurve"
 	case X9ObjectIdentifierPrime192v1:
-		ret = "PRIME192V1"
+		ret = "Prime192v1"
 	case X9ObjectIdentifierPrime192v2:
-		ret = "PRIME192V2"
+		ret = "Prime192v2"
 	case X9ObjectIdentifierPrime192v3:
-		ret = "PRIME192V3"
+		ret = "Prime192v3"
 	case X9ObjectIdentifierPrime239v1:
-		ret = "PRIME239V1"
+		ret = "Prime239v1"
 	case X9ObjectIdentifierPrime239v2:
-		ret = "PRIME239V2"
+		ret = "Prime239v2"
 	case X9ObjectIdentifierPrime239v3:
-		ret = "PRIME239V3"
+		ret = "Prime239v3"
 	case X9ObjectIdentifierPrime256v1:
-		ret = "PRIME256V1"
+		ret = "Prime256v1"
 	case X9ObjectIdentifierIdDsa:
-		ret = "IDDSA"
+		ret = "IdDsa"
 	case X9ObjectIdentifierIdDsaWithSha1:
-		ret = "IDDSAWITHSHA1"
+		ret = "IdDsaWithSha1"
 	case X9ObjectIdentifierX9x63Scheme:
-		ret = "X9X63SCHEME"
+		ret = "X9x63Scheme"
 	case X9ObjectIdentifierDHSinglePassStdDHSha1KdfScheme:
-		ret = "DHSINGLEPASSSTDDHSHA1KDFSCHEME"
+		ret = "DHSinglePassStdDHSha1KdfScheme"
 	case X9ObjectIdentifierDHSinglePassCofactorDHSha1KdfScheme:
-		ret = "DHSINGLEPASSCOFACTORDHSHA1KDFSCHEME"
+		ret = "DHSinglePassCofactorDHSha1KdfScheme"
 	case X9ObjectIdentifierMqvSinglePassSha1KdfScheme:
-		ret = "MQVSINGLEPASSSHA1KDFSCHEME"
+		ret = "MqvSinglePassSha1KdfScheme"
 	case X9ObjectIdentifieransi_x9_42:
-		ret = "ANSI_X9_42"
+		ret = "ansi_x9_42"
 	case X9ObjectIdentifierDHPublicNumber:
-		ret = "DHPUBLICNUMBER"
+		ret = "DHPublicNumber"
 	case X9ObjectIdentifierX9x42Schemes:
-		ret = "X9X42SCHEMES"
+		ret = "X9x42Schemes"
 	case X9ObjectIdentifierDHStatic:
-		ret = "DHSTATIC"
+		ret = "DHStatic"
 	case X9ObjectIdentifierDHEphem:
-		ret = "DHEPHEM"
+		ret = "DHEphem"
 	case X9ObjectIdentifierDHOneFlow:
-		ret = "DHONEFLOW"
+		ret = "DHOneFlow"
 	case X9ObjectIdentifierDHHybrid1:
-		ret = "DHHYBRID1"
+		ret = "DHHybrid1"
 	case X9ObjectIdentifierDHHybrid2:
-		ret = "DHHYBRID2"
+		ret = "DHHybrid2"
 	case X9ObjectIdentifierDHHybridOneFlow:
-		ret = "DHHYBRIDONEFLOW"
+		ret = "DHHybridOneFlow"
 	case X9ObjectIdentifierMqv2:
-		ret = "MQV2"
+		ret = "Mqv2"
 	case X9ObjectIdentifierMqv1:
-		ret = "MQV1"
+		ret = "Mqv1"
 	case X9ObjectIdentifierSecp384r1:
-		ret = "SECP384R1"
+		ret = "Secp384r1"
 	}
 	return ret
+}
+
+// AllX9ObjectIdentifier returns a slice containing all defined X9ObjectIdentifier values.
+func AllX9ObjectIdentifier() []X9ObjectIdentifier {
+	return []X9ObjectIdentifier{
+	X9ObjectIdentifierNone,
+	X9ObjectIdentifierIdFieldType,
+	X9ObjectIdentifierPrimeField,
+	X9ObjectIdentifierCharacteristicTwoField,
+	X9ObjectIdentifierGNBasis,
+	X9ObjectIdentifierTPBasis,
+	X9ObjectIdentifierPPBasis,
+	X9ObjectIdentifierECDsaWithSha1,
+	X9ObjectIdentifierIdECPublicKey,
+	X9ObjectIdentifierECDsaWithSha2,
+	X9ObjectIdentifierECDsaWithSha224,
+	X9ObjectIdentifierECDsaWithSha256,
+	X9ObjectIdentifierECDsaWithSha384,
+	X9ObjectIdentifierECDsaWithSha512,
+	X9ObjectIdentifierEllipticCurve,
+	X9ObjectIdentifierCTwoCurve,
+	X9ObjectIdentifierC2Pnb163v1,
+	X9ObjectIdentifierC2Pnb163v2,
+	X9ObjectIdentifierC2Pnb163v3,
+	X9ObjectIdentifierC2Pnb176w1,
+	X9ObjectIdentifierC2Tnb191v1,
+	X9ObjectIdentifierC2Tnb191v2,
+	X9ObjectIdentifierC2Tnb191v3,
+	X9ObjectIdentifierC2Onb191v4,
+	X9ObjectIdentifierC2Onb191v5,
+	X9ObjectIdentifierC2Pnb208w1,
+	X9ObjectIdentifierC2Tnb239v1,
+	X9ObjectIdentifierC2Tnb239v2,
+	X9ObjectIdentifierC2Tnb239v3,
+	X9ObjectIdentifierC2Onb239v4,
+	X9ObjectIdentifierC2Onb239v5,
+	X9ObjectIdentifierC2Pnb272w1,
+	X9ObjectIdentifierC2Pnb304w1,
+	X9ObjectIdentifierC2Tnb359v1,
+	X9ObjectIdentifierC2Pnb368w1,
+	X9ObjectIdentifierC2Tnb431r1,
+	X9ObjectIdentifierPrimeCurve,
+	X9ObjectIdentifierPrime192v1,
+	X9ObjectIdentifierPrime192v2,
+	X9ObjectIdentifierPrime192v3,
+	X9ObjectIdentifierPrime239v1,
+	X9ObjectIdentifierPrime239v2,
+	X9ObjectIdentifierPrime239v3,
+	X9ObjectIdentifierPrime256v1,
+	X9ObjectIdentifierIdDsa,
+	X9ObjectIdentifierIdDsaWithSha1,
+	X9ObjectIdentifierX9x63Scheme,
+	X9ObjectIdentifierDHSinglePassStdDHSha1KdfScheme,
+	X9ObjectIdentifierDHSinglePassCofactorDHSha1KdfScheme,
+	X9ObjectIdentifierMqvSinglePassSha1KdfScheme,
+	X9ObjectIdentifieransi_x9_42,
+	X9ObjectIdentifierDHPublicNumber,
+	X9ObjectIdentifierX9x42Schemes,
+	X9ObjectIdentifierDHStatic,
+	X9ObjectIdentifierDHEphem,
+	X9ObjectIdentifierDHOneFlow,
+	X9ObjectIdentifierDHHybrid1,
+	X9ObjectIdentifierDHHybrid2,
+	X9ObjectIdentifierDHHybridOneFlow,
+	X9ObjectIdentifierMqv2,
+	X9ObjectIdentifierMqv1,
+	X9ObjectIdentifierSecp384r1,
+	}
 }

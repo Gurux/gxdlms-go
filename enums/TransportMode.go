@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func TransportModeParse(value string) (TransportMode, error) {
 	var ret TransportMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "RELIABLE":
+	switch {
+	case strings.EqualFold(value, "Reliable"):
 		ret = TransportModeReliable
-	case "UNRELIABLE":
+	case strings.EqualFold(value, "Unreliable"):
 		ret = TransportModeUnreliable
-	case "RELIABLEUNRELIABLE":
+	case strings.EqualFold(value, "ReliableUnreliable"):
 		ret = TransportModeReliableUnreliable
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g TransportMode) String() string {
 	var ret string
 	switch g {
 	case TransportModeReliable:
-		ret = "RELIABLE"
+		ret = "Reliable"
 	case TransportModeUnreliable:
-		ret = "UNRELIABLE"
+		ret = "Unreliable"
 	case TransportModeReliableUnreliable:
-		ret = "RELIABLEUNRELIABLE"
+		ret = "ReliableUnreliable"
 	}
 	return ret
+}
+
+// AllTransportMode returns a slice containing all defined TransportMode values.
+func AllTransportMode() []TransportMode {
+	return []TransportMode{
+		TransportModeReliable,
+		TransportModeUnreliable,
+		TransportModeReliableUnreliable,
+	}
 }

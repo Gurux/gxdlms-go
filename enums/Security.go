@@ -1,3 +1,5 @@
+﻿package enums
+
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
@@ -32,8 +34,6 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-package enums
-
 import (
 	"fmt"
 	"strings"
@@ -62,14 +62,14 @@ const (
 func SecurityParse(value string) (Security, error) {
 	var ret Security
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = SecurityNone
-	case "AUTHENTICATION":
+	case strings.EqualFold(value, "Authentication"):
 		ret = SecurityAuthentication
-	case "ENCRYPTION":
+	case strings.EqualFold(value, "Encryption"):
 		ret = SecurityEncryption
-	case "AUTHENTICATIONENCRYPTION":
+	case strings.EqualFold(value, "AuthenticationEncryption"):
 		ret = SecurityAuthenticationEncryption
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g Security) String() string {
 	var ret string
 	switch g {
 	case SecurityNone:
-		ret = "NONE"
+		ret = "None"
 	case SecurityAuthentication:
-		ret = "AUTHENTICATION"
+		ret = "Authentication"
 	case SecurityEncryption:
-		ret = "ENCRYPTION"
+		ret = "Encryption"
 	case SecurityAuthenticationEncryption:
-		ret = "AUTHENTICATIONENCRYPTION"
+		ret = "AuthenticationEncryption"
 	}
 	return ret
+}
+
+// AllSecurity returns a slice containing all defined Security values.
+func AllSecurity() []Security {
+	return []Security{
+		SecurityNone,
+		SecurityAuthentication,
+		SecurityEncryption,
+		SecurityAuthenticationEncryption,
+	}
 }

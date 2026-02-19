@@ -279,7 +279,7 @@ func (g *GXDLMSMBusSlavePortSetup) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSMBusSlavePortSetup) GetValues() []any {
-	return []any{g.LogicalName, g.DefaultBaud, g.AvailableBaud, g.AddressState, g.BusAddress}
+	return []any{g.LogicalName(), g.DefaultBaud, g.AvailableBaud, g.AddressState, g.BusAddress}
 }
 
 // GetDataType returns the device data type of selected attribute index.

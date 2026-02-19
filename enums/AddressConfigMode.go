@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// AddressConfigMode Enumerated : s.
+// AddressConfigMode enumerates possible address config modes.
 type AddressConfigMode int
 
 const (
@@ -62,14 +62,14 @@ const (
 func AddressConfigModeParse(value string) (AddressConfigMode, error) {
 	var ret AddressConfigMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "AUTO":
+	switch {
+	case strings.EqualFold(value, "Auto"):
 		ret = AddressConfigModeAuto
-	case "DHCPV6":
+	case strings.EqualFold(value, "DHCPv6"):
 		ret = AddressConfigModeDHCPv6
-	case "MANUAL":
+	case strings.EqualFold(value, "Manual"):
 		ret = AddressConfigModeManual
-	case "NEIGHBOURDISCOVERY":
+	case strings.EqualFold(value, "NeighbourDiscovery"):
 		ret = AddressConfigModeNeighbourDiscovery
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g AddressConfigMode) String() string {
 	var ret string
 	switch g {
 	case AddressConfigModeAuto:
-		ret = "AUTO"
+		ret = "Auto"
 	case AddressConfigModeDHCPv6:
-		ret = "DHCPV6"
+		ret = "DHCPv6"
 	case AddressConfigModeManual:
-		ret = "MANUAL"
+		ret = "Manual"
 	case AddressConfigModeNeighbourDiscovery:
-		ret = "NEIGHBOURDISCOVERY"
+		ret = "NeighbourDiscovery"
 	}
 	return ret
+}
+
+// AllAddressConfigMode returns a slice containing all defined AddressConfigMode values.
+func AllAddressConfigMode() []AddressConfigMode {
+	return []AddressConfigMode{
+		AddressConfigModeAuto,
+		AddressConfigModeDHCPv6,
+		AddressConfigModeManual,
+		AddressConfigModeNeighbourDiscovery,
+	}
 }

@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Enumerates  s.
+// ActionRequestType enumerates action request types.
 type ActionRequestType int
 
 const (
@@ -66,18 +66,18 @@ const (
 func ActionRequestTypeParse(value string) (ActionRequestType, error) {
 	var ret ActionRequestType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
+	switch {
+	case strings.EqualFold(value, "Normal"):
 		ret = ActionRequestTypeNormal
-	case "NEXTBLOCK":
+	case strings.EqualFold(value, "NextBlock"):
 		ret = ActionRequestTypeNextBlock
-	case "WITHLIST":
+	case strings.EqualFold(value, "WithList"):
 		ret = ActionRequestTypeWithList
-	case "WITHFIRSTBLOCK":
+	case strings.EqualFold(value, "WithFirstBlock"):
 		ret = ActionRequestTypeWithFirstBlock
-	case "WITHLISTANDFIRSTBLOCK":
+	case strings.EqualFold(value, "WithListAndFirstBlock"):
 		ret = ActionRequestTypeWithListAndFirstBlock
-	case "WITHBLOCK":
+	case strings.EqualFold(value, "WithBlock"):
 		ret = ActionRequestTypeWithBlock
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g ActionRequestType) String() string {
 	var ret string
 	switch g {
 	case ActionRequestTypeNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case ActionRequestTypeNextBlock:
-		ret = "NEXTBLOCK"
+		ret = "NextBlock"
 	case ActionRequestTypeWithList:
-		ret = "WITHLIST"
+		ret = "WithList"
 	case ActionRequestTypeWithFirstBlock:
-		ret = "WITHFIRSTBLOCK"
+		ret = "WithFirstBlock"
 	case ActionRequestTypeWithListAndFirstBlock:
-		ret = "WITHLISTANDFIRSTBLOCK"
+		ret = "WithListAndFirstBlock"
 	case ActionRequestTypeWithBlock:
-		ret = "WITHBLOCK"
+		ret = "WithBlock"
 	}
 	return ret
+}
+
+// AllActionRequestType returns a slice containing all defined ActionRequestType values.
+func AllActionRequestType() []ActionRequestType {
+	return []ActionRequestType{
+		ActionRequestTypeNormal,
+		ActionRequestTypeNextBlock,
+		ActionRequestTypeWithList,
+		ActionRequestTypeWithFirstBlock,
+		ActionRequestTypeWithListAndFirstBlock,
+		ActionRequestTypeWithBlock,
+	}
 }

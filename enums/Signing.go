@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func SigningParse(value string) (Signing, error) {
 	var ret Signing
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = SigningNone
-	case "EPHEMERALUNIFIEDMODEL":
+	case strings.EqualFold(value, "EphemeralUnifiedModel"):
 		ret = SigningEphemeralUnifiedModel
-	case "ONEPASSDIFFIEHELLMAN":
+	case strings.EqualFold(value, "OnePassDiffieHellman"):
 		ret = SigningOnePassDiffieHellman
-	case "STATICUNIFIEDMODEL":
+	case strings.EqualFold(value, "StaticUnifiedModel"):
 		ret = SigningStaticUnifiedModel
-	case "GENERALSIGNING":
+	case strings.EqualFold(value, "GeneralSigning"):
 		ret = SigningGeneralSigning
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g Signing) String() string {
 	var ret string
 	switch g {
 	case SigningNone:
-		ret = "NONE"
+		ret = "None"
 	case SigningEphemeralUnifiedModel:
-		ret = "EPHEMERALUNIFIEDMODEL"
+		ret = "EphemeralUnifiedModel"
 	case SigningOnePassDiffieHellman:
-		ret = "ONEPASSDIFFIEHELLMAN"
+		ret = "OnePassDiffieHellman"
 	case SigningStaticUnifiedModel:
-		ret = "STATICUNIFIEDMODEL"
+		ret = "StaticUnifiedModel"
 	case SigningGeneralSigning:
-		ret = "GENERALSIGNING"
+		ret = "GeneralSigning"
 	}
 	return ret
+}
+
+// AllSigning returns a slice containing all defined Signing values.
+func AllSigning() []Signing {
+	return []Signing{
+		SigningNone,
+		SigningEphemeralUnifiedModel,
+		SigningOnePassDiffieHellman,
+		SigningStaticUnifiedModel,
+		SigningGeneralSigning,
+	}
 }

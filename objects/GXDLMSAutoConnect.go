@@ -394,7 +394,7 @@ func (g *GXDLMSAutoConnect) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSAutoConnect) GetValues() []any {
-	return []any{g.LogicalName, g.Mode, g.Repetitions, g.RepetitionDelay, g.CallingWindow, g.Destinations}
+	return []any{g.LogicalName(), g.Mode, g.Repetitions, g.RepetitionDelay, g.CallingWindow, g.Destinations}
 }
 
 // GetDataType returns the device data type of selected attribute index.

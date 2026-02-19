@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -79,22 +79,22 @@ const (
 func ControlModeParse(value string) (ControlMode, error) {
 	var ret ControlMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ControlModeNone
-	case "MODE1":
+	case strings.EqualFold(value, "Mode1"):
 		ret = ControlModeMode1
-	case "MODE2":
+	case strings.EqualFold(value, "Mode2"):
 		ret = ControlModeMode2
-	case "MODE3":
+	case strings.EqualFold(value, "Mode3"):
 		ret = ControlModeMode3
-	case "MODE4":
+	case strings.EqualFold(value, "Mode4"):
 		ret = ControlModeMode4
-	case "MODE5":
+	case strings.EqualFold(value, "Mode5"):
 		ret = ControlModeMode5
-	case "MODE6":
+	case strings.EqualFold(value, "Mode6"):
 		ret = ControlModeMode6
-	case "MODE7":
+	case strings.EqualFold(value, "Mode7"):
 		ret = ControlModeMode7
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -108,21 +108,35 @@ func (g ControlMode) String() string {
 	var ret string
 	switch g {
 	case ControlModeNone:
-		ret = "NONE"
+		ret = "None"
 	case ControlModeMode1:
-		ret = "MODE1"
+		ret = "Mode1"
 	case ControlModeMode2:
-		ret = "MODE2"
+		ret = "Mode2"
 	case ControlModeMode3:
-		ret = "MODE3"
+		ret = "Mode3"
 	case ControlModeMode4:
-		ret = "MODE4"
+		ret = "Mode4"
 	case ControlModeMode5:
-		ret = "MODE5"
+		ret = "Mode5"
 	case ControlModeMode6:
-		ret = "MODE6"
+		ret = "Mode6"
 	case ControlModeMode7:
-		ret = "MODE7"
+		ret = "Mode7"
 	}
 	return ret
+}
+
+// AllControlMode returns a slice containing all defined ControlMode values.
+func AllControlMode() []ControlMode {
+	return []ControlMode{
+	ControlModeNone,
+	ControlModeMode1,
+	ControlModeMode2,
+	ControlModeMode3,
+	ControlModeMode4,
+	ControlModeMode5,
+	ControlModeMode6,
+	ControlModeMode7,
+	}
 }

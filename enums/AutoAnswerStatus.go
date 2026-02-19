@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,12 +62,12 @@ const (
 func AutoAnswerStatusParse(value string) (AutoAnswerStatus, error) {
 	var ret AutoAnswerStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "INACTIVE":
+	switch {
+	case strings.EqualFold(value, "Inactive"):
 		ret = AutoAnswerStatusInactive
-	case "ACTIVE":
+	case strings.EqualFold(value, "Active"):
 		ret = AutoAnswerStatusActive
-	case "LOCKED":
+	case strings.EqualFold(value, "Locked"):
 		ret = AutoAnswerStatusLocked
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -81,11 +81,20 @@ func (g AutoAnswerStatus) String() string {
 	var ret string
 	switch g {
 	case AutoAnswerStatusInactive:
-		ret = "INACTIVE"
+		ret = "Inactive"
 	case AutoAnswerStatusActive:
-		ret = "ACTIVE"
+		ret = "Active"
 	case AutoAnswerStatusLocked:
-		ret = "LOCKED"
+		ret = "Locked"
 	}
 	return ret
+}
+
+// AllAutoAnswerStatus returns a slice containing all defined AutoAnswerStatus values.
+func AllAutoAnswerStatus() []AutoAnswerStatus {
+	return []AutoAnswerStatus{
+	AutoAnswerStatusInactive,
+	AutoAnswerStatusActive,
+	AutoAnswerStatusLocked,
+	}
 }

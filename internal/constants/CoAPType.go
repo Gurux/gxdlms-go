@@ -34,62 +34,16 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// CoAP type.
+// CoAPType defines used CoAP types.
 type CoAPType int
 
 const (
-	// CoAPTypeConfirmable defines that the // Request confirmable.
+	// CoAPTypeConfirmable defines that the Request confirmable.
 	CoAPTypeConfirmable CoAPType = iota
-	// CoAPTypeNonConfirmable defines that the // Request non-confirmable.
+	// CoAPTypeNonConfirmable defines that the Request non-confirmable.
 	CoAPTypeNonConfirmable
-	// CoAPTypeAcknowledgement defines that the // Response acknowledgement.
+	// CoAPTypeAcknowledgement defines that the Response acknowledgement.
 	CoAPTypeAcknowledgement
-	// CoAPTypeReset defines that the // Meter receives a message, but can't process it.
+	// CoAPTypeReset defines that the Meter receives a message, but can't process it.
 	CoAPTypeReset
 )
-
-// CoAPTypeParse converts the given string into a CoAPType value.
-//
-// It returns the corresponding CoAPType constant if the string matches
-// a known level name, or an error if the input is invalid.
-func CoAPTypeParse(value string) (CoAPType, error) {
-	var ret CoAPType
-	var err error
-	switch strings.ToUpper(value) {
-	case "CONFIRMABLE":
-		ret = CoAPTypeConfirmable
-	case "NONCONFIRMABLE":
-		ret = CoAPTypeNonConfirmable
-	case "ACKNOWLEDGEMENT":
-		ret = CoAPTypeAcknowledgement
-	case "RESET":
-		ret = CoAPTypeReset
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
-
-// String returns the canonical name of the CoAPType.
-// It satisfies fmt.Stringer.
-func (g CoAPType) String() string {
-	var ret string
-	switch g {
-	case CoAPTypeConfirmable:
-		ret = "CONFIRMABLE"
-	case CoAPTypeNonConfirmable:
-		ret = "NONCONFIRMABLE"
-	case CoAPTypeAcknowledgement:
-		ret = "ACKNOWLEDGEMENT"
-	case CoAPTypeReset:
-		ret = "RESET"
-	}
-	return ret
-}

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -74,26 +74,26 @@ const (
 func KeyUsageParse(value string) (KeyUsage, error) {
 	var ret KeyUsage
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = KeyUsageNone
-	case "DIGITALSIGNATURE":
+	case strings.EqualFold(value, "DigitalSignature"):
 		ret = KeyUsageDigitalSignature
-	case "NONREPUDIATION":
+	case strings.EqualFold(value, "NonRepudiation"):
 		ret = KeyUsageNonRepudiation
-	case "KEYENCIPHERMENT":
+	case strings.EqualFold(value, "KeyEncipherment"):
 		ret = KeyUsageKeyEncipherment
-	case "DATAENCIPHERMENT":
+	case strings.EqualFold(value, "DataEncipherment"):
 		ret = KeyUsageDataEncipherment
-	case "KEYAGREEMENT":
+	case strings.EqualFold(value, "KeyAgreement"):
 		ret = KeyUsageKeyAgreement
-	case "KEYCERTSIGN":
+	case strings.EqualFold(value, "KeyCertSign"):
 		ret = KeyUsageKeyCertSign
-	case "CRLSIGN":
+	case strings.EqualFold(value, "CrlSign"):
 		ret = KeyUsageCrlSign
-	case "ENCIPHERONLY":
+	case strings.EqualFold(value, "EncipherOnly"):
 		ret = KeyUsageEncipherOnly
-	case "DECIPHERONLY":
+	case strings.EqualFold(value, "DecipherOnly"):
 		ret = KeyUsageDecipherOnly
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -107,25 +107,41 @@ func (g KeyUsage) String() string {
 	var ret string
 	switch g {
 	case KeyUsageNone:
-		ret = "NONE"
+		ret = "None"
 	case KeyUsageDigitalSignature:
-		ret = "DIGITALSIGNATURE"
+		ret = "DigitalSignature"
 	case KeyUsageNonRepudiation:
-		ret = "NONREPUDIATION"
+		ret = "NonRepudiation"
 	case KeyUsageKeyEncipherment:
-		ret = "KEYENCIPHERMENT"
+		ret = "KeyEncipherment"
 	case KeyUsageDataEncipherment:
-		ret = "DATAENCIPHERMENT"
+		ret = "DataEncipherment"
 	case KeyUsageKeyAgreement:
-		ret = "KEYAGREEMENT"
+		ret = "KeyAgreement"
 	case KeyUsageKeyCertSign:
-		ret = "KEYCERTSIGN"
+		ret = "KeyCertSign"
 	case KeyUsageCrlSign:
-		ret = "CRLSIGN"
+		ret = "CrlSign"
 	case KeyUsageEncipherOnly:
-		ret = "ENCIPHERONLY"
+		ret = "EncipherOnly"
 	case KeyUsageDecipherOnly:
-		ret = "DECIPHERONLY"
+		ret = "DecipherOnly"
 	}
 	return ret
+}
+
+// AllKeyUsage returns a slice containing all defined KeyUsage values.
+func AllKeyUsage() []KeyUsage {
+	return []KeyUsage{
+		KeyUsageNone,
+		KeyUsageDigitalSignature,
+		KeyUsageNonRepudiation,
+		KeyUsageKeyEncipherment,
+		KeyUsageDataEncipherment,
+		KeyUsageKeyAgreement,
+		KeyUsageKeyCertSign,
+		KeyUsageCrlSign,
+		KeyUsageEncipherOnly,
+		KeyUsageDecipherOnly,
+	}
 }

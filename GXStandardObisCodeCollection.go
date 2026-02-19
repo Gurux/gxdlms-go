@@ -410,7 +410,7 @@ func (g *GXStandardObisCodeCollection) Find(obisCode string, objectType enums.Ob
 	return g.FindBytes(b, int(objectType), standard)
 }
 
-// FindBytes is the main find (C# Find(byte[] obisCode, int IC, Standard standard)).
+// FindBytes is the main find (C# Find([]byte obisCode, int IC, Standard standard)).
 func (g *GXStandardObisCodeCollection) FindBytes(obisCode []byte, IC int, standard enums.Standard) ([]GXStandardObisCode, error) {
 	_ = standard // not used in the pasted snippet; keep for signature compatibility.
 

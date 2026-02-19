@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func ConnectionStateParse(value string) (ConnectionState, error) {
 	var ret ConnectionState
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ConnectionStateNone
-	case "HDLC":
+	case strings.EqualFold(value, "Hdlc"):
 		ret = ConnectionStateHdlc
-	case "DLMS":
+	case strings.EqualFold(value, "Dlms"):
 		ret = ConnectionStateDlms
-	case "IEC":
+	case strings.EqualFold(value, "Iec"):
 		ret = ConnectionStateIec
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g ConnectionState) String() string {
 	var ret string
 	switch g {
 	case ConnectionStateNone:
-		ret = "NONE"
+		ret = "None"
 	case ConnectionStateHdlc:
-		ret = "HDLC"
+		ret = "Hdlc"
 	case ConnectionStateDlms:
-		ret = "DLMS"
+		ret = "Dlms"
 	case ConnectionStateIec:
-		ret = "IEC"
+		ret = "Iec"
 	}
 	return ret
+}
+
+// AllConnectionState returns a slice containing all defined ConnectionState values.
+func AllConnectionState() []ConnectionState {
+	return []ConnectionState{
+	ConnectionStateNone,
+	ConnectionStateHdlc,
+	ConnectionStateDlms,
+	ConnectionStateIec,
+	}
 }

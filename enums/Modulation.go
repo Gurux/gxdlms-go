@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func ModulationParse(value string) (Modulation, error) {
 	var ret Modulation
 	var err error
-	switch strings.ToUpper(value) {
-	case "ROBUSTMODE":
+	switch {
+	case strings.EqualFold(value, "RobustMode"):
 		ret = ModulationRobustMode
-	case "DBPSK":
+	case strings.EqualFold(value, "DbPsk"):
 		ret = ModulationDBPsk
-	case "DQPSK":
+	case strings.EqualFold(value, "DqPsk"):
 		ret = ModulationDqPsk
-	case "D8PSK":
+	case strings.EqualFold(value, "D8Psk"):
 		ret = ModulationD8Psk
-	case "QAM16":
+	case strings.EqualFold(value, "Qam16"):
 		ret = ModulationQam16
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g Modulation) String() string {
 	var ret string
 	switch g {
 	case ModulationRobustMode:
-		ret = "ROBUSTMODE"
+		ret = "RobustMode"
 	case ModulationDBPsk:
-		ret = "DBPSK"
+		ret = "DbPsk"
 	case ModulationDqPsk:
-		ret = "DQPSK"
+		ret = "DqPsk"
 	case ModulationD8Psk:
-		ret = "D8PSK"
+		ret = "D8Psk"
 	case ModulationQam16:
-		ret = "QAM16"
+		ret = "Qam16"
 	}
 	return ret
+}
+
+// AllModulation returns a slice containing all defined Modulation values.
+func AllModulation() []Modulation {
+	return []Modulation{
+		ModulationRobustMode,
+		ModulationDBPsk,
+		ModulationDqPsk,
+		ModulationD8Psk,
+		ModulationQam16,
+	}
 }

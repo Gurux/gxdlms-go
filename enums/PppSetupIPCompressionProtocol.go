@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -48,7 +48,7 @@ const (
 	PppSetupIPCompressionProtocolNone PppSetupIPCompressionProtocol = iota
 	// PppSetupIPCompressionProtocolVanJacobson defines that the van Jacobson (RFC 1332).
 	PppSetupIPCompressionProtocolVanJacobson PppSetupIPCompressionProtocol = 0x002d
-	// PppSetupIPCompressionProtocolIPHeaderCompression defines that the iP Header Compression (RFC 2507, 3544).
+	// PppSetupIPCompressionProtocolIPHeaderCompression defines that the IP Header Compression (RFC 2507, 3544).
 	PppSetupIPCompressionProtocolIPHeaderCompression PppSetupIPCompressionProtocol = 0x0061
 	// PppSetupIPCompressionProtocolRobustHeaderCompression defines that the robust Header Compression (RFC 3241).
 	PppSetupIPCompressionProtocolRobustHeaderCompression PppSetupIPCompressionProtocol = 0x0003
@@ -61,14 +61,14 @@ const (
 func PppSetupIPCompressionProtocolParse(value string) (PppSetupIPCompressionProtocol, error) {
 	var ret PppSetupIPCompressionProtocol
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = PppSetupIPCompressionProtocolNone
-	case "VANJACOBSON":
+	case strings.EqualFold(value, "VanJacobson"):
 		ret = PppSetupIPCompressionProtocolVanJacobson
-	case "IPHEADERCOMPRESSION":
+	case strings.EqualFold(value, "IPHeaderCompression"):
 		ret = PppSetupIPCompressionProtocolIPHeaderCompression
-	case "ROBUSTHEADERCOMPRESSION":
+	case strings.EqualFold(value, "RobustHeaderCompression"):
 		ret = PppSetupIPCompressionProtocolRobustHeaderCompression
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -82,13 +82,23 @@ func (g PppSetupIPCompressionProtocol) String() string {
 	var ret string
 	switch g {
 	case PppSetupIPCompressionProtocolNone:
-		ret = "NONE"
+		ret = "None"
 	case PppSetupIPCompressionProtocolVanJacobson:
-		ret = "VANJACOBSON"
+		ret = "VanJacobson"
 	case PppSetupIPCompressionProtocolIPHeaderCompression:
-		ret = "IPHEADERCOMPRESSION"
+		ret = "IPHeaderCompression"
 	case PppSetupIPCompressionProtocolRobustHeaderCompression:
-		ret = "ROBUSTHEADERCOMPRESSION"
+		ret = "RobustHeaderCompression"
 	}
 	return ret
+}
+
+// AllPppSetupIPCompressionProtocol returns a slice containing all defined PppSetupIPCompressionProtocol values.
+func AllPppSetupIPCompressionProtocol() []PppSetupIPCompressionProtocol {
+	return []PppSetupIPCompressionProtocol{
+		PppSetupIPCompressionProtocolNone,
+		PppSetupIPCompressionProtocolVanJacobson,
+		PppSetupIPCompressionProtocolIPHeaderCompression,
+		PppSetupIPCompressionProtocolRobustHeaderCompression,
+	}
 }

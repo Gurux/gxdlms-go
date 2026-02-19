@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// ExceptionServiceError ServiceError enumerates exception service errors.
+// ServiceError enumerates exception service errors.
 type ExceptionServiceError int
 
 const (
@@ -68,20 +68,20 @@ const (
 func ExceptionServiceErrorParse(value string) (ExceptionServiceError, error) {
 	var ret ExceptionServiceError
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ExceptionServiceErrorNone
-	case "OPERATIONNOTPOSSIBLE":
+	case strings.EqualFold(value, "OperationNotPossible"):
 		ret = ExceptionServiceErrorOperationNotPossible
-	case "SERVICENOTSUPPORTED":
+	case strings.EqualFold(value, "ServiceNotSupported"):
 		ret = ExceptionServiceErrorServiceNotSupported
-	case "OTHERREASON":
+	case strings.EqualFold(value, "OtherReason"):
 		ret = ExceptionServiceErrorOtherReason
-	case "PDUTOOLONG":
+	case strings.EqualFold(value, "PduTooLong"):
 		ret = ExceptionServiceErrorPduTooLong
-	case "DECIPHERINGERROR":
+	case strings.EqualFold(value, "DecipheringError"):
 		ret = ExceptionServiceErrorDecipheringError
-	case "INVOCATIONCOUNTERERROR":
+	case strings.EqualFold(value, "InvocationCounterError"):
 		ret = ExceptionServiceErrorInvocationCounterError
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -95,19 +95,32 @@ func (g ExceptionServiceError) String() string {
 	var ret string
 	switch g {
 	case ExceptionServiceErrorNone:
-		ret = "NONE"
+		ret = "None"
 	case ExceptionServiceErrorOperationNotPossible:
-		ret = "OPERATIONNOTPOSSIBLE"
+		ret = "OperationNotPossible"
 	case ExceptionServiceErrorServiceNotSupported:
-		ret = "SERVICENOTSUPPORTED"
+		ret = "ServiceNotSupported"
 	case ExceptionServiceErrorOtherReason:
-		ret = "OTHERREASON"
+		ret = "OtherReason"
 	case ExceptionServiceErrorPduTooLong:
-		ret = "PDUTOOLONG"
+		ret = "PduTooLong"
 	case ExceptionServiceErrorDecipheringError:
-		ret = "DECIPHERINGERROR"
+		ret = "DecipheringError"
 	case ExceptionServiceErrorInvocationCounterError:
-		ret = "INVOCATIONCOUNTERERROR"
+		ret = "InvocationCounterError"
 	}
 	return ret
+}
+
+// AllExceptionServiceError returns a slice containing all defined ExceptionServiceError values.
+func AllExceptionServiceError() []ExceptionServiceError {
+	return []ExceptionServiceError{
+		ExceptionServiceErrorNone,
+		ExceptionServiceErrorOperationNotPossible,
+		ExceptionServiceErrorServiceNotSupported,
+		ExceptionServiceErrorOtherReason,
+		ExceptionServiceErrorPduTooLong,
+		ExceptionServiceErrorDecipheringError,
+		ExceptionServiceErrorInvocationCounterError,
+	}
 }

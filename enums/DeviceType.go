@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func DeviceTypeParse(value string) (DeviceType, error) {
 	var ret DeviceType
 	var err error
-	switch strings.ToUpper(value) {
-	case "PANDEVICE":
+	switch {
+	case strings.EqualFold(value, "PanDevice"):
 		ret = DeviceTypePanDevice
-	case "PANCOORDINATOR":
+	case strings.EqualFold(value, "PanCoordinator"):
 		ret = DeviceTypePanCoordinator
-	case "NOTDEFINED":
+	case strings.EqualFold(value, "NotDefined"):
 		ret = DeviceTypeNotDefined
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g DeviceType) String() string {
 	var ret string
 	switch g {
 	case DeviceTypePanDevice:
-		ret = "PANDEVICE"
+		ret = "PanDevice"
 	case DeviceTypePanCoordinator:
-		ret = "PANCOORDINATOR"
+		ret = "PanCoordinator"
 	case DeviceTypeNotDefined:
-		ret = "NOTDEFINED"
+		ret = "NotDefined"
 	}
 	return ret
+}
+
+// AllDeviceType returns a slice containing all defined DeviceType values.
+func AllDeviceType() []DeviceType {
+	return []DeviceType{
+	DeviceTypePanDevice,
+	DeviceTypePanCoordinator,
+	DeviceTypeNotDefined,
+	}
 }

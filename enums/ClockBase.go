@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -65,18 +65,18 @@ const (
 func ClockBaseParse(value string) (ClockBase, error) {
 	var ret ClockBase
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ClockBaseNone
-	case "CRYSTAL":
+	case strings.EqualFold(value, "Crystal"):
 		ret = ClockBaseCrystal
-	case "FREQUENCY50":
+	case strings.EqualFold(value, "Frequency50"):
 		ret = ClockBaseFrequency50
-	case "FREQUENCY60":
+	case strings.EqualFold(value, "Frequency60"):
 		ret = ClockBaseFrequency60
-	case "GPS":
+	case strings.EqualFold(value, "GPS"):
 		ret = ClockBaseGPS
-	case "RADIO":
+	case strings.EqualFold(value, "Radio"):
 		ret = ClockBaseRadio
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -90,17 +90,29 @@ func (g ClockBase) String() string {
 	var ret string
 	switch g {
 	case ClockBaseNone:
-		ret = "NONE"
+		ret = "None"
 	case ClockBaseCrystal:
-		ret = "CRYSTAL"
+		ret = "Crystal"
 	case ClockBaseFrequency50:
-		ret = "FREQUENCY50"
+		ret = "Frequency50"
 	case ClockBaseFrequency60:
-		ret = "FREQUENCY60"
+		ret = "Frequency60"
 	case ClockBaseGPS:
 		ret = "GPS"
 	case ClockBaseRadio:
-		ret = "RADIO"
+		ret = "Radio"
 	}
 	return ret
+}
+
+// AllClockBase returns a slice containing all defined ClockBase values.
+func AllClockBase() []ClockBase {
+	return []ClockBase{
+	ClockBaseNone,
+	ClockBaseCrystal,
+	ClockBaseFrequency50,
+	ClockBaseFrequency60,
+	ClockBaseGPS,
+	ClockBaseRadio,
+	}
 }

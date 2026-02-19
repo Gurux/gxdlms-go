@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func ChargeConfigurationParse(value string) (ChargeConfiguration, error) {
 	var ret ChargeConfiguration
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ChargeConfigurationNone
-	case "PERCENTAGEBASEDCOLLECTION":
+	case strings.EqualFold(value, "PercentageBasedCollection"):
 		ret = ChargeConfigurationPercentageBasedCollection
-	case "CONTINUOUSCOLLECTION":
+	case strings.EqualFold(value, "ContinuousCollection"):
 		ret = ChargeConfigurationContinuousCollection
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g ChargeConfiguration) String() string {
 	var ret string
 	switch g {
 	case ChargeConfigurationNone:
-		ret = "NONE"
+		ret = "None"
 	case ChargeConfigurationPercentageBasedCollection:
-		ret = "PERCENTAGEBASEDCOLLECTION"
+		ret = "PercentageBasedCollection"
 	case ChargeConfigurationContinuousCollection:
-		ret = "CONTINUOUSCOLLECTION"
+		ret = "ContinuousCollection"
 	}
 	return ret
+}
+
+// AllChargeConfiguration returns a slice containing all defined ChargeConfiguration values.
+func AllChargeConfiguration() []ChargeConfiguration {
+	return []ChargeConfiguration{
+	ChargeConfigurationNone,
+	ChargeConfigurationPercentageBasedCollection,
+	ChargeConfigurationContinuousCollection,
+	}
 }

@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -89,78 +89,78 @@ const (
 func TranslatorGeneralTagsParse(value string) (TranslatorGeneralTags, error) {
 	var ret TranslatorGeneralTags
 	var err error
-	switch strings.ToUpper(value) {
-	case "APPLICATIONCONTEXTNAME":
+	switch {
+	case strings.EqualFold(value, "ApplicationContextName"):
 		ret = TranslatorGeneralTagsApplicationContextName
-	case "NEGOTIATEDQUALITYOFSERVICE":
+	case strings.EqualFold(value, "NegotiatedQualityOfService"):
 		ret = TranslatorGeneralTagsNegotiatedQualityOfService
-	case "PROPOSEDDLMSVERSIONNUMBER":
+	case strings.EqualFold(value, "ProposedDlmsVersionNumber"):
 		ret = TranslatorGeneralTagsProposedDlmsVersionNumber
-	case "PROPOSEDMAXPDUSIZE":
+	case strings.EqualFold(value, "ProposedMaxPduSize"):
 		ret = TranslatorGeneralTagsProposedMaxPduSize
-	case "PROPOSEDCONFORMANCE":
+	case strings.EqualFold(value, "ProposedConformance"):
 		ret = TranslatorGeneralTagsProposedConformance
-	case "VAANAME":
+	case strings.EqualFold(value, "VaaName"):
 		ret = TranslatorGeneralTagsVaaName
-	case "NEGOTIATEDCONFORMANCE":
+	case strings.EqualFold(value, "NegotiatedConformance"):
 		ret = TranslatorGeneralTagsNegotiatedConformance
-	case "NEGOTIATEDDLMSVERSIONNUMBER":
+	case strings.EqualFold(value, "NegotiatedDlmsVersionNumber"):
 		ret = TranslatorGeneralTagsNegotiatedDlmsVersionNumber
-	case "NEGOTIATEDMAXPDUSIZE":
+	case strings.EqualFold(value, "NegotiatedMaxPduSize"):
 		ret = TranslatorGeneralTagsNegotiatedMaxPduSize
-	case "CONFORMANCEBIT":
+	case strings.EqualFold(value, "ConformanceBit"):
 		ret = TranslatorGeneralTagsConformanceBit
-	case "PROPOSEDQUALITYOFSERVICE":
+	case strings.EqualFold(value, "ProposedQualityOfService"):
 		ret = TranslatorGeneralTagsProposedQualityOfService
-	case "SENDERACSEREQUIREMENTS":
+	case strings.EqualFold(value, "SenderACSERequirements"):
 		ret = TranslatorGeneralTagsSenderACSERequirements
-	case "RESPONDERACSEREQUIREMENT":
+	case strings.EqualFold(value, "ResponderACSERequirement"):
 		ret = TranslatorGeneralTagsResponderACSERequirement
-	case "RESPONDINGMECHANISMNAME":
+	case strings.EqualFold(value, "RespondingMechanismName"):
 		ret = TranslatorGeneralTagsRespondingMechanismName
-	case "CALLINGMECHANISMNAME":
+	case strings.EqualFold(value, "CallingMechanismName"):
 		ret = TranslatorGeneralTagsCallingMechanismName
-	case "CALLINGAUTHENTICATION":
+	case strings.EqualFold(value, "CallingAuthentication"):
 		ret = TranslatorGeneralTagsCallingAuthentication
-	case "RESPONDINGAUTHENTICATION":
+	case strings.EqualFold(value, "RespondingAuthentication"):
 		ret = TranslatorGeneralTagsRespondingAuthentication
-	case "ASSOCIATIONRESULT":
+	case strings.EqualFold(value, "AssociationResult"):
 		ret = TranslatorGeneralTagsAssociationResult
-	case "RESULTSOURCEDIAGNOSTIC":
+	case strings.EqualFold(value, "ResultSourceDiagnostic"):
 		ret = TranslatorGeneralTagsResultSourceDiagnostic
-	case "ACSESERVICEUSER":
+	case strings.EqualFold(value, "ACSEServiceUser"):
 		ret = TranslatorGeneralTagsACSEServiceUser
-	case "ACSESERVICEPROVIDER":
+	case strings.EqualFold(value, "ACSEServiceProvider"):
 		ret = TranslatorGeneralTagsACSEServiceProvider
-	case "CALLINGAPTITLE":
+	case strings.EqualFold(value, "CallingAPTitle"):
 		ret = TranslatorGeneralTagsCallingAPTitle
-	case "RESPONDINGAPTITLE":
+	case strings.EqualFold(value, "RespondingAPTitle"):
 		ret = TranslatorGeneralTagsRespondingAPTitle
-	case "DEDICATEDKEY":
+	case strings.EqualFold(value, "DedicatedKey"):
 		ret = TranslatorGeneralTagsDedicatedKey
-	case "CALLINGAEINVOCATIONID":
+	case strings.EqualFold(value, "CallingAeInvocationId"):
 		ret = TranslatorGeneralTagsCallingAeInvocationId
-	case "CALLEDAEINVOCATIONID":
+	case strings.EqualFold(value, "CalledAeInvocationId"):
 		ret = TranslatorGeneralTagsCalledAeInvocationId
-	case "CALLINGAEQUALIFIER":
+	case strings.EqualFold(value, "CallingAeQualifier"):
 		ret = TranslatorGeneralTagsCallingAeQualifier
-	case "CHARSTRING":
+	case strings.EqualFold(value, "CharString"):
 		ret = TranslatorGeneralTagsCharString
-	case "USERINFORMATION":
+	case strings.EqualFold(value, "UserInformation"):
 		ret = TranslatorGeneralTagsUserInformation
-	case "RESPONDINGAEINVOCATIONID":
+	case strings.EqualFold(value, "RespondingAeInvocationId"):
 		ret = TranslatorGeneralTagsRespondingAeInvocationId
-	case "PRIMENEWDEVICENOTIFICATION":
+	case strings.EqualFold(value, "PrimeNewDeviceNotification"):
 		ret = TranslatorGeneralTagsPrimeNewDeviceNotification
-	case "PRIMEREMOVEDEVICENOTIFICATION":
+	case strings.EqualFold(value, "PrimeRemoveDeviceNotification"):
 		ret = TranslatorGeneralTagsPrimeRemoveDeviceNotification
-	case "PRIMESTARTREPORTINGMETERS":
+	case strings.EqualFold(value, "PrimeStartReportingMeters"):
 		ret = TranslatorGeneralTagsPrimeStartReportingMeters
-	case "PRIMEDELETEMETERS":
+	case strings.EqualFold(value, "PrimeDeleteMeters"):
 		ret = TranslatorGeneralTagsPrimeDeleteMeters
-	case "PRIMEENABLEAUTOCLOSE":
+	case strings.EqualFold(value, "PrimeEnableAutoClose"):
 		ret = TranslatorGeneralTagsPrimeEnableAutoClose
-	case "PRIMEDISABLEAUTOCLOSE":
+	case strings.EqualFold(value, "PrimeDisableAutoClose"):
 		ret = TranslatorGeneralTagsPrimeDisableAutoClose
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -174,77 +174,119 @@ func (g TranslatorGeneralTags) String() string {
 	var ret string
 	switch g {
 	case TranslatorGeneralTagsApplicationContextName:
-		ret = "APPLICATIONCONTEXTNAME"
+		ret = "ApplicationContextName"
 	case TranslatorGeneralTagsNegotiatedQualityOfService:
-		ret = "NEGOTIATEDQUALITYOFSERVICE"
+		ret = "NegotiatedQualityOfService"
 	case TranslatorGeneralTagsProposedDlmsVersionNumber:
-		ret = "PROPOSEDDLMSVERSIONNUMBER"
+		ret = "ProposedDlmsVersionNumber"
 	case TranslatorGeneralTagsProposedMaxPduSize:
-		ret = "PROPOSEDMAXPDUSIZE"
+		ret = "ProposedMaxPduSize"
 	case TranslatorGeneralTagsProposedConformance:
-		ret = "PROPOSEDCONFORMANCE"
+		ret = "ProposedConformance"
 	case TranslatorGeneralTagsVaaName:
-		ret = "VAANAME"
+		ret = "VaaName"
 	case TranslatorGeneralTagsNegotiatedConformance:
-		ret = "NEGOTIATEDCONFORMANCE"
+		ret = "NegotiatedConformance"
 	case TranslatorGeneralTagsNegotiatedDlmsVersionNumber:
-		ret = "NEGOTIATEDDLMSVERSIONNUMBER"
+		ret = "NegotiatedDlmsVersionNumber"
 	case TranslatorGeneralTagsNegotiatedMaxPduSize:
-		ret = "NEGOTIATEDMAXPDUSIZE"
+		ret = "NegotiatedMaxPduSize"
 	case TranslatorGeneralTagsConformanceBit:
-		ret = "CONFORMANCEBIT"
+		ret = "ConformanceBit"
 	case TranslatorGeneralTagsProposedQualityOfService:
-		ret = "PROPOSEDQUALITYOFSERVICE"
+		ret = "ProposedQualityOfService"
 	case TranslatorGeneralTagsSenderACSERequirements:
-		ret = "SENDERACSEREQUIREMENTS"
+		ret = "SenderACSERequirements"
 	case TranslatorGeneralTagsResponderACSERequirement:
-		ret = "RESPONDERACSEREQUIREMENT"
+		ret = "ResponderACSERequirement"
 	case TranslatorGeneralTagsRespondingMechanismName:
-		ret = "RESPONDINGMECHANISMNAME"
+		ret = "RespondingMechanismName"
 	case TranslatorGeneralTagsCallingMechanismName:
-		ret = "CALLINGMECHANISMNAME"
+		ret = "CallingMechanismName"
 	case TranslatorGeneralTagsCallingAuthentication:
-		ret = "CALLINGAUTHENTICATION"
+		ret = "CallingAuthentication"
 	case TranslatorGeneralTagsRespondingAuthentication:
-		ret = "RESPONDINGAUTHENTICATION"
+		ret = "RespondingAuthentication"
 	case TranslatorGeneralTagsAssociationResult:
-		ret = "ASSOCIATIONRESULT"
+		ret = "AssociationResult"
 	case TranslatorGeneralTagsResultSourceDiagnostic:
-		ret = "RESULTSOURCEDIAGNOSTIC"
+		ret = "ResultSourceDiagnostic"
 	case TranslatorGeneralTagsACSEServiceUser:
-		ret = "ACSESERVICEUSER"
+		ret = "ACSEServiceUser"
 	case TranslatorGeneralTagsACSEServiceProvider:
-		ret = "ACSESERVICEPROVIDER"
+		ret = "ACSEServiceProvider"
 	case TranslatorGeneralTagsCallingAPTitle:
-		ret = "CALLINGAPTITLE"
+		ret = "CallingAPTitle"
 	case TranslatorGeneralTagsRespondingAPTitle:
-		ret = "RESPONDINGAPTITLE"
+		ret = "RespondingAPTitle"
 	case TranslatorGeneralTagsDedicatedKey:
-		ret = "DEDICATEDKEY"
+		ret = "DedicatedKey"
 	case TranslatorGeneralTagsCallingAeInvocationId:
-		ret = "CALLINGAEINVOCATIONID"
+		ret = "CallingAeInvocationId"
 	case TranslatorGeneralTagsCalledAeInvocationId:
-		ret = "CALLEDAEINVOCATIONID"
+		ret = "CalledAeInvocationId"
 	case TranslatorGeneralTagsCallingAeQualifier:
-		ret = "CALLINGAEQUALIFIER"
+		ret = "CallingAeQualifier"
 	case TranslatorGeneralTagsCharString:
-		ret = "CHARSTRING"
+		ret = "CharString"
 	case TranslatorGeneralTagsUserInformation:
-		ret = "USERINFORMATION"
+		ret = "UserInformation"
 	case TranslatorGeneralTagsRespondingAeInvocationId:
-		ret = "RESPONDINGAEINVOCATIONID"
+		ret = "RespondingAeInvocationId"
 	case TranslatorGeneralTagsPrimeNewDeviceNotification:
-		ret = "PRIMENEWDEVICENOTIFICATION"
+		ret = "PrimeNewDeviceNotification"
 	case TranslatorGeneralTagsPrimeRemoveDeviceNotification:
-		ret = "PRIMEREMOVEDEVICENOTIFICATION"
+		ret = "PrimeRemoveDeviceNotification"
 	case TranslatorGeneralTagsPrimeStartReportingMeters:
-		ret = "PRIMESTARTREPORTINGMETERS"
+		ret = "PrimeStartReportingMeters"
 	case TranslatorGeneralTagsPrimeDeleteMeters:
-		ret = "PRIMEDELETEMETERS"
+		ret = "PrimeDeleteMeters"
 	case TranslatorGeneralTagsPrimeEnableAutoClose:
-		ret = "PRIMEENABLEAUTOCLOSE"
+		ret = "PrimeEnableAutoClose"
 	case TranslatorGeneralTagsPrimeDisableAutoClose:
-		ret = "PRIMEDISABLEAUTOCLOSE"
+		ret = "PrimeDisableAutoClose"
 	}
 	return ret
+}
+
+// AllTranslatorGeneralTags returns a slice containing all defined TranslatorGeneralTags values.
+func AllTranslatorGeneralTags() []TranslatorGeneralTags {
+	return []TranslatorGeneralTags{
+		TranslatorGeneralTagsApplicationContextName,
+		TranslatorGeneralTagsNegotiatedQualityOfService,
+		TranslatorGeneralTagsProposedDlmsVersionNumber,
+		TranslatorGeneralTagsProposedMaxPduSize,
+		TranslatorGeneralTagsProposedConformance,
+		TranslatorGeneralTagsVaaName,
+		TranslatorGeneralTagsNegotiatedConformance,
+		TranslatorGeneralTagsNegotiatedDlmsVersionNumber,
+		TranslatorGeneralTagsNegotiatedMaxPduSize,
+		TranslatorGeneralTagsConformanceBit,
+		TranslatorGeneralTagsProposedQualityOfService,
+		TranslatorGeneralTagsSenderACSERequirements,
+		TranslatorGeneralTagsResponderACSERequirement,
+		TranslatorGeneralTagsRespondingMechanismName,
+		TranslatorGeneralTagsCallingMechanismName,
+		TranslatorGeneralTagsCallingAuthentication,
+		TranslatorGeneralTagsRespondingAuthentication,
+		TranslatorGeneralTagsAssociationResult,
+		TranslatorGeneralTagsResultSourceDiagnostic,
+		TranslatorGeneralTagsACSEServiceUser,
+		TranslatorGeneralTagsACSEServiceProvider,
+		TranslatorGeneralTagsCallingAPTitle,
+		TranslatorGeneralTagsRespondingAPTitle,
+		TranslatorGeneralTagsDedicatedKey,
+		TranslatorGeneralTagsCallingAeInvocationId,
+		TranslatorGeneralTagsCalledAeInvocationId,
+		TranslatorGeneralTagsCallingAeQualifier,
+		TranslatorGeneralTagsCharString,
+		TranslatorGeneralTagsUserInformation,
+		TranslatorGeneralTagsRespondingAeInvocationId,
+		TranslatorGeneralTagsPrimeNewDeviceNotification,
+		TranslatorGeneralTagsPrimeRemoveDeviceNotification,
+		TranslatorGeneralTagsPrimeStartReportingMeters,
+		TranslatorGeneralTagsPrimeDeleteMeters,
+		TranslatorGeneralTagsPrimeEnableAutoClose,
+		TranslatorGeneralTagsPrimeDisableAutoClose,
+	}
 }

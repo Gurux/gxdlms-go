@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -59,16 +59,16 @@ const (
 func PppSetupIPCPOptionTypeParse(value string) (PppSetupIPCPOptionType, error) {
 	var ret PppSetupIPCPOptionType
 	var err error
-	switch strings.ToUpper(value) {
-	case "IPCOMPRESSIONPROTOCOL":
+	switch {
+	case strings.EqualFold(value, "IPCompressionProtocol"):
 		ret = PppSetupIPCPOptionTypeIPCompressionProtocol
-	case "PREFLOCALIP":
+	case strings.EqualFold(value, "PrefLocalIP"):
 		ret = PppSetupIPCPOptionTypePrefLocalIP
-	case "PREFPEERIP":
+	case strings.EqualFold(value, "PrefPeerIP"):
 		ret = PppSetupIPCPOptionTypePrefPeerIP
-	case "GAO":
+	case strings.EqualFold(value, "GAO"):
 		ret = PppSetupIPCPOptionTypeGAO
-	case "USIP":
+	case strings.EqualFold(value, "USIP"):
 		ret = PppSetupIPCPOptionTypeUSIP
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -82,15 +82,26 @@ func (g PppSetupIPCPOptionType) String() string {
 	var ret string
 	switch g {
 	case PppSetupIPCPOptionTypeIPCompressionProtocol:
-		ret = "IPCOMPRESSIONPROTOCOL"
+		ret = "IPCompressionProtocol"
 	case PppSetupIPCPOptionTypePrefLocalIP:
-		ret = "PREFLOCALIP"
+		ret = "PrefLocalIP"
 	case PppSetupIPCPOptionTypePrefPeerIP:
-		ret = "PREFPEERIP"
+		ret = "PrefPeerIP"
 	case PppSetupIPCPOptionTypeGAO:
 		ret = "GAO"
 	case PppSetupIPCPOptionTypeUSIP:
 		ret = "USIP"
 	}
 	return ret
+}
+
+// AllPppSetupIPCPOptionType returns a slice containing all defined PppSetupIPCPOptionType values.
+func AllPppSetupIPCPOptionType() []PppSetupIPCPOptionType {
+	return []PppSetupIPCPOptionType{
+		PppSetupIPCPOptionTypeIPCompressionProtocol,
+		PppSetupIPCPOptionTypePrefLocalIP,
+		PppSetupIPCPOptionTypePrefPeerIP,
+		PppSetupIPCPOptionTypeGAO,
+		PppSetupIPCPOptionTypeUSIP,
+	}
 }

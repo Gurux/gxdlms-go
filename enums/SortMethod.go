@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// SortMethod : s.
+// SortMethod enumerates possible sort modes.
 type SortMethod int
 
 const (
@@ -66,18 +66,18 @@ const (
 func SortMethodParse(value string) (SortMethod, error) {
 	var ret SortMethod
 	var err error
-	switch strings.ToUpper(value) {
-	case "FIFO":
+	switch {
+	case strings.EqualFold(value, "FiFo"):
 		ret = SortMethodFiFo
-	case "LIFO":
+	case strings.EqualFold(value, "LiFo"):
 		ret = SortMethodLiFo
-	case "LARGEST":
+	case strings.EqualFold(value, "Largest"):
 		ret = SortMethodLargest
-	case "SMALLEST":
+	case strings.EqualFold(value, "Smallest"):
 		ret = SortMethodSmallest
-	case "NEARESTTOZERO":
+	case strings.EqualFold(value, "NearestToZero"):
 		ret = SortMethodNearestToZero
-	case "FARESTFROMZERO":
+	case strings.EqualFold(value, "FarestFromZero"):
 		ret = SortMethodFarestFromZero
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g SortMethod) String() string {
 	var ret string
 	switch g {
 	case SortMethodFiFo:
-		ret = "FIFO"
+		ret = "FiFo"
 	case SortMethodLiFo:
-		ret = "LIFO"
+		ret = "LiFo"
 	case SortMethodLargest:
-		ret = "LARGEST"
+		ret = "Largest"
 	case SortMethodSmallest:
-		ret = "SMALLEST"
+		ret = "Smallest"
 	case SortMethodNearestToZero:
-		ret = "NEARESTTOZERO"
+		ret = "NearestToZero"
 	case SortMethodFarestFromZero:
-		ret = "FARESTFROMZERO"
+		ret = "FarestFromZero"
 	}
 	return ret
+}
+
+// AllSortMethod returns a slice containing all defined SortMethod values.
+func AllSortMethod() []SortMethod {
+	return []SortMethod{
+		SortMethodFiFo,
+		SortMethodLiFo,
+		SortMethodLargest,
+		SortMethodSmallest,
+		SortMethodNearestToZero,
+		SortMethodFarestFromZero,
+	}
 }

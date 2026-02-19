@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func CreditStatusParse(value string) (CreditStatus, error) {
 	var ret CreditStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "ENABLED":
+	switch {
+	case strings.EqualFold(value, "Enabled"):
 		ret = CreditStatusEnabled
-	case "SELECTABLE":
+	case strings.EqualFold(value, "Selectable"):
 		ret = CreditStatusSelectable
-	case "INVOKED":
+	case strings.EqualFold(value, "Invoked"):
 		ret = CreditStatusInvoked
-	case "INUSE":
+	case strings.EqualFold(value, "InUse"):
 		ret = CreditStatusInUse
-	case "CONSUMED":
+	case strings.EqualFold(value, "Consumed"):
 		ret = CreditStatusConsumed
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g CreditStatus) String() string {
 	var ret string
 	switch g {
 	case CreditStatusEnabled:
-		ret = "ENABLED"
+		ret = "Enabled"
 	case CreditStatusSelectable:
-		ret = "SELECTABLE"
+		ret = "Selectable"
 	case CreditStatusInvoked:
-		ret = "INVOKED"
+		ret = "Invoked"
 	case CreditStatusInUse:
-		ret = "INUSE"
+		ret = "InUse"
 	case CreditStatusConsumed:
-		ret = "CONSUMED"
+		ret = "Consumed"
 	}
 	return ret
+}
+
+// AllCreditStatus returns a slice containing all defined CreditStatus values.
+func AllCreditStatus() []CreditStatus {
+	return []CreditStatus{
+	CreditStatusEnabled,
+	CreditStatusSelectable,
+	CreditStatusInvoked,
+	CreditStatusInUse,
+	CreditStatusConsumed,
+	}
 }

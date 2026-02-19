@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -74,26 +74,26 @@ const (
 func ServiceErrorParse(value string) (ServiceError, error) {
 	var ret ServiceError
 	var err error
-	switch strings.ToUpper(value) {
-	case "APPLICATIONREFERENCE":
+	switch {
+	case strings.EqualFold(value, "ApplicationReference"):
 		ret = ServiceErrorApplicationReference
-	case "HARDWARERESOURCE":
+	case strings.EqualFold(value, "HardwareResource"):
 		ret = ServiceErrorHardwareResource
-	case "VDESTATEERROR":
+	case strings.EqualFold(value, "VdeStateError"):
 		ret = ServiceErrorVdeStateError
-	case "SERVICE":
+	case strings.EqualFold(value, "Service"):
 		ret = ServiceErrorService
-	case "DEFINITION":
+	case strings.EqualFold(value, "Definition"):
 		ret = ServiceErrorDefinition
-	case "ACCESS":
+	case strings.EqualFold(value, "Access"):
 		ret = ServiceErrorAccess
-	case "INITIATE":
+	case strings.EqualFold(value, "Initiate"):
 		ret = ServiceErrorInitiate
-	case "LOADDATASET":
+	case strings.EqualFold(value, "LoadDataSet"):
 		ret = ServiceErrorLoadDataSet
-	case "TASK":
+	case strings.EqualFold(value, "Task"):
 		ret = ServiceErrorTask
-	case "OTHERERROR":
+	case strings.EqualFold(value, "OtherError"):
 		ret = ServiceErrorOtherError
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -107,25 +107,41 @@ func (g ServiceError) String() string {
 	var ret string
 	switch g {
 	case ServiceErrorApplicationReference:
-		ret = "APPLICATIONREFERENCE"
+		ret = "ApplicationReference"
 	case ServiceErrorHardwareResource:
-		ret = "HARDWARERESOURCE"
+		ret = "HardwareResource"
 	case ServiceErrorVdeStateError:
-		ret = "VDESTATEERROR"
+		ret = "VdeStateError"
 	case ServiceErrorService:
-		ret = "SERVICE"
+		ret = "Service"
 	case ServiceErrorDefinition:
-		ret = "DEFINITION"
+		ret = "Definition"
 	case ServiceErrorAccess:
-		ret = "ACCESS"
+		ret = "Access"
 	case ServiceErrorInitiate:
-		ret = "INITIATE"
+		ret = "Initiate"
 	case ServiceErrorLoadDataSet:
-		ret = "LOADDATASET"
+		ret = "LoadDataSet"
 	case ServiceErrorTask:
-		ret = "TASK"
+		ret = "Task"
 	case ServiceErrorOtherError:
-		ret = "OTHERERROR"
+		ret = "OtherError"
 	}
 	return ret
+}
+
+// AllServiceError returns a slice containing all defined ServiceError values.
+func AllServiceError() []ServiceError {
+	return []ServiceError{
+		ServiceErrorApplicationReference,
+		ServiceErrorHardwareResource,
+		ServiceErrorVdeStateError,
+		ServiceErrorService,
+		ServiceErrorDefinition,
+		ServiceErrorAccess,
+		ServiceErrorInitiate,
+		ServiceErrorLoadDataSet,
+		ServiceErrorTask,
+		ServiceErrorOtherError,
+	}
 }

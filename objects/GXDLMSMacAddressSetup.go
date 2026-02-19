@@ -212,7 +212,7 @@ func (g *GXDLMSMacAddressSetup) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSMacAddressSetup) GetValues() []any {
-	return []any{g.LogicalName, g.MacAddress}
+	return []any{g.LogicalName(), g.MacAddress}
 }
 
 // GetDataType returns the device data type of selected attribute index.

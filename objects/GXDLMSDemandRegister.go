@@ -509,7 +509,7 @@ func (g *GXDLMSDemandRegister) IsRead(index int) bool {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSDemandRegister) GetValues() []any {
-	return []any{g.LogicalName, g.CurrentAverageValue, g.LastAverageValue, types.GXStructure{g.Scaler, g.Unit},
+	return []any{g.LogicalName(), g.CurrentAverageValue, g.LastAverageValue, types.GXStructure{g.Scaler, g.Unit},
 		g.Status, g.CaptureTime, g.StartTimeCurrent, g.Period, g.NumberOfPeriods,
 	}
 }

@@ -61,7 +61,6 @@ func (g *GXDLMSModemConfiguration) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
 
-// TODO: Comment is missing.
 func (g *GXDLMSModemConfiguration) DefaultProfiles() []string {
 	return []string{"OK", "CONNECT", "RING", "NO CARRIER", "ERROR", "CONNECT 1200", "NO DIAL TONE", "BUSY", "NO ANSWER", "CONNECT 600", "CONNECT 2400", "CONNECT 4800", "CONNECT 9600", "CONNECT 14 400", "CONNECT 28 800", "CONNECT 33 600", "CONNECT 56 000"}
 }
@@ -370,7 +369,7 @@ func (g *GXDLMSModemConfiguration) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSModemConfiguration) GetValues() []any {
-	return []any{g.LogicalName, g.CommunicationSpeed, g.InitialisationStrings, g.ModemProfile}
+	return []any{g.LogicalName(), g.CommunicationSpeed, g.InitialisationStrings, g.ModemProfile}
 }
 
 // GetDataType returns the device data type of selected attribute index.

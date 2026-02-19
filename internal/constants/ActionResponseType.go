@@ -1,4 +1,4 @@
-package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -41,17 +41,17 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// ActionResponseType Enumerates  s.
+// ActionResponseType enumerates action response types.
 type ActionResponseType int
 
 const (
-	// ActionResponseTypeNormal defines that the normal action.
+	// ActionResponseTypeNormal defines that the // Normal action.
 	ActionResponseTypeNormal ActionResponseType = 1
-	// ActionResponseTypeWithBlock defines that the action with block.
+	// ActionResponseTypeWithBlock defines that the // Action with block.
 	ActionResponseTypeWithBlock ActionResponseType = 2
-	// ActionResponseTypeWithList defines that the action with list.
+	// ActionResponseTypeWithList defines that the // Action with list.
 	ActionResponseTypeWithList ActionResponseType = 3
-	// ActionResponseTypeNextBlock defines that the action with next block.
+	// ActionResponseTypeNextBlock defines that the // Action with next block.
 	ActionResponseTypeNextBlock ActionResponseType = 4
 )
 
@@ -62,14 +62,14 @@ const (
 func ActionResponseTypeParse(value string) (ActionResponseType, error) {
 	var ret ActionResponseType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
+	switch {
+	case strings.EqualFold(value, "Normal"):
 		ret = ActionResponseTypeNormal
-	case "WITHBLOCK":
+	case strings.EqualFold(value, "WithBlock"):
 		ret = ActionResponseTypeWithBlock
-	case "WITHLIST":
+	case strings.EqualFold(value, "WithList"):
 		ret = ActionResponseTypeWithList
-	case "NEXTBLOCK":
+	case strings.EqualFold(value, "NextBlock"):
 		ret = ActionResponseTypeNextBlock
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g ActionResponseType) String() string {
 	var ret string
 	switch g {
 	case ActionResponseTypeNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case ActionResponseTypeWithBlock:
-		ret = "WITHBLOCK"
+		ret = "WithBlock"
 	case ActionResponseTypeWithList:
-		ret = "WITHLIST"
+		ret = "WithList"
 	case ActionResponseTypeNextBlock:
-		ret = "NEXTBLOCK"
+		ret = "NextBlock"
 	}
 	return ret
+}
+
+// AllActionResponseType returns a slice containing all defined ActionResponseType values.
+func AllActionResponseType() []ActionResponseType {
+	return []ActionResponseType{
+		ActionResponseTypeNormal,
+		ActionResponseTypeWithBlock,
+		ActionResponseTypeWithList,
+		ActionResponseTypeNextBlock,
+	}
 }

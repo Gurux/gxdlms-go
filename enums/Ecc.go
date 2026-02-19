@@ -58,10 +58,10 @@ const (
 func EccParse(value string) (Ecc, error) {
 	var ret Ecc
 	var err error
-	switch strings.ToUpper(value) {
-	case "P256":
+	switch {
+	case strings.EqualFold(value, "P256"):
 		ret = EccP256
-	case "P384":
+	case strings.EqualFold(value, "P384"):
 		ret = EccP384
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -80,4 +80,12 @@ func (g Ecc) String() string {
 		ret = "P384"
 	}
 	return ret
+}
+
+// AllEcc returns a slice containing all defined Ecc values.
+func AllEcc() []Ecc {
+	return []Ecc{
+	EccP256,
+	EccP384,
+	}
 }

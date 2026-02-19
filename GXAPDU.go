@@ -115,8 +115,8 @@ func getAuthenticationString(settings *settings.GXDLMSSettings, data *types.GXBy
 	return nil
 }
 
-// SetBitString converts bit string to DLMS bytes.
-func SetBitString(buff *types.GXByteBuffer, value any, addCount bool) error {
+// setBitString converts bit string to DLMS bytes.
+func setBitString(buff *types.GXByteBuffer, value any, addCount bool) error {
 	switch v := value.(type) {
 	case types.GXBitString:
 		value = v.Value()
@@ -168,14 +168,14 @@ func SetBitString(buff *types.GXByteBuffer, value any, addCount bool) error {
 	}
 }
 
-// GenerateApplicationContextName returns the code application context name.
+// generateApplicationContextName returns the code application context name.
 //
 // Parameters:
 //
 //	settings: DLMS settings.
 //	data: Byte buffer where data is saved.
 //	cipher: Is ciphering settings.
-func GenerateApplicationContextName(settings *settings.GXDLMSSettings, data *types.GXByteBuffer, cipher settings.GXICipher) error {
+func generateApplicationContextName(settings *settings.GXDLMSSettings, data *types.GXByteBuffer, cipher settings.GXICipher) error {
 	var err error
 	if settings.ProtocolVersion != "" {
 		err = data.SetUint8(uint8(constants.BerTypeContext) | uint8(internal.PduTypeProtocolVersion))
@@ -190,7 +190,7 @@ func GenerateApplicationContextName(settings *settings.GXDLMSSettings, data *typ
 		if err != nil {
 			return err
 		}
-		err = SetBitString(data, settings.ProtocolVersion, false)
+		err = setBitString(data, settings.ProtocolVersion, false)
 		if err != nil {
 			return err
 		}
@@ -354,6 +354,9 @@ func getInitiateRequest(settings *settings.GXDLMSSettings, data *types.GXByteBuf
 		return err
 	}
 	bs, err := types.NewGXBitStringFromInteger(int(settings.ProposedConformance), 24)
+	if err != nil {
+		return err
+	}
 	err = data.Set(bs.Value())
 	if err != nil {
 		return err
@@ -365,11 +368,11 @@ func getInitiateRequest(settings *settings.GXDLMSSettings, data *types.GXByteBuf
 	return err
 }
 
-func GetConformance(value int, xml *settings.GXDLMSTranslatorStructure) {
+func getConformance(value int, xml *settings.GXDLMSTranslatorStructure) {
 	if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 		for _, it := range enums.AllConformance() {
 			if int(it)&value != 0 {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsConformanceBit), "Name", it.String())
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsConformanceBit), "Name", it.String())
 			}
 		}
 	} else {
@@ -403,7 +406,7 @@ func parse(initiateRequest bool,
 			}
 			settings.QualityOfService = ret
 			if xml != nil {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsNegotiatedQualityOfService), "Value", strconv.Itoa(int(ret)))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsNegotiatedQualityOfService), "Value", strconv.Itoa(int(ret)))
 			}
 		}
 	} else if tag == uint8(enums.CommandInitiateRequest) {
@@ -431,7 +434,7 @@ func parse(initiateRequest bool,
 				settings.Cipher.SetDedicatedKey(tmp2)
 			}
 			if xml != nil {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsDedicatedKey), "", types.ToHex(tmp2, false))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsDedicatedKey), "", types.ToHex(tmp2, false))
 			}
 		}
 		tag, err = data.Uint8()
@@ -445,7 +448,7 @@ func parse(initiateRequest bool,
 			}
 			settings.QualityOfService = ret
 			if xml != nil && (initiateRequest || xml.OutputType() == enums.TranslatorOutputTypeSimpleXML) {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsProposedQualityOfService), "", strconv.Itoa(int(settings.QualityOfService)))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsProposedQualityOfService), "", strconv.Itoa(int(settings.QualityOfService)))
 			}
 		} else {
 			if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
@@ -463,7 +466,7 @@ func parse(initiateRequest bool,
 			}
 			settings.QualityOfService = ret
 			if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsProposedQualityOfService), "", strconv.Itoa(int(settings.QualityOfService)))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsProposedQualityOfService), "", strconv.Itoa(int(settings.QualityOfService)))
 			}
 		}
 	} else if tag == uint8(enums.CommandConfirmedServiceError) {
@@ -526,7 +529,7 @@ func parse(initiateRequest bool,
 			data.SetPosition(data.Size())
 			return nil
 		}
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	// Get DLMS version number.
 	if !response {
@@ -536,7 +539,7 @@ func parse(initiateRequest bool,
 		}
 		// ProposedDlmsVersionNumber
 		if xml != nil && (initiateRequest || xml.OutputType() == enums.TranslatorOutputTypeSimpleXML) {
-			xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsProposedDlmsVersionNumber), "", xml.IntegerToHex(settings.DLMSVersion, 2, false))
+			xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsProposedDlmsVersionNumber), "", xml.IntegerToHex(settings.DLMSVersion, 2, false))
 		}
 	} else {
 		ret, err := data.Uint8()
@@ -544,10 +547,10 @@ func parse(initiateRequest bool,
 			return err
 		}
 		if ret != 6 {
-			return errors.New("Invalid DLMS version number.")
+			return dlmserrors.ErrInvalidDLMSVersionNumber
 		}
 		if xml != nil && (initiateRequest || xml.OutputType() == enums.TranslatorOutputTypeSimpleXML) {
-			xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsNegotiatedDlmsVersionNumber), "", xml.IntegerToHex(settings.DLMSVersion, 2, false))
+			xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsNegotiatedDlmsVersionNumber), "", xml.IntegerToHex(settings.DLMSVersion, 2, false))
 		}
 	}
 	tag, err = data.Uint8()
@@ -555,7 +558,7 @@ func parse(initiateRequest bool,
 		return err
 	}
 	if tag != 0x5F {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	// Old Way...
 	ret, err := data.Uint8At(data.Position())
@@ -581,13 +584,13 @@ func parse(initiateRequest bool,
 	if settings.IsServer() {
 		settings.NegotiatedConformance = enums.Conformance(v) & settings.ProposedConformance
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsProposedConformance), "", "", xml.OutputType() == enums.TranslatorOutputTypeStandardXML)
-			GetConformance(v, xml)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsProposedConformance), "", "", xml.OutputType() == enums.TranslatorOutputTypeStandardXML)
+			getConformance(v, xml)
 		}
 	} else {
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsNegotiatedConformance), "", "", xml.OutputType() == enums.TranslatorOutputTypeStandardXML)
-			GetConformance(v, xml)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsNegotiatedConformance), "", "", xml.OutputType() == enums.TranslatorOutputTypeStandardXML)
+			getConformance(v, xml)
 		}
 		settings.NegotiatedConformance = enums.Conformance(v)
 	}
@@ -601,11 +604,11 @@ func parse(initiateRequest bool,
 		if xml != nil {
 			// ProposedConformance closing
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendEndTag(int(enums.TranslatorGeneralTagsProposedConformance), false)
+				xml.AppendEndTag(int(constants.TranslatorGeneralTagsProposedConformance), false)
 			} else if initiateRequest {
-				xml.AppendEndTag(int(enums.TranslatorGeneralTagsProposedConformance), true)
+				xml.AppendEndTag(int(constants.TranslatorGeneralTagsProposedConformance), true)
 			}
-			xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsProposedMaxPduSize), "", xml.IntegerToHex(settings.MaxPduSize, 4, false))
+			xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsProposedMaxPduSize), "", xml.IntegerToHex(settings.MaxPduSize, 4, false))
 		}
 		// If client asks too high PDU.
 		if settings.MaxPduSize() > settings.GetMaxServerPDUSize() {
@@ -620,11 +623,11 @@ func parse(initiateRequest bool,
 		if xml != nil {
 			// NegotiatedConformance closing
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendEndTag(int(enums.TranslatorGeneralTagsNegotiatedConformance), false)
+				xml.AppendEndTag(int(constants.TranslatorGeneralTagsNegotiatedConformance), false)
 			} else if initiateRequest {
-				xml.Append(int(enums.TranslatorGeneralTagsNegotiatedConformance), false)
+				xml.Append(int(constants.TranslatorGeneralTagsNegotiatedConformance), false)
 			}
-			xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsNegotiatedMaxPduSize), "", xml.IntegerToHex(settings.MaxPduSize(), 4, false))
+			xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsNegotiatedMaxPduSize), "", xml.IntegerToHex(settings.MaxPduSize(), 4, false))
 		}
 		// If client asks too high PDU.
 		if settings.MaxPduSize() > settings.GetMaxServerPDUSize() {
@@ -638,7 +641,7 @@ func parse(initiateRequest bool,
 		}
 		if xml != nil {
 			if initiateRequest || xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsVaaName), "", xml.IntegerToHex(tag, 4, false))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsVaaName), "", xml.IntegerToHex(tag, 4, false))
 			}
 		}
 		switch tag {
@@ -648,7 +651,7 @@ func parse(initiateRequest bool,
 			} else {
 				// If LN
 				if !settings.UseLogicalNameReferencing() && xml == nil {
-					return errors.New("Invalid VAA.")
+					return dlmserrors.ErrInvalidVAA
 				}
 			}
 		case 0xFA00:
@@ -657,11 +660,11 @@ func parse(initiateRequest bool,
 				settings.SetUseLogicalNameReferencing(false)
 			} else {
 				if settings.UseLogicalNameReferencing() {
-					return errors.New("Invalid VAA.")
+					return dlmserrors.ErrInvalidVAA
 				}
 			}
 		default:
-			return errors.New("Invalid VAA.")
+			return dlmserrors.ErrInvalidVAA
 		}
 		if xml != nil {
 			xml.AppendEndTag(int(enums.CommandInitiateResponse), false)
@@ -687,14 +690,14 @@ func parseApplicationContextName(settings *settings.GXDLMSSettings,
 		return enums.ApplicationContextNameUnknown, err
 	}
 	if buff.Size()-buff.Position() < int(len_) {
-		return enums.ApplicationContextNameUnknown, errors.New("Encoding failed. Not enough data.")
+		return enums.ApplicationContextNameUnknown, dlmserrors.ErrPduTooSmall
 	}
 	ret, err := buff.Uint8()
 	if err != nil {
 		return enums.ApplicationContextNameUnknown, err
 	}
 	if ret != 6 {
-		return enums.ApplicationContextNameUnknown, errors.New("Encoding failed. Not an Object ID.")
+		return enums.ApplicationContextNameUnknown, dlmserrors.ErrUnknownPduTag
 	}
 	if settings.IsServer() && settings.Cipher != nil {
 		settings.Cipher.SetSecurity(enums.SecurityNone)
@@ -710,46 +713,46 @@ func parseApplicationContextName(settings *settings.GXDLMSSettings,
 	}
 	if tmp[0] != 0x60 || tmp[1] != 0x85 || tmp[2] != 0x74 || tmp[3] != 0x5 || tmp[4] != 0x8 || tmp[5] != 0x1 {
 		if xml != nil {
-			xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "Value", "UNKNOWN")
+			xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "UNKNOWN")
 			return enums.ApplicationContextNameUnknown, nil
 		}
-		return enums.ApplicationContextNameUnknown, errors.New("Encoding failed. Invalid Application context name.")
+		return enums.ApplicationContextNameUnknown, dlmserrors.ErrInvalidApplicationContextName
 	}
 	name := tmp[6]
 	if xml != nil {
 		if name == 1 {
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "Value", "LN")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "LN")
 			} else {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "", "1")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "1")
 			}
 			settings.SetUseLogicalNameReferencing(true)
 		} else if name == 3 {
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "Value", "LN_WITH_CIPHERING")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "LN_WITH_CIPHERING")
 			} else {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "", "3")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "3")
 			}
 			settings.SetUseLogicalNameReferencing(true)
 		} else if name == 2 {
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "Value", "SN")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "SN")
 			} else {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "", "2")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "2")
 			}
 			settings.SetUseLogicalNameReferencing(false)
 		} else if name == 4 {
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "Value", "SN_WITH_CIPHERING")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "SN_WITH_CIPHERING")
 			} else {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "", "4")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "4")
 			}
 			settings.SetUseLogicalNameReferencing(false)
 		} else {
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "Value", "UNKNOWN")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "UNKNOWN")
 			} else {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsApplicationContextName), "", "5")
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "5")
 			}
 		}
 		return enums.ApplicationContextNameUnknown, nil
@@ -789,7 +792,7 @@ func parseApplicationContextName(settings *settings.GXDLMSSettings,
 	return enums.ApplicationContextName(name), nil
 }
 
-func UpdateAuthentication(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer) error {
+func updateAuthentication(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer) error {
 	_, err := buff.Uint8()
 	if err != nil {
 		return err
@@ -799,72 +802,72 @@ func UpdateAuthentication(settings *settings.GXDLMSSettings, buff *types.GXByteB
 		return err
 	}
 	if ret != 0x60 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	ret, err = buff.Uint8()
 	if err != nil {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	if ret != 0x85 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	ret, err = buff.Uint8()
 	if err != nil {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	if ret != 0x74 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	ret, err = buff.Uint8()
 	if err != nil {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	if ret != 0x05 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	ret, err = buff.Uint8()
 	if err != nil {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 
 	if ret != 0x08 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	ret, err = buff.Uint8()
 	if err != nil {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	if ret != 0x02 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	ret, err = buff.Uint8()
 	if err != nil {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	if ret > 7 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	settings.Authentication = enums.Authentication(ret)
 	return nil
 }
 
-func AppendServerSystemTitleToXml(settings *settings.GXDLMSSettings, xml *settings.GXDLMSTranslatorStructure, tag int) {
+func appendServerSystemTitleToXML(settings *settings.GXDLMSSettings, xml *settings.GXDLMSTranslatorStructure, tag int) {
 	if xml != nil {
 		// RespondingAuthentication
 		if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 			xml.AppendLineFromTag(tag, "Value", types.ToHex(settings.StoCChallenge(), false))
 		} else {
 			xml.Append(tag, true)
-			xml.Append(int(enums.TranslatorGeneralTagsCharString), true)
+			xml.Append(int(constants.TranslatorGeneralTagsCharString), true)
 			xml.AppendString(types.ToHex(settings.StoCChallenge(), false))
-			xml.Append(int(enums.TranslatorGeneralTagsCharString), false)
+			xml.Append(int(constants.TranslatorGeneralTagsCharString), false)
 			xml.Append(tag, false)
 			xml.AppendString("\n")
 		}
 	}
 }
 
-func ParseProtocolVersion(settings *settings.GXDLMSSettings,
+func parseProtocolVersion(settings *settings.GXDLMSSettings,
 	buff *types.GXByteBuffer,
 	xml *settings.GXDLMSTranslatorStructure) (enums.AcseServiceProvider, error) {
 	_, err := buff.Uint8()
@@ -895,10 +898,11 @@ func ParseProtocolVersion(settings *settings.GXDLMSSettings,
 	return enums.AcseServiceProviderNone, nil
 }
 
-func UpdatePassword(settings *settings.GXDLMSSettings,
+func updatePassword(settings *settings.GXDLMSSettings,
 	buff *types.GXByteBuffer,
 	xml *settings.GXDLMSTranslatorStructure) error {
-	len_, err := buff.Uint8()
+	var len_ byte
+	_, err := buff.Uint8()
 	if err != nil {
 		return err
 	}
@@ -908,7 +912,7 @@ func UpdatePassword(settings *settings.GXDLMSSettings,
 		return err
 	}
 	if ret != 0x80 {
-		return errors.New("Invalid tag.")
+		return dlmserrors.ErrUnknownPduTag
 	}
 	len_, err = buff.Uint8()
 	if err != nil {
@@ -928,32 +932,32 @@ func UpdatePassword(settings *settings.GXDLMSSettings,
 	if xml != nil {
 		if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 			if settings.Authentication == enums.AuthenticationLow {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAuthentication), "Value", types.ToHex(settings.Password, false))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAuthentication), "Value", types.ToHex(settings.Password, false))
 			} else {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAuthentication), "Value", types.ToHex(settings.CtoSChallenge(), false))
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAuthentication), "Value", types.ToHex(settings.CtoSChallenge(), false))
 			}
 		} else {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsCallingAuthentication), "", "", true)
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsCharString), "", "", true)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsCallingAuthentication), "", "", true)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsCharString), "", "", true)
 			if settings.Authentication == enums.AuthenticationLow {
 				xml.AppendString(types.ToHex(settings.Password, false))
 			} else {
 				xml.AppendString(types.ToHex(settings.CtoSChallenge(), false))
 			}
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsCharString), false)
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsCallingAuthentication), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsCharString), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsCallingAuthentication), false)
 		}
 	}
 	return nil
 }
 
-// GenerateUserInformation returns the generate user information.
+// generateUserInformation returns the generate user information.
 //
 // Parameters:
 //
 //	settings: DLMS settings.
 //	data: Generated user information.
-func GenerateUserInformation(conf *settings.GXDLMSSettings, cipher settings.GXICipher, encryptedData *types.GXByteBuffer, data *types.GXByteBuffer) error {
+func generateUserInformation(conf *settings.GXDLMSSettings, cipher settings.GXICipher, encryptedData *types.GXByteBuffer, data *types.GXByteBuffer) error {
 	err := data.SetUint8(uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeUserInformation))
 	if err != nil {
 		return err
@@ -1046,7 +1050,7 @@ func generateAarq(settings *settings.GXDLMSSettings,
 	encryptedData *types.GXByteBuffer,
 	data *types.GXByteBuffer) error {
 	tmp := types.GXByteBuffer{}
-	err := GenerateApplicationContextName(settings, &tmp, cipher)
+	err := generateApplicationContextName(settings, &tmp, cipher)
 	if err != nil {
 		return err
 	}
@@ -1055,7 +1059,7 @@ func generateAarq(settings *settings.GXDLMSSettings,
 		return err
 	}
 
-	err = GenerateUserInformation(settings, cipher, encryptedData, &tmp)
+	err = generateUserInformation(settings, cipher, encryptedData, &tmp)
 	if err != nil {
 		return err
 	}
@@ -1195,11 +1199,11 @@ func parsePDU(settings *settings.GXDLMSSettings,
 	}
 	if settings.IsServer() {
 		if tag != (uint8(constants.BerTypeApplication) | uint8(constants.BerTypeConstructed)) {
-			return nil, errors.New("Invalid tag.")
+			return nil, dlmserrors.ErrUnknownPduTag
 		}
 	} else {
 		if tag != (uint8(constants.BerTypeApplication) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeApplicationContextName)) {
-			return nil, errors.New("Invalid tag.")
+			return nil, dlmserrors.ErrUnknownPduTag
 		}
 	}
 	len, err := types.GetObjectCount(buff)
@@ -1308,9 +1312,9 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 					if resultComponent != enums.AssociationResultAccepted {
 						xml.AppendComment(resultComponent.String())
 					}
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsAssociationResult), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsAssociationResult), "Value",
 						xml.IntegerToHex(int(resultComponent), 2, false))
-					xml.AppendStartTag(int(enums.TranslatorGeneralTagsResultSourceDiagnostic), "", "", false)
+					xml.AppendStartTag(int(constants.TranslatorGeneralTagsResultSourceDiagnostic), "", "", false)
 				}
 			}
 		case uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeCalledAeQualifier):
@@ -1360,7 +1364,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 						if ret.(enums.SourceDiagnostic) != enums.SourceDiagnosticNone {
 							xml.AppendComment(ret.(enums.SourceDiagnostic).String())
 						}
-						xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsACSEServiceUser), "Value",
+						xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsACSEServiceUser), "Value",
 							xml.IntegerToHex(int(ret.(enums.SourceDiagnostic)), 2, false))
 					}
 				} else {
@@ -1369,12 +1373,12 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 						if ret.(enums.AcseServiceProvider) != enums.AcseServiceProviderNone {
 							xml.AppendComment(ret.(enums.AcseServiceProvider).String())
 						}
-						xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsACSEServiceProvider), "Value",
+						xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsACSEServiceProvider), "Value",
 							xml.IntegerToHex(int(ret.(enums.AcseServiceProvider)), 2, false))
 					}
 				}
 				if xml != nil {
-					xml.AppendEndTag(int(enums.TranslatorGeneralTagsResultSourceDiagnostic), false)
+					xml.AppendEndTag(int(constants.TranslatorGeneralTagsResultSourceDiagnostic), false)
 				}
 			}
 		case uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeCalledApInvocationId):
@@ -1418,7 +1422,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 						xml.AppendComment(internal.SystemTitleToString(
 							settings.Standard, settings.SourceSystemTitle(), true))
 					}
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsRespondingAPTitle), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsRespondingAPTitle), "Value",
 						types.ToHex(settings.SourceSystemTitle(), false))
 				}
 			}
@@ -1442,13 +1446,13 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 			if xml != nil {
 				if len(title) != 8 {
 					xml.AppendComment("Invalid system title.")
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAPTitle), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAPTitle), "Value",
 						types.ToHex(title, false))
 					if len(title) > 8 {
 						settings.SetSourceSystemTitle(title[:8])
 					}
 				} else {
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAPTitle), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAPTitle), "Value",
 						types.ToHex(title, false))
 				}
 			}
@@ -1470,7 +1474,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 				return ret, err
 			}
 			settings.SetStoCChallenge(challenge)
-			AppendServerSystemTitleToXml(settings, xml, int(acseTag))
+			appendServerSystemTitleToXML(settings, xml, int(acseTag))
 		case uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeCallingAeInvocationId):
 			if _, err := buff.Uint8(); err != nil {
 				return ret, err
@@ -1487,7 +1491,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 			}
 			settings.UserID = int(userID)
 			if xml != nil {
-				xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAeInvocationId), "Value",
+				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAeInvocationId), "Value",
 					xml.IntegerToHex(settings.UserID, 2, false))
 			}
 		case uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeCalledAeInvocationId):
@@ -1509,7 +1513,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 					return ret, err
 				}
 				if xml != nil {
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAeQualifier), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAeQualifier), "Value",
 						types.ToHex(data, false))
 				}
 				if err := handleCertificate(settings, xml, true, data); err != nil {
@@ -1525,7 +1529,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 				}
 				settings.UserID = int(userID)
 				if xml != nil {
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCalledAeInvocationId), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCalledAeInvocationId), "Value",
 						xml.IntegerToHex(settings.UserID, 2, false))
 				}
 			}
@@ -1548,7 +1552,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 					return ret, err
 				}
 				if xml != nil {
-					xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAeQualifier), "Value",
+					xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAeQualifier), "Value",
 						types.ToHex(data, false))
 				}
 				if err := handleCertificate(settings, xml, false, data); err != nil {
@@ -1565,10 +1569,10 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 				settings.UserID = int(userID)
 				if xml != nil {
 					if settings.IsServer() {
-						xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsCallingAeQualifier), "Value",
+						xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsCallingAeQualifier), "Value",
 							xml.IntegerToHex(settings.UserID, 2, false))
 					} else {
-						xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsRespondingAeInvocationId), "Value",
+						xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsRespondingAeInvocationId), "Value",
 							xml.IntegerToHex(settings.UserID, 2, false))
 					}
 				}
@@ -1607,7 +1611,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 			}
 		case uint8(constants.BerTypeContext) | uint8(internal.PduTypeMechanismName), //0x8B
 			uint8(constants.BerTypeContext) | uint8(internal.PduTypeCallingAeInvocationId): //0x89
-			if err := UpdateAuthentication(settings, buff); err != nil {
+			if err := updateAuthentication(settings, buff); err != nil {
 				return ret, err
 			}
 			if xml != nil {
@@ -1618,11 +1622,11 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 				}
 			}
 		case uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeCallingAuthenticationValue):
-			if err := UpdatePassword(settings, buff, xml); err != nil {
+			if err := updatePassword(settings, buff, xml); err != nil {
 				return ret, err
 			}
 		case uint8(constants.BerTypeContext) | uint8(constants.BerTypeConstructed) | uint8(internal.PduTypeUserInformation):
-			serviceErr, err := ParseUserInformation(settings, cipher, buff, xml)
+			serviceErr, err := parseUserInformation(settings, cipher, buff, xml)
 			if err != nil {
 				if xml == nil {
 					return ret, err
@@ -1637,7 +1641,7 @@ func parsePDU2(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 				return enums.ExceptionServiceErrorInvocationCounterError, nil
 			}
 		case uint8(constants.BerTypeContext):
-			tmp, err := ParseProtocolVersion(settings, buff, xml)
+			tmp, err := parseProtocolVersion(settings, buff, xml)
 			if err != nil {
 				return ret, err
 			}
@@ -1796,8 +1800,8 @@ func getUserInformation(conf *settings.GXDLMSSettings, cipher settings.GXICipher
 	return data.Array(), nil
 }
 
-// GenerateAARE returns the server generates AARE message.
-func GenerateAARE(conf *settings.GXDLMSSettings,
+// generateAARE returns the server generates AARE message.
+func generateAARE(conf *settings.GXDLMSSettings,
 	data *types.GXByteBuffer,
 	result enums.AssociationResult,
 	diagnostic any,
@@ -1809,7 +1813,7 @@ func GenerateAARE(conf *settings.GXDLMSSettings,
 	if err != nil {
 		return err
 	}
-	err = GenerateApplicationContextName(conf, data, cipher)
+	err = generateApplicationContextName(conf, data, cipher)
 	if err != nil {
 		return err
 	}
@@ -2073,8 +2077,8 @@ func GenerateAARE(conf *settings.GXDLMSSettings,
 	return err
 }
 
-// ParseUserInformation returns the parse User Information from PDU.
-func ParseUserInformation(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
+// parseUserInformation returns the parse User Information from PDU.
+func parseUserInformation(settings *settings.GXDLMSSettings, cipher settings.GXICipher,
 	data *types.GXByteBuffer, xml *settings.GXDLMSTranslatorStructure) (enums.ExceptionServiceError, error) {
 	length, err := data.Uint8()
 	if err != nil {
@@ -2105,7 +2109,7 @@ func ParseUserInformation(settings *settings.GXDLMSSettings, cipher settings.GXI
 		xml.AppendComment("Error: Invalid data size.")
 	}
 	if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-		xml.AppendLineFromTag(int(enums.TranslatorGeneralTagsUserInformation), "",
+		xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsUserInformation), "",
 			types.ToHexWithRange(data.Array(), false, data.Position(), int(length)))
 		if err := data.SetPosition(data.Position() + int(length)); err != nil {
 			return enums.ExceptionServiceErrorNone, err

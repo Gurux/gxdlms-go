@@ -64,16 +64,16 @@ const (
 func VdeStateErrorParse(value string) (VdeStateError, error) {
 	var ret VdeStateError
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = VdeStateErrorOther
-	case "NODLMSCONTEXT":
+	case strings.EqualFold(value, "NoDlmsContext"):
 		ret = VdeStateErrorNoDlmsContext
-	case "LOADINGDATASET":
+	case strings.EqualFold(value, "LoadingDataSet"):
 		ret = VdeStateErrorLoadingDataSet
-	case "STATUSNOCHANGE":
+	case strings.EqualFold(value, "StatusNochange"):
 		ret = VdeStateErrorStatusNochange
-	case "STATUSINOPERABLE":
+	case strings.EqualFold(value, "StatusInoperable"):
 		ret = VdeStateErrorStatusInoperable
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g VdeStateError) String() string {
 	var ret string
 	switch g {
 	case VdeStateErrorOther:
-		ret = "OTHER"
+		ret = "Other"
 	case VdeStateErrorNoDlmsContext:
-		ret = "NODLMSCONTEXT"
+		ret = "NoDlmsContext"
 	case VdeStateErrorLoadingDataSet:
-		ret = "LOADINGDATASET"
+		ret = "LoadingDataSet"
 	case VdeStateErrorStatusNochange:
-		ret = "STATUSNOCHANGE"
+		ret = "StatusNochange"
 	case VdeStateErrorStatusInoperable:
-		ret = "STATUSINOPERABLE"
+		ret = "StatusInoperable"
 	}
 	return ret
+}
+
+// AllVdeStateError returns a slice containing all defined VdeStateError values.
+func AllVdeStateError() []VdeStateError {
+	return []VdeStateError{
+		VdeStateErrorOther,
+		VdeStateErrorNoDlmsContext,
+		VdeStateErrorLoadingDataSet,
+		VdeStateErrorStatusNochange,
+		VdeStateErrorStatusInoperable,
+	}
 }

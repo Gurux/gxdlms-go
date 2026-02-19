@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,10 +60,10 @@ const (
 func AddressStateParse(value string) (AddressState, error) {
 	var ret AddressState
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = AddressStateNone
-	case "ASSIGNED":
+	case strings.EqualFold(value, "Assigned"):
 		ret = AddressStateAssigned
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -77,9 +77,17 @@ func (g AddressState) String() string {
 	var ret string
 	switch g {
 	case AddressStateNone:
-		ret = "NONE"
+		ret = "None"
 	case AddressStateAssigned:
-		ret = "ASSIGNED"
+		ret = "Assigned"
 	}
 	return ret
+}
+
+// AllAddressState returns a slice containing all defined AddressState values.
+func AllAddressState() []AddressState {
+	return []AddressState{
+	AddressStateNone,
+	AddressStateAssigned,
+	}
 }

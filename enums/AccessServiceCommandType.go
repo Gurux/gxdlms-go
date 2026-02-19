@@ -60,12 +60,12 @@ const (
 func AccessServiceCommandTypeParse(value string) (AccessServiceCommandType, error) {
 	var ret AccessServiceCommandType
 	var err error
-	switch strings.ToUpper(value) {
-	case "GET":
+	switch {
+	case strings.EqualFold(value, "Get"):
 		ret = AccessServiceCommandTypeGet
-	case "SET":
+	case strings.EqualFold(value, "Set"):
 		ret = AccessServiceCommandTypeSet
-	case "ACTION":
+	case strings.EqualFold(value, "Action"):
 		ret = AccessServiceCommandTypeAction
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g AccessServiceCommandType) String() string {
 	var ret string
 	switch g {
 	case AccessServiceCommandTypeGet:
-		ret = "GET"
+		ret = "Get"
 	case AccessServiceCommandTypeSet:
-		ret = "SET"
+		ret = "Set"
 	case AccessServiceCommandTypeAction:
-		ret = "ACTION"
+		ret = "Action"
 	}
 	return ret
+}
+
+// AllAccessServiceCommandType returns a slice containing all defined AccessServiceCommandType values.
+func AllAccessServiceCommandType() []AccessServiceCommandType {
+	return []AccessServiceCommandType{
+	AccessServiceCommandTypeGet,
+	AccessServiceCommandTypeSet,
+	AccessServiceCommandTypeAction,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -59,12 +59,12 @@ const (
 func AccountStatusParse(value string) (AccountStatus, error) {
 	var ret AccountStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NEWINACTIVEACCOUNT":
+	switch {
+	case strings.EqualFold(value, "NewInactiveAccount"):
 		ret = AccountStatusNewInactiveAccount
-	case "ACCOUNTACTIVE":
+	case strings.EqualFold(value, "AccountActive"):
 		ret = AccountStatusAccountActive
-	case "ACCOUNTCLOSED":
+	case strings.EqualFold(value, "AccountClosed"):
 		ret = AccountStatusAccountClosed
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -78,11 +78,20 @@ func (g AccountStatus) String() string {
 	var ret string
 	switch g {
 	case AccountStatusNewInactiveAccount:
-		ret = "NEWINACTIVEACCOUNT"
+		ret = "NewInactiveAccount"
 	case AccountStatusAccountActive:
-		ret = "ACCOUNTACTIVE"
+		ret = "AccountActive"
 	case AccountStatusAccountClosed:
-		ret = "ACCOUNTCLOSED"
+		ret = "AccountClosed"
 	}
 	return ret
+}
+
+// AllAccountStatus returns a slice containing all defined AccountStatus values.
+func AllAccountStatus() []AccountStatus {
+	return []AccountStatus{
+	AccountStatusNewInactiveAccount,
+	AccountStatusAccountActive,
+	AccountStatusAccountClosed,
+	}
 }

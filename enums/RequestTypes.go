@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func RequestTypesParse(value string) (RequestTypes, error) {
 	var ret RequestTypes
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = RequestTypesNone
-	case "DATABLOCK":
+	case strings.EqualFold(value, "DataBlock"):
 		ret = RequestTypesDataBlock
-	case "FRAME":
+	case strings.EqualFold(value, "Frame"):
 		ret = RequestTypesFrame
-	case "GBT":
+	case strings.EqualFold(value, "GBT"):
 		ret = RequestTypesGBT
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,17 +79,27 @@ func RequestTypesParse(value string) (RequestTypes, error) {
 
 // String returns the canonical name of the RequestTypes.
 // It satisfies fmt.Stringer.
-func (r RequestTypes) String() string {
+func (g RequestTypes) String() string {
 	var ret string
-	switch r {
+	switch g {
 	case RequestTypesNone:
-		ret = "NONE"
+		ret = "None"
 	case RequestTypesDataBlock:
-		ret = "DATABLOCK"
+		ret = "DataBlock"
 	case RequestTypesFrame:
-		ret = "FRAME"
+		ret = "Frame"
 	case RequestTypesGBT:
 		ret = "GBT"
 	}
 	return ret
+}
+
+// AllRequestTypes returns a slice containing all defined RequestTypes values.
+func AllRequestTypes() []RequestTypes {
+	return []RequestTypes{
+		RequestTypesNone,
+		RequestTypesDataBlock,
+		RequestTypesFrame,
+		RequestTypesGBT,
+	}
 }

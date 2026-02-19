@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func ProtectionModeParse(value string) (ProtectionMode, error) {
 	var ret ProtectionMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "LOCKED":
+	switch {
+	case strings.EqualFold(value, "Locked"):
 		ret = ProtectionModeLocked
-	case "LOCKEDONFAILEDATTEMPTS":
+	case strings.EqualFold(value, "LockedOnFailedAttempts"):
 		ret = ProtectionModeLockedOnFailedAttempts
-	case "UNLOCKED":
+	case strings.EqualFold(value, "Unlocked"):
 		ret = ProtectionModeUnlocked
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g ProtectionMode) String() string {
 	var ret string
 	switch g {
 	case ProtectionModeLocked:
-		ret = "LOCKED"
+		ret = "Locked"
 	case ProtectionModeLockedOnFailedAttempts:
-		ret = "LOCKEDONFAILEDATTEMPTS"
+		ret = "LockedOnFailedAttempts"
 	case ProtectionModeUnlocked:
-		ret = "UNLOCKED"
+		ret = "Unlocked"
 	}
 	return ret
+}
+
+// AllProtectionMode returns a slice containing all defined ProtectionMode values.
+func AllProtectionMode() []ProtectionMode {
+	return []ProtectionMode{
+		ProtectionModeLocked,
+		ProtectionModeLockedOnFailedAttempts,
+		ProtectionModeUnlocked,
+	}
 }

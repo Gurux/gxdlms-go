@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func SecuritySuiteParse(value string) (SecuritySuite, error) {
 	var ret SecuritySuite
 	var err error
-	switch strings.ToUpper(value) {
-	case "SUITE0":
+	switch {
+	case strings.EqualFold(value, "Suite0"):
 		ret = SecuritySuite0
-	case "SUITE1":
+	case strings.EqualFold(value, "Suite1"):
 		ret = SecuritySuite1
-	case "SUITE2":
+	case strings.EqualFold(value, "Suite2"):
 		ret = SecuritySuite2
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g SecuritySuite) String() string {
 	var ret string
 	switch g {
 	case SecuritySuite0:
-		ret = "SUITE0"
+		ret = "Suite0"
 	case SecuritySuite1:
-		ret = "SUITE1"
+		ret = "Suite1"
 	case SecuritySuite2:
-		ret = "SUITE2"
+		ret = "Suite2"
 	}
 	return ret
+}
+
+// AllSecuritySuite returns a slice containing all defined SecuritySuite values.
+func AllSecuritySuite() []SecuritySuite {
+	return []SecuritySuite{
+		SecuritySuite0,
+		SecuritySuite1,
+		SecuritySuite2,
+	}
 }

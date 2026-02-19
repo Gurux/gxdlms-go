@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func MacStateParse(value string) (MacState, error) {
 	var ret MacState
 	var err error
-	switch strings.ToUpper(value) {
-	case "DISCONNECTED":
+	switch {
+	case strings.EqualFold(value, "Disconnected"):
 		ret = MacStateDisconnected
-	case "TERMINAL":
+	case strings.EqualFold(value, "Terminal"):
 		ret = MacStateTerminal
-	case "SWITCH":
+	case strings.EqualFold(value, "Switch"):
 		ret = MacStateSwitch
-	case "BASE":
+	case strings.EqualFold(value, "Base"):
 		ret = MacStateBase
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g MacState) String() string {
 	var ret string
 	switch g {
 	case MacStateDisconnected:
-		ret = "DISCONNECTED"
+		ret = "Disconnected"
 	case MacStateTerminal:
-		ret = "TERMINAL"
+		ret = "Terminal"
 	case MacStateSwitch:
-		ret = "SWITCH"
+		ret = "Switch"
 	case MacStateBase:
-		ret = "BASE"
+		ret = "Base"
 	}
 	return ret
+}
+
+// AllMacState returns a slice containing all defined MacState values.
+func AllMacState() []MacState {
+	return []MacState{
+		MacStateDisconnected,
+		MacStateTerminal,
+		MacStateSwitch,
+		MacStateBase,
+	}
 }

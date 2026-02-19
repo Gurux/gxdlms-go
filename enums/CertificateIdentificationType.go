@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,10 +60,10 @@ const (
 func CertificateIdentificationTypeParse(value string) (CertificateIdentificationType, error) {
 	var ret CertificateIdentificationType
 	var err error
-	switch strings.ToUpper(value) {
-	case "ENTITY":
+	switch {
+	case strings.EqualFold(value, "Entity"):
 		ret = CertificateIdentificationTypeEntity
-	case "SERIAL":
+	case strings.EqualFold(value, "Serial"):
 		ret = CertificateIdentificationTypeSerial
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -77,9 +77,17 @@ func (g CertificateIdentificationType) String() string {
 	var ret string
 	switch g {
 	case CertificateIdentificationTypeEntity:
-		ret = "ENTITY"
+		ret = "Entity"
 	case CertificateIdentificationTypeSerial:
-		ret = "SERIAL"
+		ret = "Serial"
 	}
 	return ret
+}
+
+// AllCertificateIdentificationType returns a slice containing all defined CertificateIdentificationType values.
+func AllCertificateIdentificationType() []CertificateIdentificationType {
+	return []CertificateIdentificationType{
+	CertificateIdentificationTypeEntity,
+	CertificateIdentificationTypeSerial,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func CertificateVersionParse(value string) (CertificateVersion, error) {
 	var ret CertificateVersion
 	var err error
-	switch strings.ToUpper(value) {
-	case "VERSION1":
+	switch {
+	case strings.EqualFold(value, "Version1"):
 		ret = CertificateVersionVersion1
-	case "VERSION2":
+	case strings.EqualFold(value, "Version2"):
 		ret = CertificateVersionVersion2
-	case "VERSION3":
+	case strings.EqualFold(value, "Version3"):
 		ret = CertificateVersionVersion3
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g CertificateVersion) String() string {
 	var ret string
 	switch g {
 	case CertificateVersionVersion1:
-		ret = "VERSION1"
+		ret = "Version1"
 	case CertificateVersionVersion2:
-		ret = "VERSION2"
+		ret = "Version2"
 	case CertificateVersionVersion3:
-		ret = "VERSION3"
+		ret = "Version3"
 	}
 	return ret
+}
+
+// AllCertificateVersion returns a slice containing all defined CertificateVersion values.
+func AllCertificateVersion() []CertificateVersion {
+	return []CertificateVersion{
+	CertificateVersionVersion1,
+	CertificateVersionVersion2,
+	CertificateVersionVersion3,
+	}
 }

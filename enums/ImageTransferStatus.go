@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -61,22 +61,22 @@ const (
 func ImageTransferStatusParse(value string) (ImageTransferStatus, error) {
 	var ret ImageTransferStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOTINITIATED":
+	switch {
+	case strings.EqualFold(value, "NotInitiated"):
 		ret = ImageTransferStatusNotInitiated
-	case "TRANSFERINITIATED":
+	case strings.EqualFold(value, "TransferInitiated"):
 		ret = ImageTransferStatusTransferInitiated
-	case "VERIFICATIONINITIATED":
+	case strings.EqualFold(value, "VerificationInitiated"):
 		ret = ImageTransferStatusVerificationInitiated
-	case "VERIFICATIONSUCCESSFUL":
+	case strings.EqualFold(value, "VerificationSuccessful"):
 		ret = ImageTransferStatusVerificationSuccessful
-	case "VERIFICATIONFAILED":
+	case strings.EqualFold(value, "VerificationFailed"):
 		ret = ImageTransferStatusVerificationFailed
-	case "ACTIVATIONINITIATED":
+	case strings.EqualFold(value, "ActivationInitiated"):
 		ret = ImageTransferStatusActivationInitiated
-	case "ACTIVATIONSUCCESSFUL":
+	case strings.EqualFold(value, "ActivationSuccessful"):
 		ret = ImageTransferStatusActivationSuccessful
-	case "ACTIVATIONFAILED":
+	case strings.EqualFold(value, "ActivationFailed"):
 		ret = ImageTransferStatusActivationFailed
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -90,21 +90,35 @@ func (g ImageTransferStatus) String() string {
 	var ret string
 	switch g {
 	case ImageTransferStatusNotInitiated:
-		ret = "NOTINITIATED"
+		ret = "NotInitiated"
 	case ImageTransferStatusTransferInitiated:
-		ret = "TRANSFERINITIATED"
+		ret = "TransferInitiated"
 	case ImageTransferStatusVerificationInitiated:
-		ret = "VERIFICATIONINITIATED"
+		ret = "VerificationInitiated"
 	case ImageTransferStatusVerificationSuccessful:
-		ret = "VERIFICATIONSUCCESSFUL"
+		ret = "VerificationSuccessful"
 	case ImageTransferStatusVerificationFailed:
-		ret = "VERIFICATIONFAILED"
+		ret = "VerificationFailed"
 	case ImageTransferStatusActivationInitiated:
-		ret = "ACTIVATIONINITIATED"
+		ret = "ActivationInitiated"
 	case ImageTransferStatusActivationSuccessful:
-		ret = "ACTIVATIONSUCCESSFUL"
+		ret = "ActivationSuccessful"
 	case ImageTransferStatusActivationFailed:
-		ret = "ACTIVATIONFAILED"
+		ret = "ActivationFailed"
 	}
 	return ret
+}
+
+// AllImageTransferStatus returns a slice containing all defined ImageTransferStatus values.
+func AllImageTransferStatus() []ImageTransferStatus {
+	return []ImageTransferStatus{
+	ImageTransferStatusNotInitiated,
+	ImageTransferStatusTransferInitiated,
+	ImageTransferStatusVerificationInitiated,
+	ImageTransferStatusVerificationSuccessful,
+	ImageTransferStatusVerificationFailed,
+	ImageTransferStatusActivationInitiated,
+	ImageTransferStatusActivationSuccessful,
+	ImageTransferStatusActivationFailed,
+	}
 }

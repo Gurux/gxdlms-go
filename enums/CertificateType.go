@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func CertificateTypeParse(value string) (CertificateType, error) {
 	var ret CertificateType
 	var err error
-	switch strings.ToUpper(value) {
-	case "DIGITALSIGNATURE":
+	switch {
+	case strings.EqualFold(value, "DigitalSignature"):
 		ret = CertificateTypeDigitalSignature
-	case "KEYAGREEMENT":
+	case strings.EqualFold(value, "KeyAgreement"):
 		ret = CertificateTypeKeyAgreement
-	case "TLS":
+	case strings.EqualFold(value, "TLS"):
 		ret = CertificateTypeTLS
-	case "OTHER":
+	case strings.EqualFold(value, "Other"):
 		ret = CertificateTypeOther
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g CertificateType) String() string {
 	var ret string
 	switch g {
 	case CertificateTypeDigitalSignature:
-		ret = "DIGITALSIGNATURE"
+		ret = "DigitalSignature"
 	case CertificateTypeKeyAgreement:
-		ret = "KEYAGREEMENT"
+		ret = "KeyAgreement"
 	case CertificateTypeTLS:
 		ret = "TLS"
 	case CertificateTypeOther:
-		ret = "OTHER"
+		ret = "Other"
 	}
 	return ret
+}
+
+// AllCertificateType returns a slice containing all defined CertificateType values.
+func AllCertificateType() []CertificateType {
+	return []CertificateType{
+	CertificateTypeDigitalSignature,
+	CertificateTypeKeyAgreement,
+	CertificateTypeTLS,
+	CertificateTypeOther,
+	}
 }

@@ -62,14 +62,14 @@ const (
 func AlgorithmIdParse(value string) (AlgorithmId, error) {
 	var ret AlgorithmId
 	var err error
-	switch strings.ToUpper(value) {
-	case "AESGCM128":
+	switch {
+	case strings.EqualFold(value, "AesGcm128"):
 		ret = AlgorithmIdAesGcm128
-	case "AESGCM256":
+	case strings.EqualFold(value, "AesGcm256"):
 		ret = AlgorithmIdAesGcm256
-	case "AESWRAP128":
+	case strings.EqualFold(value, "AesWrap128"):
 		ret = AlgorithmIdAesWrap128
-	case "AESWRAP256":
+	case strings.EqualFold(value, "AesWrap256"):
 		ret = AlgorithmIdAesWrap256
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g AlgorithmId) String() string {
 	var ret string
 	switch g {
 	case AlgorithmIdAesGcm128:
-		ret = "AESGCM128"
+		ret = "AesGcm128"
 	case AlgorithmIdAesGcm256:
-		ret = "AESGCM256"
+		ret = "AesGcm256"
 	case AlgorithmIdAesWrap128:
-		ret = "AESWRAP128"
+		ret = "AesWrap128"
 	case AlgorithmIdAesWrap256:
-		ret = "AESWRAP256"
+		ret = "AesWrap256"
 	}
 	return ret
+}
+
+// AllAlgorithmId returns a slice containing all defined AlgorithmId values.
+func AllAlgorithmId() []AlgorithmId {
+	return []AlgorithmId{
+	AlgorithmIdAesGcm128,
+	AlgorithmIdAesGcm256,
+	AlgorithmIdAesWrap128,
+	AlgorithmIdAesWrap256,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -61,22 +61,22 @@ const (
 func PppSetupLcpOptionTypeParse(value string) (PppSetupLcpOptionType, error) {
 	var ret PppSetupLcpOptionType
 	var err error
-	switch strings.ToUpper(value) {
-	case "MAXRECUNIT":
+	switch {
+	case strings.EqualFold(value, "MaxRecUnit"):
 		ret = PppSetupLcpOptionTypeMaxRecUnit
-	case "ASYNCCONTROLCHARMAP":
+	case strings.EqualFold(value, "AsyncControlCharMap"):
 		ret = PppSetupLcpOptionTypeAsyncControlCharMap
-	case "AUTHPROTOCOL":
+	case strings.EqualFold(value, "AuthProtocol"):
 		ret = PppSetupLcpOptionTypeAuthProtocol
-	case "MAGICNUMBER":
+	case strings.EqualFold(value, "MagicNumber"):
 		ret = PppSetupLcpOptionTypeMagicNumber
-	case "PROTOCOLFIELDCOMPRESSION":
+	case strings.EqualFold(value, "ProtocolFieldCompression"):
 		ret = PppSetupLcpOptionTypeProtocolFieldCompression
-	case "ADDRESSANDCTRCOMPRESSION":
+	case strings.EqualFold(value, "AddressAndCtrCompression"):
 		ret = PppSetupLcpOptionTypeAddressAndCtrCompression
-	case "FCSALTERNATIVES":
+	case strings.EqualFold(value, "FCSAlternatives"):
 		ret = PppSetupLcpOptionTypeFCSAlternatives
-	case "CALLBACK":
+	case strings.EqualFold(value, "Callback"):
 		ret = PppSetupLcpOptionTypeCallback
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -90,21 +90,35 @@ func (g PppSetupLcpOptionType) String() string {
 	var ret string
 	switch g {
 	case PppSetupLcpOptionTypeMaxRecUnit:
-		ret = "MAXRECUNIT"
+		ret = "MaxRecUnit"
 	case PppSetupLcpOptionTypeAsyncControlCharMap:
-		ret = "ASYNCCONTROLCHARMAP"
+		ret = "AsyncControlCharMap"
 	case PppSetupLcpOptionTypeAuthProtocol:
-		ret = "AUTHPROTOCOL"
+		ret = "AuthProtocol"
 	case PppSetupLcpOptionTypeMagicNumber:
-		ret = "MAGICNUMBER"
+		ret = "MagicNumber"
 	case PppSetupLcpOptionTypeProtocolFieldCompression:
-		ret = "PROTOCOLFIELDCOMPRESSION"
+		ret = "ProtocolFieldCompression"
 	case PppSetupLcpOptionTypeAddressAndCtrCompression:
-		ret = "ADDRESSANDCTRCOMPRESSION"
+		ret = "AddressAndCtrCompression"
 	case PppSetupLcpOptionTypeFCSAlternatives:
-		ret = "FCSALTERNATIVES"
+		ret = "FCSAlternatives"
 	case PppSetupLcpOptionTypeCallback:
-		ret = "CALLBACK"
+		ret = "Callback"
 	}
 	return ret
+}
+
+// AllPppSetupLcpOptionType returns a slice containing all defined PppSetupLcpOptionType values.
+func AllPppSetupLcpOptionType() []PppSetupLcpOptionType {
+	return []PppSetupLcpOptionType{
+		PppSetupLcpOptionTypeMaxRecUnit,
+		PppSetupLcpOptionTypeAsyncControlCharMap,
+		PppSetupLcpOptionTypeAuthProtocol,
+		PppSetupLcpOptionTypeMagicNumber,
+		PppSetupLcpOptionTypeProtocolFieldCompression,
+		PppSetupLcpOptionTypeAddressAndCtrCompression,
+		PppSetupLcpOptionTypeFCSAlternatives,
+		PppSetupLcpOptionTypeCallback,
+	}
 }

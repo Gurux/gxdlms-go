@@ -42,6 +42,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
+	"github.com/Gurux/gxdlms-go/internal/constants"
 	"github.com/Gurux/gxdlms-go/settings"
 )
 
@@ -285,45 +286,45 @@ func standardGetGeneralTags(type_ enums.TranslatorOutputType, list map[int]strin
 	addTag(list, enums.CommandUa, "Ua")
 	addTag(list, enums.CommandAarq, "aarq")
 	addTag(list, enums.CommandAare, "aare")
-	addTag(list, int(enums.TranslatorGeneralTagsApplicationContextName), "application-context-name")
+	addTag(list, int(constants.TranslatorGeneralTagsApplicationContextName), "application-context-name")
 	addTag(list, enums.CommandInitiateResponse, "InitiateResponse")
 	addTag(list, enums.CommandInitiateRequest, "initiateRequest")
-	addTag(list, int(enums.TranslatorGeneralTagsNegotiatedQualityOfService), "negotiated-quality-of-service")
-	addTag(list, int(enums.TranslatorGeneralTagsProposedQualityOfService), "proposed-quality-of-service")
-	addTag(list, int(enums.TranslatorGeneralTagsProposedDlmsVersionNumber), "proposed-dlms-version-number")
-	addTag(list, int(enums.TranslatorGeneralTagsProposedMaxPduSize), "client-max-receive-pdu-size")
-	addTag(list, int(enums.TranslatorGeneralTagsProposedConformance), "proposed-conformance")
-	addTag(list, int(enums.TranslatorGeneralTagsVaaName), "VaaName")
-	addTag(list, int(enums.TranslatorGeneralTagsNegotiatedConformance), "NegotiatedConformance")
-	addTag(list, int(enums.TranslatorGeneralTagsNegotiatedDlmsVersionNumber), "NegotiatedDlmsVersionNumber")
-	addTag(list, int(enums.TranslatorGeneralTagsNegotiatedMaxPduSize), "NegotiatedMaxPduSize")
-	addTag(list, int(enums.TranslatorGeneralTagsConformanceBit), "ConformanceBit")
-	addTag(list, int(enums.TranslatorGeneralTagsSenderACSERequirements), "sender-acse-requirements")
-	addTag(list, int(enums.TranslatorGeneralTagsResponderACSERequirement), "responder-acse-requirements")
-	addTag(list, int(enums.TranslatorGeneralTagsRespondingMechanismName), "mechanism-name")
-	addTag(list, int(enums.TranslatorGeneralTagsCallingMechanismName), "mechanism-name")
-	addTag(list, int(enums.TranslatorGeneralTagsCallingAuthentication), "calling-authentication-value")
-	addTag(list, int(enums.TranslatorGeneralTagsRespondingAuthentication), "responding-authentication-value")
+	addTag(list, int(constants.TranslatorGeneralTagsNegotiatedQualityOfService), "negotiated-quality-of-service")
+	addTag(list, int(constants.TranslatorGeneralTagsProposedQualityOfService), "proposed-quality-of-service")
+	addTag(list, int(constants.TranslatorGeneralTagsProposedDlmsVersionNumber), "proposed-dlms-version-number")
+	addTag(list, int(constants.TranslatorGeneralTagsProposedMaxPduSize), "client-max-receive-pdu-size")
+	addTag(list, int(constants.TranslatorGeneralTagsProposedConformance), "proposed-conformance")
+	addTag(list, int(constants.TranslatorGeneralTagsVaaName), "VaaName")
+	addTag(list, int(constants.TranslatorGeneralTagsNegotiatedConformance), "NegotiatedConformance")
+	addTag(list, int(constants.TranslatorGeneralTagsNegotiatedDlmsVersionNumber), "NegotiatedDlmsVersionNumber")
+	addTag(list, int(constants.TranslatorGeneralTagsNegotiatedMaxPduSize), "NegotiatedMaxPduSize")
+	addTag(list, int(constants.TranslatorGeneralTagsConformanceBit), "ConformanceBit")
+	addTag(list, int(constants.TranslatorGeneralTagsSenderACSERequirements), "sender-acse-requirements")
+	addTag(list, int(constants.TranslatorGeneralTagsResponderACSERequirement), "responder-acse-requirements")
+	addTag(list, int(constants.TranslatorGeneralTagsRespondingMechanismName), "mechanism-name")
+	addTag(list, int(constants.TranslatorGeneralTagsCallingMechanismName), "mechanism-name")
+	addTag(list, int(constants.TranslatorGeneralTagsCallingAuthentication), "calling-authentication-value")
+	addTag(list, int(constants.TranslatorGeneralTagsRespondingAuthentication), "responding-authentication-value")
 	addTag(list, enums.CommandReleaseRequest, "rlrq")
 	addTag(list, int(enums.CommandReleaseResponse), "rlre")
 	addTag(list, int(enums.CommandDisconnectRequest), "Disc")
-	addTag(list, int(enums.TranslatorGeneralTagsAssociationResult), "result")
-	addTag(list, int(enums.TranslatorGeneralTagsResultSourceDiagnostic), "result-source-diagnostic")
-	addTag(list, int(enums.TranslatorGeneralTagsACSEServiceUser), "acse-service-user")
-	addTag(list, int(enums.TranslatorGeneralTagsACSEServiceProvider), "acse-service-provider")
-	addTag(list, int(enums.TranslatorGeneralTagsCallingAPTitle), "CallingAPTitle")
-	addTag(list, int(enums.TranslatorGeneralTagsRespondingAPTitle), "RespondingAPTitle")
-	addTag(list, int(enums.TranslatorGeneralTagsCharString), "charstring")
-	addTag(list, int(enums.TranslatorGeneralTagsDedicatedKey), "dedicated-key")
+	addTag(list, int(constants.TranslatorGeneralTagsAssociationResult), "result")
+	addTag(list, int(constants.TranslatorGeneralTagsResultSourceDiagnostic), "result-source-diagnostic")
+	addTag(list, int(constants.TranslatorGeneralTagsACSEServiceUser), "acse-service-user")
+	addTag(list, int(constants.TranslatorGeneralTagsACSEServiceProvider), "acse-service-provider")
+	addTag(list, int(constants.TranslatorGeneralTagsCallingAPTitle), "CallingAPTitle")
+	addTag(list, int(constants.TranslatorGeneralTagsRespondingAPTitle), "RespondingAPTitle")
+	addTag(list, int(constants.TranslatorGeneralTagsCharString), "charstring")
+	addTag(list, int(constants.TranslatorGeneralTagsDedicatedKey), "dedicated-key")
 	addTag(list, int(internal.TranslatorTagsResponseAllowed), "response-allowed")
-	addTag(list, int(enums.TranslatorGeneralTagsUserInformation), "user-information")
+	addTag(list, int(constants.TranslatorGeneralTagsUserInformation), "user-information")
 	addTag(list, int(enums.CommandConfirmedServiceError), "confirmedServiceError")
 	addTag(list, int(enums.CommandInformationReport), "InformationReport")
 	addTag(list, int(enums.CommandEventNotification), "event-notification-request")
-	addTag(list, int(enums.TranslatorGeneralTagsCallingAeInvocationId), "calling-AE-invocation-id")
-	addTag(list, int(enums.TranslatorGeneralTagsCalledAeInvocationId), "called-AE-invocation-id")
-	addTag(list, int(enums.TranslatorGeneralTagsRespondingAeInvocationId), "responding-AE-invocation-id")
-	addTag(list, int(enums.TranslatorGeneralTagsCallingAeQualifier), "calling-Ae-qualifier")
+	addTag(list, int(constants.TranslatorGeneralTagsCallingAeInvocationId), "calling-AE-invocation-id")
+	addTag(list, int(constants.TranslatorGeneralTagsCalledAeInvocationId), "called-AE-invocation-id")
+	addTag(list, int(constants.TranslatorGeneralTagsRespondingAeInvocationId), "responding-AE-invocation-id")
+	addTag(list, int(constants.TranslatorGeneralTagsCallingAeQualifier), "calling-Ae-qualifier")
 	addTag(list, int(enums.CommandExceptionResponse), "exception-response")
 	addTag(list, int(internal.TranslatorTagsStateError), "state-error")
 }
@@ -333,52 +334,52 @@ func standardGetSnTags(type_ enums.TranslatorOutputType, list map[int]string) {
 	list[int(enums.CommandReadRequest)] = "readRequest"
 	list[int(enums.CommandWriteRequest)] = "writeRequest"
 	list[int(enums.CommandWriteResponse)] = "writeResponse"
-	list[int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData)] = "Data"
-	list[int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationVariableName)] = "variable-name"
-	list[int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationParameterisedAccess)] = "parameterized-access"
-	list[int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationBlockNumberAccess)] = "BlockNumberAccess"
-	list[int(enums.CommandWriteRequest)<<8|int(enums.VariableAccessSpecificationVariableName)] = "variable-name"
+	list[int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData)] = "Data"
+	list[int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationVariableName)] = "variable-name"
+	list[int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationParameterisedAccess)] = "parameterized-access"
+	list[int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationBlockNumberAccess)] = "BlockNumberAccess"
+	list[int(enums.CommandWriteRequest)<<8|int(constants.VariableAccessSpecificationVariableName)] = "variable-name"
 	list[int(enums.CommandReadResponse)] = "readResponse"
-	list[int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseDataBlockResult)] = "DataBlockResult"
-	list[int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseData)] = "data"
-	list[int(enums.CommandWriteResponse)<<8|int(enums.SingleReadResponseData)] = "data"
-	list[int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseDataAccessError)] = "data-access-error"
+	list[int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseDataBlockResult)] = "DataBlockResult"
+	list[int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseData)] = "data"
+	list[int(enums.CommandWriteResponse)<<8|int(constants.SingleReadResponseData)] = "data"
+	list[int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseDataAccessError)] = "data-access-error"
 }
 
 // GetLnTags returns the get LN tags.
 func standardGetLnTags(type_ enums.TranslatorOutputType, list map[int]string) {
 	addTag(list, enums.CommandGetRequest, "get-request")
-	list[int(enums.CommandGetRequest)<<8|int(enums.GetCommandTypeNormal)] = "get-request-normal"
-	list[int(enums.CommandGetRequest)<<8|int(enums.GetCommandTypeNextDataBlock)] = "get-request-next"
-	list[int(enums.CommandGetRequest)<<8|int(enums.GetCommandTypeWithList)] = "get-request-with-list"
+	list[int(enums.CommandGetRequest)<<8|int(constants.GetCommandTypeNormal)] = "get-request-normal"
+	list[int(enums.CommandGetRequest)<<8|int(constants.GetCommandTypeNextDataBlock)] = "get-request-next"
+	list[int(enums.CommandGetRequest)<<8|int(constants.GetCommandTypeWithList)] = "get-request-with-list"
 	addTag(list, enums.CommandSetRequest, "set-request")
-	list[int(enums.CommandSetRequest)<<8|int(enums.SetRequestTypeNormal)] = "set-request-normal"
-	list[int(enums.CommandSetRequest)<<8|int(enums.SetRequestTypeFirstDataBlock)] = "set-request-first-data-block"
-	list[int(enums.CommandSetRequest)<<8|int(enums.SetRequestTypeWithDataBlock)] = "set-request-with-data-block"
-	list[int(enums.CommandSetRequest)<<8|int(enums.SetRequestTypeWithList)] = "set-request-with-list"
+	list[int(enums.CommandSetRequest)<<8|int(constants.SetRequestTypeNormal)] = "set-request-normal"
+	list[int(enums.CommandSetRequest)<<8|int(constants.SetRequestTypeFirstDataBlock)] = "set-request-first-data-block"
+	list[int(enums.CommandSetRequest)<<8|int(constants.SetRequestTypeWithDataBlock)] = "set-request-with-data-block"
+	list[int(enums.CommandSetRequest)<<8|int(constants.SetRequestTypeWithList)] = "set-request-with-list"
 	addTag(list, enums.CommandMethodRequest, "action-request")
-	list[int(enums.CommandMethodRequest)<<8|int(enums.ActionRequestTypeNormal)] = "action-request-normal"
-	list[int(enums.CommandMethodRequest)<<8|int(enums.ActionRequestTypeNextBlock)] = "action-request-next-pblock"
-	list[int(enums.CommandMethodRequest)<<8|int(enums.ActionRequestTypeWithList)] = "action-request-with-list"
-	list[int(enums.CommandMethodRequest)<<8|int(enums.ActionRequestTypeWithFirstBlock)] = "action-request-with-first-block"
-	list[int(enums.CommandMethodRequest)<<8|int(enums.ActionRequestTypeWithListAndFirstBlock)] = "action-request-with-list-and-first-block"
-	list[int(enums.CommandMethodRequest)<<8|int(enums.ActionRequestTypeWithBlock)] = "action-request-with-list-and-block"
+	list[int(enums.CommandMethodRequest)<<8|int(constants.ActionRequestTypeNormal)] = "action-request-normal"
+	list[int(enums.CommandMethodRequest)<<8|int(constants.ActionRequestTypeNextBlock)] = "action-request-next-pblock"
+	list[int(enums.CommandMethodRequest)<<8|int(constants.ActionRequestTypeWithList)] = "action-request-with-list"
+	list[int(enums.CommandMethodRequest)<<8|int(constants.ActionRequestTypeWithFirstBlock)] = "action-request-with-first-block"
+	list[int(enums.CommandMethodRequest)<<8|int(constants.ActionRequestTypeWithListAndFirstBlock)] = "action-request-with-list-and-first-block"
+	list[int(enums.CommandMethodRequest)<<8|int(constants.ActionRequestTypeWithBlock)] = "action-request-with-list-and-block"
 	addTag(list, enums.CommandMethodResponse, "action-response")
-	list[int(enums.CommandMethodResponse)<<8|int(enums.ActionResponseTypeNormal)] = "action-response-normal"
-	list[int(enums.CommandMethodResponse)<<8|int(enums.ActionResponseTypeWithBlock)] = "action-response-with-pblock"
-	list[int(enums.CommandMethodResponse)<<8|int(enums.ActionResponseTypeWithList)] = "action-response-with-list"
-	list[int(enums.CommandMethodResponse)<<8|int(enums.ActionResponseTypeNextBlock)] = "action-response-next-pblock"
+	list[int(enums.CommandMethodResponse)<<8|int(constants.ActionResponseTypeNormal)] = "action-response-normal"
+	list[int(enums.CommandMethodResponse)<<8|int(constants.ActionResponseTypeWithBlock)] = "action-response-with-pblock"
+	list[int(enums.CommandMethodResponse)<<8|int(constants.ActionResponseTypeWithList)] = "action-response-with-list"
+	list[int(enums.CommandMethodResponse)<<8|int(constants.ActionResponseTypeNextBlock)] = "action-response-next-pblock"
 	list[int(internal.TranslatorTagsSingleResponse)] = "single-response"
 	list[int(enums.CommandDataNotification)] = "data-notification"
 	list[int(enums.CommandGetResponse)] = "get-response"
-	list[int(enums.CommandGetResponse)<<8|int(enums.GetCommandTypeNormal)] = "get-response-normal"
-	list[int(enums.CommandGetResponse)<<8|int(enums.GetCommandTypeNextDataBlock)] = "get-response-with-data-block"
-	list[int(enums.CommandGetResponse)<<8|int(enums.GetCommandTypeWithList)] = "get-response-with-list"
+	list[int(enums.CommandGetResponse)<<8|int(constants.GetCommandTypeNormal)] = "get-response-normal"
+	list[int(enums.CommandGetResponse)<<8|int(constants.GetCommandTypeNextDataBlock)] = "get-response-with-data-block"
+	list[int(enums.CommandGetResponse)<<8|int(constants.GetCommandTypeWithList)] = "get-response-with-list"
 	addTag(list, enums.CommandSetResponse, "set-response")
-	list[int(enums.CommandSetResponse)<<8|int(enums.SetResponseTypeNormal)] = "set-response-normal"
-	list[int(enums.CommandSetResponse)<<8|int(enums.SetResponseTypeDataBlock)] = "set-response-datablock"
-	list[int(enums.CommandSetResponse)<<8|int(enums.SetResponseTypeLastDataBlock)] = "set-response-with-last-data-block"
-	list[int(enums.CommandSetResponse)<<8|int(enums.SetResponseTypeWithList)] = "set-response-with-list"
+	list[int(enums.CommandSetResponse)<<8|int(constants.SetResponseTypeNormal)] = "set-response-normal"
+	list[int(enums.CommandSetResponse)<<8|int(constants.SetResponseTypeDataBlock)] = "set-response-datablock"
+	list[int(enums.CommandSetResponse)<<8|int(constants.SetResponseTypeLastDataBlock)] = "set-response-with-last-data-block"
+	list[int(enums.CommandSetResponse)<<8|int(constants.SetResponseTypeWithList)] = "set-response-with-list"
 	addTag(list, enums.CommandAccessRequest, "access-request")
 	list[int(enums.CommandAccessRequest)<<8|int(enums.AccessServiceCommandTypeGet)] = "access-request-get"
 	list[int(enums.CommandAccessRequest)<<8|int(enums.AccessServiceCommandTypeSet)] = "access-request-set"
@@ -784,14 +785,14 @@ func standardvalueOfErrorCode(value string) (enums.ErrorCode, error) {
 	return v, nil
 }
 
-func standardReleaseResponseReasonToString(value enums.ReleaseResponseReason) (string, error) {
+func standardReleaseResponseReasonToString(value constants.ReleaseResponseReason) (string, error) {
 	var str string
 	switch value {
-	case enums.ReleaseResponseReasonNormal:
+	case constants.ReleaseResponseReasonNormal:
 		str = "Normal"
-	case enums.ReleaseResponseReasonNotFinished:
+	case constants.ReleaseResponseReasonNotFinished:
 		str = "not-finished"
-	case enums.ReleaseResponseReasonUserDefined:
+	case constants.ReleaseResponseReasonUserDefined:
 		str = "user-defined"
 	default:
 		return "", gxcommon.ErrInvalidArgument
@@ -799,28 +800,28 @@ func standardReleaseResponseReasonToString(value enums.ReleaseResponseReason) (s
 	return str, nil
 }
 
-func standardvalueOfReleaseResponseReason(value string) (enums.ReleaseResponseReason, error) {
-	var ret enums.ReleaseResponseReason
+func standardvalueOfReleaseResponseReason(value string) (constants.ReleaseResponseReason, error) {
+	var ret constants.ReleaseResponseReason
 	if strings.EqualFold(value, "normal") {
-		ret = enums.ReleaseResponseReasonNormal
+		ret = constants.ReleaseResponseReasonNormal
 	} else if strings.EqualFold(value, "not-finished") {
-		ret = enums.ReleaseResponseReasonNotFinished
+		ret = constants.ReleaseResponseReasonNotFinished
 	} else if strings.EqualFold(value, "user-defined") {
-		ret = enums.ReleaseResponseReasonUserDefined
+		ret = constants.ReleaseResponseReasonUserDefined
 	} else {
 		return 0, gxcommon.ErrInvalidArgument
 	}
 	return ret, nil
 }
 
-func standardReleaseRequestReasonToString(value enums.ReleaseRequestReason) (string, error) {
+func standardReleaseRequestReasonToString(value constants.ReleaseRequestReason) (string, error) {
 	var str string
 	switch value {
-	case enums.ReleaseRequestReasonNormal:
+	case constants.ReleaseRequestReasonNormal:
 		str = "normal"
-	case enums.ReleaseRequestReasonUrgent:
+	case constants.ReleaseRequestReasonUrgent:
 		str = "urgent"
-	case enums.ReleaseRequestReasonUserDefined:
+	case constants.ReleaseRequestReasonUserDefined:
 		str = "user-defined"
 	default:
 		return "", gxcommon.ErrInvalidArgument
@@ -828,14 +829,14 @@ func standardReleaseRequestReasonToString(value enums.ReleaseRequestReason) (str
 	return str, nil
 }
 
-func standardvalueOfReleaseRequestReason(value string) (enums.ReleaseRequestReason, error) {
-	var ret enums.ReleaseRequestReason
+func standardvalueOfReleaseRequestReason(value string) (constants.ReleaseRequestReason, error) {
+	var ret constants.ReleaseRequestReason
 	if strings.EqualFold(value, "normal") {
-		ret = enums.ReleaseRequestReasonNormal
+		ret = constants.ReleaseRequestReasonNormal
 	} else if strings.EqualFold(value, "urgent") {
-		ret = enums.ReleaseRequestReasonUrgent
+		ret = constants.ReleaseRequestReasonUrgent
 	} else if strings.EqualFold(value, "user-defined") {
-		ret = enums.ReleaseRequestReasonUserDefined
+		ret = constants.ReleaseRequestReasonUserDefined
 	} else {
 		return 0, gxcommon.ErrInvalidArgument
 	}

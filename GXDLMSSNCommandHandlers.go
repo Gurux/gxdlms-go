@@ -65,9 +65,9 @@ func handleRead(settings *settings.GXDLMSSettings,
 		if xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
 			xml.AppendStartTag(int(internal.TranslatorTagsVariableAccessSpecification), "", "", true)
 		}
-		if type_ == uint8(enums.VariableAccessSpecificationParameterisedAccess) {
-			xml.AppendStartTag(int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationParameterisedAccess), "", "", true)
-			xml.AppendLineFromTag(int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationVariableName), "Value", xml.IntegerToHex(sn, 4, false))
+		if type_ == uint8(constants.VariableAccessSpecificationParameterisedAccess) {
+			xml.AppendStartTag(int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationParameterisedAccess), "", "", true)
+			xml.AppendLineFromTag(int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationVariableName), "Value", xml.IntegerToHex(sn, 4, false))
 			ret, err := data.Uint8()
 			if err != nil {
 				return err
@@ -78,9 +78,9 @@ func handleRead(settings *settings.GXDLMSSettings,
 			xml.AppendStartTag(int(internal.TranslatorTagsParameter), "", "", true)
 			internal.GetData(settings, data, &di)
 			xml.AppendEndTag(int(internal.TranslatorTagsParameter), false)
-			xml.AppendEndTag(int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationParameterisedAccess), true)
+			xml.AppendEndTag(int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationParameterisedAccess), true)
 		} else {
-			xml.AppendLineFromTag(int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationVariableName), "Value", xml.IntegerToHex(sn, 4, false))
+			xml.AppendLineFromTag(int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationVariableName), "Value", xml.IntegerToHex(sn, 4, false))
 		}
 		if xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
 			xml.AppendEndTag(int(internal.TranslatorTagsVariableAccessSpecification), false)
@@ -90,7 +90,7 @@ func handleRead(settings *settings.GXDLMSSettings,
 	info := FindServerSNObject(server, sn)
 	e := internal.NewValueEventArgs2(server, info.Item, info.Index)
 	e.Action = info.IsAction
-	if type_ == uint8(enums.VariableAccessSpecificationParameterisedAccess) {
+	if type_ == uint8(constants.VariableAccessSpecificationParameterisedAccess) {
 		e.Selector, err = data.Uint8()
 		if err != nil {
 			return err
@@ -139,9 +139,9 @@ func handleReadBlockNumberAccess(settings *settings.GXDLMSSettings,
 		return err
 	}
 	if xml != nil {
-		xml.AppendStartTag(int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationBlockNumberAccess), "", "", true)
+		xml.AppendStartTag(int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationBlockNumberAccess), "", "", true)
 		xml.AppendLine("<BlockNumber Value=\""+xml.IntegerToHex(blockNumber, 4, false)+"\" />", "", nil)
-		xml.AppendEndTag(int(enums.CommandReadRequest)<<8|int(enums.VariableAccessSpecificationBlockNumberAccess), false)
+		xml.AppendEndTag(int(enums.CommandReadRequest)<<8|int(constants.VariableAccessSpecificationBlockNumberAccess), false)
 		return nil
 	}
 	if uint32(blockNumber) != settings.BlockIndex {
@@ -150,7 +150,7 @@ func handleReadBlockNumberAccess(settings *settings.GXDLMSSettings,
 		if err := bb.SetUint8(uint8(enums.ErrorCodeDataBlockNumberInvalid)); err != nil {
 			return err
 		}
-		err := getSNPdu(NewGXDLMSSNParameters(settings, enums.CommandReadResponse, 1, byte(enums.SingleReadResponseDataAccessError), &bb, nil), replyData)
+		err := getSNPdu(NewGXDLMSSNParameters(settings, enums.CommandReadResponse, 1, byte(constants.SingleReadResponseDataAccessError), &bb, nil), replyData)
 		settings.ResetBlockIndex()
 		return err
 	}
@@ -181,7 +181,7 @@ func handleReadBlockNumberAccess(settings *settings.GXDLMSSettings,
 		}
 	}
 	settings.IncreaseBlockIndex()
-	p := NewGXDLMSSNParameters(settings, enums.CommandReadResponse, 1, byte(enums.SingleReadResponseDataBlockResult),
+	p := NewGXDLMSSNParameters(settings, enums.CommandReadResponse, 1, byte(constants.SingleReadResponseDataBlockResult),
 		nil, server.transaction.Data)
 	p.MultipleBlocks = true
 	if err := getSNPdu(p, replyData); err != nil {
@@ -235,7 +235,7 @@ func handleReadDataBlockAccess(settings *settings.GXDLMSSettings,
 		if err != nil {
 			return err
 		}
-		err := getSNPdu(NewGXDLMSSNParameters(settings, command, 1, byte(enums.SingleReadResponseDataAccessError), &bb, nil), replyData)
+		err := getSNPdu(NewGXDLMSSNParameters(settings, command, 1, byte(constants.SingleReadResponseDataAccessError), &bb, nil), replyData)
 		settings.ResetBlockIndex()
 		return err
 	}
@@ -262,7 +262,7 @@ func handleReadDataBlockAccess(settings *settings.GXDLMSSettings,
 		if err != nil {
 			return err
 		}
-		err = getSNPdu(NewGXDLMSSNParameters(settings, command, cnt, byte(enums.SingleReadResponseDataAccessError), &bb, nil), replyData)
+		err = getSNPdu(NewGXDLMSSNParameters(settings, command, cnt, byte(constants.SingleReadResponseDataAccessError), &bb, nil), replyData)
 		settings.ResetBlockIndex()
 		return err
 	}
@@ -278,7 +278,7 @@ func handleReadDataBlockAccess(settings *settings.GXDLMSSettings,
 		}
 		settings.IncreaseBlockIndex()
 		if command == enums.CommandReadResponse {
-			type_ = uint8(enums.SingleReadResponseBlockNumber)
+			type_ = uint8(constants.SingleReadResponseBlockNumber)
 		} else {
 			type_ = uint8(constants.SingleWriteResponseBlockNumber)
 		}
@@ -325,7 +325,7 @@ func ReturnSNError(settings *settings.GXDLMSSettings,
 	if err != nil {
 		return err
 	}
-	err = getSNPdu(NewGXDLMSSNParameters(settings, cmd, 1, byte(enums.SingleReadResponseDataAccessError), &bb, nil), replyData)
+	err = getSNPdu(NewGXDLMSSNParameters(settings, cmd, 1, byte(constants.SingleReadResponseDataAccessError), &bb, nil), replyData)
 	settings.ResetBlockIndex()
 	return err
 }
@@ -342,11 +342,11 @@ func ReturnSNError(settings *settings.GXDLMSSettings,
 //	Response type_.
 func getReadData(settings *settings.GXDLMSSettings,
 	list []*internal.ValueEventArgs,
-	data *types.GXByteBuffer) (enums.SingleReadResponse, error) {
+	data *types.GXByteBuffer) (constants.SingleReadResponse, error) {
 	var value any
 	var err error
 	first := true
-	type_ := enums.SingleReadResponseData
+	type_ := constants.SingleReadResponseData
 	for _, e := range list {
 		if e.Handled {
 			value = e.Value
@@ -363,7 +363,7 @@ func getReadData(settings *settings.GXDLMSSettings,
 		}
 		if e.Error == 0 {
 			if !first && len(list) != 1 {
-				err := data.SetUint8(uint8(enums.SingleReadResponseData))
+				err := data.SetUint8(uint8(constants.SingleReadResponseData))
 				if err != nil {
 					return type_, err
 				}
@@ -383,13 +383,13 @@ func getReadData(settings *settings.GXDLMSSettings,
 			}
 		} else {
 			if !first && len(list) != 1 {
-				data.SetUint8(uint8(enums.SingleReadResponseDataAccessError))
+				data.SetUint8(uint8(constants.SingleReadResponseDataAccessError))
 			}
 			err = data.SetUint8(uint8(e.Error))
 			if err != nil {
 				return type_, err
 			}
-			type_ = enums.SingleReadResponseDataAccessError
+			type_ = constants.SingleReadResponseDataAccessError
 		}
 		first = false
 	}
@@ -488,15 +488,15 @@ func handleReadRequest(settings *settings.GXDLMSSettings, server *GXDLMSServer,
 			if err != nil {
 				return err
 			}
-			if type_ == uint8(enums.VariableAccessSpecificationBlockNumberAccess) || type_ == uint8(enums.VariableAccessSpecificationParameterisedAccess) {
+			if type_ == uint8(constants.VariableAccessSpecificationBlockNumberAccess) || type_ == uint8(constants.VariableAccessSpecificationParameterisedAccess) {
 				err = handleRead(settings, server, type_, data, list, reads, replyData, xml, cipheredCommand)
-			} else if type_ == uint8(enums.VariableAccessSpecificationBlockNumberAccess) {
+			} else if type_ == uint8(constants.VariableAccessSpecificationBlockNumberAccess) {
 				err = handleReadBlockNumberAccess(settings, server, data, replyData, xml)
 				if xml != nil {
 					xml.AppendEndTag(int(enums.CommandReadRequest), true)
 				}
 				return err
-			} else if type_ == uint8(enums.VariableAccessSpecificationReadDataBlockAccess) {
+			} else if type_ == uint8(constants.VariableAccessSpecificationReadDataBlockAccess) {
 				err = handleReadDataBlockAccess(settings, server, enums.CommandReadResponse, data, cnt, replyData, xml, cipheredCommand)
 				if xml != nil {
 					xml.AppendEndTag(int(enums.CommandReadRequest), true)
@@ -568,7 +568,7 @@ func handleWriteRequest(conf *settings.GXDLMSSettings,
 		if err != nil {
 			return err
 		}
-		if type_ == uint8(enums.VariableAccessSpecificationVariableName) {
+		if type_ == uint8(constants.VariableAccessSpecificationVariableName) {
 			sn, err := data.Uint16()
 			if err != nil {
 				return err
@@ -591,7 +591,7 @@ func handleWriteRequest(conf *settings.GXDLMSSettings,
 					}
 				}
 			}
-		} else if type_ == uint8(enums.VariableAccessSpecificationWriteDataBlockAccess) {
+		} else if type_ == uint8(constants.VariableAccessSpecificationWriteDataBlockAccess) {
 			// Return error if connection is not established.
 			if xml == nil && (conf.Connected&enums.ConnectionStateDlms) == 0 && cipheredCommand == enums.CommandNone {
 				replyData.Add(GenerateConfirmedServiceError(enums.ConfirmedServiceErrorInitiateError, enums.ServiceErrorService, uint8(enums.ServiceUnsupported)))
@@ -627,7 +627,7 @@ func handleWriteRequest(conf *settings.GXDLMSSettings,
 		di.Clear()
 		if xml != nil {
 			if xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-				xml.AppendStartTag(int(enums.CommandWriteRequest<<8|int(enums.SingleReadResponseData)), "", "", true)
+				xml.AppendStartTag(int(enums.CommandWriteRequest<<8|int(constants.SingleReadResponseData)), "", "", true)
 			}
 			value, err = internal.GetData(conf, data, &di)
 			if err != nil {
@@ -638,7 +638,7 @@ func handleWriteRequest(conf *settings.GXDLMSSettings,
 				xml.AppendLineFromTag(settings.DataTypeOffset+int(di.Type), "Value", value.(string))
 			}
 			if xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-				xml.AppendEndTag(int(enums.CommandWriteRequest<<8|enums.SingleReadResponseData), true)
+				xml.AppendEndTag(int(enums.CommandWriteRequest<<8|constants.SingleReadResponseData), true)
 			}
 		} else if ret, err := results.Uint8At(pos); err == nil && ret == 0 {
 			access := true
@@ -781,13 +781,13 @@ func handleInformationReport(settings *settings.GXDLMSSettings,
 		if err != nil {
 			return err
 		}
-		if type_ == uint8(enums.VariableAccessSpecificationVariableName) {
+		if type_ == uint8(constants.VariableAccessSpecificationVariableName) {
 			sn, err := reply.Data.Uint16()
 			if err != nil {
 				return err
 			}
 			if reply.xml != nil {
-				reply.xml.AppendLineFromTag(int(enums.CommandWriteRequest)<<8|int(enums.VariableAccessSpecificationVariableName), "Value",
+				reply.xml.AppendLineFromTag(int(enums.CommandWriteRequest)<<8|int(constants.VariableAccessSpecificationVariableName), "Value",
 					reply.xml.IntegerToHex(sn, 4, false))
 			} else {
 				info := FindSNObject(settings.Objects.(objects.GXDLMSObjectCollection), int16(sn))

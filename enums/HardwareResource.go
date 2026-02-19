@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// HardwareResource :  describes hardware errors.
+// HardwareResource describes hardware errors.
 type HardwareResource int
 
 const (
@@ -64,16 +64,16 @@ const (
 func HardwareResourceParse(value string) (HardwareResource, error) {
 	var ret HardwareResource
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = HardwareResourceOther
-	case "MEMORYUNAVAILABLE":
+	case strings.EqualFold(value, "MemoryUnavailable"):
 		ret = HardwareResourceMemoryUnavailable
-	case "PROCESSORRESOURCEUNAVAILABLE":
+	case strings.EqualFold(value, "ProcessorResourceUnavailable"):
 		ret = HardwareResourceProcessorResourceUnavailable
-	case "MASSSTORAGEUNAVAILABLE":
+	case strings.EqualFold(value, "MassStorageUnavailable"):
 		ret = HardwareResourceMassStorageUnavailable
-	case "OTHERRESOURCEUNAVAILABLE":
+	case strings.EqualFold(value, "OtherResourceUnavailable"):
 		ret = HardwareResourceOtherResourceUnavailable
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g HardwareResource) String() string {
 	var ret string
 	switch g {
 	case HardwareResourceOther:
-		ret = "OTHER"
+		ret = "Other"
 	case HardwareResourceMemoryUnavailable:
-		ret = "MEMORYUNAVAILABLE"
+		ret = "MemoryUnavailable"
 	case HardwareResourceProcessorResourceUnavailable:
-		ret = "PROCESSORRESOURCEUNAVAILABLE"
+		ret = "ProcessorResourceUnavailable"
 	case HardwareResourceMassStorageUnavailable:
-		ret = "MASSSTORAGEUNAVAILABLE"
+		ret = "MassStorageUnavailable"
 	case HardwareResourceOtherResourceUnavailable:
-		ret = "OTHERRESOURCEUNAVAILABLE"
+		ret = "OtherResourceUnavailable"
 	}
 	return ret
+}
+
+// AllHardwareResource returns a slice containing all defined HardwareResource values.
+func AllHardwareResource() []HardwareResource {
+	return []HardwareResource{
+		HardwareResourceOther,
+		HardwareResourceMemoryUnavailable,
+		HardwareResourceProcessorResourceUnavailable,
+		HardwareResourceMassStorageUnavailable,
+		HardwareResourceOtherResourceUnavailable,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func TaskParse(value string) (Task, error) {
 	var ret Task
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = TaskOther
-	case "NOREMOTECONTROL":
+	case strings.EqualFold(value, "NoRemoteControl"):
 		ret = TaskNoRemoteControl
-	case "TISTOPPED":
+	case strings.EqualFold(value, "TiStopped"):
 		ret = TaskTiStopped
-	case "TIRUNNING":
+	case strings.EqualFold(value, "TiRunning"):
 		ret = TaskTiRunning
-	case "TIUNUSABLE":
+	case strings.EqualFold(value, "TiUnusable"):
 		ret = TaskTiUnusable
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g Task) String() string {
 	var ret string
 	switch g {
 	case TaskOther:
-		ret = "OTHER"
+		ret = "Other"
 	case TaskNoRemoteControl:
-		ret = "NOREMOTECONTROL"
+		ret = "NoRemoteControl"
 	case TaskTiStopped:
-		ret = "TISTOPPED"
+		ret = "TiStopped"
 	case TaskTiRunning:
-		ret = "TIRUNNING"
+		ret = "TiRunning"
 	case TaskTiUnusable:
-		ret = "TIUNUSABLE"
+		ret = "TiUnusable"
 	}
 	return ret
+}
+
+// AllTask returns a slice containing all defined Task values.
+func AllTask() []Task {
+	return []Task{
+		TaskOther,
+		TaskNoRemoteControl,
+		TaskTiStopped,
+		TaskTiRunning,
+		TaskTiUnusable,
+	}
 }

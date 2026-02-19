@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -45,13 +45,13 @@ import (
 type SingleReadResponse int
 
 const (
-	// SingleReadResponseData defines normal data reply.
+	// SingleReadResponseData defines that the // Normal data.
 	SingleReadResponseData SingleReadResponse = iota
-	// SingleReadResponseDataAccessError defines that the an error has occured on read.
+	// SingleReadResponseDataAccessError defines that the // Error has occured on read.
 	SingleReadResponseDataAccessError
-	// SingleReadResponseDataBlockResult defines return data as blocks.
+	// SingleReadResponseDataBlockResult defines that the // Return data as blocks.
 	SingleReadResponseDataBlockResult
-	// SingleReadResponseBlockNumber defines return block number.
+	// SingleReadResponseBlockNumber defines that the // Return block number.
 	SingleReadResponseBlockNumber
 )
 
@@ -62,14 +62,14 @@ const (
 func SingleReadResponseParse(value string) (SingleReadResponse, error) {
 	var ret SingleReadResponse
 	var err error
-	switch strings.ToUpper(value) {
-	case "DATA":
+	switch {
+	case strings.EqualFold(value, "Data"):
 		ret = SingleReadResponseData
-	case "DATAACCESSERROR":
+	case strings.EqualFold(value, "DataAccessError"):
 		ret = SingleReadResponseDataAccessError
-	case "DATABLOCKRESULT":
+	case strings.EqualFold(value, "DataBlockResult"):
 		ret = SingleReadResponseDataBlockResult
-	case "BLOCKNUMBER":
+	case strings.EqualFold(value, "BlockNumber"):
 		ret = SingleReadResponseBlockNumber
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g SingleReadResponse) String() string {
 	var ret string
 	switch g {
 	case SingleReadResponseData:
-		ret = "DATA"
+		ret = "Data"
 	case SingleReadResponseDataAccessError:
-		ret = "DATAACCESSERROR"
+		ret = "DataAccessError"
 	case SingleReadResponseDataBlockResult:
-		ret = "DATABLOCKRESULT"
+		ret = "DataBlockResult"
 	case SingleReadResponseBlockNumber:
-		ret = "BLOCKNUMBER"
+		ret = "BlockNumber"
 	}
 	return ret
+}
+
+// AllSingleReadResponse returns a slice containing all defined SingleReadResponse values.
+func AllSingleReadResponse() []SingleReadResponse {
+	return []SingleReadResponse{
+		SingleReadResponseData,
+		SingleReadResponseDataAccessError,
+		SingleReadResponseDataBlockResult,
+		SingleReadResponseBlockNumber,
+	}
 }

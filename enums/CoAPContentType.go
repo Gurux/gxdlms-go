@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func CoAPContentTypeParse(value string) (CoAPContentType, error) {
 	var ret CoAPContentType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = CoAPContentTypeNone
-	case "APPLICATIONOSCORE":
+	case strings.EqualFold(value, "ApplicationOscore"):
 		ret = CoAPContentTypeApplicationOscore
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g CoAPContentType) String() string {
 	var ret string
 	switch g {
 	case CoAPContentTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case CoAPContentTypeApplicationOscore:
-		ret = "APPLICATIONOSCORE"
+		ret = "ApplicationOscore"
 	}
 	return ret
+}
+
+// AllCoAPContentType returns a slice containing all defined CoAPContentType values.
+func AllCoAPContentType() []CoAPContentType {
+	return []CoAPContentType{
+	CoAPContentTypeNone,
+	CoAPContentTypeApplicationOscore,
+	}
 }

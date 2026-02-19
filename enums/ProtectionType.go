@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func ProtectionTypeParse(value string) (ProtectionType, error) {
 	var ret ProtectionType
 	var err error
-	switch strings.ToUpper(value) {
-	case "AUTHENTICATION":
+	switch {
+	case strings.EqualFold(value, "Authentication"):
 		ret = ProtectionTypeAuthentication
-	case "ENCRYPTION":
+	case strings.EqualFold(value, "Encryption"):
 		ret = ProtectionTypeEncryption
-	case "AUTHENTICATIONENCRYPTION":
+	case strings.EqualFold(value, "AuthenticationEncryption"):
 		ret = ProtectionTypeAuthenticationEncryption
-	case "DIGITALSIGNATURE":
+	case strings.EqualFold(value, "DigitalSignature"):
 		ret = ProtectionTypeDigitalSignature
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g ProtectionType) String() string {
 	var ret string
 	switch g {
 	case ProtectionTypeAuthentication:
-		ret = "AUTHENTICATION"
+		ret = "Authentication"
 	case ProtectionTypeEncryption:
-		ret = "ENCRYPTION"
+		ret = "Encryption"
 	case ProtectionTypeAuthenticationEncryption:
-		ret = "AUTHENTICATIONENCRYPTION"
+		ret = "AuthenticationEncryption"
 	case ProtectionTypeDigitalSignature:
-		ret = "DIGITALSIGNATURE"
+		ret = "DigitalSignature"
 	}
 	return ret
+}
+
+// AllProtectionType returns a slice containing all defined ProtectionType values.
+func AllProtectionType() []ProtectionType {
+	return []ProtectionType{
+		ProtectionTypeAuthentication,
+		ProtectionTypeEncryption,
+		ProtectionTypeAuthenticationEncryption,
+		ProtectionTypeDigitalSignature,
+	}
 }

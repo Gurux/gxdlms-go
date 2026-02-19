@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -86,38 +86,38 @@ const (
 func MBusDeviceTypeParse(value string) (MBusDeviceType, error) {
 	var ret MBusDeviceType
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = MBusDeviceTypeOther
-	case "OIL":
+	case strings.EqualFold(value, "Oil"):
 		ret = MBusDeviceTypeOil
-	case "ELECTRICITY":
+	case strings.EqualFold(value, "Electricity"):
 		ret = MBusDeviceTypeElectricity
-	case "GAS":
+	case strings.EqualFold(value, "Gas"):
 		ret = MBusDeviceTypeGas
-	case "HEAT":
+	case strings.EqualFold(value, "Heat"):
 		ret = MBusDeviceTypeHeat
-	case "STEAM":
+	case strings.EqualFold(value, "Steam"):
 		ret = MBusDeviceTypeSteam
-	case "HOTWATER":
+	case strings.EqualFold(value, "HotWater"):
 		ret = MBusDeviceTypeHotWater
-	case "WATER":
+	case strings.EqualFold(value, "Water"):
 		ret = MBusDeviceTypeWater
-	case "HEATCOSTALLOCATOR":
+	case strings.EqualFold(value, "HeatCostAllocator"):
 		ret = MBusDeviceTypeHeatCostAllocator
-	case "RESERVED":
+	case strings.EqualFold(value, "Reserved"):
 		ret = MBusDeviceTypeReserved
-	case "GASMODE2":
+	case strings.EqualFold(value, "GasMode2"):
 		ret = MBusDeviceTypeGasMode2
-	case "HEATMODE2":
+	case strings.EqualFold(value, "HeatMode2"):
 		ret = MBusDeviceTypeHeatMode2
-	case "HOTWATERMODE2":
+	case strings.EqualFold(value, "HotWaterMode2"):
 		ret = MBusDeviceTypeHotWaterMode2
-	case "WATERMODE2":
+	case strings.EqualFold(value, "WaterMode2"):
 		ret = MBusDeviceTypeWaterMode2
-	case "HEATCOSTALLOCATORMODE2":
+	case strings.EqualFold(value, "HeatCostAllocatorMode2"):
 		ret = MBusDeviceTypeHeatCostAllocatorMode2
-	case "RESERVED2":
+	case strings.EqualFold(value, "Reserved2"):
 		ret = MBusDeviceTypeReserved2
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -131,37 +131,59 @@ func (g MBusDeviceType) String() string {
 	var ret string
 	switch g {
 	case MBusDeviceTypeOther:
-		ret = "OTHER"
+		ret = "Other"
 	case MBusDeviceTypeOil:
-		ret = "OIL"
+		ret = "Oil"
 	case MBusDeviceTypeElectricity:
-		ret = "ELECTRICITY"
+		ret = "Electricity"
 	case MBusDeviceTypeGas:
-		ret = "GAS"
+		ret = "Gas"
 	case MBusDeviceTypeHeat:
-		ret = "HEAT"
+		ret = "Heat"
 	case MBusDeviceTypeSteam:
-		ret = "STEAM"
+		ret = "Steam"
 	case MBusDeviceTypeHotWater:
-		ret = "HOTWATER"
+		ret = "HotWater"
 	case MBusDeviceTypeWater:
-		ret = "WATER"
+		ret = "Water"
 	case MBusDeviceTypeHeatCostAllocator:
-		ret = "HEATCOSTALLOCATOR"
+		ret = "HeatCostAllocator"
 	case MBusDeviceTypeReserved:
-		ret = "RESERVED"
+		ret = "Reserved"
 	case MBusDeviceTypeGasMode2:
-		ret = "GASMODE2"
+		ret = "GasMode2"
 	case MBusDeviceTypeHeatMode2:
-		ret = "HEATMODE2"
+		ret = "HeatMode2"
 	case MBusDeviceTypeHotWaterMode2:
-		ret = "HOTWATERMODE2"
+		ret = "HotWaterMode2"
 	case MBusDeviceTypeWaterMode2:
-		ret = "WATERMODE2"
+		ret = "WaterMode2"
 	case MBusDeviceTypeHeatCostAllocatorMode2:
-		ret = "HEATCOSTALLOCATORMODE2"
+		ret = "HeatCostAllocatorMode2"
 	case MBusDeviceTypeReserved2:
-		ret = "RESERVED2"
+		ret = "Reserved2"
 	}
 	return ret
+}
+
+// AllMBusDeviceType returns a slice containing all defined MBusDeviceType values.
+func AllMBusDeviceType() []MBusDeviceType {
+	return []MBusDeviceType{
+		MBusDeviceTypeOther,
+		MBusDeviceTypeOil,
+		MBusDeviceTypeElectricity,
+		MBusDeviceTypeGas,
+		MBusDeviceTypeHeat,
+		MBusDeviceTypeSteam,
+		MBusDeviceTypeHotWater,
+		MBusDeviceTypeWater,
+		MBusDeviceTypeHeatCostAllocator,
+		MBusDeviceTypeReserved,
+		MBusDeviceTypeGasMode2,
+		MBusDeviceTypeHeatMode2,
+		MBusDeviceTypeHotWaterMode2,
+		MBusDeviceTypeWaterMode2,
+		MBusDeviceTypeHeatCostAllocatorMode2,
+		MBusDeviceTypeReserved2,
+	}
 }

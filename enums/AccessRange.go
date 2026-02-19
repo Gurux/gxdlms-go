@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -61,14 +61,14 @@ const (
 func AccessRangeParse(value string) (AccessRange, error) {
 	var ret AccessRange
 	var err error
-	switch strings.ToUpper(value) {
-	case "ENTRY":
+	switch {
+	case strings.EqualFold(value, "Entry"):
 		ret = AccessRangeEntry
-	case "LAST":
+	case strings.EqualFold(value, "Last"):
 		ret = AccessRangeLast
-	case "RANGE":
+	case strings.EqualFold(value, "Range"):
 		ret = AccessRangeRange
-	case "ALL":
+	case strings.EqualFold(value, "All"):
 		ret = AccessRangeAll
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -82,13 +82,23 @@ func (g AccessRange) String() string {
 	var ret string
 	switch g {
 	case AccessRangeEntry:
-		ret = "ENTRY"
+		ret = "Entry"
 	case AccessRangeLast:
-		ret = "LAST"
+		ret = "Last"
 	case AccessRangeRange:
-		ret = "RANGE"
+		ret = "Range"
 	case AccessRangeAll:
-		ret = "ALL"
+		ret = "All"
 	}
 	return ret
+}
+
+// AllAccessRange returns a slice containing all defined AccessRange values.
+func AllAccessRange() []AccessRange {
+	return []AccessRange{
+	AccessRangeEntry,
+	AccessRangeLast,
+	AccessRangeRange,
+	AccessRangeAll,
+	}
 }

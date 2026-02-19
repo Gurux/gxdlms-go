@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -74,26 +74,26 @@ const (
 func BaudRateParse(value string) (BaudRate, error) {
 	var ret BaudRate
 	var err error
-	switch strings.ToUpper(value) {
-	case "BAUDRATE300":
+	switch {
+	case strings.EqualFold(value, "Baudrate300"):
 		ret = BaudRateBaudrate300
-	case "BAUDRATE600":
+	case strings.EqualFold(value, "Baudrate600"):
 		ret = BaudRateBaudrate600
-	case "BAUDRATE1200":
+	case strings.EqualFold(value, "Baudrate1200"):
 		ret = BaudRateBaudrate1200
-	case "BAUDRATE2400":
+	case strings.EqualFold(value, "Baudrate2400"):
 		ret = BaudRateBaudrate2400
-	case "BAUDRATE4800":
+	case strings.EqualFold(value, "Baudrate4800"):
 		ret = BaudRateBaudrate4800
-	case "BAUDRATE9600":
+	case strings.EqualFold(value, "Baudrate9600"):
 		ret = BaudRateBaudrate9600
-	case "BAUDRATE19200":
+	case strings.EqualFold(value, "Baudrate19200"):
 		ret = BaudRateBaudrate19200
-	case "BAUDRATE38400":
+	case strings.EqualFold(value, "Baudrate38400"):
 		ret = BaudRateBaudrate38400
-	case "BAUDRATE57600":
+	case strings.EqualFold(value, "Baudrate57600"):
 		ret = BaudRateBaudrate57600
-	case "BAUDRATE115200":
+	case strings.EqualFold(value, "Baudrate115200"):
 		ret = BaudRateBaudrate115200
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -107,25 +107,41 @@ func (g BaudRate) String() string {
 	var ret string
 	switch g {
 	case BaudRateBaudrate300:
-		ret = "BAUDRATE300"
+		ret = "Baudrate300"
 	case BaudRateBaudrate600:
-		ret = "BAUDRATE600"
+		ret = "Baudrate600"
 	case BaudRateBaudrate1200:
-		ret = "BAUDRATE1200"
+		ret = "Baudrate1200"
 	case BaudRateBaudrate2400:
-		ret = "BAUDRATE2400"
+		ret = "Baudrate2400"
 	case BaudRateBaudrate4800:
-		ret = "BAUDRATE4800"
+		ret = "Baudrate4800"
 	case BaudRateBaudrate9600:
-		ret = "BAUDRATE9600"
+		ret = "Baudrate9600"
 	case BaudRateBaudrate19200:
-		ret = "BAUDRATE19200"
+		ret = "Baudrate19200"
 	case BaudRateBaudrate38400:
-		ret = "BAUDRATE38400"
+		ret = "Baudrate38400"
 	case BaudRateBaudrate57600:
-		ret = "BAUDRATE57600"
+		ret = "Baudrate57600"
 	case BaudRateBaudrate115200:
-		ret = "BAUDRATE115200"
+		ret = "Baudrate115200"
 	}
 	return ret
+}
+
+// AllBaudRate returns a slice containing all defined BaudRate values.
+func AllBaudRate() []BaudRate {
+	return []BaudRate{
+	BaudRateBaudrate300,
+	BaudRateBaudrate600,
+	BaudRateBaudrate1200,
+	BaudRateBaudrate2400,
+	BaudRateBaudrate4800,
+	BaudRateBaudrate9600,
+	BaudRateBaudrate19200,
+	BaudRateBaudrate38400,
+	BaudRateBaudrate57600,
+	BaudRateBaudrate115200,
+	}
 }

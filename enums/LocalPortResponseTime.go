@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,10 +60,10 @@ const (
 func LocalPortResponseTimeParse(value string) (LocalPortResponseTime, error) {
 	var ret LocalPortResponseTime
 	var err error
-	switch strings.ToUpper(value) {
-	case "MS20":
+	switch {
+	case strings.EqualFold(value, "ms20"):
 		ret = LocalPortResponseTimems20
-	case "MS200":
+	case strings.EqualFold(value, "ms200"):
 		ret = LocalPortResponseTimems200
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -77,9 +77,17 @@ func (g LocalPortResponseTime) String() string {
 	var ret string
 	switch g {
 	case LocalPortResponseTimems20:
-		ret = "MS20"
+		ret = "ms20"
 	case LocalPortResponseTimems200:
-		ret = "MS200"
+		ret = "ms200"
 	}
 	return ret
+}
+
+// AllLocalPortResponseTime returns a slice containing all defined LocalPortResponseTime values.
+func AllLocalPortResponseTime() []LocalPortResponseTime {
+	return []LocalPortResponseTime{
+		LocalPortResponseTimems20,
+		LocalPortResponseTimems200,
+	}
 }

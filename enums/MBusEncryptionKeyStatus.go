@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,16 +58,16 @@ const (
 func MBusEncryptionKeyStatusParse(value string) (MBusEncryptionKeyStatus, error) {
 	var ret MBusEncryptionKeyStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOENCRYPTIONKEY":
+	switch {
+	case strings.EqualFold(value, "NoEncryptionKey"):
 		ret = MBusEncryptionKeyStatusNoEncryptionKey
-	case "ENCRYPTIONKEYSET":
+	case strings.EqualFold(value, "EncryptionKeySet"):
 		ret = MBusEncryptionKeyStatusEncryptionKeySet
-	case "ENCRYPTIONKEYTRANSFERRED":
+	case strings.EqualFold(value, "EncryptionKeyTransferred"):
 		ret = MBusEncryptionKeyStatusEncryptionKeyTransferred
-	case "ENCRYPTIONKEYSETANDTRANSFERRED":
+	case strings.EqualFold(value, "EncryptionKeySetAndTransferred"):
 		ret = MBusEncryptionKeyStatusEncryptionKeySetAndTransferred
-	case "ENCRYPTIONKEYINUSE":
+	case strings.EqualFold(value, "EncryptionKeyInUse"):
 		ret = MBusEncryptionKeyStatusEncryptionKeyInUse
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -81,15 +81,26 @@ func (g MBusEncryptionKeyStatus) String() string {
 	var ret string
 	switch g {
 	case MBusEncryptionKeyStatusNoEncryptionKey:
-		ret = "NOENCRYPTIONKEY"
+		ret = "NoEncryptionKey"
 	case MBusEncryptionKeyStatusEncryptionKeySet:
-		ret = "ENCRYPTIONKEYSET"
+		ret = "EncryptionKeySet"
 	case MBusEncryptionKeyStatusEncryptionKeyTransferred:
-		ret = "ENCRYPTIONKEYTRANSFERRED"
+		ret = "EncryptionKeyTransferred"
 	case MBusEncryptionKeyStatusEncryptionKeySetAndTransferred:
-		ret = "ENCRYPTIONKEYSETANDTRANSFERRED"
+		ret = "EncryptionKeySetAndTransferred"
 	case MBusEncryptionKeyStatusEncryptionKeyInUse:
-		ret = "ENCRYPTIONKEYINUSE"
+		ret = "EncryptionKeyInUse"
 	}
 	return ret
+}
+
+// AllMBusEncryptionKeyStatus returns a slice containing all defined MBusEncryptionKeyStatus values.
+func AllMBusEncryptionKeyStatus() []MBusEncryptionKeyStatus {
+	return []MBusEncryptionKeyStatus{
+	MBusEncryptionKeyStatusNoEncryptionKey,
+	MBusEncryptionKeyStatusEncryptionKeySet,
+	MBusEncryptionKeyStatusEncryptionKeyTransferred,
+	MBusEncryptionKeyStatusEncryptionKeySetAndTransferred,
+	MBusEncryptionKeyStatusEncryptionKeyInUse,
+	}
 }

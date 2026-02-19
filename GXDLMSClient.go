@@ -45,6 +45,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
+	"github.com/Gurux/gxdlms-go/internal/constants"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
 	"github.com/Gurux/gxdlms-go/manufacturersettings"
 	"github.com/Gurux/gxdlms-go/objects"
@@ -924,7 +925,7 @@ func (g *GXDLMSClient) Method2(name any,
 				return nil, err
 			}
 		}
-		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandMethodRequest, byte(enums.ActionRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandMethodRequest, byte(constants.ActionRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		// GBT Window size or streaming is not used with method because there is no information available from theGBT block number and client doesn't know when ACK is expected.
 		return getLnMessages(p)
@@ -949,7 +950,7 @@ func (g *GXDLMSClient) Method2(name any,
 				return nil, err
 			}
 		}
-		return getSnMessages(NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, 1, byte(enums.VariableAccessSpecificationVariableName), &attributeDescriptor, &data))
+		return getSnMessages(NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, 1, byte(constants.VariableAccessSpecificationVariableName), &attributeDescriptor, &data))
 	}
 	return nil, nil
 }
@@ -990,7 +991,7 @@ func (g *GXDLMSClient) Write2(name any, value any, type_ enums.DataType, objectT
 		if err != nil {
 			return nil, err
 		}
-		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandSetRequest, byte(enums.SetRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandSetRequest, byte(constants.SetRequestTypeNormal), &attributeDescriptor, &data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		p.blockIndex = g.settings.BlockIndex
 		p.blockNumberAck = g.settings.BlockNumberAck
@@ -1011,7 +1012,7 @@ func (g *GXDLMSClient) Write2(name any, value any, type_ enums.DataType, objectT
 		if err != nil {
 			return nil, err
 		}
-		p := NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, 1, byte(enums.VariableAccessSpecificationVariableName), &attributeDescriptor, &data)
+		p := NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, 1, byte(constants.VariableAccessSpecificationVariableName), &attributeDescriptor, &data)
 		reply, err = getSnMessages(p)
 	}
 	return reply, err
@@ -1053,7 +1054,7 @@ func (g *GXDLMSClient) Read2(name any, objectType enums.ObjectType, attributeOrd
 				return nil, err
 			}
 		}
-		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandGetRequest, byte(enums.GetCommandTypeNormal), &attributeDescriptor, data, 0xff, enums.CommandNone)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandGetRequest, byte(constants.GetCommandTypeNormal), &attributeDescriptor, data, 0xff, enums.CommandNone)
 		p.AccessMode = mode
 		reply, err = getLnMessages(p)
 	} else {
@@ -1066,9 +1067,9 @@ func (g *GXDLMSClient) Read2(name any, objectType enums.ObjectType, attributeOrd
 		}
 		// parameterized-access
 		if data != nil && data.Size() != 0 {
-			requestType = uint8(enums.VariableAccessSpecificationParameterisedAccess)
+			requestType = uint8(constants.VariableAccessSpecificationParameterisedAccess)
 		} else {
-			requestType = uint8(enums.VariableAccessSpecificationVariableName)
+			requestType = uint8(constants.VariableAccessSpecificationVariableName)
 		}
 		p := NewGXDLMSSNParameters(g.settings, enums.CommandReadRequest, 1, requestType, &attributeDescriptor, data)
 		reply, err = getSnMessages(p)
@@ -1364,7 +1365,7 @@ func (g *GXDLMSClient) GetApplicationAssociationRequestWithLogicalName(ln string
 		 Settings.Cipher.SigningKeyPair.Key
 		// if (Settings.Cipher.SigningKeyPair.Value == nil)
 		// {
-		// Settings.Cipher.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(Settings.Cipher.SigningKeyPair.Key,
+		// Settings.Cipher.SigningKeyPair = types.NewGXKeyValuePair<GXPublicKey, GXPrivateKey>(Settings.Cipher.SigningKeyPair.Key,
 		// (GXPrivateKey)Settings.GetKey(DLMS.Objects.Enums.CertificateType.DigitalSignature,
 		// Settings.Cipher.SystemTitle, true))
 		// }
@@ -1563,7 +1564,7 @@ func (g *GXDLMSClient) ReleaseRequest2(force bool) ([][]byte, error) {
 		}
 		g.settings.SetMaxPduSize(g.initializePduSize)
 		g.settings.NegotiatedConformance = g.settings.ProposedConformance
-		err = GenerateUserInformation(g.settings, g.settings.Cipher, nil, &buff)
+		err = generateUserInformation(g.settings, g.settings.Cipher, nil, &buff)
 		if err != nil {
 			return nil, err
 		}
@@ -2070,7 +2071,7 @@ func (g *GXDLMSClient) ReadList(list []types.GXKeyValuePair[objects.IGXDLMSBase,
 				mode = m
 			}
 		}
-		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandGetRequest, byte(enums.GetCommandTypeWithList), &data,
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandGetRequest, byte(constants.GetCommandTypeWithList), &data,
 			nil, 0xff, enums.CommandNone)
 
 		p.AccessMode = mode
@@ -2132,7 +2133,7 @@ func (g *GXDLMSClient) ReadList(list []types.GXKeyValuePair[objects.IGXDLMSBase,
 		}
 		p := GXDLMSSNParameters{Settings: g.settings, Command: enums.CommandReadRequest, Count: len(list), RequestType: 0xFF, AttributeDescriptor: &data}
 		for _, it := range list {
-			err = data.SetUint8(byte(enums.VariableAccessSpecificationBlockNumberAccess))
+			err = data.SetUint8(byte(constants.VariableAccessSpecificationBlockNumberAccess))
 			if err != nil {
 				return nil, err
 			}
@@ -2255,7 +2256,7 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 	} else {
 		p := NewGXDLMSSNParameters(g.settings, enums.CommandWriteRequest, len(list), 0xFF, nil, &data)
 		for _, it := range list {
-			err = data.SetUint8(byte(enums.VariableAccessSpecificationBlockNumberAccess))
+			err = data.SetUint8(byte(constants.VariableAccessSpecificationBlockNumberAccess))
 			if err != nil {
 				return nil, err
 			}
@@ -2731,7 +2732,7 @@ func (g *GXDLMSClient) GetData(reply *types.GXByteBuffer, data *GXReplyData, not
 			if err != nil {
 				return false, err
 			}
-			err = tmp.SetUint8(byte(enums.GetCommandTypeNormal))
+			err = tmp.SetUint8(byte(constants.GetCommandTypeNormal))
 			if err != nil {
 				return false, err
 			}
@@ -2754,7 +2755,7 @@ func (g *GXDLMSClient) GetData(reply *types.GXByteBuffer, data *GXReplyData, not
 			if err != nil {
 				return false, err
 			}
-			err = tmp.SetUint8(byte(enums.GetCommandTypeNormal))
+			err = tmp.SetUint8(byte(constants.GetCommandTypeNormal))
 			if err != nil {
 				return false, err
 			}
@@ -2785,7 +2786,7 @@ func (g *GXDLMSClient) GetData(reply *types.GXByteBuffer, data *GXReplyData, not
 			if err != nil {
 				return false, err
 			}
-			err = tmp.SetUint8(byte(enums.VariableAccessSpecificationBlockNumberAccess))
+			err = tmp.SetUint8(byte(constants.VariableAccessSpecificationBlockNumberAccess))
 			if err != nil {
 				return false, err
 			}

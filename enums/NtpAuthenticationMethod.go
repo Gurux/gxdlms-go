@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func NtpAuthenticationMethodParse(value string) (NtpAuthenticationMethod, error) {
 	var ret NtpAuthenticationMethod
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOSECURITY":
+	switch {
+	case strings.EqualFold(value, "NoSecurity"):
 		ret = NtpAuthenticationMethodNoSecurity
-	case "SHAREDSECRETS":
+	case strings.EqualFold(value, "SharedSecrets"):
 		ret = NtpAuthenticationMethodSharedSecrets
-	case "AUTOKEYIFF":
+	case strings.EqualFold(value, "AutoKeyIff"):
 		ret = NtpAuthenticationMethodAutoKeyIff
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g NtpAuthenticationMethod) String() string {
 	var ret string
 	switch g {
 	case NtpAuthenticationMethodNoSecurity:
-		ret = "NOSECURITY"
+		ret = "NoSecurity"
 	case NtpAuthenticationMethodSharedSecrets:
-		ret = "SHAREDSECRETS"
+		ret = "SharedSecrets"
 	case NtpAuthenticationMethodAutoKeyIff:
-		ret = "AUTOKEYIFF"
+		ret = "AutoKeyIff"
 	}
 	return ret
+}
+
+// AllNtpAuthenticationMethod returns a slice containing all defined NtpAuthenticationMethod values.
+func AllNtpAuthenticationMethod() []NtpAuthenticationMethod {
+	return []NtpAuthenticationMethod{
+		NtpAuthenticationMethodNoSecurity,
+		NtpAuthenticationMethodSharedSecrets,
+		NtpAuthenticationMethodAutoKeyIff,
+	}
 }

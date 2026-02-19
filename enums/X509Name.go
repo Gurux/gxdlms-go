@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -117,70 +117,70 @@ const (
 func X509NameParse(value string) (X509Name, error) {
 	var ret X509Name
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = X509NameNone
-	case "C":
+	case strings.EqualFold(value, "C"):
 		ret = X509NameC
-	case "O":
+	case strings.EqualFold(value, "O"):
 		ret = X509NameO
-	case "OU":
+	case strings.EqualFold(value, "OU"):
 		ret = X509NameOU
-	case "T":
+	case strings.EqualFold(value, "T"):
 		ret = X509NameT
-	case "CN":
+	case strings.EqualFold(value, "CN"):
 		ret = X509NameCN
-	case "STREET":
+	case strings.EqualFold(value, "STREET"):
 		ret = X509NameSTREET
-	case "SERIALNUMBER":
+	case strings.EqualFold(value, "SerialNumber"):
 		ret = X509NameSerialNumber
-	case "L":
+	case strings.EqualFold(value, "L"):
 		ret = X509NameL
-	case "ST":
+	case strings.EqualFold(value, "ST"):
 		ret = X509NameST
-	case "SURNAME":
+	case strings.EqualFold(value, "SurName"):
 		ret = X509NameSurName
-	case "GIVENNAME":
+	case strings.EqualFold(value, "GivenName"):
 		ret = X509NameGivenName
-	case "INITIALS":
+	case strings.EqualFold(value, "Initials"):
 		ret = X509NameInitials
-	case "GENERATION":
+	case strings.EqualFold(value, "Generation"):
 		ret = X509NameGeneration
-	case "UNIQUEIDENTIFIER":
+	case strings.EqualFold(value, "UniqueIdentifier"):
 		ret = X509NameUniqueIdentifier
-	case "BUSINESSCATEGORY":
+	case strings.EqualFold(value, "BusinessCategory"):
 		ret = X509NameBusinessCategory
-	case "POSTALCODE":
+	case strings.EqualFold(value, "PostalCode"):
 		ret = X509NamePostalCode
-	case "DNQUALIFIER":
+	case strings.EqualFold(value, "DnQualifier"):
 		ret = X509NameDnQualifier
-	case "PSEUDONYM":
+	case strings.EqualFold(value, "Pseudonym"):
 		ret = X509NamePseudonym
-	case "DATEOFBIRTH":
+	case strings.EqualFold(value, "DateOfBirth"):
 		ret = X509NameDateOfBirth
-	case "PLACEOFBIRTH":
+	case strings.EqualFold(value, "PlaceOfBirth"):
 		ret = X509NamePlaceOfBirth
-	case "GENDER":
+	case strings.EqualFold(value, "Gender"):
 		ret = X509NameGender
-	case "COUNTRYOFCITIZENSHIP":
+	case strings.EqualFold(value, "CountryOfCitizenship"):
 		ret = X509NameCountryOfCitizenship
-	case "COUNTRYOFRESIDENCE":
+	case strings.EqualFold(value, "CountryOfResidence"):
 		ret = X509NameCountryOfResidence
-	case "NAMEATBIRTH":
+	case strings.EqualFold(value, "NameAtBirth"):
 		ret = X509NameNameAtBirth
-	case "POSTALADDRESS":
+	case strings.EqualFold(value, "PostalAddress"):
 		ret = X509NamePostalAddress
-	case "DMDNAME":
+	case strings.EqualFold(value, "DmdName"):
 		ret = X509NameDmdName
-	case "TELEPHONENUMBER":
+	case strings.EqualFold(value, "TelephoneNumber"):
 		ret = X509NameTelephoneNumber
-	case "NAME":
+	case strings.EqualFold(value, "Name"):
 		ret = X509NameName
-	case "E":
+	case strings.EqualFold(value, "E"):
 		ret = X509NameE
-	case "DC":
+	case strings.EqualFold(value, "DC"):
 		ret = X509NameDC
-	case "UID":
+	case strings.EqualFold(value, "UID"):
 		ret = X509NameUID
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -194,7 +194,7 @@ func (g X509Name) String() string {
 	var ret string
 	switch g {
 	case X509NameNone:
-		ret = "NONE"
+		ret = "None"
 	case X509NameC:
 		ret = "C"
 	case X509NameO:
@@ -208,49 +208,49 @@ func (g X509Name) String() string {
 	case X509NameSTREET:
 		ret = "STREET"
 	case X509NameSerialNumber:
-		ret = "SERIALNUMBER"
+		ret = "SerialNumber"
 	case X509NameL:
 		ret = "L"
 	case X509NameST:
 		ret = "ST"
 	case X509NameSurName:
-		ret = "SURNAME"
+		ret = "SurName"
 	case X509NameGivenName:
-		ret = "GIVENNAME"
+		ret = "GivenName"
 	case X509NameInitials:
-		ret = "INITIALS"
+		ret = "Initials"
 	case X509NameGeneration:
-		ret = "GENERATION"
+		ret = "Generation"
 	case X509NameUniqueIdentifier:
-		ret = "UNIQUEIDENTIFIER"
+		ret = "UniqueIdentifier"
 	case X509NameBusinessCategory:
-		ret = "BUSINESSCATEGORY"
+		ret = "BusinessCategory"
 	case X509NamePostalCode:
-		ret = "POSTALCODE"
+		ret = "PostalCode"
 	case X509NameDnQualifier:
-		ret = "DNQUALIFIER"
+		ret = "DnQualifier"
 	case X509NamePseudonym:
-		ret = "PSEUDONYM"
+		ret = "Pseudonym"
 	case X509NameDateOfBirth:
-		ret = "DATEOFBIRTH"
+		ret = "DateOfBirth"
 	case X509NamePlaceOfBirth:
-		ret = "PLACEOFBIRTH"
+		ret = "PlaceOfBirth"
 	case X509NameGender:
-		ret = "GENDER"
+		ret = "Gender"
 	case X509NameCountryOfCitizenship:
-		ret = "COUNTRYOFCITIZENSHIP"
+		ret = "CountryOfCitizenship"
 	case X509NameCountryOfResidence:
-		ret = "COUNTRYOFRESIDENCE"
+		ret = "CountryOfResidence"
 	case X509NameNameAtBirth:
-		ret = "NAMEATBIRTH"
+		ret = "NameAtBirth"
 	case X509NamePostalAddress:
-		ret = "POSTALADDRESS"
+		ret = "PostalAddress"
 	case X509NameDmdName:
-		ret = "DMDNAME"
+		ret = "DmdName"
 	case X509NameTelephoneNumber:
-		ret = "TELEPHONENUMBER"
+		ret = "TelephoneNumber"
 	case X509NameName:
-		ret = "NAME"
+		ret = "Name"
 	case X509NameE:
 		ret = "E"
 	case X509NameDC:
@@ -259,4 +259,42 @@ func (g X509Name) String() string {
 		ret = "UID"
 	}
 	return ret
+}
+
+// AllX509Name returns a slice containing all defined X509Name values.
+func AllX509Name() []X509Name {
+	return []X509Name{
+		X509NameNone,
+		X509NameC,
+		X509NameO,
+		X509NameOU,
+		X509NameT,
+		X509NameCN,
+		X509NameSTREET,
+		X509NameSerialNumber,
+		X509NameL,
+		X509NameST,
+		X509NameSurName,
+		X509NameGivenName,
+		X509NameInitials,
+		X509NameGeneration,
+		X509NameUniqueIdentifier,
+		X509NameBusinessCategory,
+		X509NamePostalCode,
+		X509NameDnQualifier,
+		X509NamePseudonym,
+		X509NameDateOfBirth,
+		X509NamePlaceOfBirth,
+		X509NameGender,
+		X509NameCountryOfCitizenship,
+		X509NameCountryOfResidence,
+		X509NameNameAtBirth,
+		X509NamePostalAddress,
+		X509NameDmdName,
+		X509NameTelephoneNumber,
+		X509NameName,
+		X509NameE,
+		X509NameDC,
+		X509NameUID,
+	}
 }

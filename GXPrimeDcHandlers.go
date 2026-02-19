@@ -44,6 +44,7 @@ import (
 
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
+	"github.com/Gurux/gxdlms-go/internal/constants"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
 	"github.com/Gurux/gxdlms-go/objects"
 	"github.com/Gurux/gxdlms-go/settings"
@@ -85,7 +86,7 @@ func primeDcHandleNewDeviceNotification(data *types.GXByteBuffer, replyData *GXR
 		replyData.PrimeDc.Type = enums.PrimeDcMsgTypeNewDeviceNotification
 		replyData.PrimeDc.DeviceID = deviceId
 		replyData.PrimeDc.Capabilities = capabilities
-		replyData.PrimeDc.DlmsId = id
+		replyData.PrimeDc.DlmsID = id
 		replyData.PrimeDc.Eui48 = eui48
 	}
 	if xml != nil {
@@ -725,7 +726,7 @@ func primeDcHanleSetRequestWithList(settings *settings.GXDLMSSettings,
 				di := internal.GXDataInfo{}
 				di.Xml = xml
 				if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-					xml.AppendStartTag(int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData), "", "", false)
+					xml.AppendStartTag(int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData), "", "", false)
 				}
 				value, err := internal.GetData(settings, data, &di)
 				if err != nil {
@@ -737,7 +738,7 @@ func primeDcHanleSetRequestWithList(settings *settings.GXDLMSSettings,
 					value = types.ToHex(v, false)
 				}
 				if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-					xml.AppendEndTag(int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData), false)
+					xml.AppendEndTag(int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData), false)
 				}
 			}
 		}
@@ -754,7 +755,7 @@ func primeDcHanleSetRequestWithList(settings *settings.GXDLMSSettings,
 			return err
 		}
 	}
-	p.requestType = uint8(enums.SetResponseTypeWithList)
+	p.requestType = uint8(constants.SetResponseTypeWithList)
 	return nil
 }
 
@@ -797,7 +798,7 @@ func primeDcMethodRequestNextDataBlock2(settings *settings.GXDLMSSettings,
 	if streaming {
 		cmd = enums.CommandGeneralBlockTransfer
 	}
-	p := NewGXDLMSLNParameters(settings, uint32(invokeID), cmd, byte(enums.ActionResponseTypeWithBlock), nil, &bb, byte(enums.ErrorCodeOk), cipheredCommand)
+	p := NewGXDLMSLNParameters(settings, uint32(invokeID), cmd, byte(constants.ActionResponseTypeWithBlock), nil, &bb, byte(enums.ErrorCodeOk), cipheredCommand)
 	p.streaming = streaming
 	p.gbtWindowSize = settings.GbtWindowSize()
 	// If transaction is not in progress.
@@ -1042,51 +1043,51 @@ func primeDcHandleNotification(data *types.GXByteBuffer, replyData *GXReplyData,
 	switch type_ {
 	case enums.PrimeDcMsgTypeNewDeviceNotification:
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsPrimeNewDeviceNotification), "", "", false)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsPrimeNewDeviceNotification), "", "", false)
 		}
 		err = primeDcHandleNewDeviceNotification(data, replyData, xml)
 		if xml != nil {
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsPrimeNewDeviceNotification), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsPrimeNewDeviceNotification), false)
 		}
 	case enums.PrimeDcMsgTypeRemoveDeviceNotification:
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsPrimeRemoveDeviceNotification), "", "", false)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsPrimeRemoveDeviceNotification), "", "", false)
 		}
 		err = primeDcHandleRemoveDeviceNotification(data, replyData, xml)
 		if xml != nil {
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsPrimeRemoveDeviceNotification), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsPrimeRemoveDeviceNotification), false)
 		}
 	case enums.PrimeDcMsgTypeStartReportingMeters:
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsPrimeStartReportingMeters), "", "", false)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsPrimeStartReportingMeters), "", "", false)
 		}
 		err = primeDcHandleStartReportingMeters(data, replyData, xml)
 		if xml != nil {
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsPrimeStartReportingMeters), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsPrimeStartReportingMeters), false)
 		}
 	case enums.PrimeDcMsgTypeDeleteMeters:
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsPrimeDeleteMeters), "", "", false)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsPrimeDeleteMeters), "", "", false)
 		}
 		err = primeDcHandleDeleteMeters(data, replyData, xml)
 		if xml != nil {
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsPrimeDeleteMeters), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsPrimeDeleteMeters), false)
 		}
 	case enums.PrimeDcMsgTypeEnableAutoClose:
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsPrimeEnableAutoClose), "", "", false)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsPrimeEnableAutoClose), "", "", false)
 		}
 		err = primeDcHandleEnableAutoClose(data, replyData, xml)
 		if xml != nil {
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsPrimeEnableAutoClose), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsPrimeEnableAutoClose), false)
 		}
 	case enums.PrimeDcMsgTypeDisableAutoClose:
 		if xml != nil {
-			xml.AppendStartTag(int(enums.TranslatorGeneralTagsPrimeDisableAutoClose), "", "", false)
+			xml.AppendStartTag(int(constants.TranslatorGeneralTagsPrimeDisableAutoClose), "", "", false)
 		}
 		err = primeDcHandleDisableAutoClose(data, replyData, xml)
 		if xml != nil {
-			xml.AppendEndTag(int(enums.TranslatorGeneralTagsPrimeDisableAutoClose), false)
+			xml.AppendEndTag(int(constants.TranslatorGeneralTagsPrimeDisableAutoClose), false)
 		}
 	default:
 		data.SetPosition(data.Position() - 1)
@@ -1133,15 +1134,15 @@ func primeDcHandleSetRequest(settings *settings.GXDLMSSettings,
 		}
 	}
 	switch type_ {
-	case byte(enums.SetRequestTypeNormal):
-	case byte(enums.SetRequestTypeFirstDataBlock):
-		if type_ == byte(enums.SetRequestTypeNormal) {
+	case byte(constants.SetRequestTypeNormal):
+	case byte(constants.SetRequestTypeFirstDataBlock):
+		if type_ == byte(constants.SetRequestTypeNormal) {
 			p.status = 0
 		}
 		err = primeDcHandleSetRequestNormal(settings, server, data, byte(type_), p, replyData, xml)
-	case byte(enums.SetRequestTypeWithDataBlock):
+	case byte(constants.SetRequestTypeWithDataBlock):
 		err = primeDcHandleSetRequestWithDataBlock(settings, server, data, p, replyData, xml)
-	case byte(enums.SetRequestTypeWithList):
+	case byte(constants.SetRequestTypeWithList):
 		err = primeDcHanleSetRequestWithList(settings, invoke, server, data, p, replyData, xml)
 	default:
 		log.Println("HandleSetRequest failed. Unknown command.")
@@ -1161,7 +1162,7 @@ func primeDcHandleSetRequest(settings *settings.GXDLMSSettings,
 }
 
 func primeDcMethodRequest(settings *settings.GXDLMSSettings,
-	type_ enums.ActionRequestType,
+	type_ constants.ActionRequestType,
 	invokeId uint8,
 	server *GXDLMSServer,
 	data *types.GXByteBuffer,
@@ -1188,9 +1189,9 @@ func primeDcMethodRequest(settings *settings.GXDLMSSettings,
 		return err
 	}
 	var parameters any
-	p := NewGXDLMSLNParameters(settings, uint32(invokeId), enums.CommandMethodResponse, byte(enums.ActionResponseTypeNormal), nil, &bb, 0, cipheredCommand)
+	p := NewGXDLMSLNParameters(settings, uint32(invokeId), enums.CommandMethodResponse, byte(constants.ActionResponseTypeNormal), nil, &bb, 0, cipheredCommand)
 	switch type_ {
-	case enums.ActionRequestTypeNormal:
+	case constants.ActionRequestTypeNormal:
 		// Get parameters.
 		selection, err := data.Uint8()
 		if err != nil {
@@ -1214,8 +1215,8 @@ func primeDcMethodRequest(settings *settings.GXDLMSSettings,
 				return err
 			}
 		}
-	case enums.ActionRequestTypeWithFirstBlock:
-		p.requestType = uint8(enums.ActionResponseTypeNextBlock)
+	case constants.ActionRequestTypeWithFirstBlock:
+		p.requestType = uint8(constants.ActionResponseTypeNextBlock)
 		p.status = 0xFF
 		lastBlock, err := data.Uint8()
 		if err != nil {
@@ -1289,7 +1290,7 @@ func primeDcMethodRequest(settings *settings.GXDLMSSettings,
 				server.transaction = newGXDLMSLongTransaction([]*internal.ValueEventArgs{e}, enums.CommandMethodRequest, data)
 			} else if server.transaction == nil {
 				//Check transaction so invoke is not called multiple times.This might happen when all data can't fit to one PDU.
-				p.requestType = uint8(enums.ActionResponseTypeNormal)
+				p.requestType = uint8(constants.ActionResponseTypeNormal)
 				server.NotifyPreAction([]*internal.ValueEventArgs{e})
 				var actionReply []byte
 				if e.Handled {
@@ -1389,14 +1390,14 @@ func primeDcMethodRequestNextBlock(settings *settings.GXDLMSSettings,
 			server.transaction = nil
 			log.Println("MethodRequestNextBlock failed. Invalid block number. %d/%d", settings.BlockIndex, blockNumber)
 			settings.ResetBlockIndex()
-			return getLNPdu(NewGXDLMSLNParameters(settings, 0, enums.CommandMethodResponse, byte(enums.ActionResponseTypeNormal), nil,
+			return getLNPdu(NewGXDLMSLNParameters(settings, 0, enums.CommandMethodResponse, byte(constants.ActionResponseTypeNormal), nil,
 				&bb, byte(enums.ErrorCodeDataBlockNumberInvalid), cipheredCommand), replyData)
 		}
 		if size < data.Available() {
 			server.transaction = nil
 			settings.ResetBlockIndex()
 			log.Println("MethodRequestNextBlock failed. Not enought data. Actual: %d . Expected %d", data.Available, +size)
-			return getLNPdu(NewGXDLMSLNParameters(settings, 0, enums.CommandMethodResponse, byte(enums.ActionResponseTypeNormal), nil,
+			return getLNPdu(NewGXDLMSLNParameters(settings, 0, enums.CommandMethodResponse, byte(constants.ActionResponseTypeNormal), nil,
 				&bb, byte(enums.ErrorCodeDataBlockNumberInvalid), cipheredCommand), replyData)
 		}
 	}
@@ -1404,7 +1405,7 @@ func primeDcMethodRequestNextBlock(settings *settings.GXDLMSSettings,
 	if streaming {
 		cmd = enums.CommandGeneralBlockTransfer
 	}
-	p := NewGXDLMSLNParameters(settings, 0, cmd, byte(enums.ActionResponseTypeNormal), nil, &bb, byte(enums.ErrorCodeOk), cipheredCommand)
+	p := NewGXDLMSLNParameters(settings, 0, cmd, byte(constants.ActionResponseTypeNormal), nil, &bb, byte(enums.ErrorCodeOk), cipheredCommand)
 	p.multipleBlocks = lastBlock == 0
 	p.streaming = streaming
 	p.gbtWindowSize = settings.GbtWindowSize()
@@ -1478,7 +1479,7 @@ func primeDcMethodRequestNextBlock(settings *settings.GXDLMSSettings,
 			}
 		} else {
 			//Ask next block.
-			p.requestType = uint8(enums.ActionResponseTypeNextBlock)
+			p.requestType = uint8(constants.ActionResponseTypeNextBlock)
 			p.status = 0xFF
 		}
 	}
@@ -1506,14 +1507,14 @@ func primeDcHandleMethodRequest(settings *settings.GXDLMSSettings,
 	if err != nil {
 		return err
 	}
-	type_ := enums.ActionRequestType(ret)
+	type_ := constants.ActionRequestType(ret)
 	invokeID, err = data.Uint8()
 	if err != nil {
 		return err
 	}
 	settings.UpdateInvokeID(invokeID)
 	if xml != nil {
-		if type_ > 0 && type_ <= enums.ActionRequestTypeWithBlock {
+		if type_ > 0 && type_ <= constants.ActionRequestTypeWithBlock {
 			addInvokeId(xml, enums.CommandMethodRequest, int(type_), uint32(invokeID))
 		} else {
 			xml.AppendStartTag(int(enums.CommandMethodRequest), "", "", true)
@@ -1522,24 +1523,24 @@ func primeDcHandleMethodRequest(settings *settings.GXDLMSSettings,
 		}
 	}
 	switch type_ {
-	case enums.ActionRequestTypeNormal:
-	case enums.ActionRequestTypeWithFirstBlock:
+	case constants.ActionRequestTypeNormal:
+	case constants.ActionRequestTypeWithFirstBlock:
 		err = primeDcMethodRequest(settings, type_, invokeID, server, data, connectionInfo, replyData, xml, cipheredCommand)
-	case enums.ActionRequestTypeNextBlock:
+	case constants.ActionRequestTypeNextBlock:
 		err = primeDcMethodRequestNextDataBlock2(settings, server, data, invokeID, replyData, xml, false, cipheredCommand)
-	case enums.ActionRequestTypeWithBlock:
+	case constants.ActionRequestTypeWithBlock:
 		err = primeDcMethodRequestNextBlock(settings, server, data, connectionInfo, replyData, xml, false, cipheredCommand)
 	default:
 		if xml == nil {
 			log.Println("HandleMethodRequest failed. Invalid command type_.")
 			settings.ResetBlockIndex()
-			type_ = enums.ActionRequestTypeNormal
+			type_ = constants.ActionRequestTypeNormal
 			data.Clear()
 			err = getLNPdu(NewGXDLMSLNParameters(settings, uint32(invokeID), enums.CommandMethodResponse, byte(type_), nil, nil, byte(enums.ErrorCodeReadWriteDenied), cipheredCommand), replyData)
 		}
 	}
 	if xml != nil {
-		if type_ > 0 && type_ <= enums.ActionRequestTypeWithBlock {
+		if type_ > 0 && type_ <= constants.ActionRequestTypeWithBlock {
 			xml.AppendEndTag(int(enums.CommandMethodRequest)<<8|int(type_), true)
 		} else {
 			xml.AppendEndTag(int(enums.CommandMethodRequest), true)
@@ -1673,7 +1674,7 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 		di := internal.GXDataInfo{}
 		di.Xml = xml
 		if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-			xml.AppendStartTag(int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData), "", "", true)
+			xml.AppendStartTag(int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData), "", "", true)
 		}
 		value, err := internal.GetData(settings, data, &di)
 		if err != nil {
@@ -1766,7 +1767,7 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 			}
 		}
 		if xml != nil && xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-			xml.AppendEndTag(int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData), true)
+			xml.AppendEndTag(int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData), true)
 		}
 	}
 	if xml != nil {

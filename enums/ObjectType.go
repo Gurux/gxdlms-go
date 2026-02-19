@@ -310,182 +310,182 @@ const (
 func ObjectTypeParse(value string) (ObjectType, error) {
 	var ret ObjectType
 	var err error
-	switch strings.ToUpper(value) {
-	case "None":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ObjectTypeNone
-	case "ActionSchedule":
+	case strings.EqualFold(value, "ActionSchedule"):
 		ret = ObjectTypeActionSchedule
-	case "ActivityCalendar":
+	case strings.EqualFold(value, "ActivityCalendar"):
 		ret = ObjectTypeActivityCalendar
-	case "AssociationLogicalName":
+	case strings.EqualFold(value, "AssociationLogicalName"):
 		ret = ObjectTypeAssociationLogicalName
-	case "AssociationShortName":
+	case strings.EqualFold(value, "AssociationShortName"):
 		ret = ObjectTypeAssociationShortName
-	case "AutoAnswer":
+	case strings.EqualFold(value, "AutoAnswer"):
 		ret = ObjectTypeAutoAnswer
-	case "AutoConnect":
+	case strings.EqualFold(value, "AutoConnect"):
 		ret = ObjectTypeAutoConnect
-	case "Clock":
+	case strings.EqualFold(value, "Clock"):
 		ret = ObjectTypeClock
-	case "Data":
+	case strings.EqualFold(value, "Data"):
 		ret = ObjectTypeData
-	case "DemandRegister":
+	case strings.EqualFold(value, "DemandRegister"):
 		ret = ObjectTypeDemandRegister
-	case "MacAddressSetup":
+	case strings.EqualFold(value, "MacAddressSetup"):
 		ret = ObjectTypeMacAddressSetup
-	case "ExtendedRegister":
+	case strings.EqualFold(value, "ExtendedRegister"):
 		ret = ObjectTypeExtendedRegister
-	case "GprsSetup":
+	case strings.EqualFold(value, "GprsSetup"):
 		ret = ObjectTypeGprsSetup
-	case "IecHdlcSetup":
+	case strings.EqualFold(value, "IecHdlcSetup"):
 		ret = ObjectTypeIecHdlcSetup
-	case "IecLocalPortSetup":
+	case strings.EqualFold(value, "IecLocalPortSetup"):
 		ret = ObjectTypeIecLocalPortSetup
-	case "IecTwistedPairSetup":
+	case strings.EqualFold(value, "IecTwistedPairSetup"):
 		ret = ObjectTypeIecTwistedPairSetup
-	case "IP4Setup":
+	case strings.EqualFold(value, "IP4Setup"):
 		ret = ObjectTypeIP4Setup
-	case "GSMDiagnostic":
+	case strings.EqualFold(value, "GSMDiagnostic"):
 		ret = ObjectTypeGSMDiagnostic
-	case "IP6Setup":
+	case strings.EqualFold(value, "IP6Setup"):
 		ret = ObjectTypeIP6Setup
-	case "MBusSlavePortSetup":
+	case strings.EqualFold(value, "MBusSlavePortSetup"):
 		ret = ObjectTypeMBusSlavePortSetup
-	case "ModemConfiguration":
+	case strings.EqualFold(value, "ModemConfiguration"):
 		ret = ObjectTypeModemConfiguration
-	case "PushSetup":
+	case strings.EqualFold(value, "PushSetup"):
 		ret = ObjectTypePushSetup
-	case "PppSetup":
+	case strings.EqualFold(value, "PppSetup"):
 		ret = ObjectTypePppSetup
-	case "ProfileGeneric":
+	case strings.EqualFold(value, "ProfileGeneric"):
 		ret = ObjectTypeProfileGeneric
-	case "Register":
+	case strings.EqualFold(value, "Register"):
 		ret = ObjectTypeRegister
-	case "RegisterActivation":
+	case strings.EqualFold(value, "RegisterActivation"):
 		ret = ObjectTypeRegisterActivation
-	case "RegisterMonitor":
+	case strings.EqualFold(value, "RegisterMonitor"):
 		ret = ObjectTypeRegisterMonitor
-	case "Iec8802LlcType1Setup":
+	case strings.EqualFold(value, "Iec8802LlcType1Setup"):
 		ret = ObjectTypeIec8802LlcType1Setup
-	case "Iec8802LlcType2Setup":
+	case strings.EqualFold(value, "Iec8802LlcType2Setup"):
 		ret = ObjectTypeIec8802LlcType2Setup
-	case "Iec8802LlcType3Setup":
+	case strings.EqualFold(value, "Iec8802LlcType3Setup"):
 		ret = ObjectTypeIec8802LlcType3Setup
-	case "DisconnectControl":
+	case strings.EqualFold(value, "DisconnectControl"):
 		ret = ObjectTypeDisconnectControl
-	case "Limiter":
+	case strings.EqualFold(value, "Limiter"):
 		ret = ObjectTypeLimiter
-	case "MBusClient":
+	case strings.EqualFold(value, "MBusClient"):
 		ret = ObjectTypeMBusClient
-	case "CompactData":
+	case strings.EqualFold(value, "CompactData"):
 		ret = ObjectTypeCompactData
-	case "ParameterMonitor":
+	case strings.EqualFold(value, "ParameterMonitor"):
 		ret = ObjectTypeParameterMonitor
-	case "WirelessModeQchannel":
+	case strings.EqualFold(value, "WirelessModeQchannel"):
 		ret = ObjectTypeWirelessModeQchannel
-	case "MBusMasterPortSetup":
+	case strings.EqualFold(value, "MBusMasterPortSetup"):
 		ret = ObjectTypeMBusMasterPortSetup
-	case "MBusPortSetup":
+	case strings.EqualFold(value, "MBusPortSetup"):
 		ret = ObjectTypeMBusPortSetup
-	case "MBusDiagnostic":
+	case strings.EqualFold(value, "MBusDiagnostic"):
 		ret = ObjectTypeMBusDiagnostic
-	case "LlcSscsSetup":
+	case strings.EqualFold(value, "LlcSscsSetup"):
 		ret = ObjectTypeLlcSscsSetup
-	case "PrimeNbOfdmPlcPhysicalLayerCounters":
+	case strings.EqualFold(value, "PrimeNbOfdmPlcPhysicalLayerCounters"):
 		ret = ObjectTypePrimeNbOfdmPlcPhysicalLayerCounters
-	case "PrimeNbOfdmPlcMacSetup":
+	case strings.EqualFold(value, "PrimeNbOfdmPlcMacSetup"):
 		ret = ObjectTypePrimeNbOfdmPlcMacSetup
-	case "PrimeNbOfdmPlcMacFunctionalParameters":
+	case strings.EqualFold(value, "PrimeNbOfdmPlcMacFunctionalParameters"):
 		ret = ObjectTypePrimeNbOfdmPlcMacFunctionalParameters
-	case "PrimeNbOfdmPlcMacCounters":
+	case strings.EqualFold(value, "PrimeNbOfdmPlcMacCounters"):
 		ret = ObjectTypePrimeNbOfdmPlcMacCounters
-	case "PrimeNbOfdmPlcMacNetworkAdministrationData":
+	case strings.EqualFold(value, "PrimeNbOfdmPlcMacNetworkAdministrationData"):
 		ret = ObjectTypePrimeNbOfdmPlcMacNetworkAdministrationData
-	case "PrimeNbOfdmPlcApplicationsIdentification":
+	case strings.EqualFold(value, "PrimeNbOfdmPlcApplicationsIdentification"):
 		ret = ObjectTypePrimeNbOfdmPlcApplicationsIdentification
-	case "RegisterTable":
+	case strings.EqualFold(value, "RegisterTable"):
 		ret = ObjectTypeRegisterTable
-	case "NtpSetup":
+	case strings.EqualFold(value, "NtpSetup"):
 		ret = ObjectTypeNtpSetup
-	case "ZigBeeSasStartup":
+	case strings.EqualFold(value, "ZigBeeSasStartup"):
 		ret = ObjectTypeZigBeeSasStartup
-	case "ZigBeeSasJoin":
+	case strings.EqualFold(value, "ZigBeeSasJoin"):
 		ret = ObjectTypeZigBeeSasJoin
-	case "ZigBeeSasApsFragmentation":
+	case strings.EqualFold(value, "ZigBeeSasApsFragmentation"):
 		ret = ObjectTypeZigBeeSasApsFragmentation
-	case "ZigBeeNetworkControl":
+	case strings.EqualFold(value, "ZigBeeNetworkControl"):
 		ret = ObjectTypeZigBeeNetworkControl
-	case "DataProtection":
+	case strings.EqualFold(value, "DataProtection"):
 		ret = ObjectTypeDataProtection
-	case "Account":
+	case strings.EqualFold(value, "Account"):
 		ret = ObjectTypeAccount
-	case "Credit":
+	case strings.EqualFold(value, "Credit"):
 		ret = ObjectTypeCredit
-	case "Charge":
+	case strings.EqualFold(value, "Charge"):
 		ret = ObjectTypeCharge
-	case "TokenGateway":
+	case strings.EqualFold(value, "TokenGateway"):
 		ret = ObjectTypeTokenGateway
-	case "IEC6205541Attributes":
+	case strings.EqualFold(value, "IEC6205541Attributes"):
 		ret = ObjectTypeIEC6205541Attributes
-	case "ArrayManager":
+	case strings.EqualFold(value, "ArrayManager"):
 		ret = ObjectTypeArrayManager
-	case "SapAssignment":
+	case strings.EqualFold(value, "SapAssignment"):
 		ret = ObjectTypeSapAssignment
-	case "ImageTransfer":
+	case strings.EqualFold(value, "ImageTransfer"):
 		ret = ObjectTypeImageTransfer
-	case "Schedule":
+	case strings.EqualFold(value, "Schedule"):
 		ret = ObjectTypeSchedule
-	case "ScriptTable":
+	case strings.EqualFold(value, "ScriptTable"):
 		ret = ObjectTypeScriptTable
-	case "SMTPSetup":
+	case strings.EqualFold(value, "SMTPSetup"):
 		ret = ObjectTypeSMTPSetup
-	case "SpecialDaysTable":
+	case strings.EqualFold(value, "SpecialDaysTable"):
 		ret = ObjectTypeSpecialDaysTable
-	case "StatusMapping":
+	case strings.EqualFold(value, "StatusMapping"):
 		ret = ObjectTypeStatusMapping
-	case "SecuritySetup":
+	case strings.EqualFold(value, "SecuritySetup"):
 		ret = ObjectTypeSecuritySetup
-	case "TCPUDPSetup":
+	case strings.EqualFold(value, "TCPUDPSetup"):
 		ret = ObjectTypeTCPUDPSetup
-	case "UtilityTables":
+	case strings.EqualFold(value, "UtilityTables"):
 		ret = ObjectTypeUtilityTables
-	case "SFSKPhyMacSetUp":
+	case strings.EqualFold(value, "SFSKPhyMacSetUp"):
 		ret = ObjectTypeSFSKPhyMacSetUp
-	case "SFSKActiveInitiator":
+	case strings.EqualFold(value, "SFSKActiveInitiator"):
 		ret = ObjectTypeSFSKActiveInitiator
-	case "SFSKMacSynchronizationTimeouts":
+	case strings.EqualFold(value, "SFSKMacSynchronizationTimeouts"):
 		ret = ObjectTypeSFSKMacSynchronizationTimeouts
-	case "SFSKMacCounters":
+	case strings.EqualFold(value, "SFSKMacCounters"):
 		ret = ObjectTypeSFSKMacCounters
-	case "Iec61334_4_32LlcSetup":
+	case strings.EqualFold(value, "Iec61334_4_32LlcSetup"):
 		ret = ObjectTypeIec61334_4_32LlcSetup
-	case "SFSKReportingSystemList":
+	case strings.EqualFold(value, "SFSKReportingSystemList"):
 		ret = ObjectTypeSFSKReportingSystemList
-	case "Arbitrator":
+	case strings.EqualFold(value, "Arbitrator"):
 		ret = ObjectTypeArbitrator
-	case "G3PlcMacLayerCounters":
+	case strings.EqualFold(value, "G3PlcMacLayerCounters"):
 		ret = ObjectTypeG3PlcMacLayerCounters
-	case "G3PlcMacSetup":
+	case strings.EqualFold(value, "G3PlcMacSetup"):
 		ret = ObjectTypeG3PlcMacSetup
-	case "G3Plc6LoWPan":
+	case strings.EqualFold(value, "G3Plc6LoWPan"):
 		ret = ObjectTypeG3Plc6LoWPan
-	case "FunctionControl":
+	case strings.EqualFold(value, "FunctionControl"):
 		ret = ObjectTypeFunctionControl
-	case "CommunicationPortProtection":
+	case strings.EqualFold(value, "CommunicationPortProtection"):
 		ret = ObjectTypeCommunicationPortProtection
-	case "LteMonitoring":
+	case strings.EqualFold(value, "LteMonitoring"):
 		ret = ObjectTypeLteMonitoring
-	case "CoAPSetup":
+	case strings.EqualFold(value, "CoAPSetup"):
 		ret = ObjectTypeCoAPSetup
-	case "CoAPDiagnostic":
+	case strings.EqualFold(value, "CoAPDiagnostic"):
 		ret = ObjectTypeCoAPDiagnostic
-	case "G3PlcHybridRfMacLayerCounters":
+	case strings.EqualFold(value, "G3PlcHybridRfMacLayerCounters"):
 		ret = ObjectTypeG3PlcHybridRfMacLayerCounters
-	case "G3PlcHybridRfMacSetup":
+	case strings.EqualFold(value, "G3PlcHybridRfMacSetup"):
 		ret = ObjectTypeG3PlcHybridRfMacSetup
-	case "G3PlcHybrid6LoWPANAdaptationLayerSetup":
+	case strings.EqualFold(value, "G3PlcHybrid6LoWPANAdaptationLayerSetup"):
 		ret = ObjectTypeG3PlcHybrid6LoWPANAdaptationLayerSetup
-	case "TariffPlan":
+	case strings.EqualFold(value, "TariffPlan"):
 		ret = ObjectTypeTariffPlan
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -678,7 +678,7 @@ func (g ObjectType) String() string {
 	return ret
 }
 
-// AllObjectType returns a slice containing all defined object type values.
+// AllObjectType returns a slice containing all defined ObjectType values.
 func AllObjectType() []ObjectType {
 	return []ObjectType{
 		ObjectTypeNone,

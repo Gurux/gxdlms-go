@@ -270,7 +270,7 @@ func (g *GXDLMSDisconnectControl) RemoteReconnect(client IGXDLMSClient) ([][]uin
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSDisconnectControl) GetValues() []any {
-	return []any{g.LogicalName, g.OutputState, g.ControlState, g.ControlMode}
+	return []any{g.LogicalName(), g.OutputState, g.ControlState, g.ControlMode}
 }
 
 // GetDataType returns the device data type of selected attribute index.

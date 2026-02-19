@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Priority Used priority.
+// Priority defines used priority.
 type Priority int
 
 const (
@@ -58,10 +58,10 @@ const (
 func PriorityParse(value string) (Priority, error) {
 	var ret Priority
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
+	switch {
+	case strings.EqualFold(value, "Normal"):
 		ret = PriorityNormal
-	case "HIGH":
+	case strings.EqualFold(value, "High"):
 		ret = PriorityHigh
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g Priority) String() string {
 	var ret string
 	switch g {
 	case PriorityNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case PriorityHigh:
-		ret = "HIGH"
+		ret = "High"
 	}
 	return ret
+}
+
+// AllPriority returns a slice containing all defined Priority values.
+func AllPriority() []Priority {
+	return []Priority{
+		PriorityNormal,
+		PriorityHigh,
+	}
 }

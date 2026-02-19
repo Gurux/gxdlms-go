@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,14 +64,14 @@ const (
 func PppSetupAuthenticationProtocolParse(value string) (PppSetupAuthenticationProtocol, error) {
 	var ret PppSetupAuthenticationProtocol
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = PppSetupAuthenticationProtocolNone
-	case "PAP":
+	case strings.EqualFold(value, "PAP"):
 		ret = PppSetupAuthenticationProtocolPAP
-	case "CHAP":
+	case strings.EqualFold(value, "CHAP"):
 		ret = PppSetupAuthenticationProtocolCHAP
-	case "EAP":
+	case strings.EqualFold(value, "EAP"):
 		ret = PppSetupAuthenticationProtocolEAP
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -85,7 +85,7 @@ func (g PppSetupAuthenticationProtocol) String() string {
 	var ret string
 	switch g {
 	case PppSetupAuthenticationProtocolNone:
-		ret = "NONE"
+		ret = "None"
 	case PppSetupAuthenticationProtocolPAP:
 		ret = "PAP"
 	case PppSetupAuthenticationProtocolCHAP:
@@ -94,4 +94,14 @@ func (g PppSetupAuthenticationProtocol) String() string {
 		ret = "EAP"
 	}
 	return ret
+}
+
+// AllPppSetupAuthenticationProtocol returns a slice containing all defined PppSetupAuthenticationProtocol values.
+func AllPppSetupAuthenticationProtocol() []PppSetupAuthenticationProtocol {
+	return []PppSetupAuthenticationProtocol{
+		PppSetupAuthenticationProtocolNone,
+		PppSetupAuthenticationProtocolPAP,
+		PppSetupAuthenticationProtocolCHAP,
+		PppSetupAuthenticationProtocolEAP,
+	}
 }

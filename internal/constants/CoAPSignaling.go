@@ -34,74 +34,20 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// CoAP Signaling .
+// CoAPSignaling defines Coap signaling values .
 type CoAPSignaling int
 
 const (
-	// CoAPSignalingUnassigned defines that the // Unassigned.
+	// CoAPSignalingUnassigned defines that the Unassigned.
 	CoAPSignalingUnassigned CoAPSignaling = iota
-	// CoAPSignalingCSM defines that the // CSM.
+	// CoAPSignalingCSM defines CSM.
 	CoAPSignalingCSM
-	// CoAPSignalingPing defines that the // Ping.
+	// CoAPSignalingPing defines Ping.
 	CoAPSignalingPing
-	// CoAPSignalingPong defines that the // Pong.
+	// CoAPSignalingPong defines Pong.
 	CoAPSignalingPong
-	// CoAPSignalingRelease defines that the // Release.
+	// CoAPSignalingRelease defines  Release.
 	CoAPSignalingRelease
-	// CoAPSignalingAbort defines that the // Forbidden.
+	// CoAPSignalingAbort defines Forbidden.
 	CoAPSignalingAbort
 )
-
-// CoAPSignalingParse converts the given string into a CoAPSignaling value.
-//
-// It returns the corresponding CoAPSignaling constant if the string matches
-// a known level name, or an error if the input is invalid.
-func CoAPSignalingParse(value string) (CoAPSignaling, error) {
-	var ret CoAPSignaling
-	var err error
-	switch strings.ToUpper(value) {
-	case "UNASSIGNED":
-		ret = CoAPSignalingUnassigned
-	case "CSM":
-		ret = CoAPSignalingCSM
-	case "PING":
-		ret = CoAPSignalingPing
-	case "PONG":
-		ret = CoAPSignalingPong
-	case "RELEASE":
-		ret = CoAPSignalingRelease
-	case "ABORT":
-		ret = CoAPSignalingAbort
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
-
-// String returns the canonical name of the CoAPSignaling.
-// It satisfies fmt.Stringer.
-func (g CoAPSignaling) String() string {
-	var ret string
-	switch g {
-	case CoAPSignalingUnassigned:
-		ret = "UNASSIGNED"
-	case CoAPSignalingCSM:
-		ret = "CSM"
-	case CoAPSignalingPing:
-		ret = "PING"
-	case CoAPSignalingPong:
-		ret = "PONG"
-	case CoAPSignalingRelease:
-		ret = "RELEASE"
-	case CoAPSignalingAbort:
-		ret = "ABORT"
-	}
-	return ret
-}

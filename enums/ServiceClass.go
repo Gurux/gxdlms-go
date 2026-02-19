@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func ServiceClassParse(value string) (ServiceClass, error) {
 	var ret ServiceClass
 	var err error
-	switch strings.ToUpper(value) {
-	case "UNCONFIRMED":
+	switch {
+	case strings.EqualFold(value, "UnConfirmed"):
 		ret = ServiceClassUnConfirmed
-	case "CONFIRMED":
+	case strings.EqualFold(value, "Confirmed"):
 		ret = ServiceClassConfirmed
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g ServiceClass) String() string {
 	var ret string
 	switch g {
 	case ServiceClassUnConfirmed:
-		ret = "UNCONFIRMED"
+		ret = "UnConfirmed"
 	case ServiceClassConfirmed:
-		ret = "CONFIRMED"
+		ret = "Confirmed"
 	}
 	return ret
+}
+
+// AllServiceClass returns a slice containing all defined ServiceClass values.
+func AllServiceClass() []ServiceClass {
+	return []ServiceClass{
+		ServiceClassUnConfirmed,
+		ServiceClassConfirmed,
+	}
 }

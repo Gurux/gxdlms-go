@@ -61,20 +61,20 @@ const (
 func PlcMacSubframesParse(value string) (PlcMacSubframes, error) {
 	var ret PlcMacSubframes
 	var err error
-	switch strings.ToUpper(value) {
-	case "ONE":
+	switch {
+	case strings.EqualFold(value, "One"):
 		ret = PlcMacSubframesOne
-	case "TWO":
+	case strings.EqualFold(value, "Two"):
 		ret = PlcMacSubframesTwo
-	case "THREE":
+	case strings.EqualFold(value, "Three"):
 		ret = PlcMacSubframesThree
-	case "FOUR":
+	case strings.EqualFold(value, "Four"):
 		ret = PlcMacSubframesFour
-	case "FIVE":
+	case strings.EqualFold(value, "Five"):
 		ret = PlcMacSubframesFive
-	case "SIX":
+	case strings.EqualFold(value, "Six"):
 		ret = PlcMacSubframesSix
-	case "SEVEN":
+	case strings.EqualFold(value, "Seven"):
 		ret = PlcMacSubframesSeven
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -88,19 +88,32 @@ func (g PlcMacSubframes) String() string {
 	var ret string
 	switch g {
 	case PlcMacSubframesOne:
-		ret = "ONE"
+		ret = "One"
 	case PlcMacSubframesTwo:
-		ret = "TWO"
+		ret = "Two"
 	case PlcMacSubframesThree:
-		ret = "THREE"
+		ret = "Three"
 	case PlcMacSubframesFour:
-		ret = "FOUR"
+		ret = "Four"
 	case PlcMacSubframesFive:
-		ret = "FIVE"
+		ret = "Five"
 	case PlcMacSubframesSix:
-		ret = "SIX"
+		ret = "Six"
 	case PlcMacSubframesSeven:
-		ret = "SEVEN"
+		ret = "Seven"
 	}
 	return ret
+}
+
+// AllPlcMacSubframes returns a slice containing all defined PlcMacSubframes values.
+func AllPlcMacSubframes() []PlcMacSubframes {
+	return []PlcMacSubframes{
+	PlcMacSubframesOne,
+	PlcMacSubframesTwo,
+	PlcMacSubframesThree,
+	PlcMacSubframesFour,
+	PlcMacSubframesFive,
+	PlcMacSubframesSix,
+	PlcMacSubframesSeven,
+	}
 }

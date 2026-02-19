@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -66,18 +66,18 @@ const (
 func PrimeDcMsgTypeParse(value string) (PrimeDcMsgType, error) {
 	var ret PrimeDcMsgType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NEWDEVICENOTIFICATION":
+	switch {
+	case strings.EqualFold(value, "NewDeviceNotification"):
 		ret = PrimeDcMsgTypeNewDeviceNotification
-	case "REMOVEDEVICENOTIFICATION":
+	case strings.EqualFold(value, "RemoveDeviceNotification"):
 		ret = PrimeDcMsgTypeRemoveDeviceNotification
-	case "STARTREPORTINGMETERS":
+	case strings.EqualFold(value, "StartReportingMeters"):
 		ret = PrimeDcMsgTypeStartReportingMeters
-	case "DELETEMETERS":
+	case strings.EqualFold(value, "DeleteMeters"):
 		ret = PrimeDcMsgTypeDeleteMeters
-	case "ENABLEAUTOCLOSE":
+	case strings.EqualFold(value, "EnableAutoClose"):
 		ret = PrimeDcMsgTypeEnableAutoClose
-	case "DISABLEAUTOCLOSE":
+	case strings.EqualFold(value, "DisableAutoClose"):
 		ret = PrimeDcMsgTypeDisableAutoClose
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g PrimeDcMsgType) String() string {
 	var ret string
 	switch g {
 	case PrimeDcMsgTypeNewDeviceNotification:
-		ret = "NEWDEVICENOTIFICATION"
+		ret = "NewDeviceNotification"
 	case PrimeDcMsgTypeRemoveDeviceNotification:
-		ret = "REMOVEDEVICENOTIFICATION"
+		ret = "RemoveDeviceNotification"
 	case PrimeDcMsgTypeStartReportingMeters:
-		ret = "STARTREPORTINGMETERS"
+		ret = "StartReportingMeters"
 	case PrimeDcMsgTypeDeleteMeters:
-		ret = "DELETEMETERS"
+		ret = "DeleteMeters"
 	case PrimeDcMsgTypeEnableAutoClose:
-		ret = "ENABLEAUTOCLOSE"
+		ret = "EnableAutoClose"
 	case PrimeDcMsgTypeDisableAutoClose:
-		ret = "DISABLEAUTOCLOSE"
+		ret = "DisableAutoClose"
 	}
 	return ret
+}
+
+// AllPrimeDcMsgType returns a slice containing all defined PrimeDcMsgType values.
+func AllPrimeDcMsgType() []PrimeDcMsgType {
+	return []PrimeDcMsgType{
+		PrimeDcMsgTypeNewDeviceNotification,
+		PrimeDcMsgTypeRemoveDeviceNotification,
+		PrimeDcMsgTypeStartReportingMeters,
+		PrimeDcMsgTypeDeleteMeters,
+		PrimeDcMsgTypeEnableAutoClose,
+		PrimeDcMsgTypeDisableAutoClose,
+	}
 }

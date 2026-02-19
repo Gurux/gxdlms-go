@@ -56,10 +56,10 @@ const (
 func PlcSourceAddressParse(value string) (PlcSourceAddress, error) {
 	var ret PlcSourceAddress
 	var err error
-	switch strings.ToUpper(value) {
-	case "INITIATOR":
+	switch {
+	case strings.EqualFold(value, "Initiator"):
 		ret = PlcSourceAddressInitiator
-	case "NEW":
+	case strings.EqualFold(value, "New"):
 		ret = PlcSourceAddressNew
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -73,9 +73,17 @@ func (g PlcSourceAddress) String() string {
 	var ret string
 	switch g {
 	case PlcSourceAddressInitiator:
-		ret = "INITIATOR"
+		ret = "Initiator"
 	case PlcSourceAddressNew:
-		ret = "NEW"
+		ret = "New"
 	}
 	return ret
+}
+
+// AllPlcSourceAddress returns a slice containing all defined PlcSourceAddress values.
+func AllPlcSourceAddress() []PlcSourceAddress {
+	return []PlcSourceAddress{
+	PlcSourceAddressInitiator,
+	PlcSourceAddressNew,
+	}
 }

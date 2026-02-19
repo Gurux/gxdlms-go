@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -63,12 +63,12 @@ const (
 func OpticalProtocolModeParse(value string) (OpticalProtocolMode, error) {
 	var ret OpticalProtocolMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "DEFAULT":
+	switch {
+	case strings.EqualFold(value, "Default"):
 		ret = OpticalProtocolModeDefault
-	case "NET":
+	case strings.EqualFold(value, "Net"):
 		ret = OpticalProtocolModeNet
-	case "UNKNOWN":
+	case strings.EqualFold(value, "Unknown"):
 		ret = OpticalProtocolModeUnknown
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -82,11 +82,20 @@ func (g OpticalProtocolMode) String() string {
 	var ret string
 	switch g {
 	case OpticalProtocolModeDefault:
-		ret = "DEFAULT"
+		ret = "Default"
 	case OpticalProtocolModeNet:
-		ret = "NET"
+		ret = "Net"
 	case OpticalProtocolModeUnknown:
-		ret = "UNKNOWN"
+		ret = "Unknown"
 	}
 	return ret
+}
+
+// AllOpticalProtocolMode returns a slice containing all defined OpticalProtocolMode values.
+func AllOpticalProtocolMode() []OpticalProtocolMode {
+	return []OpticalProtocolMode{
+		OpticalProtocolModeDefault,
+		OpticalProtocolModeNet,
+		OpticalProtocolModeUnknown,
+	}
 }

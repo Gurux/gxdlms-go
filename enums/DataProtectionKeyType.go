@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func DataProtectionKeyTypeParse(value string) (DataProtectionKeyType, error) {
 	var ret DataProtectionKeyType
 	var err error
-	switch strings.ToUpper(value) {
-	case "IDENTIFIED":
+	switch {
+	case strings.EqualFold(value, "Identified"):
 		ret = DataProtectionKeyTypeIdentified
-	case "WRAPPED":
+	case strings.EqualFold(value, "Wrapped"):
 		ret = DataProtectionKeyTypeWrapped
-	case "AGREED":
+	case strings.EqualFold(value, "Agreed"):
 		ret = DataProtectionKeyTypeAgreed
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g DataProtectionKeyType) String() string {
 	var ret string
 	switch g {
 	case DataProtectionKeyTypeIdentified:
-		ret = "IDENTIFIED"
+		ret = "Identified"
 	case DataProtectionKeyTypeWrapped:
-		ret = "WRAPPED"
+		ret = "Wrapped"
 	case DataProtectionKeyTypeAgreed:
-		ret = "AGREED"
+		ret = "Agreed"
 	}
 	return ret
+}
+
+// AllDataProtectionKeyType returns a slice containing all defined DataProtectionKeyType values.
+func AllDataProtectionKeyType() []DataProtectionKeyType {
+	return []DataProtectionKeyType{
+	DataProtectionKeyTypeIdentified,
+	DataProtectionKeyTypeWrapped,
+	DataProtectionKeyTypeAgreed,
+	}
 }

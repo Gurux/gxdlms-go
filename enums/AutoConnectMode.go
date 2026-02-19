@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -80,28 +80,28 @@ const (
 func AutoConnectModeParse(value string) (AutoConnectMode, error) {
 	var ret AutoConnectMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOAUTOCONNECT":
+	switch {
+	case strings.EqualFold(value, "NoAutoConnect"):
 		ret = AutoConnectModeNoAutoConnect
-	case "AUTODIALLINGALLOWEDANYTIME":
+	case strings.EqualFold(value, "AutoDiallingAllowedAnytime"):
 		ret = AutoConnectModeAutoDiallingAllowedAnytime
-	case "AUTODIALLINGALLOWEDCALLINGWINDOW":
+	case strings.EqualFold(value, "AutoDiallingAllowedCallingWindow"):
 		ret = AutoConnectModeAutoDiallingAllowedCallingWindow
-	case "REGULARAUTODIALLINGALLOWEDCALLINGWINDOW":
+	case strings.EqualFold(value, "RegularAutoDiallingAllowedCallingWindow"):
 		ret = AutoConnectModeRegularAutoDiallingAllowedCallingWindow
-	case "SMSSENDINGPLMN":
+	case strings.EqualFold(value, "SmsSendingPlmn"):
 		ret = AutoConnectModeSmsSendingPlmn
-	case "SMSSENDINGPSTN":
+	case strings.EqualFold(value, "SmsSendingPstn"):
 		ret = AutoConnectModeSmsSendingPstn
-	case "EMAILSENDING":
+	case strings.EqualFold(value, "EmailSending"):
 		ret = AutoConnectModeEmailSending
-	case "PERMANENTLYCONNECT":
+	case strings.EqualFold(value, "PermanentlyConnect"):
 		ret = AutoConnectModePermanentlyConnect
-	case "CONNECTWITHCALLINGWINDOW":
+	case strings.EqualFold(value, "ConnectWithCallingWindow"):
 		ret = AutoConnectModeConnectWithCallingWindow
-	case "CONNECTINVOKED":
+	case strings.EqualFold(value, "ConnectInvoked"):
 		ret = AutoConnectModeConnectInvoked
-	case "DISCONNECTCONNECTINVOKED":
+	case strings.EqualFold(value, "DisconnectConnectInvoked"):
 		ret = AutoConnectModeDisconnectConnectInvoked
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -115,27 +115,44 @@ func (g AutoConnectMode) String() string {
 	var ret string
 	switch g {
 	case AutoConnectModeNoAutoConnect:
-		ret = "NOAUTOCONNECT"
+		ret = "NoAutoConnect"
 	case AutoConnectModeAutoDiallingAllowedAnytime:
-		ret = "AUTODIALLINGALLOWEDANYTIME"
+		ret = "AutoDiallingAllowedAnytime"
 	case AutoConnectModeAutoDiallingAllowedCallingWindow:
-		ret = "AUTODIALLINGALLOWEDCALLINGWINDOW"
+		ret = "AutoDiallingAllowedCallingWindow"
 	case AutoConnectModeRegularAutoDiallingAllowedCallingWindow:
-		ret = "REGULARAUTODIALLINGALLOWEDCALLINGWINDOW"
+		ret = "RegularAutoDiallingAllowedCallingWindow"
 	case AutoConnectModeSmsSendingPlmn:
-		ret = "SMSSENDINGPLMN"
+		ret = "SmsSendingPlmn"
 	case AutoConnectModeSmsSendingPstn:
-		ret = "SMSSENDINGPSTN"
+		ret = "SmsSendingPstn"
 	case AutoConnectModeEmailSending:
-		ret = "EMAILSENDING"
+		ret = "EmailSending"
 	case AutoConnectModePermanentlyConnect:
-		ret = "PERMANENTLYCONNECT"
+		ret = "PermanentlyConnect"
 	case AutoConnectModeConnectWithCallingWindow:
-		ret = "CONNECTWITHCALLINGWINDOW"
+		ret = "ConnectWithCallingWindow"
 	case AutoConnectModeConnectInvoked:
-		ret = "CONNECTINVOKED"
+		ret = "ConnectInvoked"
 	case AutoConnectModeDisconnectConnectInvoked:
-		ret = "DISCONNECTCONNECTINVOKED"
+		ret = "DisconnectConnectInvoked"
 	}
 	return ret
+}
+
+// AllAutoConnectMode returns a slice containing all defined AutoConnectMode values.
+func AllAutoConnectMode() []AutoConnectMode {
+	return []AutoConnectMode{
+	AutoConnectModeNoAutoConnect,
+	AutoConnectModeAutoDiallingAllowedAnytime,
+	AutoConnectModeAutoDiallingAllowedCallingWindow,
+	AutoConnectModeRegularAutoDiallingAllowedCallingWindow,
+	AutoConnectModeSmsSendingPlmn,
+	AutoConnectModeSmsSendingPstn,
+	AutoConnectModeEmailSending,
+	AutoConnectModePermanentlyConnect,
+	AutoConnectModeConnectWithCallingWindow,
+	AutoConnectModeConnectInvoked,
+	AutoConnectModeDisconnectConnectInvoked,
+	}
 }

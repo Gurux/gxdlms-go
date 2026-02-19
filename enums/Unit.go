@@ -1,19 +1,22 @@
-// --------------------------------------------------------------------------
+﻿package enums
+
 //
-//	Gurux Ltd
+// --------------------------------------------------------------------------
+//  Gurux Ltd
+//
+//
 //
 // Filename:        $HeadURL$
 //
 // Version:         $Revision$,
+//                  $Date$
+//                  $Author$
 //
-//	$Date$
-//	$Author$
+// Copyright (c) Gurux Ltd
 //
-// # Copyright (c) Gurux Ltd
+//---------------------------------------------------------------------------
 //
-// ---------------------------------------------------------------------------
-//
-//	DESCRIPTION
+//  DESCRIPTION
 //
 // This file is a part of Gurux Device Framework.
 //
@@ -29,8 +32,7 @@
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
-// ---------------------------------------------------------------------------
-package enums
+//---------------------------------------------------------------------------
 
 import (
 	"fmt"
@@ -39,17 +41,17 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Unit :  describes available COSEM unit types.
+// Unit describes available COSEM unit types.
 type Unit int
 
 const (
-	// UnitNone defines that the no unit is used.
+	// UnitNone defines that the // No unit is used.
 	UnitNone Unit = iota
-	// UnitYear defines that the unit is year.
+	// UnitYear defines that the // Unit is year.
 	UnitYear
-	// UnitMonth defines that the unit is month.
+	// UnitMonth defines that the // Unit is month.
 	UnitMonth
-	// UnitWeek defines that the unit is week.
+	// UnitWeek defines that the // Unit is week.
 	UnitWeek
 	// UnitDay defines that the unit is day.
 	UnitDay
@@ -290,242 +292,242 @@ const (
 func UnitParse(value string) (Unit, error) {
 	var ret Unit
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = UnitNone
-	case "YEAR":
+	case strings.EqualFold(value, "Year"):
 		ret = UnitYear
-	case "MONTH":
+	case strings.EqualFold(value, "Month"):
 		ret = UnitMonth
-	case "WEEK":
+	case strings.EqualFold(value, "Week"):
 		ret = UnitWeek
-	case "DAY":
+	case strings.EqualFold(value, "Day"):
 		ret = UnitDay
-	case "HOUR":
+	case strings.EqualFold(value, "Hour"):
 		ret = UnitHour
-	case "MINUTE":
+	case strings.EqualFold(value, "Minute"):
 		ret = UnitMinute
-	case "SECOND":
+	case strings.EqualFold(value, "Second"):
 		ret = UnitSecond
-	case "PHASEANGLEDEGREE":
+	case strings.EqualFold(value, "PhaseAngleDegree"):
 		ret = UnitPhaseAngleDegree
-	case "TEMPERATURE":
+	case strings.EqualFold(value, "Temperature"):
 		ret = UnitTemperature
-	case "LOCALCURRENCY":
+	case strings.EqualFold(value, "LocalCurrency"):
 		ret = UnitLocalCurrency
-	case "LENGTH":
+	case strings.EqualFold(value, "Length"):
 		ret = UnitLength
-	case "SPEED":
+	case strings.EqualFold(value, "Speed"):
 		ret = UnitSpeed
-	case "VOLUMECUBICMETER":
+	case strings.EqualFold(value, "VolumeCubicMeter"):
 		ret = UnitVolumeCubicMeter
-	case "CORRECTEDVOLUME":
+	case strings.EqualFold(value, "CorrectedVolume"):
 		ret = UnitCorrectedVolume
-	case "VOLUMEFLUXHOUR":
+	case strings.EqualFold(value, "VolumeFluxHour"):
 		ret = UnitVolumeFluxHour
-	case "CORRECTEDVOLUMEFLUXHOUR":
+	case strings.EqualFold(value, "CorrectedVolumeFluxHour"):
 		ret = UnitCorrectedVolumeFluxHour
-	case "VOLUMEFLUXDAY":
+	case strings.EqualFold(value, "VolumeFluxDay"):
 		ret = UnitVolumeFluxDay
-	case "CORRECTEDVOLUMEFLUXDAY":
+	case strings.EqualFold(value, "CorrectedVolumeFluxDay"):
 		ret = UnitCorrectedVolumeFluxDay
-	case "VOLUMELITER":
+	case strings.EqualFold(value, "VolumeLiter"):
 		ret = UnitVolumeLiter
-	case "MASSKG":
+	case strings.EqualFold(value, "MassKg"):
 		ret = UnitMassKg
-	case "FORCE":
+	case strings.EqualFold(value, "Force"):
 		ret = UnitForce
-	case "ENERGY":
+	case strings.EqualFold(value, "Energy"):
 		ret = UnitEnergy
-	case "PRESSUREPASCAL":
+	case strings.EqualFold(value, "PressurePascal"):
 		ret = UnitPressurePascal
-	case "PRESSUREBAR":
+	case strings.EqualFold(value, "PressureBar"):
 		ret = UnitPressureBar
-	case "ENERGYJOULE":
+	case strings.EqualFold(value, "EnergyJoule"):
 		ret = UnitEnergyJoule
-	case "THERMALPOWER":
+	case strings.EqualFold(value, "ThermalPower"):
 		ret = UnitThermalPower
-	case "ACTIVEPOWER":
+	case strings.EqualFold(value, "ActivePower"):
 		ret = UnitActivePower
-	case "APPARENTPOWER":
+	case strings.EqualFold(value, "ApparentPower"):
 		ret = UnitApparentPower
-	case "REACTIVEPOWER":
+	case strings.EqualFold(value, "ReactivePower"):
 		ret = UnitReactivePower
-	case "ACTIVEENERGY":
+	case strings.EqualFold(value, "ActiveEnergy"):
 		ret = UnitActiveEnergy
-	case "APPARENTENERGY":
+	case strings.EqualFold(value, "ApparentEnergy"):
 		ret = UnitApparentEnergy
-	case "REACTIVEENERGY":
+	case strings.EqualFold(value, "ReactiveEnergy"):
 		ret = UnitReactiveEnergy
-	case "CURRENT":
+	case strings.EqualFold(value, "Current"):
 		ret = UnitCurrent
-	case "ELECTRICALCHARGE":
+	case strings.EqualFold(value, "ElectricalCharge"):
 		ret = UnitElectricalCharge
-	case "VOLTAGE":
+	case strings.EqualFold(value, "Voltage"):
 		ret = UnitVoltage
-	case "ELECTRICALFIELDSTRENGTH":
+	case strings.EqualFold(value, "ElectricalFieldStrength"):
 		ret = UnitElectricalFieldStrength
-	case "CAPACITY":
+	case strings.EqualFold(value, "Capacity"):
 		ret = UnitCapacity
-	case "RESISTANCE":
+	case strings.EqualFold(value, "Resistance"):
 		ret = UnitResistance
-	case "RESISTIVITY":
+	case strings.EqualFold(value, "Resistivity"):
 		ret = UnitResistivity
-	case "MAGNETICFLUX":
+	case strings.EqualFold(value, "MagneticFlux"):
 		ret = UnitMagneticFlux
-	case "INDUCTION":
+	case strings.EqualFold(value, "Induction"):
 		ret = UnitInduction
-	case "MAGNETIC":
+	case strings.EqualFold(value, "Magnetic"):
 		ret = UnitMagnetic
-	case "INDUCTIVITY":
+	case strings.EqualFold(value, "Inductivity"):
 		ret = UnitInductivity
-	case "FREQUENCY":
+	case strings.EqualFold(value, "Frequency"):
 		ret = UnitFrequency
-	case "ACTIVE":
+	case strings.EqualFold(value, "Active"):
 		ret = UnitActive
-	case "REACTIVE":
+	case strings.EqualFold(value, "Reactive"):
 		ret = UnitReactive
-	case "APPARENT":
+	case strings.EqualFold(value, "Apparent"):
 		ret = UnitApparent
-	case "V260":
+	case strings.EqualFold(value, "V260"):
 		ret = UnitV260
-	case "A260":
+	case strings.EqualFold(value, "A260"):
 		ret = UnitA260
-	case "MASSKGPERSECOND":
+	case strings.EqualFold(value, "MassKgPerSecond"):
 		ret = UnitMassKgPerSecond
-	case "CONDUCTANCE":
+	case strings.EqualFold(value, "Conductance"):
 		ret = UnitConductance
-	case "KELVIN":
+	case strings.EqualFold(value, "Kelvin"):
 		ret = UnitKelvin
-	case "RU2H":
+	case strings.EqualFold(value, "RU2h"):
 		ret = UnitRU2h
-	case "RI2H":
+	case strings.EqualFold(value, "RI2h"):
 		ret = UnitRI2h
-	case "CUBICMETERRV":
+	case strings.EqualFold(value, "CubicMeterRV"):
 		ret = UnitCubicMeterRV
-	case "PERCENTAGE":
+	case strings.EqualFold(value, "Percentage"):
 		ret = UnitPercentage
-	case "AMPEREHOUR":
+	case strings.EqualFold(value, "AmpereHour"):
 		ret = UnitAmpereHour
-	case "ENERGYPERVOLUME":
+	case strings.EqualFold(value, "EnergyPerVolume"):
 		ret = UnitEnergyPerVolume
-	case "WOBBE":
+	case strings.EqualFold(value, "Wobbe"):
 		ret = UnitWobbe
-	case "MOLEPERCENT":
+	case strings.EqualFold(value, "MolePercent"):
 		ret = UnitMolePercent
-	case "MASSDENSITY":
+	case strings.EqualFold(value, "MassDensity"):
 		ret = UnitMassDensity
-	case "PASCALSECOND":
+	case strings.EqualFold(value, "PascalSecond"):
 		ret = UnitPascalSecond
-	case "JOULEKILOGRAM":
+	case strings.EqualFold(value, "JouleKilogram"):
 		ret = UnitJouleKilogram
-	case "PRESSUREGRAMPERSQUARECENTIMETER":
+	case strings.EqualFold(value, "PressureGramPerSquareCentimeter"):
 		ret = UnitPressureGramPerSquareCentimeter
-	case "PRESSUREATMOSPHERE":
+	case strings.EqualFold(value, "PressureAtmosphere"):
 		ret = UnitPressureAtmosphere
-	case "SIGNALSTRENGTHMILLIWATT":
+	case strings.EqualFold(value, "SignalStrengthMilliWatt"):
 		ret = UnitSignalStrengthMilliWatt
-	case "SIGNALSTRENGTHMICROVOLT":
+	case strings.EqualFold(value, "SignalStrengthMicroVolt"):
 		ret = UnitSignalStrengthMicroVolt
-	case "DB":
+	case strings.EqualFold(value, "dB"):
 		ret = UnitdB
-	case "INCH":
+	case strings.EqualFold(value, "Inch"):
 		ret = UnitInch
-	case "FOOT":
+	case strings.EqualFold(value, "Foot"):
 		ret = UnitFoot
-	case "POUND":
+	case strings.EqualFold(value, "Pound"):
 		ret = UnitPound
-	case "FAHRENHEIT":
+	case strings.EqualFold(value, "Fahrenheit"):
 		ret = UnitFahrenheit
-	case "RANKINE":
+	case strings.EqualFold(value, "Rankine"):
 		ret = UnitRankine
-	case "SQUAREINCH":
+	case strings.EqualFold(value, "SquareInch"):
 		ret = UnitSquareInch
-	case "SQUAREFOOT":
+	case strings.EqualFold(value, "SquareFoot"):
 		ret = UnitSquareFoot
-	case "ACRE":
+	case strings.EqualFold(value, "Acre"):
 		ret = UnitAcre
-	case "CUBICINCH":
+	case strings.EqualFold(value, "CubicInch"):
 		ret = UnitCubicInch
-	case "CUBICFOOT":
+	case strings.EqualFold(value, "CubicFoot"):
 		ret = UnitCubicFoot
-	case "ACREFOOT":
+	case strings.EqualFold(value, "AcreFoot"):
 		ret = UnitAcreFoot
-	case "GALLONIMPERIAL":
+	case strings.EqualFold(value, "GallonImperial"):
 		ret = UnitGallonImperial
-	case "GALLONUS":
+	case strings.EqualFold(value, "GallonUS"):
 		ret = UnitGallonUS
-	case "POUNDFORCE":
+	case strings.EqualFold(value, "PoundForce"):
 		ret = UnitPoundForce
-	case "POUNDFORCEPERSQUAREINCH":
+	case strings.EqualFold(value, "PoundForcePerSquareInch"):
 		ret = UnitPoundForcePerSquareInch
-	case "POUNDPERCUBICFOOT":
+	case strings.EqualFold(value, "PoundPerCubicFoot"):
 		ret = UnitPoundPerCubicFoot
-	case "POUNDPERFOOTSECOND":
+	case strings.EqualFold(value, "PoundPerFootSecond"):
 		ret = UnitPoundPerFootSecond
-	case "SQUAREFOOTPERSECOND":
+	case strings.EqualFold(value, "SquareFootPerSecond"):
 		ret = UnitSquareFootPerSecond
-	case "BRITISHTHERMALUNIT":
+	case strings.EqualFold(value, "BritishThermalUnit"):
 		ret = UnitBritishThermalUnit
-	case "THERMEU":
+	case strings.EqualFold(value, "ThermEU"):
 		ret = UnitThermEU
-	case "THERMUS":
+	case strings.EqualFold(value, "ThermUS"):
 		ret = UnitThermUS
-	case "BRITISHTHERMALUNITPERPOUND":
+	case strings.EqualFold(value, "BritishThermalUnitPerPound"):
 		ret = UnitBritishThermalUnitPerPound
-	case "BRITISHTHERMALUNITPERCUBICFOOT":
+	case strings.EqualFold(value, "BritishThermalUnitPerCubicFoot"):
 		ret = UnitBritishThermalUnitPerCubicFoot
-	case "CUBICFEET":
+	case strings.EqualFold(value, "CubicFeet"):
 		ret = UnitCubicFeet
-	case "FOOTPERSECOND":
+	case strings.EqualFold(value, "FootPerSecond"):
 		ret = UnitFootPerSecond
-	case "CUBICFOOTPERSECOND":
+	case strings.EqualFold(value, "CubicFootPerSecond"):
 		ret = UnitCubicFootPerSecond
-	case "CUBICFOOTPERMIN":
+	case strings.EqualFold(value, "CubicFootPerMin"):
 		ret = UnitCubicFootPerMin
-	case "CUBICFOOTPERHOUR":
+	case strings.EqualFold(value, "CubicFootPerHour"):
 		ret = UnitCubicFootPerHour
-	case "CUBICFOOTPERDAY":
+	case strings.EqualFold(value, "CubicFootPerDay"):
 		ret = UnitCubicFootPerDay
-	case "ACREFOOTPERSECOND":
+	case strings.EqualFold(value, "AcreFootPerSecond"):
 		ret = UnitAcreFootPerSecond
-	case "ACREFOOTPERMIN":
+	case strings.EqualFold(value, "AcreFootPerMin"):
 		ret = UnitAcreFootPerMin
-	case "ACREFOOTPERHOUR":
+	case strings.EqualFold(value, "AcreFootPerHour"):
 		ret = UnitAcreFootPerHour
-	case "ACREFOOTPERDAY":
+	case strings.EqualFold(value, "AcreFootPerDay"):
 		ret = UnitAcreFootPerDay
-	case "IMPERIALGALLON":
+	case strings.EqualFold(value, "ImperialGallon"):
 		ret = UnitImperialGallon
-	case "IMPERIALGALLONPERSECOND":
+	case strings.EqualFold(value, "ImperialGallonPerSecond"):
 		ret = UnitImperialGallonPerSecond
-	case "IMPERIALGALLONPERMIN":
+	case strings.EqualFold(value, "ImperialGallonPerMin"):
 		ret = UnitImperialGallonPerMin
-	case "IMPERIALGALLONPERHOUR":
+	case strings.EqualFold(value, "ImperialGallonPerHour"):
 		ret = UnitImperialGallonPerHour
-	case "IMPERIALGALLONPERDAY":
+	case strings.EqualFold(value, "ImperialGallonPerDay"):
 		ret = UnitImperialGallonPerDay
-	case "USGALLON":
+	case strings.EqualFold(value, "USGallon"):
 		ret = UnitUSGallon
-	case "USGALLONPERSECOND":
+	case strings.EqualFold(value, "USGallonPerSecond"):
 		ret = UnitUSGallonPerSecond
-	case "USGALLONPERMIN":
+	case strings.EqualFold(value, "USGallonPerMin"):
 		ret = UnitUSGallonPerMin
-	case "USGALLONPERHOUR":
+	case strings.EqualFold(value, "USGallonPerHour"):
 		ret = UnitUSGallonPerHour
-	case "USGALLONPERDAY":
+	case strings.EqualFold(value, "USGallonPerDay"):
 		ret = UnitUSGallonPerDay
-	case "BRITISHTHERMALUNITPERSECOND":
+	case strings.EqualFold(value, "BritishThermalUnitPerSecond"):
 		ret = UnitBritishThermalUnitPerSecond
-	case "BRITISHTHERMALUNITPERMINUTE":
+	case strings.EqualFold(value, "BritishThermalUnitPerMinute"):
 		ret = UnitBritishThermalUnitPerMinute
-	case "BRITISHTHERMALUNITPERHOUR":
+	case strings.EqualFold(value, "BritishThermalUnitPerHour"):
 		ret = UnitBritishThermalUnitPerHour
-	case "BRITISHTHERMALUNITPERDAY":
+	case strings.EqualFold(value, "BritishThermalUnitPerDay"):
 		ret = UnitBritishThermalUnitPerDay
-	case "OTHERUNIT":
+	case strings.EqualFold(value, "OtherUnit"):
 		ret = UnitOtherUnit
-	case "NOUNIT":
+	case strings.EqualFold(value, "NoUnit"):
 		ret = UnitNoUnit
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -539,241 +541,365 @@ func (g Unit) String() string {
 	var ret string
 	switch g {
 	case UnitNone:
-		ret = "NONE"
+		ret = "None"
 	case UnitYear:
-		ret = "YEAR"
+		ret = "Year"
 	case UnitMonth:
-		ret = "MONTH"
+		ret = "Month"
 	case UnitWeek:
-		ret = "WEEK"
+		ret = "Week"
 	case UnitDay:
-		ret = "DAY"
+		ret = "Day"
 	case UnitHour:
-		ret = "HOUR"
+		ret = "Hour"
 	case UnitMinute:
-		ret = "MINUTE"
+		ret = "Minute"
 	case UnitSecond:
-		ret = "SECOND"
+		ret = "Second"
 	case UnitPhaseAngleDegree:
-		ret = "PHASEANGLEDEGREE"
+		ret = "PhaseAngleDegree"
 	case UnitTemperature:
-		ret = "TEMPERATURE"
+		ret = "Temperature"
 	case UnitLocalCurrency:
-		ret = "LOCALCURRENCY"
+		ret = "LocalCurrency"
 	case UnitLength:
-		ret = "LENGTH"
+		ret = "Length"
 	case UnitSpeed:
-		ret = "SPEED"
+		ret = "Speed"
 	case UnitVolumeCubicMeter:
-		ret = "VOLUMECUBICMETER"
+		ret = "VolumeCubicMeter"
 	case UnitCorrectedVolume:
-		ret = "CORRECTEDVOLUME"
+		ret = "CorrectedVolume"
 	case UnitVolumeFluxHour:
-		ret = "VOLUMEFLUXHOUR"
+		ret = "VolumeFluxHour"
 	case UnitCorrectedVolumeFluxHour:
-		ret = "CORRECTEDVOLUMEFLUXHOUR"
+		ret = "CorrectedVolumeFluxHour"
 	case UnitVolumeFluxDay:
-		ret = "VOLUMEFLUXDAY"
+		ret = "VolumeFluxDay"
 	case UnitCorrectedVolumeFluxDay:
-		ret = "CORRECTEDVOLUMEFLUXDAY"
+		ret = "CorrectedVolumeFluxDay"
 	case UnitVolumeLiter:
-		ret = "VOLUMELITER"
+		ret = "VolumeLiter"
 	case UnitMassKg:
-		ret = "MASSKG"
+		ret = "MassKg"
 	case UnitForce:
-		ret = "FORCE"
+		ret = "Force"
 	case UnitEnergy:
-		ret = "ENERGY"
+		ret = "Energy"
 	case UnitPressurePascal:
-		ret = "PRESSUREPASCAL"
+		ret = "PressurePascal"
 	case UnitPressureBar:
-		ret = "PRESSUREBAR"
+		ret = "PressureBar"
 	case UnitEnergyJoule:
-		ret = "ENERGYJOULE"
+		ret = "EnergyJoule"
 	case UnitThermalPower:
-		ret = "THERMALPOWER"
+		ret = "ThermalPower"
 	case UnitActivePower:
-		ret = "ACTIVEPOWER"
+		ret = "ActivePower"
 	case UnitApparentPower:
-		ret = "APPARENTPOWER"
+		ret = "ApparentPower"
 	case UnitReactivePower:
-		ret = "REACTIVEPOWER"
+		ret = "ReactivePower"
 	case UnitActiveEnergy:
-		ret = "ACTIVEENERGY"
+		ret = "ActiveEnergy"
 	case UnitApparentEnergy:
-		ret = "APPARENTENERGY"
+		ret = "ApparentEnergy"
 	case UnitReactiveEnergy:
-		ret = "REACTIVEENERGY"
+		ret = "ReactiveEnergy"
 	case UnitCurrent:
-		ret = "CURRENT"
+		ret = "Current"
 	case UnitElectricalCharge:
-		ret = "ELECTRICALCHARGE"
+		ret = "ElectricalCharge"
 	case UnitVoltage:
-		ret = "VOLTAGE"
+		ret = "Voltage"
 	case UnitElectricalFieldStrength:
-		ret = "ELECTRICALFIELDSTRENGTH"
+		ret = "ElectricalFieldStrength"
 	case UnitCapacity:
-		ret = "CAPACITY"
+		ret = "Capacity"
 	case UnitResistance:
-		ret = "RESISTANCE"
+		ret = "Resistance"
 	case UnitResistivity:
-		ret = "RESISTIVITY"
+		ret = "Resistivity"
 	case UnitMagneticFlux:
-		ret = "MAGNETICFLUX"
+		ret = "MagneticFlux"
 	case UnitInduction:
-		ret = "INDUCTION"
+		ret = "Induction"
 	case UnitMagnetic:
-		ret = "MAGNETIC"
+		ret = "Magnetic"
 	case UnitInductivity:
-		ret = "INDUCTIVITY"
+		ret = "Inductivity"
 	case UnitFrequency:
-		ret = "FREQUENCY"
+		ret = "Frequency"
 	case UnitActive:
-		ret = "ACTIVE"
+		ret = "Active"
 	case UnitReactive:
-		ret = "REACTIVE"
+		ret = "Reactive"
 	case UnitApparent:
-		ret = "APPARENT"
+		ret = "Apparent"
 	case UnitV260:
 		ret = "V260"
 	case UnitA260:
 		ret = "A260"
 	case UnitMassKgPerSecond:
-		ret = "MASSKGPERSECOND"
+		ret = "MassKgPerSecond"
 	case UnitConductance:
-		ret = "CONDUCTANCE"
+		ret = "Conductance"
 	case UnitKelvin:
-		ret = "KELVIN"
+		ret = "Kelvin"
 	case UnitRU2h:
-		ret = "RU2H"
+		ret = "RU2h"
 	case UnitRI2h:
-		ret = "RI2H"
+		ret = "RI2h"
 	case UnitCubicMeterRV:
-		ret = "CUBICMETERRV"
+		ret = "Cubic meter RV"
 	case UnitPercentage:
-		ret = "PERCENTAGE"
+		ret = "Percentage"
 	case UnitAmpereHour:
-		ret = "AMPEREHOUR"
+		ret = "AmpereHour"
 	case UnitEnergyPerVolume:
-		ret = "ENERGYPERVOLUME"
+		ret = "EnergyPerVolume"
 	case UnitWobbe:
-		ret = "WOBBE"
+		ret = "Wobbe"
 	case UnitMolePercent:
-		ret = "MOLEPERCENT"
+		ret = "MolePercent"
 	case UnitMassDensity:
-		ret = "MASSDENSITY"
+		ret = "MassDensity"
 	case UnitPascalSecond:
-		ret = "PASCALSECOND"
+		ret = "PascalSecond"
 	case UnitJouleKilogram:
-		ret = "JOULEKILOGRAM"
+		ret = "JouleKilogram"
 	case UnitPressureGramPerSquareCentimeter:
-		ret = "PRESSUREGRAMPERSQUARECENTIMETER"
+		ret = "PressureGramPerSquareCentimeter"
 	case UnitPressureAtmosphere:
-		ret = "PRESSUREATMOSPHERE"
+		ret = "PressureAtmosphere"
 	case UnitSignalStrengthMilliWatt:
-		ret = "SIGNALSTRENGTHMILLIWATT"
+		ret = "SignalStrengthMilliWatt"
 	case UnitSignalStrengthMicroVolt:
-		ret = "SIGNALSTRENGTHMICROVOLT"
+		ret = "SignalStrengthMicroVolt"
 	case UnitdB:
-		ret = "DB"
+		ret = "dB"
 	case UnitInch:
-		ret = "INCH"
+		ret = "Inch"
 	case UnitFoot:
-		ret = "FOOT"
+		ret = "Foot"
 	case UnitPound:
-		ret = "POUND"
+		ret = "Pound"
 	case UnitFahrenheit:
-		ret = "FAHRENHEIT"
+		ret = "Fahrenheit"
 	case UnitRankine:
-		ret = "RANKINE"
+		ret = "Rankine"
 	case UnitSquareInch:
-		ret = "SQUAREINCH"
+		ret = "SquareInch"
 	case UnitSquareFoot:
-		ret = "SQUAREFOOT"
+		ret = "SquareFoot"
 	case UnitAcre:
-		ret = "ACRE"
+		ret = "Acre"
 	case UnitCubicInch:
-		ret = "CUBICINCH"
+		ret = "CubicInch"
 	case UnitCubicFoot:
-		ret = "CUBICFOOT"
+		ret = "CubicFoot"
 	case UnitAcreFoot:
-		ret = "ACREFOOT"
+		ret = "AcreFoot"
 	case UnitGallonImperial:
-		ret = "GALLONIMPERIAL"
+		ret = "GallonImperial"
 	case UnitGallonUS:
-		ret = "GALLONUS"
+		ret = "Gallon US"
 	case UnitPoundForce:
-		ret = "POUNDFORCE"
+		ret = "PoundForce"
 	case UnitPoundForcePerSquareInch:
-		ret = "POUNDFORCEPERSQUAREINCH"
+		ret = "PoundForcePerSquareInch"
 	case UnitPoundPerCubicFoot:
-		ret = "POUNDPERCUBICFOOT"
+		ret = "PoundPerCubicFoot"
 	case UnitPoundPerFootSecond:
-		ret = "POUNDPERFOOTSECOND"
+		ret = "PoundPerFootSecond"
 	case UnitSquareFootPerSecond:
-		ret = "SQUAREFOOTPERSECOND"
+		ret = "SquareFootPerSecond"
 	case UnitBritishThermalUnit:
-		ret = "BRITISHTHERMALUNIT"
+		ret = "BritishThermalUnit"
 	case UnitThermEU:
-		ret = "THERMEU"
+		ret = "Therm EU"
 	case UnitThermUS:
-		ret = "THERMUS"
+		ret = "Therm US"
 	case UnitBritishThermalUnitPerPound:
-		ret = "BRITISHTHERMALUNITPERPOUND"
+		ret = "BritishThermalUnitPerPound"
 	case UnitBritishThermalUnitPerCubicFoot:
-		ret = "BRITISHTHERMALUNITPERCUBICFOOT"
+		ret = "BritishThermalUnitPerCubicFoot"
 	case UnitCubicFeet:
-		ret = "CUBICFEET"
+		ret = "CubicFeet"
 	case UnitFootPerSecond:
-		ret = "FOOTPERSECOND"
+		ret = "FootPerSecond"
 	case UnitCubicFootPerSecond:
-		ret = "CUBICFOOTPERSECOND"
+		ret = "CubicFootPerSecond"
 	case UnitCubicFootPerMin:
-		ret = "CUBICFOOTPERMIN"
+		ret = "CubicFootPerMin"
 	case UnitCubicFootPerHour:
-		ret = "CUBICFOOTPERHOUR"
+		ret = "CubicFootPerHour"
 	case UnitCubicFootPerDay:
-		ret = "CUBICFOOTPERDAY"
+		ret = "CubicFootPerDay"
 	case UnitAcreFootPerSecond:
-		ret = "ACREFOOTPERSECOND"
+		ret = "AcreFootPerSecond"
 	case UnitAcreFootPerMin:
-		ret = "ACREFOOTPERMIN"
+		ret = "AcreFootPerMin"
 	case UnitAcreFootPerHour:
-		ret = "ACREFOOTPERHOUR"
+		ret = "AcreFootPerHour"
 	case UnitAcreFootPerDay:
-		ret = "ACREFOOTPERDAY"
+		ret = "AcreFootPerDay"
 	case UnitImperialGallon:
-		ret = "IMPERIALGALLON"
+		ret = "ImperialGallon"
 	case UnitImperialGallonPerSecond:
-		ret = "IMPERIALGALLONPERSECOND"
+		ret = "ImperialGallonPerSecond"
 	case UnitImperialGallonPerMin:
-		ret = "IMPERIALGALLONPERMIN"
+		ret = "ImperialGallonPerMin"
 	case UnitImperialGallonPerHour:
-		ret = "IMPERIALGALLONPERHOUR"
+		ret = "ImperialGallonPerHour"
 	case UnitImperialGallonPerDay:
-		ret = "IMPERIALGALLONPERDAY"
+		ret = "ImperialGallonPerDay"
 	case UnitUSGallon:
-		ret = "USGALLON"
+		ret = "US Gallon"
 	case UnitUSGallonPerSecond:
-		ret = "USGALLONPERSECOND"
+		ret = "US gallon per second"
 	case UnitUSGallonPerMin:
-		ret = "USGALLONPERMIN"
+		ret = "US gallon per min"
 	case UnitUSGallonPerHour:
-		ret = "USGALLONPERHOUR"
+		ret = "US gallon per hour"
 	case UnitUSGallonPerDay:
-		ret = "USGALLONPERDAY"
+		ret = "US gallon per day"
 	case UnitBritishThermalUnitPerSecond:
-		ret = "BRITISHTHERMALUNITPERSECOND"
+		ret = "BritishThermalUnitPerSecond"
 	case UnitBritishThermalUnitPerMinute:
-		ret = "BRITISHTHERMALUNITPERMINUTE"
+		ret = "BritishThermalUnitPerMinute"
 	case UnitBritishThermalUnitPerHour:
-		ret = "BRITISHTHERMALUNITPERHOUR"
+		ret = "BritishThermalUnitPerHour"
 	case UnitBritishThermalUnitPerDay:
-		ret = "BRITISHTHERMALUNITPERDAY"
+		ret = "BritishThermalUnitPerDay"
 	case UnitOtherUnit:
-		ret = "OTHERUNIT"
+		ret = "OtherUnit"
 	case UnitNoUnit:
-		ret = "NOUNIT"
+		ret = "NoUnit"
 	}
 	return ret
+}
+
+// AllUnit returns a slice containing all defined Unit values.
+func AllUnit() []Unit {
+	return []Unit{
+		UnitNone,
+		UnitYear,
+		UnitMonth,
+		UnitWeek,
+		UnitDay,
+		UnitHour,
+		UnitMinute,
+		UnitSecond,
+		UnitPhaseAngleDegree,
+		UnitTemperature,
+		UnitLocalCurrency,
+		UnitLength,
+		UnitSpeed,
+		UnitVolumeCubicMeter,
+		UnitCorrectedVolume,
+		UnitVolumeFluxHour,
+		UnitCorrectedVolumeFluxHour,
+		UnitVolumeFluxDay,
+		UnitCorrectedVolumeFluxDay,
+		UnitVolumeLiter,
+		UnitMassKg,
+		UnitForce,
+		UnitEnergy,
+		UnitPressurePascal,
+		UnitPressureBar,
+		UnitEnergyJoule,
+		UnitThermalPower,
+		UnitActivePower,
+		UnitApparentPower,
+		UnitReactivePower,
+		UnitActiveEnergy,
+		UnitApparentEnergy,
+		UnitReactiveEnergy,
+		UnitCurrent,
+		UnitElectricalCharge,
+		UnitVoltage,
+		UnitElectricalFieldStrength,
+		UnitCapacity,
+		UnitResistance,
+		UnitResistivity,
+		UnitMagneticFlux,
+		UnitInduction,
+		UnitMagnetic,
+		UnitInductivity,
+		UnitFrequency,
+		UnitActive,
+		UnitReactive,
+		UnitApparent,
+		UnitV260,
+		UnitA260,
+		UnitMassKgPerSecond,
+		UnitConductance,
+		UnitKelvin,
+		UnitRU2h,
+		UnitRI2h,
+		UnitCubicMeterRV,
+		UnitPercentage,
+		UnitAmpereHour,
+		UnitEnergyPerVolume,
+		UnitWobbe,
+		UnitMolePercent,
+		UnitMassDensity,
+		UnitPascalSecond,
+		UnitJouleKilogram,
+		UnitPressureGramPerSquareCentimeter,
+		UnitPressureAtmosphere,
+		UnitSignalStrengthMilliWatt,
+		UnitSignalStrengthMicroVolt,
+		UnitdB,
+		UnitInch,
+		UnitFoot,
+		UnitPound,
+		UnitFahrenheit,
+		UnitRankine,
+		UnitSquareInch,
+		UnitSquareFoot,
+		UnitAcre,
+		UnitCubicInch,
+		UnitCubicFoot,
+		UnitAcreFoot,
+		UnitGallonImperial,
+		UnitGallonUS,
+		UnitPoundForce,
+		UnitPoundForcePerSquareInch,
+		UnitPoundPerCubicFoot,
+		UnitPoundPerFootSecond,
+		UnitSquareFootPerSecond,
+		UnitBritishThermalUnit,
+		UnitThermEU,
+		UnitThermUS,
+		UnitBritishThermalUnitPerPound,
+		UnitBritishThermalUnitPerCubicFoot,
+		UnitCubicFeet,
+		UnitFootPerSecond,
+		UnitCubicFootPerSecond,
+		UnitCubicFootPerMin,
+		UnitCubicFootPerHour,
+		UnitCubicFootPerDay,
+		UnitAcreFootPerSecond,
+		UnitAcreFootPerMin,
+		UnitAcreFootPerHour,
+		UnitAcreFootPerDay,
+		UnitImperialGallon,
+		UnitImperialGallonPerSecond,
+		UnitImperialGallonPerMin,
+		UnitImperialGallonPerHour,
+		UnitImperialGallonPerDay,
+		UnitUSGallon,
+		UnitUSGallonPerSecond,
+		UnitUSGallonPerMin,
+		UnitUSGallonPerHour,
+		UnitUSGallonPerDay,
+		UnitBritishThermalUnitPerSecond,
+		UnitBritishThermalUnitPerMinute,
+		UnitBritishThermalUnitPerHour,
+		UnitBritishThermalUnitPerDay,
+		UnitOtherUnit,
+		UnitNoUnit,
+	}
 }

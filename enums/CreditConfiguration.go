@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -66,18 +66,18 @@ const (
 func CreditConfigurationParse(value string) (CreditConfiguration, error) {
 	var ret CreditConfiguration
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = CreditConfigurationNone
-	case "VISUAL":
+	case strings.EqualFold(value, "Visual"):
 		ret = CreditConfigurationVisual
-	case "CONFIRMATION":
+	case strings.EqualFold(value, "Confirmation"):
 		ret = CreditConfigurationConfirmation
-	case "PAIDBACK":
+	case strings.EqualFold(value, "PaidBack"):
 		ret = CreditConfigurationPaidBack
-	case "RESETTABLE":
+	case strings.EqualFold(value, "Resettable"):
 		ret = CreditConfigurationResettable
-	case "TOKENS":
+	case strings.EqualFold(value, "Tokens"):
 		ret = CreditConfigurationTokens
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g CreditConfiguration) String() string {
 	var ret string
 	switch g {
 	case CreditConfigurationNone:
-		ret = "NONE"
+		ret = "None"
 	case CreditConfigurationVisual:
-		ret = "VISUAL"
+		ret = "Visual"
 	case CreditConfigurationConfirmation:
-		ret = "CONFIRMATION"
+		ret = "Confirmation"
 	case CreditConfigurationPaidBack:
-		ret = "PAIDBACK"
+		ret = "PaidBack"
 	case CreditConfigurationResettable:
-		ret = "RESETTABLE"
+		ret = "Resettable"
 	case CreditConfigurationTokens:
-		ret = "TOKENS"
+		ret = "Tokens"
 	}
 	return ret
+}
+
+// AllCreditConfiguration returns a slice containing all defined CreditConfiguration values.
+func AllCreditConfiguration() []CreditConfiguration {
+	return []CreditConfiguration{
+	CreditConfigurationNone,
+	CreditConfigurationVisual,
+	CreditConfigurationConfirmation,
+	CreditConfigurationPaidBack,
+	CreditConfigurationResettable,
+	CreditConfigurationTokens,
+	}
 }

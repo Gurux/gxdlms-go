@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func ApplicationContextNameParse(value string) (ApplicationContextName, error) {
 	var ret ApplicationContextName
 	var err error
-	switch strings.ToUpper(value) {
-	case "UNKNOWN":
+	switch {
+	case strings.EqualFold(value, "Unknown"):
 		ret = ApplicationContextNameUnknown
-	case "LOGICALNAME":
+	case strings.EqualFold(value, "LogicalName"):
 		ret = ApplicationContextNameLogicalName
-	case "SHORTNAME":
+	case strings.EqualFold(value, "ShortName"):
 		ret = ApplicationContextNameShortName
-	case "LOGICALNAMEWITHCIPHERING":
+	case strings.EqualFold(value, "LogicalNameWithCiphering"):
 		ret = ApplicationContextNameLogicalNameWithCiphering
-	case "SHORTNAMEWITHCIPHERING":
+	case strings.EqualFold(value, "ShortNameWithCiphering"):
 		ret = ApplicationContextNameShortNameWithCiphering
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g ApplicationContextName) String() string {
 	var ret string
 	switch g {
 	case ApplicationContextNameUnknown:
-		ret = "UNKNOWN"
+		ret = "Unknown"
 	case ApplicationContextNameLogicalName:
-		ret = "LOGICALNAME"
+		ret = "LogicalName"
 	case ApplicationContextNameShortName:
-		ret = "SHORTNAME"
+		ret = "ShortName"
 	case ApplicationContextNameLogicalNameWithCiphering:
-		ret = "LOGICALNAMEWITHCIPHERING"
+		ret = "LogicalNameWithCiphering"
 	case ApplicationContextNameShortNameWithCiphering:
-		ret = "SHORTNAMEWITHCIPHERING"
+		ret = "ShortNameWithCiphering"
 	}
 	return ret
+}
+
+// AllApplicationContextName returns a slice containing all defined ApplicationContextName values.
+func AllApplicationContextName() []ApplicationContextName {
+	return []ApplicationContextName{
+	ApplicationContextNameUnknown,
+	ApplicationContextNameLogicalName,
+	ApplicationContextNameShortName,
+	ApplicationContextNameLogicalNameWithCiphering,
+	ApplicationContextNameShortNameWithCiphering,
+	}
 }

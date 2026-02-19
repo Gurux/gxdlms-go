@@ -706,7 +706,7 @@ func (g *GXDLMSLimiter) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSLimiter) GetValues() []any {
-	return []any{g.LogicalName, g.MonitoredValue, g.ThresholdActive, g.ThresholdNormal,
+	return []any{g.LogicalName(), g.MonitoredValue, g.ThresholdActive, g.ThresholdNormal,
 		g.ThresholdEmergency, g.MinOverThresholdDuration, g.MinUnderThresholdDuration,
 		g.EmergencyProfile, g.EmergencyProfileGroupIDs, g.EmergencyProfileActive, []any{g.ActionOverThreshold, g.ActionUnderThreshold}}
 }

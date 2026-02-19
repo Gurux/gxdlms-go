@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func ProtectionStatusParse(value string) (ProtectionStatus, error) {
 	var ret ProtectionStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "UNLOCKED":
+	switch {
+	case strings.EqualFold(value, "Unlocked"):
 		ret = ProtectionStatusUnlocked
-	case "TEMPORARILYLOCKED":
+	case strings.EqualFold(value, "TemporarilyLocked"):
 		ret = ProtectionStatusTemporarilyLocked
-	case "LOCKED":
+	case strings.EqualFold(value, "Locked"):
 		ret = ProtectionStatusLocked
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g ProtectionStatus) String() string {
 	var ret string
 	switch g {
 	case ProtectionStatusUnlocked:
-		ret = "UNLOCKED"
+		ret = "Unlocked"
 	case ProtectionStatusTemporarilyLocked:
-		ret = "TEMPORARILYLOCKED"
+		ret = "TemporarilyLocked"
 	case ProtectionStatusLocked:
-		ret = "LOCKED"
+		ret = "Locked"
 	}
 	return ret
+}
+
+// AllProtectionStatus returns a slice containing all defined ProtectionStatus values.
+func AllProtectionStatus() []ProtectionStatus {
+	return []ProtectionStatus{
+		ProtectionStatusUnlocked,
+		ProtectionStatusTemporarilyLocked,
+		ProtectionStatusLocked,
+	}
 }

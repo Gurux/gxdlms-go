@@ -429,7 +429,7 @@ func (g *GXDLMSGprsSetup) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSGprsSetup) GetValues() []any {
-	return []any{g.LogicalName, g.APN, g.PINCode, []any{g.DefaultQualityOfService, g.RequestedQualityOfService}}
+	return []any{g.LogicalName(), g.APN, g.PINCode, []any{g.DefaultQualityOfService, g.RequestedQualityOfService}}
 }
 
 // GetUIDataType returns the UI data type of selected index.

@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -34,45 +34,18 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// M-Bus command.
+// MBusCommand defines M-Bus commands.
 type MBusCommand int
 
 const (
-	// MBusCommandRspUd defines that the access demand from Meter to Other Device. This message requests an access to
-	//  the Meter (contains no application data).
+	// MBusCommandRspUd defines that the // Access demand from Meter to Other Device. This message requests an access to
+	// the Meter (contains no application data).
 	MBusCommandRspUd MBusCommand = 0x8
-	// MBusCommandSndNr defines that the send unsolicited/periodical application data without request (Send/No Reply)
+	// MBusCommandSndNr defines that the // Send unsolicited/periodical application data without request (Send/No Reply)
 	MBusCommandSndNr MBusCommand = 0x4
-	// MBusCommandSndUd defines that the send a command (Send User Data).
+	// MBusCommandSndUd defines that the // Send a command (Send User Data).
 	MBusCommandSndUd MBusCommand = 0x3
 )
-
-// MBusCommandParse converts the given string into a MBusCommand value.
-//
-// It returns the corresponding MBusCommand constant if the string matches
-// a known level name, or an error if the input is invalid.
-func MBusCommandParse(value string) (MBusCommand, error) {
-	var ret MBusCommand
-	var err error
-	switch strings.ToUpper(value) {
-	case "RSPUD":
-		ret = MBusCommandRspUd
-	case "SNDNR":
-		ret = MBusCommandSndNr
-	case "SNDUD":
-		ret = MBusCommandSndUd
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
 
 // String returns the canonical name of the MBusCommand.
 // It satisfies fmt.Stringer.
@@ -80,11 +53,11 @@ func (g MBusCommand) String() string {
 	var ret string
 	switch g {
 	case MBusCommandRspUd:
-		ret = "RSPUD"
+		ret = "RspUd"
 	case MBusCommandSndNr:
-		ret = "SNDNR"
+		ret = "SndNr"
 	case MBusCommandSndUd:
-		ret = "SNDUD"
+		ret = "SndUd"
 	}
 	return ret
 }

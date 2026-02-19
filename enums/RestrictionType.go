@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func RestrictionTypeParse(value string) (RestrictionType, error) {
 	var ret RestrictionType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = RestrictionTypeNone
-	case "DATE":
+	case strings.EqualFold(value, "Date"):
 		ret = RestrictionTypeDate
-	case "ENTRY":
+	case strings.EqualFold(value, "Entry"):
 		ret = RestrictionTypeEntry
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g RestrictionType) String() string {
 	var ret string
 	switch g {
 	case RestrictionTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case RestrictionTypeDate:
-		ret = "DATE"
+		ret = "Date"
 	case RestrictionTypeEntry:
-		ret = "ENTRY"
+		ret = "Entry"
 	}
 	return ret
+}
+
+// AllRestrictionType returns a slice containing all defined RestrictionType values.
+func AllRestrictionType() []RestrictionType {
+	return []RestrictionType{
+		RestrictionTypeNone,
+		RestrictionTypeDate,
+		RestrictionTypeEntry,
+	}
 }

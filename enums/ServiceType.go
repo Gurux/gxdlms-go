@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -76,28 +76,28 @@ const (
 func ServiceTypeParse(value string) (ServiceType, error) {
 	var ret ServiceType
 	var err error
-	switch strings.ToUpper(value) {
-	case "TCP":
+	switch {
+	case strings.EqualFold(value, "TCP"):
 		ret = ServiceTypeTCP
-	case "UDP":
+	case strings.EqualFold(value, "UDP"):
 		ret = ServiceTypeUDP
-	case "FTP":
+	case strings.EqualFold(value, "Ftp"):
 		ret = ServiceTypeFTP
-	case "SMTP":
+	case strings.EqualFold(value, "SMTP"):
 		ret = ServiceTypeSMTP
-	case "SMS":
+	case strings.EqualFold(value, "Sms"):
 		ret = ServiceTypeSMS
-	case "HDLC":
+	case strings.EqualFold(value, "Hdlc"):
 		ret = ServiceTypeHDLC
-	case "MBUS":
+	case strings.EqualFold(value, "MBus"):
 		ret = ServiceTypeMBUS
-	case "ZIGBEE":
+	case strings.EqualFold(value, "ZigBee"):
 		ret = ServiceTypeZigBee
-	case "DLMSGATEWAY":
+	case strings.EqualFold(value, "DlmsGateway"):
 		ret = ServiceTypeDlmsGateway
-	case "RELIABLECOAP":
+	case strings.EqualFold(value, "ReliableCoAP"):
 		ret = ServiceTypeReliableCoAP
-	case "UNRELIABLECOAP":
+	case strings.EqualFold(value, "UnreliableCoAP"):
 		ret = ServiceTypeUnreliableCoAP
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -115,23 +115,40 @@ func (g ServiceType) String() string {
 	case ServiceTypeUDP:
 		ret = "UDP"
 	case ServiceTypeFTP:
-		ret = "FTP"
+		ret = "Ftp"
 	case ServiceTypeSMTP:
 		ret = "SMTP"
 	case ServiceTypeSMS:
-		ret = "SMS"
+		ret = "Sms"
 	case ServiceTypeHDLC:
-		ret = "HDLC"
+		ret = "Hdlc"
 	case ServiceTypeMBUS:
-		ret = "MBUS"
+		ret = "MBus"
 	case ServiceTypeZigBee:
-		ret = "ZIGBEE"
+		ret = "ZigBee"
 	case ServiceTypeDlmsGateway:
-		ret = "DLMSGATEWAY"
+		ret = "DlmsGateway"
 	case ServiceTypeReliableCoAP:
-		ret = "RELIABLECOAP"
+		ret = "ReliableCoAP"
 	case ServiceTypeUnreliableCoAP:
-		ret = "UNRELIABLECOAP"
+		ret = "UnreliableCoAP"
 	}
 	return ret
+}
+
+// AllServiceType returns a slice containing all defined ServiceType values.
+func AllServiceType() []ServiceType {
+	return []ServiceType{
+		ServiceTypeTCP,
+		ServiceTypeUDP,
+		ServiceTypeFTP,
+		ServiceTypeSMTP,
+		ServiceTypeSMS,
+		ServiceTypeHDLC,
+		ServiceTypeMBUS,
+		ServiceTypeZigBee,
+		ServiceTypeDlmsGateway,
+		ServiceTypeReliableCoAP,
+		ServiceTypeUnreliableCoAP,
+	}
 }

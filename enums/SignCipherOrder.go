@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func SignCipherOrderParse(value string) (SignCipherOrder, error) {
 	var ret SignCipherOrder
 	var err error
-	switch strings.ToUpper(value) {
-	case "CIPHEREDFIRST":
+	switch {
+	case strings.EqualFold(value, "CipheredFirst"):
 		ret = SignCipherOrderCipheredFirst
-	case "SIGNEDFIRST":
+	case strings.EqualFold(value, "SignedFirst"):
 		ret = SignCipherOrderSignedFirst
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g SignCipherOrder) String() string {
 	var ret string
 	switch g {
 	case SignCipherOrderCipheredFirst:
-		ret = "CIPHEREDFIRST"
+		ret = "CipheredFirst"
 	case SignCipherOrderSignedFirst:
-		ret = "SIGNEDFIRST"
+		ret = "SignedFirst"
 	}
 	return ret
+}
+
+// AllSignCipherOrder returns a slice containing all defined SignCipherOrder values.
+func AllSignCipherOrder() []SignCipherOrder {
+	return []SignCipherOrder{
+		SignCipherOrderCipheredFirst,
+		SignCipherOrderSignedFirst,
+	}
 }

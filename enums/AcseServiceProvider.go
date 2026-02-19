@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// AcseServiceProvider ACSE service provider.
+// AcseServiceProvider numerates ACSE service providers.
 type AcseServiceProvider int
 
 const (
@@ -60,12 +60,12 @@ const (
 func AcseServiceProviderParse(value string) (AcseServiceProvider, error) {
 	var ret AcseServiceProvider
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = AcseServiceProviderNone
-	case "NOREASONGIVEN":
+	case strings.EqualFold(value, "NoReasonGiven"):
 		ret = AcseServiceProviderNoReasonGiven
-	case "NOCOMMONACSEVERSION":
+	case strings.EqualFold(value, "NoCommonAcseVersion"):
 		ret = AcseServiceProviderNoCommonAcseVersion
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g AcseServiceProvider) String() string {
 	var ret string
 	switch g {
 	case AcseServiceProviderNone:
-		ret = "NONE"
+		ret = "None"
 	case AcseServiceProviderNoReasonGiven:
-		ret = "NOREASONGIVEN"
+		ret = "NoReasonGiven"
 	case AcseServiceProviderNoCommonAcseVersion:
-		ret = "NOCOMMONACSEVERSION"
+		ret = "NoCommonAcseVersion"
 	}
 	return ret
+}
+
+// AllAcseServiceProvider returns a slice containing all defined AcseServiceProvider values.
+func AllAcseServiceProvider() []AcseServiceProvider {
+	return []AcseServiceProvider{
+		AcseServiceProviderNone,
+		AcseServiceProviderNoReasonGiven,
+		AcseServiceProviderNoCommonAcseVersion,
+	}
 }

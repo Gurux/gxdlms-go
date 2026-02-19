@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -59,12 +59,12 @@ const (
 func MessageTypeParse(value string) (MessageType, error) {
 	var ret MessageType
 	var err error
-	switch strings.ToUpper(value) {
-	case "COSEMAPDU":
+	switch {
+	case strings.EqualFold(value, "CosemApdu"):
 		ret = MessageTypeCosemApdu
-	case "COSEMAPDUXML":
+	case strings.EqualFold(value, "CosemApduXml"):
 		ret = MessageTypeCosemApduXML
-	case "MANUFACTURERSPESIFIC":
+	case strings.EqualFold(value, "ManufacturerSpesific"):
 		ret = MessageTypeManufacturerSpesific
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -78,11 +78,20 @@ func (g MessageType) String() string {
 	var ret string
 	switch g {
 	case MessageTypeCosemApdu:
-		ret = "COSEMAPDU"
+		ret = "CosemApdu"
 	case MessageTypeCosemApduXML:
-		ret = "COSEMAPDUXML"
+		ret = "CosemApduXml"
 	case MessageTypeManufacturerSpesific:
-		ret = "MANUFACTURERSPESIFIC"
+		ret = "ManufacturerSpesific"
 	}
 	return ret
+}
+
+// AllMessageType returns a slice containing all defined MessageType values.
+func AllMessageType() []MessageType {
+	return []MessageType{
+		MessageTypeCosemApdu,
+		MessageTypeCosemApduXML,
+		MessageTypeManufacturerSpesific,
+	}
 }

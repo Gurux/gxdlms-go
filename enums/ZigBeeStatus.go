@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func ZigBeeStatusParse(value string) (ZigBeeStatus, error) {
 	var ret ZigBeeStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "AUTHORISED":
+	switch {
+	case strings.EqualFold(value, "Authorised"):
 		ret = ZigBeeStatusAuthorised
-	case "REPORTING":
+	case strings.EqualFold(value, "Reporting"):
 		ret = ZigBeeStatusReporting
-	case "UNAUTHORISED":
+	case strings.EqualFold(value, "Unauthorised"):
 		ret = ZigBeeStatusUnauthorised
-	case "AUTHORISEDSWAPOUT":
+	case strings.EqualFold(value, "AuthorisedSwapOut"):
 		ret = ZigBeeStatusAuthorisedSwapOut
-	case "SEPTRANSMITTING":
+	case strings.EqualFold(value, "SepTransmitting"):
 		ret = ZigBeeStatusSepTransmitting
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g ZigBeeStatus) String() string {
 	var ret string
 	switch g {
 	case ZigBeeStatusAuthorised:
-		ret = "AUTHORISED"
+		ret = "Authorised"
 	case ZigBeeStatusReporting:
-		ret = "REPORTING"
+		ret = "Reporting"
 	case ZigBeeStatusUnauthorised:
-		ret = "UNAUTHORISED"
+		ret = "Unauthorised"
 	case ZigBeeStatusAuthorisedSwapOut:
-		ret = "AUTHORISEDSWAPOUT"
+		ret = "AuthorisedSwapOut"
 	case ZigBeeStatusSepTransmitting:
-		ret = "SEPTRANSMITTING"
+		ret = "SepTransmitting"
 	}
 	return ret
+}
+
+// AllZigBeeStatus returns a slice containing all defined ZigBeeStatus values.
+func AllZigBeeStatus() []ZigBeeStatus {
+	return []ZigBeeStatus{
+		ZigBeeStatusAuthorised,
+		ZigBeeStatusReporting,
+		ZigBeeStatusUnauthorised,
+		ZigBeeStatusAuthorisedSwapOut,
+		ZigBeeStatusSepTransmitting,
+	}
 }

@@ -56,8 +56,8 @@ const (
 func PlcHdlcSourceAddressParse(value string) (PlcHdlcSourceAddress, error) {
 	var ret PlcHdlcSourceAddress
 	var err error
-	switch strings.ToUpper(value) {
-	case "INITIATOR":
+	switch {
+	case strings.EqualFold(value, "Initiator"):
 		ret = PlcHdlcSourceAddressInitiator
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -71,7 +71,14 @@ func (g PlcHdlcSourceAddress) String() string {
 	var ret string
 	switch g {
 	case PlcHdlcSourceAddressInitiator:
-		ret = "INITIATOR"
+		ret = "Initiator"
 	}
 	return ret
+}
+
+// AllPlcHdlcSourceAddress returns a slice containing all defined PlcHdlcSourceAddress values.
+func AllPlcHdlcSourceAddress() []PlcHdlcSourceAddress {
+	return []PlcHdlcSourceAddress{
+		PlcHdlcSourceAddressInitiator,
+	}
 }

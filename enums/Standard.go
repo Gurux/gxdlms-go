@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Standard Used DLMS standard.
+// Standard defines Used DLMS substandards.
 type Standard int
 
 const (
@@ -66,18 +66,18 @@ const (
 func StandardParse(value string) (Standard, error) {
 	var ret Standard
 	var err error
-	switch strings.ToUpper(value) {
-	case "DLMS":
+	switch {
+	case strings.EqualFold(value, "DLMS"):
 		ret = StandardDLMS
-	case "INDIA":
+	case strings.EqualFold(value, "India"):
 		ret = StandardIndia
-	case "ITALY":
+	case strings.EqualFold(value, "Italy"):
 		ret = StandardItaly
-	case "SAUDIARABIA":
+	case strings.EqualFold(value, "SaudiArabia"):
 		ret = StandardSaudiArabia
-	case "IDIS":
+	case strings.EqualFold(value, "Idis"):
 		ret = StandardIdis
-	case "SPAIN":
+	case strings.EqualFold(value, "Spain"):
 		ret = StandardSpain
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -93,15 +93,27 @@ func (g Standard) String() string {
 	case StandardDLMS:
 		ret = "DLMS"
 	case StandardIndia:
-		ret = "INDIA"
+		ret = "India"
 	case StandardItaly:
-		ret = "ITALY"
+		ret = "Italy"
 	case StandardSaudiArabia:
-		ret = "SAUDIARABIA"
+		ret = "SaudiArabia"
 	case StandardIdis:
-		ret = "IDIS"
+		ret = "Idis"
 	case StandardSpain:
-		ret = "SPAIN"
+		ret = "Spain"
 	}
 	return ret
+}
+
+// AllStandard returns a slice containing all defined Standard values.
+func AllStandard() []Standard {
+	return []Standard{
+		StandardDLMS,
+		StandardIndia,
+		StandardItaly,
+		StandardSaudiArabia,
+		StandardIdis,
+		StandardSpain,
+	}
 }

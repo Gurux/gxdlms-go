@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -70,22 +70,22 @@ const (
 func MethodAccessMode3Parse(value string) (MethodAccessMode3, error) {
 	var ret MethodAccessMode3
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOACCESS":
+	switch {
+	case strings.EqualFold(value, "NoAccess"):
 		ret = MethodAccessMode3NoAccess
-	case "ACCESS":
+	case strings.EqualFold(value, "Access"):
 		ret = MethodAccessMode3Access
-	case "AUTHENTICATEDREQUEST":
+	case strings.EqualFold(value, "AuthenticatedRequest"):
 		ret = MethodAccessMode3AuthenticatedRequest
-	case "ENCRYPTEDREQUEST":
+	case strings.EqualFold(value, "EncryptedRequest"):
 		ret = MethodAccessMode3EncryptedRequest
-	case "DIGITALLYSIGNEDREQUEST":
+	case strings.EqualFold(value, "DigitallySignedRequest"):
 		ret = MethodAccessMode3DigitallySignedRequest
-	case "AUTHENTICATEDRESPONSE":
+	case strings.EqualFold(value, "AuthenticatedResponse"):
 		ret = MethodAccessMode3AuthenticatedResponse
-	case "ENCRYPTEDRESPONSE":
+	case strings.EqualFold(value, "EncryptedResponse"):
 		ret = MethodAccessMode3EncryptedResponse
-	case "DIGITALLYSIGNEDRESPONSE":
+	case strings.EqualFold(value, "DigitallySignedResponse"):
 		ret = MethodAccessMode3DigitallySignedResponse
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -99,21 +99,35 @@ func (g MethodAccessMode3) String() string {
 	var ret string
 	switch g {
 	case MethodAccessMode3NoAccess:
-		ret = "NOACCESS"
+		ret = "NoAccess"
 	case MethodAccessMode3Access:
-		ret = "ACCESS"
+		ret = "Access"
 	case MethodAccessMode3AuthenticatedRequest:
-		ret = "AUTHENTICATEDREQUEST"
+		ret = "AuthenticatedRequest"
 	case MethodAccessMode3EncryptedRequest:
-		ret = "ENCRYPTEDREQUEST"
+		ret = "EncryptedRequest"
 	case MethodAccessMode3DigitallySignedRequest:
-		ret = "DIGITALLYSIGNEDREQUEST"
+		ret = "DigitallySignedRequest"
 	case MethodAccessMode3AuthenticatedResponse:
-		ret = "AUTHENTICATEDRESPONSE"
+		ret = "AuthenticatedResponse"
 	case MethodAccessMode3EncryptedResponse:
-		ret = "ENCRYPTEDRESPONSE"
+		ret = "EncryptedResponse"
 	case MethodAccessMode3DigitallySignedResponse:
-		ret = "DIGITALLYSIGNEDRESPONSE"
+		ret = "DigitallySignedResponse"
 	}
 	return ret
+}
+
+// AllMethodAccessMode3 returns a slice containing all defined MethodAccessMode3 values.
+func AllMethodAccessMode3() []MethodAccessMode3 {
+	return []MethodAccessMode3{
+		MethodAccessMode3NoAccess,
+		MethodAccessMode3Access,
+		MethodAccessMode3AuthenticatedRequest,
+		MethodAccessMode3EncryptedRequest,
+		MethodAccessMode3DigitallySignedRequest,
+		MethodAccessMode3AuthenticatedResponse,
+		MethodAccessMode3EncryptedResponse,
+		MethodAccessMode3DigitallySignedResponse,
+	}
 }

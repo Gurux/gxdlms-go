@@ -1,4 +1,4 @@
-package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -34,56 +34,14 @@ package enums
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// GetCommandType Enumerates Get request and response types.
+// GetCommandType enumerates Get request and response types.
 type GetCommandType int
 
 const (
-	// GetCommandTypeNormal defines that the normal Get.
+	// GetCommandTypeNormal defines that the // Normal Get.
 	GetCommandTypeNormal GetCommandType = 1
-	// GetCommandTypeNextDataBlock defines that the next data block.
+	// GetCommandTypeNextDataBlock defines that the // Next data block.
 	GetCommandTypeNextDataBlock GetCommandType = 2
-	// GetCommandTypeWithList defines that the get request with list.
+	// GetCommandTypeWithList defines that the // Get request with list.
 	GetCommandTypeWithList GetCommandType = 3
 )
-
-// GetCommandTypeParse converts the given string into a GetCommandType value.
-//
-// It returns the corresponding GetCommandType constant if the string matches
-// a known level name, or an error if the input is invalid.
-func GetCommandTypeParse(value string) (GetCommandType, error) {
-	var ret GetCommandType
-	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
-		ret = GetCommandTypeNormal
-	case "NEXTDATABLOCK":
-		ret = GetCommandTypeNextDataBlock
-	case "WITHLIST":
-		ret = GetCommandTypeWithList
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
-
-// String returns the canonical name of the GetCommandType.
-// It satisfies fmt.Stringer.
-func (g GetCommandType) String() string {
-	var ret string
-	switch g {
-	case GetCommandTypeNormal:
-		ret = "NORMAL"
-	case GetCommandTypeNextDataBlock:
-		ret = "NEXTDATABLOCK"
-	case GetCommandTypeWithList:
-		ret = "WITHLIST"
-	}
-	return ret
-}

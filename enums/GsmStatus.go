@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// GsmStatus GSM status.
+// GsmStatus enumerates GSM status.
 type GsmStatus int
 
 const (
@@ -66,18 +66,18 @@ const (
 func GsmStatusParse(value string) (GsmStatus, error) {
 	var ret GsmStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = GsmStatusNone
-	case "HOMENETWORK":
+	case strings.EqualFold(value, "HomeNetwork"):
 		ret = GsmStatusHomeNetwork
-	case "SEARCHING":
+	case strings.EqualFold(value, "Searching"):
 		ret = GsmStatusSearching
-	case "DENIED":
+	case strings.EqualFold(value, "Denied"):
 		ret = GsmStatusDenied
-	case "UNKNOWN":
+	case strings.EqualFold(value, "Unknown"):
 		ret = GsmStatusUnknown
-	case "ROAMING":
+	case strings.EqualFold(value, "Roaming"):
 		ret = GsmStatusRoaming
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g GsmStatus) String() string {
 	var ret string
 	switch g {
 	case GsmStatusNone:
-		ret = "NONE"
+		ret = "None"
 	case GsmStatusHomeNetwork:
-		ret = "HOMENETWORK"
+		ret = "HomeNetwork"
 	case GsmStatusSearching:
-		ret = "SEARCHING"
+		ret = "Searching"
 	case GsmStatusDenied:
-		ret = "DENIED"
+		ret = "Denied"
 	case GsmStatusUnknown:
-		ret = "UNKNOWN"
+		ret = "Unknown"
 	case GsmStatusRoaming:
-		ret = "ROAMING"
+		ret = "Roaming"
 	}
 	return ret
+}
+
+// AllGsmStatus returns a slice containing all defined GsmStatus values.
+func AllGsmStatus() []GsmStatus {
+	return []GsmStatus{
+		GsmStatusNone,
+		GsmStatusHomeNetwork,
+		GsmStatusSearching,
+		GsmStatusDenied,
+		GsmStatusUnknown,
+		GsmStatusRoaming,
+	}
 }

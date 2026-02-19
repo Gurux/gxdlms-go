@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -84,34 +84,34 @@ const (
 func InterfaceTypeParse(value string) (InterfaceType, error) {
 	var ret InterfaceType
 	var err error
-	switch strings.ToUpper(value) {
-	case "HDLC":
+	switch {
+	case strings.EqualFold(value, "HDLC"):
 		ret = InterfaceTypeHDLC
-	case "WRAPPER":
+	case strings.EqualFold(value, "WRAPPER"):
 		ret = InterfaceTypeWRAPPER
-	case "PDU":
+	case strings.EqualFold(value, "PDU"):
 		ret = InterfaceTypePDU
-	case "WIRELESSMBUS":
+	case strings.EqualFold(value, "WirelessMBus"):
 		ret = InterfaceTypeWirelessMBus
-	case "HDLCWITHMODEE":
+	case strings.EqualFold(value, "HdlcWithModeE"):
 		ret = InterfaceTypeHdlcWithModeE
-	case "PLC":
+	case strings.EqualFold(value, "Plc"):
 		ret = InterfaceTypePlc
-	case "PLCHDLC":
+	case strings.EqualFold(value, "PlcHdlc"):
 		ret = InterfaceTypePlcHdlc
-	case "LPWAN":
+	case strings.EqualFold(value, "LPWAN"):
 		ret = InterfaceTypeLPWAN
-	case "WISUN":
+	case strings.EqualFold(value, "WiSUN"):
 		ret = InterfaceTypeWiSUN
-	case "PLCPRIME":
+	case strings.EqualFold(value, "PlcPrime"):
 		ret = InterfaceTypePlcPrime
-	case "WIREDMBUS":
+	case strings.EqualFold(value, "WiredMBus"):
 		ret = InterfaceTypeWiredMBus
-	case "SMS":
+	case strings.EqualFold(value, "SMS"):
 		ret = InterfaceTypeSMS
-	case "PRIMEDCWRAPPER":
+	case strings.EqualFold(value, "PrimeDcWrapper"):
 		ret = InterfaceTypePrimeDcWrapper
-	case "COAP":
+	case strings.EqualFold(value, "CoAP"):
 		ret = InterfaceTypeCoAP
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -131,27 +131,47 @@ func (g InterfaceType) String() string {
 	case InterfaceTypePDU:
 		ret = "PDU"
 	case InterfaceTypeWirelessMBus:
-		ret = "WIRELESSMBUS"
+		ret = "WirelessMBus"
 	case InterfaceTypeHdlcWithModeE:
-		ret = "HDLCWITHMODEE"
+		ret = "HdlcWithModeE"
 	case InterfaceTypePlc:
-		ret = "PLC"
+		ret = "Plc"
 	case InterfaceTypePlcHdlc:
-		ret = "PLCHDLC"
+		ret = "PlcHdlc"
 	case InterfaceTypeLPWAN:
 		ret = "LPWAN"
 	case InterfaceTypeWiSUN:
-		ret = "WISUN"
+		ret = "WiSUN"
 	case InterfaceTypePlcPrime:
-		ret = "PLCPRIME"
+		ret = "PlcPrime"
 	case InterfaceTypeWiredMBus:
-		ret = "WIREDMBUS"
+		ret = "WiredMBus"
 	case InterfaceTypeSMS:
 		ret = "SMS"
 	case InterfaceTypePrimeDcWrapper:
-		ret = "PRIMEDCWRAPPER"
+		ret = "PrimeDcWrapper"
 	case InterfaceTypeCoAP:
-		ret = "COAP"
+		ret = "CoAP"
 	}
 	return ret
+}
+
+// AllInterfaceType returns a slice containing all defined InterfaceType values.
+func AllInterfaceType() []InterfaceType {
+	return []InterfaceType{
+		InterfaceTypeHDLC,
+		InterfaceTypeWRAPPER,
+		InterfaceTypePDU,
+		InterfaceTypeWirelessMBus,
+		InterfaceTypeHdlcWithModeE,
+		InterfaceTypePlc,
+		InterfaceTypePlcHdlc,
+		InterfaceTypeLPWAN,
+		InterfaceTypeWiSUN,
+		InterfaceTypePlcPrime,
+		InterfaceTypeWiredMBus,
+		InterfaceTypeSMS,
+		InterfaceTypePrimeDcWrapper,
+		InterfaceTypeCoAP,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// GlobalKeyType : s.
+// GlobalKeyType Enumerates global key types.
 type GlobalKeyType int
 
 const (
@@ -62,14 +62,14 @@ const (
 func GlobalKeyTypeParse(value string) (GlobalKeyType, error) {
 	var ret GlobalKeyType
 	var err error
-	switch strings.ToUpper(value) {
-	case "UNICASTENCRYPTION":
+	switch {
+	case strings.EqualFold(value, "UnicastEncryption"):
 		ret = GlobalKeyTypeUnicastEncryption
-	case "BROADCASTENCRYPTION":
+	case strings.EqualFold(value, "BroadcastEncryption"):
 		ret = GlobalKeyTypeBroadcastEncryption
-	case "AUTHENTICATION":
+	case strings.EqualFold(value, "Authentication"):
 		ret = GlobalKeyTypeAuthentication
-	case "KEK":
+	case strings.EqualFold(value, "Kek"):
 		ret = GlobalKeyTypeKek
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g GlobalKeyType) String() string {
 	var ret string
 	switch g {
 	case GlobalKeyTypeUnicastEncryption:
-		ret = "UNICASTENCRYPTION"
+		ret = "UnicastEncryption"
 	case GlobalKeyTypeBroadcastEncryption:
-		ret = "BROADCASTENCRYPTION"
+		ret = "BroadcastEncryption"
 	case GlobalKeyTypeAuthentication:
-		ret = "AUTHENTICATION"
+		ret = "Authentication"
 	case GlobalKeyTypeKek:
-		ret = "KEK"
+		ret = "Kek"
 	}
 	return ret
+}
+
+// AllGlobalKeyType returns a slice containing all defined GlobalKeyType values.
+func AllGlobalKeyType() []GlobalKeyType {
+	return []GlobalKeyType{
+		GlobalKeyTypeUnicastEncryption,
+		GlobalKeyTypeBroadcastEncryption,
+		GlobalKeyTypeAuthentication,
+		GlobalKeyTypeKek,
+	}
 }

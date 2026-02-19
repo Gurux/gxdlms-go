@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -70,22 +70,22 @@ const (
 func LoadDataSetParse(value string) (LoadDataSet, error) {
 	var ret LoadDataSet
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = LoadDataSetOther
-	case "PRIMITIVEOUTOFSEQUENCE":
+	case strings.EqualFold(value, "PrimitiveOutOfSequence"):
 		ret = LoadDataSetPrimitiveOutOfSequence
-	case "NOTLOADABLE":
+	case strings.EqualFold(value, "NotLoadable"):
 		ret = LoadDataSetNotLoadable
-	case "DATASETSIZETOOLARGE":
+	case strings.EqualFold(value, "DatasetSizeTooLarge"):
 		ret = LoadDataSetDatasetSizeTooLarge
-	case "NOTAWAITEDSEGMENT":
+	case strings.EqualFold(value, "NotAwaitedSegment"):
 		ret = LoadDataSetNotAwaitedSegment
-	case "INTERPRETATIONFAILURE":
+	case strings.EqualFold(value, "InterpretationFailure"):
 		ret = LoadDataSetInterpretationFailure
-	case "STORAGEFAILURE":
+	case strings.EqualFold(value, "StorageFailure"):
 		ret = LoadDataSetStorageFailure
-	case "DATASETNOTREADY":
+	case strings.EqualFold(value, "DatasetNotReady"):
 		ret = LoadDataSetDatasetNotReady
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -99,21 +99,35 @@ func (g LoadDataSet) String() string {
 	var ret string
 	switch g {
 	case LoadDataSetOther:
-		ret = "OTHER"
+		ret = "Other"
 	case LoadDataSetPrimitiveOutOfSequence:
-		ret = "PRIMITIVEOUTOFSEQUENCE"
+		ret = "PrimitiveOutOfSequence"
 	case LoadDataSetNotLoadable:
-		ret = "NOTLOADABLE"
+		ret = "NotLoadable"
 	case LoadDataSetDatasetSizeTooLarge:
-		ret = "DATASETSIZETOOLARGE"
+		ret = "DatasetSizeTooLarge"
 	case LoadDataSetNotAwaitedSegment:
-		ret = "NOTAWAITEDSEGMENT"
+		ret = "NotAwaitedSegment"
 	case LoadDataSetInterpretationFailure:
-		ret = "INTERPRETATIONFAILURE"
+		ret = "InterpretationFailure"
 	case LoadDataSetStorageFailure:
-		ret = "STORAGEFAILURE"
+		ret = "StorageFailure"
 	case LoadDataSetDatasetNotReady:
-		ret = "DATASETNOTREADY"
+		ret = "DatasetNotReady"
 	}
 	return ret
+}
+
+// AllLoadDataSet returns a slice containing all defined LoadDataSet values.
+func AllLoadDataSet() []LoadDataSet {
+	return []LoadDataSet{
+		LoadDataSetOther,
+		LoadDataSetPrimitiveOutOfSequence,
+		LoadDataSetNotLoadable,
+		LoadDataSetDatasetSizeTooLarge,
+		LoadDataSetNotAwaitedSegment,
+		LoadDataSetInterpretationFailure,
+		LoadDataSetStorageFailure,
+		LoadDataSetDatasetNotReady,
+	}
 }

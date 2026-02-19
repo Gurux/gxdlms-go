@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -63,14 +63,14 @@ const (
 func AutoAnswerModeParse(value string) (AutoAnswerMode, error) {
 	var ret AutoAnswerMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "DEVICE":
+	switch {
+	case strings.EqualFold(value, "Device"):
 		ret = AutoAnswerModeDevice
-	case "CALL":
+	case strings.EqualFold(value, "Call"):
 		ret = AutoAnswerModeCall
-	case "CONNECTED":
+	case strings.EqualFold(value, "Connected"):
 		ret = AutoAnswerModeConnected
-	case "NONE":
+	case strings.EqualFold(value, "None"):
 		ret = AutoAnswerModeNone
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -84,13 +84,23 @@ func (g AutoAnswerMode) String() string {
 	var ret string
 	switch g {
 	case AutoAnswerModeDevice:
-		ret = "DEVICE"
+		ret = "Device"
 	case AutoAnswerModeCall:
-		ret = "CALL"
+		ret = "Call"
 	case AutoAnswerModeConnected:
-		ret = "CONNECTED"
+		ret = "Connected"
 	case AutoAnswerModeNone:
-		ret = "NONE"
+		ret = "None"
 	}
 	return ret
+}
+
+// AllAutoAnswerMode returns a slice containing all defined AutoAnswerMode values.
+func AllAutoAnswerMode() []AutoAnswerMode {
+	return []AutoAnswerMode{
+	AutoAnswerModeDevice,
+	AutoAnswerModeCall,
+	AutoAnswerModeConnected,
+	AutoAnswerModeNone,
+	}
 }

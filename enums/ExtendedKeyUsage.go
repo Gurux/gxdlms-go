@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// ExtendedKeyUsage .
+// ExtendedKeyUsage enumerates extended key usage values.
 type ExtendedKeyUsage int
 
 const (
@@ -60,12 +60,12 @@ const (
 func ExtendedKeyUsageParse(value string) (ExtendedKeyUsage, error) {
 	var ret ExtendedKeyUsage
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ExtendedKeyUsageNone
-	case "SERVERAUTH":
+	case strings.EqualFold(value, "ServerAuth"):
 		ret = ExtendedKeyUsageServerAuth
-	case "CLIENTAUTH":
+	case strings.EqualFold(value, "ClientAuth"):
 		ret = ExtendedKeyUsageClientAuth
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g ExtendedKeyUsage) String() string {
 	var ret string
 	switch g {
 	case ExtendedKeyUsageNone:
-		ret = "NONE"
+		ret = "None"
 	case ExtendedKeyUsageServerAuth:
-		ret = "SERVERAUTH"
+		ret = "ServerAuth"
 	case ExtendedKeyUsageClientAuth:
-		ret = "CLIENTAUTH"
+		ret = "ClientAuth"
 	}
 	return ret
+}
+
+// AllExtendedKeyUsage returns a slice containing all defined ExtendedKeyUsage values.
+func AllExtendedKeyUsage() []ExtendedKeyUsage {
+	return []ExtendedKeyUsage{
+		ExtendedKeyUsageNone,
+		ExtendedKeyUsageServerAuth,
+		ExtendedKeyUsageClientAuth,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -78,30 +78,30 @@ const (
 func MacCapabilitiesParse(value string) (MacCapabilities, error) {
 	var ret MacCapabilities
 	var err error
-	switch strings.ToUpper(value) {
-	case "SWITCHCAPABLE":
+	switch {
+	case strings.EqualFold(value, "SwitchCapable"):
 		ret = MacCapabilitiesSwitchCapable
-	case "PACKETAGGREGATION":
+	case strings.EqualFold(value, "PacketAggregation"):
 		ret = MacCapabilitiesPacketAggregation
-	case "CONTENTIONFREEPERIOD":
+	case strings.EqualFold(value, "ContentionFreePeriod"):
 		ret = MacCapabilitiesContentionFreePeriod
-	case "DIRECTCONNECTION":
+	case strings.EqualFold(value, "DirectConnection"):
 		ret = MacCapabilitiesDirectConnection
-	case "MULTICAST":
+	case strings.EqualFold(value, "Multicast"):
 		ret = MacCapabilitiesMulticast
-	case "PHYROBUSTNESSMANAGEMENT":
+	case strings.EqualFold(value, "PhyRobustnessManagement"):
 		ret = MacCapabilitiesPhyRobustnessManagement
-	case "ARQ":
+	case strings.EqualFold(value, "Arq"):
 		ret = MacCapabilitiesArq
-	case "RESERVEDFORFUTUREUSE":
+	case strings.EqualFold(value, "ReservedForFutureUse"):
 		ret = MacCapabilitiesReservedForFutureUse
-	case "DIRECTCONNECTIONSWITCHING":
+	case strings.EqualFold(value, "DirectConnectionSwitching"):
 		ret = MacCapabilitiesDirectConnectionSwitching
-	case "MULTICASTSWITCHINGCAPABILITY":
+	case strings.EqualFold(value, "MulticastSwitchingCapability"):
 		ret = MacCapabilitiesMulticastSwitchingCapability
-	case "PHYROBUSTNESSMANAGEMENTSWITCHINGCAPABILITY":
+	case strings.EqualFold(value, "PhyRobustnessManagementSwitchingCapability"):
 		ret = MacCapabilitiesPhyRobustnessManagementSwitchingCapability
-	case "ARQBUFFERINGSWITCHINGCAPABILITY":
+	case strings.EqualFold(value, "ArqBufferingSwitchingCapability"):
 		ret = MacCapabilitiesArqBufferingSwitchingCapability
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -115,29 +115,47 @@ func (g MacCapabilities) String() string {
 	var ret string
 	switch g {
 	case MacCapabilitiesSwitchCapable:
-		ret = "SWITCHCAPABLE"
+		ret = "SwitchCapable"
 	case MacCapabilitiesPacketAggregation:
-		ret = "PACKETAGGREGATION"
+		ret = "PacketAggregation"
 	case MacCapabilitiesContentionFreePeriod:
-		ret = "CONTENTIONFREEPERIOD"
+		ret = "ContentionFreePeriod"
 	case MacCapabilitiesDirectConnection:
-		ret = "DIRECTCONNECTION"
+		ret = "DirectConnection"
 	case MacCapabilitiesMulticast:
-		ret = "MULTICAST"
+		ret = "Multicast"
 	case MacCapabilitiesPhyRobustnessManagement:
-		ret = "PHYROBUSTNESSMANAGEMENT"
+		ret = "PhyRobustnessManagement"
 	case MacCapabilitiesArq:
-		ret = "ARQ"
+		ret = "Arq"
 	case MacCapabilitiesReservedForFutureUse:
-		ret = "RESERVEDFORFUTUREUSE"
+		ret = "ReservedForFutureUse"
 	case MacCapabilitiesDirectConnectionSwitching:
-		ret = "DIRECTCONNECTIONSWITCHING"
+		ret = "DirectConnectionSwitching"
 	case MacCapabilitiesMulticastSwitchingCapability:
-		ret = "MULTICASTSWITCHINGCAPABILITY"
+		ret = "MulticastSwitchingCapability"
 	case MacCapabilitiesPhyRobustnessManagementSwitchingCapability:
-		ret = "PHYROBUSTNESSMANAGEMENTSWITCHINGCAPABILITY"
+		ret = "PhyRobustnessManagementSwitchingCapability"
 	case MacCapabilitiesArqBufferingSwitchingCapability:
-		ret = "ARQBUFFERINGSWITCHINGCAPABILITY"
+		ret = "ArqBufferingSwitchingCapability"
 	}
 	return ret
+}
+
+// AllMacCapabilities returns a slice containing all defined MacCapabilities values.
+func AllMacCapabilities() []MacCapabilities {
+	return []MacCapabilities{
+		MacCapabilitiesSwitchCapable,
+		MacCapabilitiesPacketAggregation,
+		MacCapabilitiesContentionFreePeriod,
+		MacCapabilitiesDirectConnection,
+		MacCapabilitiesMulticast,
+		MacCapabilitiesPhyRobustnessManagement,
+		MacCapabilitiesArq,
+		MacCapabilitiesReservedForFutureUse,
+		MacCapabilitiesDirectConnectionSwitching,
+		MacCapabilitiesMulticastSwitchingCapability,
+		MacCapabilitiesPhyRobustnessManagementSwitchingCapability,
+		MacCapabilitiesArqBufferingSwitchingCapability,
+	}
 }

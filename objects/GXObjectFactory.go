@@ -95,33 +95,21 @@ func CreateObject(objectType enums.ObjectType) IGXDLMSBase {
 		ret = &GXDLMSProfileGeneric{}
 	case enums.ObjectTypeRegister:
 		ret = &GXDLMSRegister{}
-		/*
-		   case enums.ObjectTypeRegisterActivation:
-		       ret = &GXDLMSRegisterActivation{}
-		   case enums.ObjectTypeRegisterMonitor:
-		       ret = &GXDLMSRegisterMonitor{}
-		   case enums.ObjectTypeRegisterTable:
-		       ret = &GXDLMSObject{}
-		   case enums.ObjectTypeZigbeeSasStartup:
-		       ret = &GXDLMSObject{}
-		   case enums.ObjectTypeZigbeeSasJoining:
-		       ret = &GXDLMSObject{}
-		   case enums.ObjectTypeSapAssignment:
-		       ret = &GXDLMSSapAssignment{}
-		   case enums.ObjectTypeSchedule:
-		       ret = &GXDLMSSchedule{}
-		*/
+	case enums.ObjectTypeRegisterActivation:
+		ret = &GXDLMSRegisterActivation{}
+	case enums.ObjectTypeRegisterMonitor:
+		ret = &GXDLMSRegisterMonitor{}
+	case enums.ObjectTypeSapAssignment:
+		ret = &GXDLMSSapAssignment{}
+	case enums.ObjectTypeSchedule:
+		ret = &GXDLMSSchedule{}
 	case enums.ObjectTypeScriptTable:
 		ret = &GXDLMSScriptTable{}
+	case enums.ObjectTypeSpecialDaysTable:
+		ret = &GXDLMSSpecialDaysTable{}
+	case enums.ObjectTypeTCPUDPSetup:
+		ret = &GXDLMSTcpUdpSetup{}
 		/*
-		   case enums.ObjectTypeSpecialDaysTable:
-		       ret = &GXDLMSSpecialDaysTable{}
-		   case enums.ObjectTypeStatusMapping:
-		       ret = &GXDLMSObject{}
-		   case enums.ObjectTypeTcpUdpSetup:
-		       ret = &GXDLMSTcpUdpSetup{}
-		   case enums.ObjectTypeZigbeeSasApsFragmentation:
-		       ret = &GXDLMSObject{}
 		   case enums.ObjectTypeUtilityTables:
 		       ret = &GXDLMSUtilityTables{}
 		   case enums.ObjectTypePushSetup:

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -59,12 +59,12 @@ const (
 func ScriptActionTypeParse(value string) (ScriptActionType, error) {
 	var ret ScriptActionType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = ScriptActionTypeNone
-	case "WRITE":
+	case strings.EqualFold(value, "Write"):
 		ret = ScriptActionTypeWrite
-	case "EXECUTE":
+	case strings.EqualFold(value, "Execute"):
 		ret = ScriptActionTypeExecute
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -78,11 +78,20 @@ func (g ScriptActionType) String() string {
 	var ret string
 	switch g {
 	case ScriptActionTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case ScriptActionTypeWrite:
-		ret = "WRITE"
+		ret = "Write"
 	case ScriptActionTypeExecute:
-		ret = "EXECUTE"
+		ret = "Execute"
 	}
 	return ret
+}
+
+// AllScriptActionType returns a slice containing all defined ScriptActionType values.
+func AllScriptActionType() []ScriptActionType {
+	return []ScriptActionType{
+		ScriptActionTypeNone,
+		ScriptActionTypeWrite,
+		ScriptActionTypeExecute,
+	}
 }

@@ -55,8 +55,8 @@ const (
 func PlcDestinationAddressParse(value string) (PlcDestinationAddress, error) {
 	var ret PlcDestinationAddress
 	var err error
-	switch strings.ToUpper(value) {
-	case "ALLPHYSICAL":
+	switch {
+	case strings.EqualFold(value, "AllPhysical"):
 		ret = PlcDestinationAddressAllPhysical
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -70,7 +70,14 @@ func (g PlcDestinationAddress) String() string {
 	var ret string
 	switch g {
 	case PlcDestinationAddressAllPhysical:
-		ret = "ALLPHYSICAL"
+		ret = "AllPhysical"
 	}
 	return ret
+}
+
+// AllPlcDestinationAddress returns a slice containing all defined PlcDestinationAddress values.
+func AllPlcDestinationAddress() []PlcDestinationAddress {
+	return []PlcDestinationAddress{
+	PlcDestinationAddressAllPhysical,
+	}
 }

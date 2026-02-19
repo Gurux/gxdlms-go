@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func MethodAccessModeParse(value string) (MethodAccessMode, error) {
 	var ret MethodAccessMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOACCESS":
+	switch {
+	case strings.EqualFold(value, "NoAccess"):
 		ret = MethodAccessModeNoAccess
-	case "ACCESS":
+	case strings.EqualFold(value, "Access"):
 		ret = MethodAccessModeAccess
-	case "AUTHENTICATEDACCESS":
+	case strings.EqualFold(value, "AuthenticatedAccess"):
 		ret = MethodAccessModeAuthenticatedAccess
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g MethodAccessMode) String() string {
 	var ret string
 	switch g {
 	case MethodAccessModeNoAccess:
-		ret = "NOACCESS"
+		ret = "NoAccess"
 	case MethodAccessModeAccess:
-		ret = "ACCESS"
+		ret = "Access"
 	case MethodAccessModeAuthenticatedAccess:
-		ret = "AUTHENTICATEDACCESS"
+		ret = "AuthenticatedAccess"
 	}
 	return ret
+}
+
+// AllMethodAccessMode returns a slice containing all defined MethodAccessMode values.
+func AllMethodAccessMode() []MethodAccessMode {
+	return []MethodAccessMode{
+		MethodAccessModeNoAccess,
+		MethodAccessModeAccess,
+		MethodAccessModeAuthenticatedAccess,
+	}
 }

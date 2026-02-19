@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func CertificateEntityParse(value string) (CertificateEntity, error) {
 	var ret CertificateEntity
 	var err error
-	switch strings.ToUpper(value) {
-	case "SERVER":
+	switch {
+	case strings.EqualFold(value, "Server"):
 		ret = CertificateEntityServer
-	case "CLIENT":
+	case strings.EqualFold(value, "Client"):
 		ret = CertificateEntityClient
-	case "CERTIFICATIONAUTHORITY":
+	case strings.EqualFold(value, "CertificationAuthority"):
 		ret = CertificateEntityCertificationAuthority
-	case "OTHER":
+	case strings.EqualFold(value, "Other"):
 		ret = CertificateEntityOther
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g CertificateEntity) String() string {
 	var ret string
 	switch g {
 	case CertificateEntityServer:
-		ret = "SERVER"
+		ret = "Server"
 	case CertificateEntityClient:
-		ret = "CLIENT"
+		ret = "Client"
 	case CertificateEntityCertificationAuthority:
-		ret = "CERTIFICATIONAUTHORITY"
+		ret = "CertificationAuthority"
 	case CertificateEntityOther:
-		ret = "OTHER"
+		ret = "Other"
 	}
 	return ret
+}
+
+// AllCertificateEntity returns a slice containing all defined CertificateEntity values.
+func AllCertificateEntity() []CertificateEntity {
+	return []CertificateEntity{
+	CertificateEntityServer,
+	CertificateEntityClient,
+	CertificateEntityCertificationAuthority,
+	CertificateEntityOther,
+	}
 }

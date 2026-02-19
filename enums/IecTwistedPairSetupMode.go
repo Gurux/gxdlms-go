@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// IecTwistedPairSetupMode IEC Twisted pair setup working mode.
+// IecTwistedPairSetupMode defines IEC Twisted pair setup working mode.
 type IecTwistedPairSetupMode int
 
 const (
@@ -58,10 +58,10 @@ const (
 func IecTwistedPairSetupModeParse(value string) (IecTwistedPairSetupMode, error) {
 	var ret IecTwistedPairSetupMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "INACTIVE":
+	switch {
+	case strings.EqualFold(value, "Inactive"):
 		ret = IecTwistedPairSetupModeInactive
-	case "ACTIVE":
+	case strings.EqualFold(value, "Active"):
 		ret = IecTwistedPairSetupModeActive
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g IecTwistedPairSetupMode) String() string {
 	var ret string
 	switch g {
 	case IecTwistedPairSetupModeInactive:
-		ret = "INACTIVE"
+		ret = "Inactive"
 	case IecTwistedPairSetupModeActive:
-		ret = "ACTIVE"
+		ret = "Active"
 	}
 	return ret
+}
+
+// AllIecTwistedPairSetupMode returns a slice containing all defined IecTwistedPairSetupMode values.
+func AllIecTwistedPairSetupMode() []IecTwistedPairSetupMode {
+	return []IecTwistedPairSetupMode{
+		IecTwistedPairSetupModeInactive,
+		IecTwistedPairSetupModeActive,
+	}
 }

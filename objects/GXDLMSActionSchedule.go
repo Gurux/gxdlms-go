@@ -413,9 +413,9 @@ func (g *GXDLMSActionSchedule) PostLoad(reader *GXXmlReader) error {
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSActionSchedule) GetValues() []any {
 	if g.Target != nil {
-		return []any{g.LogicalName, fmt.Sprint("%s %d", g.Target.LogicalName(), g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
+		return []any{g.LogicalName(), fmt.Sprint("%s %d", g.Target.LogicalName(), g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
 	}
-	return []any{g.LogicalName, fmt.Sprint("%s %d", g.ExecutedScriptLogicalName, g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
+	return []any{g.LogicalName(), fmt.Sprint("%s %d", g.ExecutedScriptLogicalName, g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
 }
 
 // GetDataType returns the device data type of selected attribute index.

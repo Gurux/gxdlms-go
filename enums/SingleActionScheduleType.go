@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -67,16 +67,16 @@ const (
 func SingleActionScheduleTypeParse(value string) (SingleActionScheduleType, error) {
 	var ret SingleActionScheduleType
 	var err error
-	switch strings.ToUpper(value) {
-	case "SINGLEACTIONSCHEDULETYPE1":
+	switch {
+	case strings.EqualFold(value, "SingleActionScheduleType1"):
 		ret = SingleActionScheduleTypeSingleActionScheduleType1
-	case "SINGLEACTIONSCHEDULETYPE2":
+	case strings.EqualFold(value, "SingleActionScheduleType2"):
 		ret = SingleActionScheduleTypeSingleActionScheduleType2
-	case "SINGLEACTIONSCHEDULETYPE3":
+	case strings.EqualFold(value, "SingleActionScheduleType3"):
 		ret = SingleActionScheduleTypeSingleActionScheduleType3
-	case "SINGLEACTIONSCHEDULETYPE4":
+	case strings.EqualFold(value, "SingleActionScheduleType4"):
 		ret = SingleActionScheduleTypeSingleActionScheduleType4
-	case "SINGLEACTIONSCHEDULETYPE5":
+	case strings.EqualFold(value, "SingleActionScheduleType5"):
 		ret = SingleActionScheduleTypeSingleActionScheduleType5
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -90,15 +90,26 @@ func (g SingleActionScheduleType) String() string {
 	var ret string
 	switch g {
 	case SingleActionScheduleTypeSingleActionScheduleType1:
-		ret = "SINGLEACTIONSCHEDULETYPE1"
+		ret = "SingleActionScheduleType1"
 	case SingleActionScheduleTypeSingleActionScheduleType2:
-		ret = "SINGLEACTIONSCHEDULETYPE2"
+		ret = "SingleActionScheduleType2"
 	case SingleActionScheduleTypeSingleActionScheduleType3:
-		ret = "SINGLEACTIONSCHEDULETYPE3"
+		ret = "SingleActionScheduleType3"
 	case SingleActionScheduleTypeSingleActionScheduleType4:
-		ret = "SINGLEACTIONSCHEDULETYPE4"
+		ret = "SingleActionScheduleType4"
 	case SingleActionScheduleTypeSingleActionScheduleType5:
-		ret = "SINGLEACTIONSCHEDULETYPE5"
+		ret = "SingleActionScheduleType5"
 	}
 	return ret
+}
+
+// AllSingleActionScheduleType returns a slice containing all defined SingleActionScheduleType values.
+func AllSingleActionScheduleType() []SingleActionScheduleType {
+	return []SingleActionScheduleType{
+		SingleActionScheduleTypeSingleActionScheduleType1,
+		SingleActionScheduleTypeSingleActionScheduleType2,
+		SingleActionScheduleTypeSingleActionScheduleType3,
+		SingleActionScheduleTypeSingleActionScheduleType4,
+		SingleActionScheduleTypeSingleActionScheduleType5,
+	}
 }

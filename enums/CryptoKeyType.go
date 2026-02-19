@@ -62,14 +62,14 @@ const (
 func CryptoKeyTypeParse(value string) (CryptoKeyType, error) {
 	var ret CryptoKeyType
 	var err error
-	switch strings.ToUpper(value) {
-	case "ECDSA":
+	switch {
+	case strings.EqualFold(value, "Ecdsa"):
 		ret = CryptoKeyTypeEcdsa
-	case "BLOCKCIPHER":
+	case strings.EqualFold(value, "BlockCipher"):
 		ret = CryptoKeyTypeBlockCipher
-	case "AUTHENTICATION":
+	case strings.EqualFold(value, "Authentication"):
 		ret = CryptoKeyTypeAuthentication
-	case "BROADCAST":
+	case strings.EqualFold(value, "Broadcast"):
 		ret = CryptoKeyTypeBroadcast
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g CryptoKeyType) String() string {
 	var ret string
 	switch g {
 	case CryptoKeyTypeEcdsa:
-		ret = "ECDSA"
+		ret = "Ecdsa"
 	case CryptoKeyTypeBlockCipher:
-		ret = "BLOCKCIPHER"
+		ret = "BlockCipher"
 	case CryptoKeyTypeAuthentication:
-		ret = "AUTHENTICATION"
+		ret = "Authentication"
 	case CryptoKeyTypeBroadcast:
-		ret = "BROADCAST"
+		ret = "Broadcast"
 	}
 	return ret
+}
+
+// AllCryptoKeyType returns a slice containing all defined CryptoKeyType values.
+func AllCryptoKeyType() []CryptoKeyType {
+	return []CryptoKeyType{
+	CryptoKeyTypeEcdsa,
+	CryptoKeyTypeBlockCipher,
+	CryptoKeyTypeAuthentication,
+	CryptoKeyTypeBroadcast,
+	}
 }

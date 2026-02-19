@@ -151,7 +151,7 @@ func getGloMessage(cmd enums.Command) (uint8, error) {
 	case enums.CommandAccessResponse:
 		cmd = enums.CommandGeneralCiphering
 	default:
-		return 0, errors.New("Invalid GLO enums.Command")
+		return 0, dlmserrors.ErrInvalidGloCommand
 	}
 	return uint8(cmd), nil
 }
@@ -591,7 +591,7 @@ func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GX
 		data.TargetAddress = target
 		data.SourceAddress = source
 	}
-	if frame != 0x13 && frame != 0x3 && (frame&uint8(enums.HdlcFrameTypeUframe)) == uint8(enums.HdlcFrameTypeUframe) {
+	if frame != 0x13 && frame != 0x3 && (frame&uint8(constants.HdlcFrameTypeUframe)) == uint8(constants.HdlcFrameTypeUframe) {
 		// Get Eop if there is no data.
 		if reply.Position() == packetStartID+frameLen+1 {
 			reply.Uint8()
@@ -608,14 +608,14 @@ func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GX
 		if data.command == enums.CommandSnrm {
 			settings.Connected &= ^enums.ConnectionStateIec
 		}
-	} else if frame != 0x13 && frame != 0x3 && (frame&uint8(enums.HdlcFrameTypeSframe)) == uint8(enums.HdlcFrameTypeSframe) {
+	} else if frame != 0x13 && frame != 0x3 && (frame&uint8(constants.HdlcFrameTypeSframe)) == uint8(constants.HdlcFrameTypeSframe) {
 		// If frame is rejected.
 		tmp := (frame >> 2) & 0x3
-		if tmp == uint8(enums.HdlcControlFrameReject) {
+		if tmp == uint8(constants.HdlcControlFrameReject) {
 			data.Error = int(enums.ErrorCodeRejected)
-		} else if tmp == uint8(enums.HdlcControlFrameReceiveNotReady) {
+		} else if tmp == uint8(constants.HdlcControlFrameReceiveNotReady) {
 			data.Error = int(enums.ErrorCodeReceiveNotReady)
-		} else if tmp == uint8(enums.HdlcControlFrameReceiveReady) {
+		} else if tmp == uint8(constants.HdlcControlFrameReceiveReady) {
 			log.Println("ReceiveReady.")
 		}
 		// Get Eop if there is no data.
@@ -738,7 +738,7 @@ func checkHdlcAddress(server bool, settings *settings.GXDLMSSettings, reply *typ
 	return true, nil
 }
 
-// GetTcpData returns the get data from TCP/IP frame.
+// getTcpData returns the get data from TCP/IP frame.
 //
 // Parameters:
 //
@@ -746,7 +746,7 @@ func checkHdlcAddress(server bool, settings *settings.GXDLMSSettings, reply *typ
 //	buff: Received data.
 //	data: Reply information.
 //	notify: Notify information.
-func GetTcpData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, data *GXReplyData, notify *GXReplyData) bool {
+func getTcpData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, data *GXReplyData, notify *GXReplyData) bool {
 	// If whole frame is not received yet.
 	if buff.Available() < 8 {
 		data.isComplete = false
@@ -787,7 +787,7 @@ func GetTcpData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, dat
 	return isData
 }
 
-// GetSmsData returns the get data from SMS frame.
+// getSmsData returns the get data from SMS frame.
 //
 // Parameters:
 //
@@ -795,7 +795,7 @@ func GetTcpData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, dat
 //	buff: Received data.
 //	data: Reply information.
 //	notify: Notify information.
-func GetSmsData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, data *GXReplyData, notify *GXReplyData) bool {
+func getSmsData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, data *GXReplyData, notify *GXReplyData) bool {
 	// If whole frame is not received yet.
 	if buff.Size()-buff.Position() < 3 {
 		data.isComplete = false
@@ -934,7 +934,7 @@ func getWiredMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffe
 				data.isComplete = true
 				// Control field (C-Field)
 				tmp, err := buff.Uint8()
-				cmd := enums.MBusCommand(tmp & 0xF)
+				cmd := constants.MBusCommand(tmp & 0xF)
 				// Address (A-field)
 				id, err := buff.Uint8()
 				// The Control Information Field (CI-field)
@@ -1021,7 +1021,7 @@ func getWirelessMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBu
 		if err != nil {
 			return err
 		}
-		cmd := enums.MBusCommand(ch & 0x4)
+		cmd := constants.MBusCommand(ch & 0x4)
 		// M-Field.
 		manufacturerID, err := buff.Uint16()
 		if err != nil {
@@ -1059,7 +1059,7 @@ func getWirelessMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBu
 		if err != nil {
 			return err
 		}
-		encryption := enums.MBusEncryptionMode(configurationWord & 7)
+		encryption := constants.MBusEncryptionMode(configurationWord & 7)
 		v, err := buff.Uint8()
 		if err != nil {
 			return err
@@ -1318,11 +1318,11 @@ func readResponseDataBlockResult(settings *settings.GXDLMSSettings, reply *GXRep
 	reply.command = enums.CommandNone
 	if reply.xml != nil {
 		reply.Data.Trim()
-		reply.xml.AppendStartTag(enums.CommandReadResponse<<8|int(enums.SingleReadResponseDataBlockResult), "", "", false)
+		reply.xml.AppendStartTag(enums.CommandReadResponse<<8|int(constants.SingleReadResponseDataBlockResult), "", "", false)
 		reply.xml.AppendLine(internal.TranslatorTagsLastBlock.String(), "Value", reply.xml.IntegerToHex(lastBlock, 2, false))
 		reply.xml.AppendLine(internal.TranslatorTagsBlockNumber.String(), "Value", reply.xml.IntegerToHex(number, 4, false))
 		reply.xml.AppendLine(internal.TranslatorTagsRawData.String(), "Value", buffer.ToHexWithRange(reply.Data.Array(), false, 0, reply.Data.Size()))
-		reply.xml.AppendEndTag(enums.CommandReadResponse<<8|int(enums.SingleReadResponseDataBlockResult), false)
+		reply.xml.AppendEndTag(enums.CommandReadResponse<<8|int(constants.SingleReadResponseDataBlockResult), false)
 		return false, nil
 	}
 	getDataFromBlock(reply.Data, index)
@@ -1342,7 +1342,7 @@ func readResponseDataBlockResult(settings *settings.GXDLMSSettings, reply *GXRep
 func handleReadResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, index int) (bool, error) {
 	cnt := reply.TotalCount
 	// If we are reading value first time or block is handed.
-	first := cnt == 0 || reply.commandType == uint8(enums.SingleReadResponseDataBlockResult)
+	first := cnt == 0 || reply.commandType == uint8(constants.SingleReadResponseDataBlockResult)
 	if first {
 		cnt, err := types.GetObjectCount(reply.Data)
 		if err != nil {
@@ -1350,7 +1350,7 @@ func handleReadResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, i
 		}
 		reply.TotalCount = cnt
 	}
-	var type_ enums.SingleReadResponse
+	var type_ constants.SingleReadResponse
 	var values []any
 	if cnt != 1 {
 		// Parse data after all data is received when readlist is used.
@@ -1378,26 +1378,26 @@ func handleReadResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, i
 			if err != nil {
 				return false, err
 			}
-			type_ = enums.SingleReadResponse(ch)
+			type_ = constants.SingleReadResponse(ch)
 			reply.commandType = uint8(type_)
 		} else {
-			type_ = enums.SingleReadResponse(reply.commandType)
+			type_ = constants.SingleReadResponse(reply.commandType)
 		}
 		switch type_ {
-		case enums.SingleReadResponseData:
+		case constants.SingleReadResponseData:
 			reply.Error = 0
 			if reply.xml != nil {
 				if standardXml {
 					reply.xml.AppendStartTag(int(internal.TranslatorTagsChoice), "", "", false)
 				}
-				reply.xml.AppendStartTag(int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseData), "", "", false)
+				reply.xml.AppendStartTag(int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseData), "", "", false)
 				di := internal.GXDataInfo{}
 				di.Xml = reply.xml
 				_, err := internal.GetData(settings, reply.Data, &di)
 				if err != nil {
 					return false, err
 				}
-				reply.xml.AppendEndTag(int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseData), false)
+				reply.xml.AppendEndTag(int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseData), false)
 				if standardXml {
 					reply.xml.AppendEndTag(int(internal.TranslatorTagsChoice), false)
 				}
@@ -1410,7 +1410,7 @@ func handleReadResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, i
 				values = append(values, reply.Value)
 				reply.Value = nil
 			}
-		case enums.SingleReadResponseDataAccessError:
+		case constants.SingleReadResponseDataAccessError:
 			// Get error code.
 			v, err := reply.Data.Uint8()
 			if err != nil {
@@ -1425,14 +1425,14 @@ func handleReadResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, i
 				if err != nil {
 					return false, err
 				}
-				reply.xml.AppendLine(reply.xml.GetTag(int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseDataAccessError)),
+				reply.xml.AppendLine(reply.xml.GetTag(int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseDataAccessError)),
 					"",
 					ret)
 				if standardXml {
 					reply.xml.AppendEndTag(int(internal.TranslatorTagsChoice), false)
 				}
 			}
-		case enums.SingleReadResponseDataBlockResult:
+		case constants.SingleReadResponseDataBlockResult:
 			ret, err := readResponseDataBlockResult(settings, reply, index)
 			if err != nil {
 				return false, err
@@ -1444,7 +1444,7 @@ func handleReadResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, i
 				}
 				return false, nil
 			}
-		case enums.SingleReadResponseBlockNumber:
+		case constants.SingleReadResponseBlockNumber:
 			// Get Block number.
 			number, err := reply.Data.Uint16()
 			if err != nil {
@@ -1625,7 +1625,7 @@ func handleActionResponseWithBlock(settings *settings.GXDLMSSettings, reply *GXR
 	} else if reply.Data.Position() == reply.Data.Size() {
 		reply.EmptyResponses = enums.RequestTypesDataBlock
 	}
-	if reply.moreData == enums.RequestTypesNone && settings != nil && settings.Command == enums.CommandMethodRequest && settings.CommandType == uint8(enums.ActionResponseTypeWithList) {
+	if reply.moreData == enums.RequestTypesNone && settings != nil && settings.Command == enums.CommandMethodRequest && settings.CommandType == uint8(constants.ActionResponseTypeWithList) {
 		return false, errors.New("not implemented")
 	}
 	return ret, nil
@@ -1643,7 +1643,7 @@ func handleMethodResponse(settings *settings.GXDLMSSettings, data *GXReplyData, 
 	if err != nil {
 		return err
 	}
-	type_ := enums.ActionResponseType(ret)
+	type_ := constants.ActionResponseType(ret)
 	ret, err = data.Data.Uint8()
 	if err != nil {
 		return err
@@ -1652,13 +1652,13 @@ func handleMethodResponse(settings *settings.GXDLMSSettings, data *GXReplyData, 
 	verifyInvokeId(settings, data)
 	addInvokeId(data.xml, enums.CommandMethodResponse, int(type_), data.invokeId)
 	switch type_ {
-	case enums.ActionResponseTypeNormal:
+	case constants.ActionResponseTypeNormal:
 		handleActionResponseNormal(settings, data)
-	case enums.ActionResponseTypeWithBlock:
+	case constants.ActionResponseTypeWithBlock:
 		handleActionResponseWithBlock(settings, data, index)
-	case enums.ActionResponseTypeWithList:
+	case constants.ActionResponseTypeWithList:
 		return errors.New("Invalid enums.Command")
-	case enums.ActionResponseTypeNextBlock:
+	case constants.ActionResponseTypeNextBlock:
 		number, err := data.Data.Uint32()
 		if err != nil {
 			return err
@@ -1684,7 +1684,7 @@ func handleSetResponse(settings *settings.GXDLMSSettings, data *GXReplyData) err
 	if err != nil {
 		return err
 	}
-	type_ := enums.SetResponseType(ret)
+	type_ := constants.SetResponseType(ret)
 	ch, err := data.Data.Uint8()
 	if err != nil {
 		return err
@@ -1693,7 +1693,7 @@ func handleSetResponse(settings *settings.GXDLMSSettings, data *GXReplyData) err
 	verifyInvokeId(settings, data)
 	addInvokeId(data.xml, enums.CommandSetResponse, int(type_), data.invokeId)
 	// SetResponseNormal
-	if type_ == enums.SetResponseTypeNormal {
+	if type_ == constants.SetResponseTypeNormal {
 		ch, err = data.Data.Uint8()
 		if err != nil {
 			return err
@@ -1706,7 +1706,7 @@ func handleSetResponse(settings *settings.GXDLMSSettings, data *GXReplyData) err
 			}
 			data.xml.AppendLine(data.xml.GetTag(int(internal.TranslatorTagsResult)), "Value", ret)
 		}
-	} else if type_ == enums.SetResponseTypeDataBlock {
+	} else if type_ == constants.SetResponseTypeDataBlock {
 		number, err := data.Data.Uint32()
 		if err != nil {
 			return err
@@ -1714,7 +1714,7 @@ func handleSetResponse(settings *settings.GXDLMSSettings, data *GXReplyData) err
 		if data.xml != nil {
 			data.xml.AppendLine(data.xml.GetTag(int(internal.TranslatorTagsBlockNumber)), "Value", data.xml.IntegerToHex(number, 8, false))
 		}
-	} else if type_ == enums.SetResponseTypeLastDataBlock {
+	} else if type_ == constants.SetResponseTypeLastDataBlock {
 		ch, err := data.Data.Uint8()
 		if err != nil {
 			return err
@@ -1732,7 +1732,7 @@ func handleSetResponse(settings *settings.GXDLMSSettings, data *GXReplyData) err
 			data.xml.AppendLine(data.xml.GetTag(int(internal.TranslatorTagsResult)), "Value", ret)
 			data.xml.AppendLine(data.xml.GetTag(int(internal.TranslatorTagsBlockNumber)), "Value", data.xml.IntegerToHex(number, 8, false))
 		}
-	} else if type_ == enums.SetResponseTypeWithList {
+	} else if type_ == constants.SetResponseTypeWithList {
 		cnt, err := types.GetObjectCount(data.Data)
 		if err != nil {
 			return err
@@ -1845,9 +1845,9 @@ func handleGetResponseWithList(settings *settings.GXDLMSSettings, reply *GXReply
 			if reply.xml != nil {
 				di := internal.GXDataInfo{}
 				di.Xml = reply.xml
-				di.Xml.AppendStartTag(int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseData), "", "", false)
+				di.Xml.AppendStartTag(int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseData), "", "", false)
 				internal.GetData(settings, reply.Data, &di)
-				di.Xml.AppendEndTag(int(enums.CommandReadResponse)<<8|int(enums.SingleReadResponseData), false)
+				di.Xml.AppendEndTag(int(enums.CommandReadResponse)<<8|int(constants.SingleReadResponseData), false)
 				reply.ReadPosition = reply.Data.Position()
 			} else {
 				getValueFromData(settings, reply)
@@ -1884,7 +1884,7 @@ func handleGetResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, in
 	if err != nil {
 		return false, err
 	}
-	type_ := enums.GetCommandType(ch)
+	type_ := constants.GetCommandType(ch)
 	reply.commandType = ch
 	ch, err = data.Uint8()
 	if err != nil {
@@ -1894,17 +1894,17 @@ func handleGetResponse(settings *settings.GXDLMSSettings, reply *GXReplyData, in
 	verifyInvokeId(settings, reply)
 	addInvokeId(reply.xml, enums.CommandGetResponse, int(type_), reply.invokeId)
 	switch type_ {
-	case enums.GetCommandTypeNormal:
+	case constants.GetCommandTypeNormal:
 		empty, err = handleGetResponseNormal(settings, reply, data)
 		if err != nil {
 			return false, err
 		}
-	case enums.GetCommandTypeNextDataBlock:
+	case constants.GetCommandTypeNextDataBlock:
 		ret, err = handleGetResponseNextDataBlock(settings, reply, index, data)
 		if err != nil {
 			return false, err
 		}
-	case enums.GetCommandTypeWithList:
+	case constants.GetCommandTypeWithList:
 		if !reply.IsMoreData() {
 			handleGetResponseWithList(settings, reply)
 		}
@@ -2020,7 +2020,7 @@ func handleGetResponseNextDataBlock(settings *settings.GXDLMSSettings, reply *GX
 	} else if data.Position() == data.Size() {
 		reply.EmptyResponses = enums.RequestTypesDataBlock
 	}
-	if reply.moreData == enums.RequestTypesNone && settings != nil && settings.Command == enums.CommandGetRequest && settings.CommandType == uint8(enums.GetCommandTypeWithList) {
+	if reply.moreData == enums.RequestTypesNone && settings != nil && settings.Command == enums.CommandGetRequest && settings.CommandType == uint8(constants.GetCommandTypeWithList) {
 		handleGetResponseWithList(settings, reply)
 		ret = false
 	}
@@ -2219,13 +2219,13 @@ func handleAccessResponse(settings *settings.GXDLMSSettings, reply *GXReplyData)
 		reply.xml.AppendStartTag(int(internal.TranslatorTagsAccessResponseListOfData), "Qty", reply.xml.IntegerToHex(len, 2, false), false)
 		for pos := 0; pos != len; pos++ {
 			if reply.xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-				reply.xml.AppendStartTag(int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData), "", "", false)
+				reply.xml.AppendStartTag(int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData), "", "", false)
 			}
 			di := internal.GXDataInfo{}
 			di.Xml = reply.xml
 			internal.GetData(settings, reply.Data, &di)
 			if reply.xml.OutputType() == enums.TranslatorOutputTypeStandardXML {
-				reply.xml.AppendEndTag(int(enums.CommandWriteRequest)<<8|int(enums.SingleReadResponseData), false)
+				reply.xml.AppendEndTag(int(enums.CommandWriteRequest)<<8|int(constants.SingleReadResponseData), false)
 			}
 		}
 		reply.xml.AppendEndTag(int(internal.TranslatorTagsAccessResponseListOfData), false)
@@ -2503,10 +2503,10 @@ func receiverReady(settings *settings.GXDLMSSettings, reply *GXReplyData) ([]byt
 		}
 		settings.IncreaseBlockIndex()
 		if settings.UseLogicalNameReferencing() {
-			p := NewGXDLMSLNParameters(settings, 0, enums.Command(cmd), byte(enums.GetCommandTypeNextDataBlock), bb, nil, 0xff, reply.cipheredCommand)
+			p := NewGXDLMSLNParameters(settings, 0, enums.Command(cmd), byte(constants.GetCommandTypeNextDataBlock), bb, nil, 0xff, reply.cipheredCommand)
 			data, err = getLnMessages(p)
 		} else {
-			p := NewGXDLMSSNParameters(settings, enums.Command(cmd), 1, uint8(enums.VariableAccessSpecificationBlockNumberAccess), bb, nil)
+			p := NewGXDLMSSNParameters(settings, enums.Command(cmd), 1, uint8(constants.VariableAccessSpecificationBlockNumberAccess), bb, nil)
 			data, err = getSnMessages(p)
 			if err != nil {
 				return nil, err
@@ -2772,30 +2772,30 @@ func getLNPdu(p *GXDLMSLNParameters, reply *types.GXByteBuffer) error {
 			// Change Request type if Set request and multiple blocks is needed.
 			if p.command == enums.CommandSetRequest {
 				if p.multipleBlocks && (p.settings.NegotiatedConformance&enums.ConformanceGeneralBlockTransfer) == 0 {
-					if p.requestType == uint8(enums.SetRequestTypeNormal) {
-						p.requestType = uint8(enums.SetRequestTypeFirstDataBlock)
-					} else if p.requestType == uint8(enums.SetRequestTypeFirstDataBlock) {
-						p.requestType = uint8(enums.SetRequestTypeWithDataBlock)
+					if p.requestType == uint8(constants.SetRequestTypeNormal) {
+						p.requestType = uint8(constants.SetRequestTypeFirstDataBlock)
+					} else if p.requestType == uint8(constants.SetRequestTypeFirstDataBlock) {
+						p.requestType = uint8(constants.SetRequestTypeWithDataBlock)
 					}
 				}
 			} else if p.command == enums.CommandMethodRequest {
 				if p.multipleBlocks && (p.settings.NegotiatedConformance&enums.ConformanceGeneralBlockTransfer) == 0 {
-					if p.requestType == uint8(enums.ActionRequestTypeNormal) {
+					if p.requestType == uint8(constants.ActionRequestTypeNormal) {
 						p.attributeDescriptor.SetSize(p.attributeDescriptor.Size() - 1)
-						p.requestType = uint8(enums.ActionRequestTypeWithFirstBlock)
-					} else if p.requestType == uint8(enums.ActionRequestTypeWithFirstBlock) {
-						p.requestType = uint8(enums.ActionRequestTypeWithBlock)
+						p.requestType = uint8(constants.ActionRequestTypeWithFirstBlock)
+					} else if p.requestType == uint8(constants.ActionRequestTypeWithFirstBlock) {
+						p.requestType = uint8(constants.ActionRequestTypeWithBlock)
 					}
 				}
 			} else if p.command == enums.CommandMethodResponse {
 				if p.multipleBlocks && (p.settings.NegotiatedConformance&enums.ConformanceGeneralBlockTransfer) == 0 {
 					p.status = 0xFF
-					if p.requestType == uint8(enums.ActionResponseTypeNormal) {
+					if p.requestType == uint8(constants.ActionResponseTypeNormal) {
 						//Remove Method Invocation Parameters tag.
 						p.data.SetPosition(p.data.Position() + 2)
-						p.requestType = uint8(enums.ActionResponseTypeWithBlock)
-					} else if p.requestType == uint8(enums.ActionResponseTypeWithBlock) && p.data.Available() == 0 {
-						p.requestType = uint8(enums.ActionResponseTypeNextBlock)
+						p.requestType = uint8(constants.ActionResponseTypeWithBlock)
+					} else if p.requestType == uint8(constants.ActionResponseTypeWithBlock) && p.data.Available() == 0 {
+						p.requestType = uint8(constants.ActionResponseTypeNextBlock)
 					}
 				}
 			} else if p.command == enums.CommandGetResponse {
@@ -2888,7 +2888,7 @@ func getLNPdu(p *GXDLMSLNParameters, reply *types.GXByteBuffer) error {
 				len_ = len_ - int(helpers.GetObjectCountSizeInBytes(len_))
 			}
 			// If server is not asking the next block.
-			if !(len_ == 0 && p.command == enums.CommandMethodResponse && p.requestType == uint8(enums.ActionResponseTypeNextBlock)) {
+			if !(len_ == 0 && p.command == enums.CommandMethodResponse && p.requestType == uint8(constants.ActionResponseTypeNextBlock)) {
 				types.SetObjectCount(len_, reply)
 				err = reply.SetByteBufferByCount(p.data, len_)
 				if err != nil {
@@ -3311,11 +3311,11 @@ func getSNPdu(p *GXDLMSSNParameters, reply *types.GXByteBuffer) error {
 					}
 				}
 				if p.Command == enums.CommandWriteRequest {
-					p.RequestType = uint8(enums.VariableAccessSpecificationWriteDataBlockAccess)
+					p.RequestType = uint8(constants.VariableAccessSpecificationWriteDataBlockAccess)
 				} else if p.Command == enums.CommandReadRequest {
-					p.RequestType = uint8(enums.VariableAccessSpecificationReadDataBlockAccess)
+					p.RequestType = uint8(constants.VariableAccessSpecificationReadDataBlockAccess)
 				} else if p.Command == enums.CommandReadResponse {
-					p.RequestType = uint8(enums.SingleReadResponseDataBlockResult)
+					p.RequestType = uint8(constants.SingleReadResponseDataBlockResult)
 				} else {
 					return errors.New("Invalid enums.Command")
 				}
@@ -3911,7 +3911,7 @@ func isWirelessMBusData(buff *types.GXByteBuffer) bool {
 	if err != nil {
 		return false
 	}
-	return (cmd&uint8(enums.MBusCommandSndNr)) != 0 || (cmd&uint8(enums.MBusCommandSndUd)) != 0 || (cmd&uint8(enums.MBusCommandRspUd)) != 0
+	return (cmd&uint8(constants.MBusCommandSndNr)) != 0 || (cmd&uint8(constants.MBusCommandSndUd)) != 0 || (cmd&uint8(constants.MBusCommandRspUd)) != 0
 }
 
 // IsWiredMBusData returns the check is this wired M-Bus message.
@@ -4879,7 +4879,7 @@ func GetPdu(conf *settings.GXDLMSSettings, data *GXReplyData) error {
 		}
 	}
 	// Get data only blocks if SN is used. This is faster.
-	if cmd == enums.CommandReadResponse && data.CommandType() == byte(enums.SingleReadResponseDataBlockResult) && (data.moreData&enums.RequestTypesFrame) != 0 {
+	if cmd == enums.CommandReadResponse && data.CommandType() == byte(constants.SingleReadResponseDataBlockResult) && (data.moreData&enums.RequestTypesFrame) != 0 {
 		return nil
 	}
 	// Get data if all data is read or we want to peek data.
@@ -4907,7 +4907,7 @@ func getData(settings *settings.GXDLMSSettings, reply *types.GXByteBuffer, data 
 		}
 		data.SetFrameId(frame)
 	case enums.InterfaceTypeWRAPPER, enums.InterfaceTypePrimeDcWrapper:
-		if !GetTcpData(settings, reply, data, notify) {
+		if !getTcpData(settings, reply, data, notify) {
 			if notify != nil {
 				data = notify
 			}
@@ -4928,7 +4928,7 @@ func getData(settings *settings.GXDLMSSettings, reply *types.GXByteBuffer, data 
 	case enums.InterfaceTypeWiredMBus:
 		getWiredMBusData(settings, reply, data)
 	case enums.InterfaceTypeSMS:
-		if !GetSmsData(settings, reply, data, notify) {
+		if !getSmsData(settings, reply, data, notify) {
 			if notify != nil {
 				data = notify
 			}

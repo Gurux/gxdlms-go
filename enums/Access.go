@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func AccessParse(value string) (Access, error) {
 	var ret Access
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = AccessOther
-	case "SCOPEOFACCESSVIOLATED":
+	case strings.EqualFold(value, "ScopeOfAccessViolated"):
 		ret = AccessScopeOfAccessViolated
-	case "OBJECTACCESSINVALID":
+	case strings.EqualFold(value, "ObjectAccessInvalid"):
 		ret = AccessObjectAccessInvalid
-	case "HARDWAREFAULT":
+	case strings.EqualFold(value, "HardwareFault"):
 		ret = AccessHardwareFault
-	case "OBJECTUNAVAILABLE":
+	case strings.EqualFold(value, "ObjectUnavailable"):
 		ret = AccessObjectUnavailable
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g Access) String() string {
 	var ret string
 	switch g {
 	case AccessOther:
-		ret = "OTHER"
+		ret = "Other"
 	case AccessScopeOfAccessViolated:
-		ret = "SCOPEOFACCESSVIOLATED"
+		ret = "ScopeOfAccessViolated"
 	case AccessObjectAccessInvalid:
-		ret = "OBJECTACCESSINVALID"
+		ret = "ObjectAccessInvalid"
 	case AccessHardwareFault:
-		ret = "HARDWAREFAULT"
+		ret = "HardwareFault"
 	case AccessObjectUnavailable:
-		ret = "OBJECTUNAVAILABLE"
+		ret = "ObjectUnavailable"
 	}
 	return ret
+}
+
+// AllAccess returns a slice containing all defined Access values.
+func AllAccess() []Access {
+	return []Access{
+	AccessOther,
+	AccessScopeOfAccessViolated,
+	AccessObjectAccessInvalid,
+	AccessHardwareFault,
+	AccessObjectUnavailable,
+	}
 }

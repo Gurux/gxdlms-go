@@ -39,7 +39,7 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// GXDLMSConfirmedServiceError corresponds to the C# exception class.
+// GXDLMSConfirmedServiceError implements DLMS confirmed service error.
 type GXDLMSConfirmedServiceError struct {
 	ConfirmedServiceError enums.ConfirmedServiceError
 	ServiceError          enums.ServiceError

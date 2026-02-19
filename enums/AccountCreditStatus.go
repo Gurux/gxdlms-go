@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// AccountCreditStatus Credit status.
+// AccountCreditStatus enumerates the account redit status.
 type AccountCreditStatus int
 
 const (
@@ -72,24 +72,24 @@ const (
 func AccountCreditStatusParse(value string) (AccountCreditStatus, error) {
 	var ret AccountCreditStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = AccountCreditStatusNone
-	case "INCREDIT":
+	case strings.EqualFold(value, "InCredit"):
 		ret = AccountCreditStatusInCredit
-	case "LOWCREDIT":
+	case strings.EqualFold(value, "LowCredit"):
 		ret = AccountCreditStatusLowCredit
-	case "NEXTCREDITENABLED":
+	case strings.EqualFold(value, "NextCreditEnabled"):
 		ret = AccountCreditStatusNextCreditEnabled
-	case "NEXTCREDITSELECTABLE":
+	case strings.EqualFold(value, "NextCreditSelectable"):
 		ret = AccountCreditStatusNextCreditSelectable
-	case "CREDITREFERENCELIST":
+	case strings.EqualFold(value, "CreditReferenceList"):
 		ret = AccountCreditStatusCreditReferenceList
-	case "SELECTABLECREDITINUSE":
+	case strings.EqualFold(value, "SelectableCreditInUse"):
 		ret = AccountCreditStatusSelectableCreditInUse
-	case "OUTOFCREDIT":
+	case strings.EqualFold(value, "OutOfCredit"):
 		ret = AccountCreditStatusOutOfCredit
-	case "RESERVED":
+	case strings.EqualFold(value, "Reserved"):
 		ret = AccountCreditStatusReserved
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -103,23 +103,38 @@ func (g AccountCreditStatus) String() string {
 	var ret string
 	switch g {
 	case AccountCreditStatusNone:
-		ret = "NONE"
+		ret = "None"
 	case AccountCreditStatusInCredit:
-		ret = "INCREDIT"
+		ret = "InCredit"
 	case AccountCreditStatusLowCredit:
-		ret = "LOWCREDIT"
+		ret = "LowCredit"
 	case AccountCreditStatusNextCreditEnabled:
-		ret = "NEXTCREDITENABLED"
+		ret = "NextCreditEnabled"
 	case AccountCreditStatusNextCreditSelectable:
-		ret = "NEXTCREDITSELECTABLE"
+		ret = "NextCreditSelectable"
 	case AccountCreditStatusCreditReferenceList:
-		ret = "CREDITREFERENCELIST"
+		ret = "CreditReferenceList"
 	case AccountCreditStatusSelectableCreditInUse:
-		ret = "SELECTABLECREDITINUSE"
+		ret = "SelectableCreditInUse"
 	case AccountCreditStatusOutOfCredit:
-		ret = "OUTOFCREDIT"
+		ret = "OutOfCredit"
 	case AccountCreditStatusReserved:
-		ret = "RESERVED"
+		ret = "Reserved"
 	}
 	return ret
+}
+
+// AllAccountCreditStatus returns a slice containing all defined AccountCreditStatus values.
+func AllAccountCreditStatus() []AccountCreditStatus {
+	return []AccountCreditStatus{
+		AccountCreditStatusNone,
+		AccountCreditStatusInCredit,
+		AccountCreditStatusLowCredit,
+		AccountCreditStatusNextCreditEnabled,
+		AccountCreditStatusNextCreditSelectable,
+		AccountCreditStatusCreditReferenceList,
+		AccountCreditStatusSelectableCreditInUse,
+		AccountCreditStatusOutOfCredit,
+		AccountCreditStatusReserved,
+	}
 }

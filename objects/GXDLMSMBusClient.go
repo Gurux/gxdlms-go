@@ -731,11 +731,11 @@ func (g *GXDLMSMBusClient) TransferKey(client IGXDLMSClient, encryptionKey []byt
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSMBusClient) GetValues() []any {
 	if g.Version == 0 {
-		return []any{g.LogicalName, g.MBusPortReference, g.CaptureDefinition,
+		return []any{g.LogicalName(), g.MBusPortReference, g.CaptureDefinition,
 			g.CapturePeriod, g.PrimaryAddress, g.IdentificationNumber, g.ManufacturerID,
 			g.DataHeaderVersion, g.DeviceType, g.AccessNumber, g.Status, g.Alarm}
 	}
-	return []any{g.LogicalName, g.MBusPortReference, g.CaptureDefinition, g.CapturePeriod,
+	return []any{g.LogicalName(), g.MBusPortReference, g.CaptureDefinition, g.CapturePeriod,
 		g.PrimaryAddress, g.IdentificationNumber, g.ManufacturerID, g.DataHeaderVersion,
 		g.DeviceType, g.AccessNumber, g.Status, g.Alarm, g.Configuration, g.EncryptionKeyStatus}
 }

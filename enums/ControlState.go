@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func ControlStateParse(value string) (ControlState, error) {
 	var ret ControlState
 	var err error
-	switch strings.ToUpper(value) {
-	case "DISCONNECTED":
+	switch {
+	case strings.EqualFold(value, "Disconnected"):
 		ret = ControlStateDisconnected
-	case "CONNECTED":
+	case strings.EqualFold(value, "Connected"):
 		ret = ControlStateConnected
-	case "READYFORRECONNECTION":
+	case strings.EqualFold(value, "ReadyForReconnection"):
 		ret = ControlStateReadyForReconnection
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g ControlState) String() string {
 	var ret string
 	switch g {
 	case ControlStateDisconnected:
-		ret = "DISCONNECTED"
+		ret = "Disconnected"
 	case ControlStateConnected:
-		ret = "CONNECTED"
+		ret = "Connected"
 	case ControlStateReadyForReconnection:
-		ret = "READYFORRECONNECTION"
+		ret = "ReadyForReconnection"
 	}
 	return ret
+}
+
+// AllControlState returns a slice containing all defined ControlState values.
+func AllControlState() []ControlState {
+	return []ControlState{
+	ControlStateDisconnected,
+	ControlStateConnected,
+	ControlStateReadyForReconnection,
+	}
 }

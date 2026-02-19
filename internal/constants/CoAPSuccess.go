@@ -34,80 +34,22 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// CoAP success enumerates.
+// CoAPSuccess defines CoAP success values
 type CoAPSuccess int
 
 const (
-	// CoAPSuccessNone defines that the // Empty success code.
+	// CoAPSuccessNone defines that the Empty success code.
 	CoAPSuccessNone CoAPSuccess = iota
-	// CoAPSuccessCreated defines that the // Created.
+	// CoAPSuccessCreated defines that the Created.
 	CoAPSuccessCreated
-	// CoAPSuccessDeleted defines that the // Deleted.
+	// CoAPSuccessDeleted defines that the Deleted.
 	CoAPSuccessDeleted
-	// CoAPSuccessValid defines that the // Valid.
+	// CoAPSuccessValid defines that the Valid.
 	CoAPSuccessValid
-	// CoAPSuccessChanged defines that the // Changed.
+	// CoAPSuccessChanged defines that the Changed.
 	CoAPSuccessChanged
-	// CoAPSuccessContent defines that the // Content.
+	// CoAPSuccessContent defines that the Content.
 	CoAPSuccessContent
-	// CoAPSuccessContinue defines that the // Continue.
+	// CoAPSuccessContinue defines that the Continue.
 	CoAPSuccessContinue CoAPSuccess = 31
 )
-
-// CoAPSuccessParse converts the given string into a CoAPSuccess value.
-//
-// It returns the corresponding CoAPSuccess constant if the string matches
-// a known level name, or an error if the input is invalid.
-func CoAPSuccessParse(value string) (CoAPSuccess, error) {
-	var ret CoAPSuccess
-	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
-		ret = CoAPSuccessNone
-	case "CREATED":
-		ret = CoAPSuccessCreated
-	case "DELETED":
-		ret = CoAPSuccessDeleted
-	case "VALID":
-		ret = CoAPSuccessValid
-	case "CHANGED":
-		ret = CoAPSuccessChanged
-	case "CONTENT":
-		ret = CoAPSuccessContent
-	case "CONTINUE":
-		ret = CoAPSuccessContinue
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
-
-// String returns the canonical name of the CoAPSuccess.
-// It satisfies fmt.Stringer.
-func (g CoAPSuccess) String() string {
-	var ret string
-	switch g {
-	case CoAPSuccessNone:
-		ret = "NONE"
-	case CoAPSuccessCreated:
-		ret = "CREATED"
-	case CoAPSuccessDeleted:
-		ret = "DELETED"
-	case CoAPSuccessValid:
-		ret = "VALID"
-	case CoAPSuccessChanged:
-		ret = "CHANGED"
-	case CoAPSuccessContent:
-		ret = "CONTENT"
-	case CoAPSuccessContinue:
-		ret = "CONTINUE"
-	}
-	return ret
-}

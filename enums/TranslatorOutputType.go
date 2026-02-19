@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func TranslatorOutputTypeParse(value string) (TranslatorOutputType, error) {
 	var ret TranslatorOutputType
 	var err error
-	switch strings.ToUpper(value) {
-	case "SIMPLEXML":
+	switch {
+	case strings.EqualFold(value, "SimpleXml"):
 		ret = TranslatorOutputTypeSimpleXML
-	case "STANDARDXML":
+	case strings.EqualFold(value, "StandardXml"):
 		ret = TranslatorOutputTypeStandardXML
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g TranslatorOutputType) String() string {
 	var ret string
 	switch g {
 	case TranslatorOutputTypeSimpleXML:
-		ret = "SIMPLEXML"
+		ret = "SimpleXml"
 	case TranslatorOutputTypeStandardXML:
-		ret = "STANDARDXML"
+		ret = "StandardXml"
 	}
 	return ret
+}
+
+// AllTranslatorOutputType returns a slice containing all defined TranslatorOutputType values.
+func AllTranslatorOutputType() []TranslatorOutputType {
+	return []TranslatorOutputType{
+		TranslatorOutputTypeSimpleXML,
+		TranslatorOutputTypeStandardXML,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func CurrencyParse(value string) (Currency, error) {
 	var ret Currency
 	var err error
-	switch strings.ToUpper(value) {
-	case "TIME":
+	switch {
+	case strings.EqualFold(value, "Time"):
 		ret = CurrencyTime
-	case "CONSUMPTION":
+	case strings.EqualFold(value, "Consumption"):
 		ret = CurrencyConsumption
-	case "MONETARY":
+	case strings.EqualFold(value, "Monetary"):
 		ret = CurrencyMonetary
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g Currency) String() string {
 	var ret string
 	switch g {
 	case CurrencyTime:
-		ret = "TIME"
+		ret = "Time"
 	case CurrencyConsumption:
-		ret = "CONSUMPTION"
+		ret = "Consumption"
 	case CurrencyMonetary:
-		ret = "MONETARY"
+		ret = "Monetary"
 	}
 	return ret
+}
+
+// AllCurrency returns a slice containing all defined Currency values.
+func AllCurrency() []Currency {
+	return []Currency{
+	CurrencyTime,
+	CurrencyConsumption,
+	CurrencyMonetary,
+	}
 }

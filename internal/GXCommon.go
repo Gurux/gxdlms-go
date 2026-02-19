@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Gurux/gxcommon-go"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal/buffer"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -1139,6 +1140,17 @@ func Contains[T comparable](slice []T, value T) bool {
 	return false
 }
 
+func InsertAt[T any](slice []T, index int, value T) ([]T, error) {
+	if index < 0 || index > len(slice) {
+		return nil, gxcommon.ErrArgumentOutOfRange
+	}
+	slice = append(
+		slice[:index],
+		append([]T{value}, slice[index:]...)...,
+	)
+	return slice, nil
+}
+
 // Remove removes first occurrence of value from slice and returns modified slice.
 func Remove[T comparable](slice []T, value T) []T {
 	for i, v := range slice {
@@ -1191,10 +1203,10 @@ var rfc3394IV = []byte{0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6}
 //	Encrypted data.
 func Encrypt(kek []byte, data []byte) ([]byte, error) {
 	if len(kek) != 16 && len(kek) != 32 {
-		return nil, errors.New("Invalid Key Encrypting Key")
+		return nil, errors.New("invalid key encrypting key")
 	}
 	if len(data) != 16 && len(data) != 32 {
-		return nil, errors.New("Invalid data.")
+		return nil, errors.New("invalid data")
 	}
 
 	n := len(data) / 8
@@ -1227,10 +1239,10 @@ func Encrypt(kek []byte, data []byte) ([]byte, error) {
 // Decrypt returns the decrypted data using AES key wrap algorithm defined in RFC 3394.
 func Decrypt(kek []byte, input []byte) ([]byte, error) {
 	if len(kek) != 16 && len(kek) != 32 {
-		return nil, errors.New("Invalid Key Encrypting Key")
+		return nil, errors.New("invalid key encrypting key")
 	}
 	if len(input) < len(rfc3394IV)+8 {
-		return nil, errors.New("Invalid data.")
+		return nil, errors.New("invalid data")
 	}
 
 	block := make([]byte, len(input)-len(rfc3394IV))

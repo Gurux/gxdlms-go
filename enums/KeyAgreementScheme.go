@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// KeyAgreementScheme : .
+// KeyAgreementScheme enumerates key agreement schemes.
 type KeyAgreementScheme int
 
 const (
@@ -60,12 +60,12 @@ const (
 func KeyAgreementSchemeParse(value string) (KeyAgreementScheme, error) {
 	var ret KeyAgreementScheme
 	var err error
-	switch strings.ToUpper(value) {
-	case "EPHEMERALUNIFIEDMODEL":
+	switch {
+	case strings.EqualFold(value, "EphemeralUnifiedModel"):
 		ret = KeyAgreementSchemeEphemeralUnifiedModel
-	case "ONEPASSDIFFIEHELLMAN":
+	case strings.EqualFold(value, "OnePassDiffieHellman"):
 		ret = KeyAgreementSchemeOnePassDiffieHellman
-	case "STATICUNIFIEDMODEL":
+	case strings.EqualFold(value, "StaticUnifiedModel"):
 		ret = KeyAgreementSchemeStaticUnifiedModel
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g KeyAgreementScheme) String() string {
 	var ret string
 	switch g {
 	case KeyAgreementSchemeEphemeralUnifiedModel:
-		ret = "EPHEMERALUNIFIEDMODEL"
+		ret = "EphemeralUnifiedModel"
 	case KeyAgreementSchemeOnePassDiffieHellman:
-		ret = "ONEPASSDIFFIEHELLMAN"
+		ret = "OnePassDiffieHellman"
 	case KeyAgreementSchemeStaticUnifiedModel:
-		ret = "STATICUNIFIEDMODEL"
+		ret = "StaticUnifiedModel"
 	}
 	return ret
+}
+
+// AllKeyAgreementScheme returns a slice containing all defined KeyAgreementScheme values.
+func AllKeyAgreementScheme() []KeyAgreementScheme {
+	return []KeyAgreementScheme{
+		KeyAgreementSchemeEphemeralUnifiedModel,
+		KeyAgreementSchemeOnePassDiffieHellman,
+		KeyAgreementSchemeStaticUnifiedModel,
+	}
 }

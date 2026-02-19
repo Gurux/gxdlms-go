@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -74,26 +74,26 @@ const (
 func GsmPacketSwitchStatusParse(value string) (GsmPacketSwitchStatus, error) {
 	var ret GsmPacketSwitchStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "INACTIVE":
+	switch {
+	case strings.EqualFold(value, "Inactive"):
 		ret = GsmPacketSwitchStatusInactive
-	case "GPRS":
+	case strings.EqualFold(value, "GPRS"):
 		ret = GsmPacketSwitchStatusGPRS
-	case "EDGE":
+	case strings.EqualFold(value, "EDGE"):
 		ret = GsmPacketSwitchStatusEDGE
-	case "UMTS":
+	case strings.EqualFold(value, "UMTS"):
 		ret = GsmPacketSwitchStatusUMTS
-	case "HSDPA":
+	case strings.EqualFold(value, "HSDPA"):
 		ret = GsmPacketSwitchStatusHSDPA
-	case "LTE":
+	case strings.EqualFold(value, "LTE"):
 		ret = GsmPacketSwitchStatusLTE
-	case "CDMA":
+	case strings.EqualFold(value, "CDMA"):
 		ret = GsmPacketSwitchStatusCDMA
-	case "LTECATM1":
+	case strings.EqualFold(value, "LteCatM1"):
 		ret = GsmPacketSwitchStatusLteCatM1
-	case "LTECATNB1":
+	case strings.EqualFold(value, "LteCatNb1"):
 		ret = GsmPacketSwitchStatusLteCatNb1
-	case "LTECATNB2":
+	case strings.EqualFold(value, "LteCatNb2"):
 		ret = GsmPacketSwitchStatusLteCatNb2
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -107,7 +107,7 @@ func (g GsmPacketSwitchStatus) String() string {
 	var ret string
 	switch g {
 	case GsmPacketSwitchStatusInactive:
-		ret = "INACTIVE"
+		ret = "Inactive"
 	case GsmPacketSwitchStatusGPRS:
 		ret = "GPRS"
 	case GsmPacketSwitchStatusEDGE:
@@ -121,11 +121,27 @@ func (g GsmPacketSwitchStatus) String() string {
 	case GsmPacketSwitchStatusCDMA:
 		ret = "CDMA"
 	case GsmPacketSwitchStatusLteCatM1:
-		ret = "LTECATM1"
+		ret = "LteCatM1"
 	case GsmPacketSwitchStatusLteCatNb1:
-		ret = "LTECATNB1"
+		ret = "LteCatNb1"
 	case GsmPacketSwitchStatusLteCatNb2:
-		ret = "LTECATNB2"
+		ret = "LteCatNb2"
 	}
 	return ret
+}
+
+// AllGsmPacketSwitchStatus returns a slice containing all defined GsmPacketSwitchStatus values.
+func AllGsmPacketSwitchStatus() []GsmPacketSwitchStatus {
+	return []GsmPacketSwitchStatus{
+		GsmPacketSwitchStatusInactive,
+		GsmPacketSwitchStatusGPRS,
+		GsmPacketSwitchStatusEDGE,
+		GsmPacketSwitchStatusUMTS,
+		GsmPacketSwitchStatusHSDPA,
+		GsmPacketSwitchStatusLTE,
+		GsmPacketSwitchStatusCDMA,
+		GsmPacketSwitchStatusLteCatM1,
+		GsmPacketSwitchStatusLteCatNb1,
+		GsmPacketSwitchStatusLteCatNb2,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func PaymentModeParse(value string) (PaymentMode, error) {
 	var ret PaymentMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "CREDIT":
+	switch {
+	case strings.EqualFold(value, "Credit"):
 		ret = PaymentModeCredit
-	case "PREPAYMENT":
+	case strings.EqualFold(value, "Prepayment"):
 		ret = PaymentModePrepayment
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g PaymentMode) String() string {
 	var ret string
 	switch g {
 	case PaymentModeCredit:
-		ret = "CREDIT"
+		ret = "Credit"
 	case PaymentModePrepayment:
-		ret = "PREPAYMENT"
+		ret = "Prepayment"
 	}
 	return ret
+}
+
+// AllPaymentMode returns a slice containing all defined PaymentMode values.
+func AllPaymentMode() []PaymentMode {
+	return []PaymentMode{
+		PaymentModeCredit,
+		PaymentModePrepayment,
+	}
 }

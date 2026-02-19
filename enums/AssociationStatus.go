@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func AssociationStatusParse(value string) (AssociationStatus, error) {
 	var ret AssociationStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONASSOCIATED":
+	switch {
+	case strings.EqualFold(value, "NonAssociated"):
 		ret = AssociationStatusNonAssociated
-	case "ASSOCIATIONPENDING":
+	case strings.EqualFold(value, "AssociationPending"):
 		ret = AssociationStatusAssociationPending
-	case "ASSOCIATED":
+	case strings.EqualFold(value, "Associated"):
 		ret = AssociationStatusAssociated
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g AssociationStatus) String() string {
 	var ret string
 	switch g {
 	case AssociationStatusNonAssociated:
-		ret = "NONASSOCIATED"
+		ret = "NonAssociated"
 	case AssociationStatusAssociationPending:
-		ret = "ASSOCIATIONPENDING"
+		ret = "AssociationPending"
 	case AssociationStatusAssociated:
-		ret = "ASSOCIATED"
+		ret = "Associated"
 	}
 	return ret
+}
+
+// AllAssociationStatus returns a slice containing all defined AssociationStatus values.
+func AllAssociationStatus() []AssociationStatus {
+	return []AssociationStatus{
+	AssociationStatusNonAssociated,
+	AssociationStatusAssociationPending,
+	AssociationStatusAssociated,
+	}
 }

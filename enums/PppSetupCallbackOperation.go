@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -66,18 +66,18 @@ const (
 func PppSetupCallbackOperationParse(value string) (PppSetupCallbackOperation, error) {
 	var ret PppSetupCallbackOperation
 	var err error
-	switch strings.ToUpper(value) {
-	case "USER":
+	switch {
+	case strings.EqualFold(value, "User"):
 		ret = PppSetupCallbackOperationUser
-	case "DIALLING":
+	case strings.EqualFold(value, "Dialling"):
 		ret = PppSetupCallbackOperationDialling
-	case "LOCATION":
+	case strings.EqualFold(value, "Location"):
 		ret = PppSetupCallbackOperationLocation
-	case "E_164":
+	case strings.EqualFold(value, "E164"):
 		ret = PppSetupCallbackOperationE164
-	case "X500":
+	case strings.EqualFold(value, "X500"):
 		ret = PppSetupCallbackOperationX500
-	case "CBCP":
+	case strings.EqualFold(value, "CBCP"):
 		ret = PppSetupCallbackOperationCBCP
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g PppSetupCallbackOperation) String() string {
 	var ret string
 	switch g {
 	case PppSetupCallbackOperationUser:
-		ret = "USER"
+		ret = "User"
 	case PppSetupCallbackOperationDialling:
-		ret = "DIALLING"
+		ret = "Dialling"
 	case PppSetupCallbackOperationLocation:
-		ret = "LOCATION"
+		ret = "Location"
 	case PppSetupCallbackOperationE164:
-		ret = "E_164"
+		ret = "E164"
 	case PppSetupCallbackOperationX500:
 		ret = "X500"
 	case PppSetupCallbackOperationCBCP:
 		ret = "CBCP"
 	}
 	return ret
+}
+
+// AllPppSetupCallbackOperation returns a slice containing all defined PppSetupCallbackOperation values.
+func AllPppSetupCallbackOperation() []PppSetupCallbackOperation {
+	return []PppSetupCallbackOperation{
+		PppSetupCallbackOperationUser,
+		PppSetupCallbackOperationDialling,
+		PppSetupCallbackOperationLocation,
+		PppSetupCallbackOperationE164,
+		PppSetupCallbackOperationX500,
+		PppSetupCallbackOperationCBCP,
+	}
 }

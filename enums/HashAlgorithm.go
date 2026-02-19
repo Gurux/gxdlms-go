@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// HashAlgorithm s.
+// HashAlgorithm enumerates hash algorithm.
 type HashAlgorithm int
 
 const (
@@ -83,64 +83,64 @@ const (
 func HashAlgorithmParse(value string) (HashAlgorithm, error) {
 	var ret HashAlgorithm
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = HashAlgorithmNone
-	case "SHA1RSA":
+	case strings.EqualFold(value, "Sha1Rsa"):
 		ret = HashAlgorithmSha1Rsa
-	case "MD5RSA":
+	case strings.EqualFold(value, "Md5Rsa"):
 		ret = HashAlgorithmMd5Rsa
-	case "SHA1DSA":
+	case strings.EqualFold(value, "Sha1Dsa"):
 		ret = HashAlgorithmSha1Dsa
-	case "SHA1RSA1":
+	case strings.EqualFold(value, "Sha1Rsa1"):
 		ret = HashAlgorithmSha1Rsa1
-	case "SHARSA":
+	case strings.EqualFold(value, "ShaRsa"):
 		ret = HashAlgorithmShaRsa
-	case "MD5RSA1":
+	case strings.EqualFold(value, "Md5Rsa1"):
 		ret = HashAlgorithmMd5Rsa1
-	case "MD2RSA1":
+	case strings.EqualFold(value, "Md2Rsa1"):
 		ret = HashAlgorithmMd2Rsa1
-	case "MD4RSA":
+	case strings.EqualFold(value, "Md4Rsa"):
 		ret = HashAlgorithmMd4Rsa
-	case "MD4RSA1":
+	case strings.EqualFold(value, "Md4Rsa1"):
 		ret = HashAlgorithmMd4Rsa1
-	case "MD4RSA2":
+	case strings.EqualFold(value, "Md4Rsa2"):
 		ret = HashAlgorithmMd4Rsa2
-	case "MD2RSA":
+	case strings.EqualFold(value, "Md2Rsa"):
 		ret = HashAlgorithmMd2Rsa
-	case "SHA1DSA1":
+	case strings.EqualFold(value, "Sha1Dsa1"):
 		ret = HashAlgorithmSha1Dsa1
-	case "DSASHA1":
+	case strings.EqualFold(value, "DsaSha1"):
 		ret = HashAlgorithmDsaSha1
-	case "MOSAICUPDATEDSIG":
+	case strings.EqualFold(value, "MosaicUpdatedSig"):
 		ret = HashAlgorithmMosaicUpdatedSig
-	case "SHA1NOSIGN":
+	case strings.EqualFold(value, "Sha1NoSign"):
 		ret = HashAlgorithmSha1NoSign
-	case "MD5NOSIGN":
+	case strings.EqualFold(value, "Md5NoSign"):
 		ret = HashAlgorithmMd5NoSign
-	case "SHA256NOSIGN":
+	case strings.EqualFold(value, "Sha256NoSign"):
 		ret = HashAlgorithmSha256NoSign
-	case "SHA384NOSIGN":
+	case strings.EqualFold(value, "Sha384NoSign"):
 		ret = HashAlgorithmSha384NoSign
-	case "SHA512NOSIGN":
+	case strings.EqualFold(value, "Sha512NoSign"):
 		ret = HashAlgorithmSha512NoSign
-	case "SHA256RSA":
+	case strings.EqualFold(value, "Sha256Rsa"):
 		ret = HashAlgorithmSha256Rsa
-	case "SHA384RSA":
+	case strings.EqualFold(value, "Sha384Rsa"):
 		ret = HashAlgorithmSha384Rsa
-	case "SHA512RSA":
+	case strings.EqualFold(value, "Sha512Rsa"):
 		ret = HashAlgorithmSha512Rsa
-	case "RSASSAPSS":
+	case strings.EqualFold(value, "RsaSsaPss"):
 		ret = HashAlgorithmRsaSsaPss
-	case "SHA1WITHECDSA":
+	case strings.EqualFold(value, "Sha1withecdsa"):
 		ret = HashAlgorithmSha1withecdsa
-	case "SHA256WITHECDSA":
+	case strings.EqualFold(value, "Sha256WithEcdsa"):
 		ret = HashAlgorithmSha256WithEcdsa
-	case "SHA384WITHECDSA":
+	case strings.EqualFold(value, "Sha384WithEcdsa"):
 		ret = HashAlgorithmSha384WithEcdsa
-	case "SHA512WITHECDSA":
+	case strings.EqualFold(value, "Sha512WithEcdsa"):
 		ret = HashAlgorithmSha512WithEcdsa
-	case "SPECIFIEDECDSA":
+	case strings.EqualFold(value, "SpecifiedEcdsa"):
 		ret = HashAlgorithmSpecifiedEcdsa
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -154,63 +154,98 @@ func (g HashAlgorithm) String() string {
 	var ret string
 	switch g {
 	case HashAlgorithmNone:
-		ret = "NONE"
+		ret = "None"
 	case HashAlgorithmSha1Rsa:
-		ret = "SHA1RSA"
+		ret = "Sha1Rsa"
 	case HashAlgorithmMd5Rsa:
-		ret = "MD5RSA"
+		ret = "Md5Rsa"
 	case HashAlgorithmSha1Dsa:
-		ret = "SHA1DSA"
+		ret = "Sha1Dsa"
 	case HashAlgorithmSha1Rsa1:
-		ret = "SHA1RSA1"
+		ret = "Sha1Rsa1"
 	case HashAlgorithmShaRsa:
-		ret = "SHARSA"
+		ret = "ShaRsa"
 	case HashAlgorithmMd5Rsa1:
-		ret = "MD5RSA1"
+		ret = "Md5Rsa1"
 	case HashAlgorithmMd2Rsa1:
-		ret = "MD2RSA1"
+		ret = "Md2Rsa1"
 	case HashAlgorithmMd4Rsa:
-		ret = "MD4RSA"
+		ret = "Md4Rsa"
 	case HashAlgorithmMd4Rsa1:
-		ret = "MD4RSA1"
+		ret = "Md4Rsa1"
 	case HashAlgorithmMd4Rsa2:
-		ret = "MD4RSA2"
+		ret = "Md4Rsa2"
 	case HashAlgorithmMd2Rsa:
-		ret = "MD2RSA"
+		ret = "Md2Rsa"
 	case HashAlgorithmSha1Dsa1:
-		ret = "SHA1DSA1"
+		ret = "Sha1Dsa1"
 	case HashAlgorithmDsaSha1:
-		ret = "DSASHA1"
+		ret = "DsaSha1"
 	case HashAlgorithmMosaicUpdatedSig:
-		ret = "MOSAICUPDATEDSIG"
+		ret = "MosaicUpdatedSig"
 	case HashAlgorithmSha1NoSign:
-		ret = "SHA1NOSIGN"
+		ret = "Sha1NoSign"
 	case HashAlgorithmMd5NoSign:
-		ret = "MD5NOSIGN"
+		ret = "Md5NoSign"
 	case HashAlgorithmSha256NoSign:
-		ret = "SHA256NOSIGN"
+		ret = "Sha256NoSign"
 	case HashAlgorithmSha384NoSign:
-		ret = "SHA384NOSIGN"
+		ret = "Sha384NoSign"
 	case HashAlgorithmSha512NoSign:
-		ret = "SHA512NOSIGN"
+		ret = "Sha512NoSign"
 	case HashAlgorithmSha256Rsa:
-		ret = "SHA256RSA"
+		ret = "Sha256Rsa"
 	case HashAlgorithmSha384Rsa:
-		ret = "SHA384RSA"
+		ret = "Sha384Rsa"
 	case HashAlgorithmSha512Rsa:
-		ret = "SHA512RSA"
+		ret = "Sha512Rsa"
 	case HashAlgorithmRsaSsaPss:
-		ret = "RSASSAPSS"
+		ret = "RsaSsaPss"
 	case HashAlgorithmSha1withecdsa:
-		ret = "SHA1WITHECDSA"
+		ret = "Sha1withecdsa"
 	case HashAlgorithmSha256WithEcdsa:
-		ret = "SHA256WITHECDSA"
+		ret = "Sha256WithEcdsa"
 	case HashAlgorithmSha384WithEcdsa:
-		ret = "SHA384WITHECDSA"
+		ret = "Sha384WithEcdsa"
 	case HashAlgorithmSha512WithEcdsa:
-		ret = "SHA512WITHECDSA"
+		ret = "Sha512WithEcdsa"
 	case HashAlgorithmSpecifiedEcdsa:
-		ret = "SPECIFIEDECDSA"
+		ret = "SpecifiedEcdsa"
 	}
 	return ret
+}
+
+// AllHashAlgorithm returns a slice containing all defined HashAlgorithm values.
+func AllHashAlgorithm() []HashAlgorithm {
+	return []HashAlgorithm{
+		HashAlgorithmNone,
+		HashAlgorithmSha1Rsa,
+		HashAlgorithmMd5Rsa,
+		HashAlgorithmSha1Dsa,
+		HashAlgorithmSha1Rsa1,
+		HashAlgorithmShaRsa,
+		HashAlgorithmMd5Rsa1,
+		HashAlgorithmMd2Rsa1,
+		HashAlgorithmMd4Rsa,
+		HashAlgorithmMd4Rsa1,
+		HashAlgorithmMd4Rsa2,
+		HashAlgorithmMd2Rsa,
+		HashAlgorithmSha1Dsa1,
+		HashAlgorithmDsaSha1,
+		HashAlgorithmMosaicUpdatedSig,
+		HashAlgorithmSha1NoSign,
+		HashAlgorithmMd5NoSign,
+		HashAlgorithmSha256NoSign,
+		HashAlgorithmSha384NoSign,
+		HashAlgorithmSha512NoSign,
+		HashAlgorithmSha256Rsa,
+		HashAlgorithmSha384Rsa,
+		HashAlgorithmSha512Rsa,
+		HashAlgorithmRsaSsaPss,
+		HashAlgorithmSha1withecdsa,
+		HashAlgorithmSha256WithEcdsa,
+		HashAlgorithmSha384WithEcdsa,
+		HashAlgorithmSha512WithEcdsa,
+		HashAlgorithmSpecifiedEcdsa,
+	}
 }

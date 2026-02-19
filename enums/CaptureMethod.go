@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -57,10 +57,10 @@ const (
 func CaptureMethodParse(value string) (CaptureMethod, error) {
 	var ret CaptureMethod
 	var err error
-	switch strings.ToUpper(value) {
-	case "INVOKE":
+	switch {
+	case strings.EqualFold(value, "Invoke"):
 		ret = CaptureMethodInvoke
-	case "IMPLICIT":
+	case strings.EqualFold(value, "Implicit"):
 		ret = CaptureMethodImplicit
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -74,9 +74,17 @@ func (g CaptureMethod) String() string {
 	var ret string
 	switch g {
 	case CaptureMethodInvoke:
-		ret = "INVOKE"
+		ret = "Invoke"
 	case CaptureMethodImplicit:
-		ret = "IMPLICIT"
+		ret = "Implicit"
 	}
 	return ret
+}
+
+// AllCaptureMethod returns a slice containing all defined CaptureMethod values.
+func AllCaptureMethod() []CaptureMethod {
+	return []CaptureMethod{
+	CaptureMethodInvoke,
+	CaptureMethodImplicit,
+	}
 }

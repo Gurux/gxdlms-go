@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func ConfirmedServiceErrorParse(value string) (ConfirmedServiceError, error) {
 	var ret ConfirmedServiceError
 	var err error
-	switch strings.ToUpper(value) {
-	case "INITIATEERROR":
+	switch {
+	case strings.EqualFold(value, "InitiateError"):
 		ret = ConfirmedServiceErrorInitiateError
-	case "READ":
+	case strings.EqualFold(value, "Read"):
 		ret = ConfirmedServiceErrorRead
-	case "WRITE":
+	case strings.EqualFold(value, "Write"):
 		ret = ConfirmedServiceErrorWrite
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g ConfirmedServiceError) String() string {
 	var ret string
 	switch g {
 	case ConfirmedServiceErrorInitiateError:
-		ret = "INITIATEERROR"
+		ret = "InitiateError"
 	case ConfirmedServiceErrorRead:
-		ret = "READ"
+		ret = "Read"
 	case ConfirmedServiceErrorWrite:
-		ret = "WRITE"
+		ret = "Write"
 	}
 	return ret
+}
+
+// AllConfirmedServiceError returns a slice containing all defined ConfirmedServiceError values.
+func AllConfirmedServiceError() []ConfirmedServiceError {
+	return []ConfirmedServiceError{
+	ConfirmedServiceErrorInitiateError,
+	ConfirmedServiceErrorRead,
+	ConfirmedServiceErrorWrite,
+	}
 }

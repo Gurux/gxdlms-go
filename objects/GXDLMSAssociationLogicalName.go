@@ -2115,7 +2115,7 @@ func (g *GXDLMSAssociationLogicalName) GetAttributeAccess(target IGXDLMSBase, at
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSAssociationLogicalName) GetValues() []any {
-	return []any{g.LogicalName, g.ObjectList, []any{g.ClientSAP, g.ServerSAP}, g.ApplicationContextName,
+	return []any{g.LogicalName(), g.ObjectList, []any{g.ClientSAP, g.ServerSAP}, g.ApplicationContextName,
 		g.XDLMSContextInfo, g.AuthenticationMechanismName, g.Secret, g.AssociationStatus, g.SecuritySetupReference, g.UserList, g.CurrentUser}
 }
 

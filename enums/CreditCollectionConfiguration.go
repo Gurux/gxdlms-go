@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func CreditCollectionConfigurationParse(value string) (CreditCollectionConfiguration, error) {
 	var ret CreditCollectionConfiguration
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = CreditCollectionConfigurationNone
-	case "DISCONNECTED":
+	case strings.EqualFold(value, "Disconnected"):
 		ret = CreditCollectionConfigurationDisconnected
-	case "LOADLIMITING":
+	case strings.EqualFold(value, "LoadLimiting"):
 		ret = CreditCollectionConfigurationLoadLimiting
-	case "FRIENDLYCREDIT":
+	case strings.EqualFold(value, "FriendlyCredit"):
 		ret = CreditCollectionConfigurationFriendlyCredit
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g CreditCollectionConfiguration) String() string {
 	var ret string
 	switch g {
 	case CreditCollectionConfigurationNone:
-		ret = "NONE"
+		ret = "None"
 	case CreditCollectionConfigurationDisconnected:
-		ret = "DISCONNECTED"
+		ret = "Disconnected"
 	case CreditCollectionConfigurationLoadLimiting:
-		ret = "LOADLIMITING"
+		ret = "LoadLimiting"
 	case CreditCollectionConfigurationFriendlyCredit:
-		ret = "FRIENDLYCREDIT"
+		ret = "FriendlyCredit"
 	}
 	return ret
+}
+
+// AllCreditCollectionConfiguration returns a slice containing all defined CreditCollectionConfiguration values.
+func AllCreditCollectionConfiguration() []CreditCollectionConfiguration {
+	return []CreditCollectionConfiguration{
+	CreditCollectionConfigurationNone,
+	CreditCollectionConfigurationDisconnected,
+	CreditCollectionConfigurationLoadLimiting,
+	CreditCollectionConfigurationFriendlyCredit,
+	}
 }

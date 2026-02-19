@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Weekdays Defines the weekdays.
+// Weekdays defines the weekdays.
 type Weekdays int
 
 const (
@@ -70,22 +70,22 @@ const (
 func WeekdaysParse(value string) (Weekdays, error) {
 	var ret Weekdays
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = WeekdaysNone
-	case "MONDAY":
+	case strings.EqualFold(value, "Monday"):
 		ret = WeekdaysMonday
-	case "TUESDAY":
+	case strings.EqualFold(value, "Tuesday"):
 		ret = WeekdaysTuesday
-	case "WEDNESDAY":
+	case strings.EqualFold(value, "Wednesday"):
 		ret = WeekdaysWednesday
-	case "THURSDAY":
+	case strings.EqualFold(value, "Thursday"):
 		ret = WeekdaysThursday
-	case "FRIDAY":
+	case strings.EqualFold(value, "Friday"):
 		ret = WeekdaysFriday
-	case "SATURDAY":
+	case strings.EqualFold(value, "Saturday"):
 		ret = WeekdaysSaturday
-	case "SUNDAY":
+	case strings.EqualFold(value, "Sunday"):
 		ret = WeekdaysSunday
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -99,21 +99,35 @@ func (g Weekdays) String() string {
 	var ret string
 	switch g {
 	case WeekdaysNone:
-		ret = "NONE"
+		ret = "None"
 	case WeekdaysMonday:
-		ret = "MONDAY"
+		ret = "Monday"
 	case WeekdaysTuesday:
-		ret = "TUESDAY"
+		ret = "Tuesday"
 	case WeekdaysWednesday:
-		ret = "WEDNESDAY"
+		ret = "Wednesday"
 	case WeekdaysThursday:
-		ret = "THURSDAY"
+		ret = "Thursday"
 	case WeekdaysFriday:
-		ret = "FRIDAY"
+		ret = "Friday"
 	case WeekdaysSaturday:
-		ret = "SATURDAY"
+		ret = "Saturday"
 	case WeekdaysSunday:
-		ret = "SUNDAY"
+		ret = "Sunday"
 	}
 	return ret
+}
+
+// AllWeekdays returns a slice containing all defined Weekdays values.
+func AllWeekdays() []Weekdays {
+	return []Weekdays{
+		WeekdaysNone,
+		WeekdaysMonday,
+		WeekdaysTuesday,
+		WeekdaysWednesday,
+		WeekdaysThursday,
+		WeekdaysFriday,
+		WeekdaysSaturday,
+		WeekdaysSunday,
+	}
 }

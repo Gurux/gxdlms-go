@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// DataType DataType enumerates usable types of data in GuruxDLMS.
+// DataType enumerates usable types of data in GuruxDLMS.
 type DataType int
 
 const (
@@ -114,66 +114,66 @@ const (
 func DataTypeParse(value string) (DataType, error) {
 	var ret DataType
 	var err error
-	switch strings.ToUpper(value) {
-	case "Array":
+	switch {
+	case strings.EqualFold(value, "Array"):
 		ret = DataTypeArray
-	case "Bcd":
+	case strings.EqualFold(value, "Bcd"):
 		ret = DataTypeBcd
-	case "BitString":
+	case strings.EqualFold(value, "BitString"):
 		ret = DataTypeBitString
-	case "Boolean":
+	case strings.EqualFold(value, "Boolean"):
 		ret = DataTypeBoolean
-	case "CompactArray":
+	case strings.EqualFold(value, "CompactArray"):
 		ret = DataTypeCompactArray
-	case "Date":
+	case strings.EqualFold(value, "Date"):
 		ret = DataTypeDate
-	case "DateTime":
+	case strings.EqualFold(value, "DateTime"):
 		ret = DataTypeDateTime
-	case "Enum":
+	case strings.EqualFold(value, "Enum"):
 		ret = DataTypeEnum
-	case "Float32":
+	case strings.EqualFold(value, "Float32"):
 		ret = DataTypeFloat32
-	case "Float64":
+	case strings.EqualFold(value, "Float64"):
 		ret = DataTypeFloat64
-	case "Int16":
+	case strings.EqualFold(value, "Int16"):
 		ret = DataTypeInt16
-	case "Int32":
+	case strings.EqualFold(value, "Int32"):
 		ret = DataTypeInt32
-	case "Int64":
+	case strings.EqualFold(value, "Int64"):
 		ret = DataTypeInt64
-	case "Int8":
+	case strings.EqualFold(value, "Int8"):
 		ret = DataTypeInt8
-	case "None":
+	case strings.EqualFold(value, "None"):
 		ret = DataTypeNone
-	case "OctetString":
+	case strings.EqualFold(value, "OctetString"):
 		ret = DataTypeOctetString
-	case "String":
+	case strings.EqualFold(value, "String"):
 		ret = DataTypeString
-	case "StringUTF8":
+	case strings.EqualFold(value, "StringUTF8"):
 		ret = DataTypeStringUTF8
-	case "Structure":
+	case strings.EqualFold(value, "Structure"):
 		ret = DataTypeStructure
-	case "Time":
+	case strings.EqualFold(value, "Time"):
 		ret = DataTypeTime
-	case "DeltaInt8":
+	case strings.EqualFold(value, "DeltaInt8"):
 		ret = DataTypeDeltaInt8
-	case "DeltaInt16":
+	case strings.EqualFold(value, "DeltaInt16"):
 		ret = DataTypeDeltaInt16
-	case "DeltaInt32":
+	case strings.EqualFold(value, "DeltaInt32"):
 		ret = DataTypeDeltaInt32
-	case "DeltaUint8":
+	case strings.EqualFold(value, "DeltaUint8"):
 		ret = DataTypeDeltaUint8
-	case "DeltaUint16":
+	case strings.EqualFold(value, "DeltaUint16"):
 		ret = DataTypeDeltaUint16
-	case "DeltaUint32":
+	case strings.EqualFold(value, "DeltaUint32"):
 		ret = DataTypeDeltaUint32
-	case "Uint16":
+	case strings.EqualFold(value, "Uint16"):
 		ret = DataTypeUint16
-	case "Uint32":
+	case strings.EqualFold(value, "Uint32"):
 		ret = DataTypeUint32
-	case "Uint64":
+	case strings.EqualFold(value, "Uint64"):
 		ret = DataTypeUint64
-	case "Uint8":
+	case strings.EqualFold(value, "Uint8"):
 		ret = DataTypeUint8
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -181,7 +181,7 @@ func DataTypeParse(value string) (DataType, error) {
 	return ret, err
 }
 
-// String returns the canonical name of the enums.DataType
+// String returns the canonical name of the DataType.
 // It satisfies fmt.Stringer.
 func (g DataType) String() string {
 	var ret string

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// RequiredProtection The :  enumerates the access modes for data protection.
+// RequiredProtection enumerates the access modes for data protection.
 type RequiredProtection int
 
 const (
@@ -66,18 +66,18 @@ const (
 func RequiredProtectionParse(value string) (RequiredProtection, error) {
 	var ret RequiredProtection
 	var err error
-	switch strings.ToUpper(value) {
-	case "AUTHENTICATEDREQUEST":
+	switch {
+	case strings.EqualFold(value, "AuthenticatedRequest"):
 		ret = RequiredProtectionAuthenticatedRequest
-	case "ENCRYPTEDREQUEST":
+	case strings.EqualFold(value, "EncryptedRequest"):
 		ret = RequiredProtectionEncryptedRequest
-	case "DIGITALLYSIGNEDREQUEST":
+	case strings.EqualFold(value, "DigitallySignedRequest"):
 		ret = RequiredProtectionDigitallySignedRequest
-	case "AUTHENTICATEDRESPONSE":
+	case strings.EqualFold(value, "AuthenticatedResponse"):
 		ret = RequiredProtectionAuthenticatedResponse
-	case "ENCRYPTEDRESPONSE":
+	case strings.EqualFold(value, "EncryptedResponse"):
 		ret = RequiredProtectionEncryptedResponse
-	case "DIGITALLYSIGNEDRESPONSE":
+	case strings.EqualFold(value, "DigitallySignedResponse"):
 		ret = RequiredProtectionDigitallySignedResponse
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -91,17 +91,29 @@ func (g RequiredProtection) String() string {
 	var ret string
 	switch g {
 	case RequiredProtectionAuthenticatedRequest:
-		ret = "AUTHENTICATEDREQUEST"
+		ret = "AuthenticatedRequest"
 	case RequiredProtectionEncryptedRequest:
-		ret = "ENCRYPTEDREQUEST"
+		ret = "EncryptedRequest"
 	case RequiredProtectionDigitallySignedRequest:
-		ret = "DIGITALLYSIGNEDREQUEST"
+		ret = "DigitallySignedRequest"
 	case RequiredProtectionAuthenticatedResponse:
-		ret = "AUTHENTICATEDRESPONSE"
+		ret = "AuthenticatedResponse"
 	case RequiredProtectionEncryptedResponse:
-		ret = "ENCRYPTEDRESPONSE"
+		ret = "EncryptedResponse"
 	case RequiredProtectionDigitallySignedResponse:
-		ret = "DIGITALLYSIGNEDRESPONSE"
+		ret = "DigitallySignedResponse"
 	}
 	return ret
+}
+
+// AllRequiredProtection returns a slice containing all defined RequiredProtection values.
+func AllRequiredProtection() []RequiredProtection {
+	return []RequiredProtection{
+		RequiredProtectionAuthenticatedRequest,
+		RequiredProtectionEncryptedRequest,
+		RequiredProtectionDigitallySignedRequest,
+		RequiredProtectionAuthenticatedResponse,
+		RequiredProtectionEncryptedResponse,
+		RequiredProtectionDigitallySignedResponse,
+	}
 }

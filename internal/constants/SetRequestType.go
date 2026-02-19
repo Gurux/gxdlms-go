@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func SetRequestTypeParse(value string) (SetRequestType, error) {
 	var ret SetRequestType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
+	switch {
+	case strings.EqualFold(value, "Normal"):
 		ret = SetRequestTypeNormal
-	case "FIRSTDATABLOCK":
+	case strings.EqualFold(value, "FirstDataBlock"):
 		ret = SetRequestTypeFirstDataBlock
-	case "WITHDATABLOCK":
+	case strings.EqualFold(value, "WithDataBlock"):
 		ret = SetRequestTypeWithDataBlock
-	case "WITHLIST":
+	case strings.EqualFold(value, "WithList"):
 		ret = SetRequestTypeWithList
-	case "WITHLISTANDWITHFIRSTDATABLOCK":
+	case strings.EqualFold(value, "WithListAndWithFirstDatablock"):
 		ret = SetRequestTypeWithListAndWithFirstDatablock
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g SetRequestType) String() string {
 	var ret string
 	switch g {
 	case SetRequestTypeNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case SetRequestTypeFirstDataBlock:
-		ret = "FIRSTDATABLOCK"
+		ret = "FirstDataBlock"
 	case SetRequestTypeWithDataBlock:
-		ret = "WITHDATABLOCK"
+		ret = "WithDataBlock"
 	case SetRequestTypeWithList:
-		ret = "WITHLIST"
+		ret = "WithList"
 	case SetRequestTypeWithListAndWithFirstDatablock:
-		ret = "WITHLISTANDWITHFIRSTDATABLOCK"
+		ret = "WithListAndWithFirstDatablock"
 	}
 	return ret
+}
+
+// AllSetRequestType returns a slice containing all defined SetRequestType values.
+func AllSetRequestType() []SetRequestType {
+	return []SetRequestType{
+		SetRequestTypeNormal,
+		SetRequestTypeFirstDataBlock,
+		SetRequestTypeWithDataBlock,
+		SetRequestTypeWithList,
+		SetRequestTypeWithListAndWithFirstDatablock,
+	}
 }

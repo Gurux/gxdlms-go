@@ -34,68 +34,18 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// CoAP class.
+// CoAPClass defines Coap class information.
 type CoAPClass int
 
 const (
-	// CoAPClassMethod defines that the // Request method.
+	// CoAPClassMethod defines request method.
 	CoAPClassMethod CoAPClass = iota
-	// CoAPClassSuccess defines that the // Success response.
+	// CoAPClassSuccess defines success response.
 	CoAPClassSuccess CoAPClass = 2
-	// CoAPClassClientError defines that the // Client error response.
+	// CoAPClassClientError defines client error response.
 	CoAPClassClientError CoAPClass = 4
-	// CoAPClassServerError defines that the // Server error response.
+	// CoAPClassServerError defines server error response.
 	CoAPClassServerError CoAPClass = 5
-	// CoAPClassSignaling defines that the // Signaling.
+	// CoAPClassSignaling defines signaling.
 	CoAPClassSignaling CoAPClass = 7
 )
-
-// CoAPClassParse converts the given string into a CoAPClass value.
-//
-// It returns the corresponding CoAPClass constant if the string matches
-// a known level name, or an error if the input is invalid.
-func CoAPClassParse(value string) (CoAPClass, error) {
-	var ret CoAPClass
-	var err error
-	switch strings.ToUpper(value) {
-	case "METHOD":
-		ret = CoAPClassMethod
-	case "SUCCESS":
-		ret = CoAPClassSuccess
-	case "CLIENTERROR":
-		ret = CoAPClassClientError
-	case "SERVERERROR":
-		ret = CoAPClassServerError
-	case "SIGNALING":
-		ret = CoAPClassSignaling
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
-
-// String returns the canonical name of the CoAPClass.
-// It satisfies fmt.Stringer.
-func (g CoAPClass) String() string {
-	var ret string
-	switch g {
-	case CoAPClassMethod:
-		ret = "METHOD"
-	case CoAPClassSuccess:
-		ret = "SUCCESS"
-	case CoAPClassClientError:
-		ret = "CLIENTERROR"
-	case CoAPClassServerError:
-		ret = "SERVERERROR"
-	case CoAPClassSignaling:
-		ret = "SIGNALING"
-	}
-	return ret
-}

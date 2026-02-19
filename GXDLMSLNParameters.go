@@ -36,6 +36,7 @@
 
 import (
 	"github.com/Gurux/gxdlms-go/enums"
+	"github.com/Gurux/gxdlms-go/internal/constants"
 	"github.com/Gurux/gxdlms-go/settings"
 	"github.com/Gurux/gxdlms-go/types"
 )
@@ -100,7 +101,7 @@ func NewGXDLMSLNParameters(settings *settings.GXDLMSSettings,
 	status byte,
 	cipheredCommand enums.Command) *GXDLMSLNParameters {
 	settings.Command = command
-	if command == enums.CommandGetRequest && commandType != byte(enums.GetCommandTypeNextDataBlock) {
+	if command == enums.CommandGetRequest && commandType != byte(constants.GetCommandTypeNextDataBlock) {
 		settings.CommandType = commandType
 	}
 	return &GXDLMSLNParameters{

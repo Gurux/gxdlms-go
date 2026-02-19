@@ -299,7 +299,7 @@ func (g *GXDLMSExtendedRegister) GetUIDataType(index int) enums.DataType {
 }
 
 func (g *GXDLMSExtendedRegister) GetValues() []any {
-	return []any{g.LogicalName, g.Value, []any{g.Scaler, g.Unit}, g.Status, g.CaptureTime}
+	return []any{g.LogicalName(), g.Value, []any{g.Scaler, g.Unit}, g.Status, g.CaptureTime}
 }
 
 func (g *GXDLMSExtendedRegister) IsRead(index int) bool {

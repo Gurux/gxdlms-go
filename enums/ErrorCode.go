@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,8 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// ErrorCode Enumerated DLMS error codes.
+// ErrorCode enumerates DLMS error codes.
+// https://www.gurux.fi/Gurux.DLMS.ErrorCodes
 type ErrorCode int
 
 const (
@@ -94,46 +95,46 @@ const (
 func ErrorCodeParse(value string) (ErrorCode, error) {
 	var ret ErrorCode
 	var err error
-	switch strings.ToUpper(value) {
-	case "DISCONNECTMODE":
+	switch {
+	case strings.EqualFold(value, "DisconnectMode"):
 		ret = ErrorCodeDisconnectMode
-	case "RECEIVENOTREADY":
+	case strings.EqualFold(value, "ReceiveNotReady"):
 		ret = ErrorCodeReceiveNotReady
-	case "REJECTED":
+	case strings.EqualFold(value, "Rejected"):
 		ret = ErrorCodeRejected
-	case "UNACCEPTABLEFRAME":
+	case strings.EqualFold(value, "UnacceptableFrame"):
 		ret = ErrorCodeUnacceptableFrame
-	case "OK":
+	case strings.EqualFold(value, "Ok"):
 		ret = ErrorCodeOk
-	case "HARDWAREFAULT":
+	case strings.EqualFold(value, "HardwareFault"):
 		ret = ErrorCodeHardwareFault
-	case "TEMPORARYFAILURE":
+	case strings.EqualFold(value, "TemporaryFailure"):
 		ret = ErrorCodeTemporaryFailure
-	case "READWRITEDENIED":
+	case strings.EqualFold(value, "ReadWriteDenied"):
 		ret = ErrorCodeReadWriteDenied
-	case "UNDEFINEDOBJECT":
+	case strings.EqualFold(value, "UndefinedObject"):
 		ret = ErrorCodeUndefinedObject
-	case "INCONSISTENTCLASS":
+	case strings.EqualFold(value, "InconsistentClass"):
 		ret = ErrorCodeInconsistentClass
-	case "UNAVAILABLEOBJECT":
+	case strings.EqualFold(value, "UnavailableObject"):
 		ret = ErrorCodeUnavailableObject
-	case "UNMATCHEDTYPE":
+	case strings.EqualFold(value, "UnmatchedType"):
 		ret = ErrorCodeUnmatchedType
-	case "ACCESSVIOLATED":
+	case strings.EqualFold(value, "AccessViolated"):
 		ret = ErrorCodeAccessViolated
-	case "DATABLOCKUNAVAILABLE":
+	case strings.EqualFold(value, "DataBlockUnavailable"):
 		ret = ErrorCodeDataBlockUnavailable
-	case "LONGGETORREADABORTED":
+	case strings.EqualFold(value, "LongGetOrReadAborted"):
 		ret = ErrorCodeLongGetOrReadAborted
-	case "NOLONGGETORREADINPROGRESS":
+	case strings.EqualFold(value, "NoLongGetOrReadInProgress"):
 		ret = ErrorCodeNoLongGetOrReadInProgress
-	case "LONGSETORWRITEABORTED":
+	case strings.EqualFold(value, "LongSetOrWriteAborted"):
 		ret = ErrorCodeLongSetOrWriteAborted
-	case "NOLONGSETORWRITEINPROGRESS":
+	case strings.EqualFold(value, "NoLongSetOrWriteInProgress"):
 		ret = ErrorCodeNoLongSetOrWriteInProgress
-	case "DATABLOCKNUMBERINVALID":
+	case strings.EqualFold(value, "DataBlockNumberInvalid"):
 		ret = ErrorCodeDataBlockNumberInvalid
-	case "OTHERREASON":
+	case strings.EqualFold(value, "OtherReason"):
 		ret = ErrorCodeOtherReason
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -147,45 +148,71 @@ func (g ErrorCode) String() string {
 	var ret string
 	switch g {
 	case ErrorCodeDisconnectMode:
-		ret = "DISCONNECTMODE"
+		ret = "DisconnectMode"
 	case ErrorCodeReceiveNotReady:
-		ret = "RECEIVENOTREADY"
+		ret = "ReceiveNotReady"
 	case ErrorCodeRejected:
-		ret = "REJECTED"
+		ret = "Rejected"
 	case ErrorCodeUnacceptableFrame:
-		ret = "UNACCEPTABLEFRAME"
+		ret = "UnacceptableFrame"
 	case ErrorCodeOk:
-		ret = "OK"
+		ret = "Ok"
 	case ErrorCodeHardwareFault:
-		ret = "HARDWAREFAULT"
+		ret = "HardwareFault"
 	case ErrorCodeTemporaryFailure:
-		ret = "TEMPORARYFAILURE"
+		ret = "TemporaryFailure"
 	case ErrorCodeReadWriteDenied:
-		ret = "READWRITEDENIED"
+		ret = "ReadWriteDenied"
 	case ErrorCodeUndefinedObject:
-		ret = "UNDEFINEDOBJECT"
+		ret = "UndefinedObject"
 	case ErrorCodeInconsistentClass:
-		ret = "INCONSISTENTCLASS"
+		ret = "InconsistentClass"
 	case ErrorCodeUnavailableObject:
-		ret = "UNAVAILABLEOBJECT"
+		ret = "UnavailableObject"
 	case ErrorCodeUnmatchedType:
-		ret = "UNMATCHEDTYPE"
+		ret = "UnmatchedType"
 	case ErrorCodeAccessViolated:
-		ret = "ACCESSVIOLATED"
+		ret = "AccessViolated"
 	case ErrorCodeDataBlockUnavailable:
-		ret = "DATABLOCKUNAVAILABLE"
+		ret = "DataBlockUnavailable"
 	case ErrorCodeLongGetOrReadAborted:
-		ret = "LONGGETORREADABORTED"
+		ret = "LongGetOrReadAborted"
 	case ErrorCodeNoLongGetOrReadInProgress:
-		ret = "NOLONGGETORREADINPROGRESS"
+		ret = "NoLongGetOrReadInProgress"
 	case ErrorCodeLongSetOrWriteAborted:
-		ret = "LONGSETORWRITEABORTED"
+		ret = "LongSetOrWriteAborted"
 	case ErrorCodeNoLongSetOrWriteInProgress:
-		ret = "NOLONGSETORWRITEINPROGRESS"
+		ret = "NoLongSetOrWriteInProgress"
 	case ErrorCodeDataBlockNumberInvalid:
-		ret = "DATABLOCKNUMBERINVALID"
+		ret = "DataBlockNumberInvalid"
 	case ErrorCodeOtherReason:
-		ret = "OTHERREASON"
+		ret = "OtherReason"
 	}
 	return ret
+}
+
+// AllErrorCode returns a slice containing all defined ErrorCode values.
+func AllErrorCode() []ErrorCode {
+	return []ErrorCode{
+		ErrorCodeDisconnectMode,
+		ErrorCodeReceiveNotReady,
+		ErrorCodeRejected,
+		ErrorCodeUnacceptableFrame,
+		ErrorCodeOk,
+		ErrorCodeHardwareFault,
+		ErrorCodeTemporaryFailure,
+		ErrorCodeReadWriteDenied,
+		ErrorCodeUndefinedObject,
+		ErrorCodeInconsistentClass,
+		ErrorCodeUnavailableObject,
+		ErrorCodeUnmatchedType,
+		ErrorCodeAccessViolated,
+		ErrorCodeDataBlockUnavailable,
+		ErrorCodeLongGetOrReadAborted,
+		ErrorCodeNoLongGetOrReadInProgress,
+		ErrorCodeLongSetOrWriteAborted,
+		ErrorCodeNoLongSetOrWriteInProgress,
+		ErrorCodeDataBlockNumberInvalid,
+		ErrorCodeOtherReason,
+	}
 }

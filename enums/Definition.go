@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func DefinitionParse(value string) (Definition, error) {
 	var ret Definition
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = DefinitionOther
-	case "OBJECTUNDEFINED":
+	case strings.EqualFold(value, "ObjectUndefined"):
 		ret = DefinitionObjectUndefined
-	case "OBJECTCLASSINCONSISTENT":
+	case strings.EqualFold(value, "ObjectClassInconsistent"):
 		ret = DefinitionObjectClassInconsistent
-	case "OBJECTATTRIBUTEINCONSISTENT":
+	case strings.EqualFold(value, "ObjectAttributeInconsistent"):
 		ret = DefinitionObjectAttributeInconsistent
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g Definition) String() string {
 	var ret string
 	switch g {
 	case DefinitionOther:
-		ret = "OTHER"
+		ret = "Other"
 	case DefinitionObjectUndefined:
-		ret = "OBJECTUNDEFINED"
+		ret = "ObjectUndefined"
 	case DefinitionObjectClassInconsistent:
-		ret = "OBJECTCLASSINCONSISTENT"
+		ret = "ObjectClassInconsistent"
 	case DefinitionObjectAttributeInconsistent:
-		ret = "OBJECTATTRIBUTEINCONSISTENT"
+		ret = "ObjectAttributeInconsistent"
 	}
 	return ret
+}
+
+// AllDefinition returns a slice containing all defined Definition values.
+func AllDefinition() []Definition {
+	return []Definition{
+	DefinitionOther,
+	DefinitionObjectUndefined,
+	DefinitionObjectClassInconsistent,
+	DefinitionObjectAttributeInconsistent,
+	}
 }

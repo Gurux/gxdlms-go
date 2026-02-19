@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,15 +41,15 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// GsmCircuitSwitchStatus GSM circuit switced status.
+// GSM circuit switced status.
 type GsmCircuitSwitchStatus int
 
 const (
-	// GsmCircuitSwitchStatusInactive defines that the inactive.
+	// GsmCircuitSwitchStatusInactive defines that the // Inactive.
 	GsmCircuitSwitchStatusInactive GsmCircuitSwitchStatus = iota
-	// GsmCircuitSwitchStatusIncomingCall defines that the incoming call.
+	// GsmCircuitSwitchStatusIncomingCall defines that the // Incoming call.
 	GsmCircuitSwitchStatusIncomingCall
-	// GsmCircuitSwitchStatusActive defines that the active.
+	// GsmCircuitSwitchStatusActive defines that the // Active.
 	GsmCircuitSwitchStatusActive
 )
 
@@ -60,12 +60,12 @@ const (
 func GsmCircuitSwitchStatusParse(value string) (GsmCircuitSwitchStatus, error) {
 	var ret GsmCircuitSwitchStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "INACTIVE":
+	switch {
+	case strings.EqualFold(value, "Inactive"):
 		ret = GsmCircuitSwitchStatusInactive
-	case "INCOMINGCALL":
+	case strings.EqualFold(value, "IncomingCall"):
 		ret = GsmCircuitSwitchStatusIncomingCall
-	case "ACTIVE":
+	case strings.EqualFold(value, "Active"):
 		ret = GsmCircuitSwitchStatusActive
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g GsmCircuitSwitchStatus) String() string {
 	var ret string
 	switch g {
 	case GsmCircuitSwitchStatusInactive:
-		ret = "INACTIVE"
+		ret = "Inactive"
 	case GsmCircuitSwitchStatusIncomingCall:
-		ret = "INCOMINGCALL"
+		ret = "IncomingCall"
 	case GsmCircuitSwitchStatusActive:
-		ret = "ACTIVE"
+		ret = "Active"
 	}
 	return ret
+}
+
+// AllGsmCircuitSwitchStatus returns a slice containing all defined GsmCircuitSwitchStatus values.
+func AllGsmCircuitSwitchStatus() []GsmCircuitSwitchStatus {
+	return []GsmCircuitSwitchStatus{
+	GsmCircuitSwitchStatusInactive,
+	GsmCircuitSwitchStatusIncomingCall,
+	GsmCircuitSwitchStatusActive,
+	}
 }

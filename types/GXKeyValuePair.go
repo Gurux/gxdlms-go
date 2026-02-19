@@ -35,14 +35,14 @@ package types
 //---------------------------------------------------------------------------
 
 // GXKeyValuePair is a generic key-value pair structure.
-type GXKeyValuePair[K comparable, V any] struct {
+type GXKeyValuePair[K, V any] struct {
 	// Key value of the pair.
 	Key K
 	// Value associated with the key.
 	Value V
 }
 
-// NewGXKeyValuePair creates a new KeyValuePair instance with the provided key and value.
-func NewGXKeyValuePair[K comparable, V any](key K, value V) *GXKeyValuePair[K, V] {
+// NewGXKeyValuePair creates a types.NewGXKeyValuePair instance with the provided key and value.
+func NewGXKeyValuePair[K, V any](key K, value V) *GXKeyValuePair[K, V] {
 	return &GXKeyValuePair[K, V]{Key: key, Value: value}
 }

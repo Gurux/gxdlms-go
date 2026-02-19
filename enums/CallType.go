@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func CallTypeParse(value string) (CallType, error) {
 	var ret CallType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
+	switch {
+	case strings.EqualFold(value, "Normal"):
 		ret = CallTypeNormal
-	case "WAKEUP":
+	case strings.EqualFold(value, "WakeUp"):
 		ret = CallTypeWakeUp
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g CallType) String() string {
 	var ret string
 	switch g {
 	case CallTypeNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case CallTypeWakeUp:
-		ret = "WAKEUP"
+		ret = "WakeUp"
 	}
 	return ret
+}
+
+// AllCallType returns a slice containing all defined CallType values.
+func AllCallType() []CallType {
+	return []CallType{
+	CallTypeNormal,
+	CallTypeWakeUp,
+	}
 }

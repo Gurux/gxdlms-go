@@ -267,24 +267,6 @@ func (x *GXXmlReader) ReadElementContentAsTime(name string) (types.GXTime, error
 	return *sdt, err
 }
 
-func (x *GXXmlReader) ReadElementContentAsBool(name string, def bool) (bool, error) {
-	if err := x.getNext(); err != nil {
-		return def, err
-	}
-	if !strings.EqualFold(x.Name(), name) {
-		return def, nil
-	}
-	s, err := x.readElementText(name)
-	if err != nil {
-		return def, err
-	}
-	v, err := strconv.Atoi(strings.TrimSpace(s))
-	if err != nil {
-		return def, err
-	}
-	return v != 0, nil
-}
-
 func (x *GXXmlReader) ReadElementContentAsInt(name string, def int) (int, error) {
 	if err := x.getNext(); err != nil {
 		return def, err
@@ -301,6 +283,54 @@ func (x *GXXmlReader) ReadElementContentAsInt(name string, def int) (int, error)
 		return def, err
 	}
 	return v, nil
+}
+
+func (x *GXXmlReader) ReadElementContentAsBool(name string, def bool) (bool, error) {
+	ret, err := x.ReadElementContentAsInt(name, 0)
+	if err != nil {
+		return false, err
+	}
+	return ret != 0, nil
+}
+
+func (x *GXXmlReader) ReadElementContentAsInt8(name string, def int) (int8, error) {
+	ret, err := x.ReadElementContentAsInt(name, def)
+	if err != nil {
+		return 0, err
+	}
+	return int8(ret), nil
+}
+
+func (x *GXXmlReader) ReadElementContentAsInt16(name string, def int) (int16, error) {
+	ret, err := x.ReadElementContentAsInt(name, def)
+	if err != nil {
+		return 0, err
+	}
+	return int16(ret), nil
+}
+
+func (x *GXXmlReader) ReadElementContentAsUInt8(name string, def int) (uint8, error) {
+	ret, err := x.ReadElementContentAsInt(name, def)
+	if err != nil {
+		return 0, err
+	}
+	return uint8(ret), nil
+}
+
+func (x *GXXmlReader) ReadElementContentAsUInt16(name string, def int) (uint16, error) {
+	ret, err := x.ReadElementContentAsInt(name, def)
+	if err != nil {
+		return 0, err
+	}
+	return uint16(ret), nil
+}
+
+func (x *GXXmlReader) ReadElementContentAsUInt32(name string, def int) (uint32, error) {
+	ret, err := x.ReadElementContentAsInt(name, def)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(ret), nil
 }
 
 func (x *GXXmlReader) ReadElementContentAsLong(name string, def int64) (int64, error) {

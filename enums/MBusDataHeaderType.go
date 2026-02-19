@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func MBusDataHeaderTypeParse(value string) (MBusDataHeaderType, error) {
 	var ret MBusDataHeaderType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = MBusDataHeaderTypeNone
-	case "SHORT":
+	case strings.EqualFold(value, "Short"):
 		ret = MBusDataHeaderTypeShort
-	case "LONG":
+	case strings.EqualFold(value, "Long"):
 		ret = MBusDataHeaderTypeLong
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g MBusDataHeaderType) String() string {
 	var ret string
 	switch g {
 	case MBusDataHeaderTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case MBusDataHeaderTypeShort:
-		ret = "SHORT"
+		ret = "Short"
 	case MBusDataHeaderTypeLong:
-		ret = "LONG"
+		ret = "Long"
 	}
 	return ret
+}
+
+// AllMBusDataHeaderType returns a slice containing all defined MBusDataHeaderType values.
+func AllMBusDataHeaderType() []MBusDataHeaderType {
+	return []MBusDataHeaderType{
+		MBusDataHeaderTypeNone,
+		MBusDataHeaderTypeShort,
+		MBusDataHeaderTypeLong,
+	}
 }

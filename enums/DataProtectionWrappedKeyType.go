@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -56,8 +56,8 @@ const (
 func DataProtectionWrappedKeyTypeParse(value string) (DataProtectionWrappedKeyType, error) {
 	var ret DataProtectionWrappedKeyType
 	var err error
-	switch strings.ToUpper(value) {
-	case "MASTERKEY":
+	switch {
+	case strings.EqualFold(value, "MasterKey"):
 		ret = DataProtectionWrappedKeyTypeMasterKey
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -71,7 +71,14 @@ func (g DataProtectionWrappedKeyType) String() string {
 	var ret string
 	switch g {
 	case DataProtectionWrappedKeyTypeMasterKey:
-		ret = "MASTERKEY"
+		ret = "MasterKey"
 	}
 	return ret
+}
+
+// AllDataProtectionWrappedKeyType returns a slice containing all defined DataProtectionWrappedKeyType values.
+func AllDataProtectionWrappedKeyType() []DataProtectionWrappedKeyType {
+	return []DataProtectionWrappedKeyType{
+	DataProtectionWrappedKeyTypeMasterKey,
+	}
 }

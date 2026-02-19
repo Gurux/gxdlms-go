@@ -34,14 +34,7 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/Gurux/gxcommon-go"
-)
-
-// CoAP server error codes.
+// CoAPServerError defines server error values.
 type CoAPServerError int
 
 const (
@@ -58,50 +51,3 @@ const (
 	// CoAPServerErrorProxyingNotSupported defines that the // Proxying not supported.
 	CoAPServerErrorProxyingNotSupported
 )
-
-// CoAPServerErrorParse converts the given string into a CoAPServerError value.
-//
-// It returns the corresponding CoAPServerError constant if the string matches
-// a known level name, or an error if the input is invalid.
-func CoAPServerErrorParse(value string) (CoAPServerError, error) {
-	var ret CoAPServerError
-	var err error
-	switch strings.ToUpper(value) {
-	case "INTERNAL":
-		ret = CoAPServerErrorInternal
-	case "NOTIMPLEMENTED":
-		ret = CoAPServerErrorNotImplemented
-	case "BADGATEWAY":
-		ret = CoAPServerErrorBadGateway
-	case "SERVICEUNAVAILABLE":
-		ret = CoAPServerErrorServiceUnavailable
-	case "GATEWAYTIMEOUT":
-		ret = CoAPServerErrorGatewayTimeout
-	case "PROXYINGNOTSUPPORTED":
-		ret = CoAPServerErrorProxyingNotSupported
-	default:
-		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
-	}
-	return ret, err
-}
-
-// String returns the canonical name of the CoAPServerError.
-// It satisfies fmt.Stringer.
-func (g CoAPServerError) String() string {
-	var ret string
-	switch g {
-	case CoAPServerErrorInternal:
-		ret = "INTERNAL"
-	case CoAPServerErrorNotImplemented:
-		ret = "NOTIMPLEMENTED"
-	case CoAPServerErrorBadGateway:
-		ret = "BADGATEWAY"
-	case CoAPServerErrorServiceUnavailable:
-		ret = "SERVICEUNAVAILABLE"
-	case CoAPServerErrorGatewayTimeout:
-		ret = "GATEWAYTIMEOUT"
-	case CoAPServerErrorProxyingNotSupported:
-		ret = "PROXYINGNOTSUPPORTED"
-	}
-	return ret
-}

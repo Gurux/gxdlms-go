@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// ApplicationReference :  describes application errors.
+// ApplicationReference enumerates application errors.
 type ApplicationReference int
 
 const (
@@ -68,20 +68,20 @@ const (
 func ApplicationReferenceParse(value string) (ApplicationReference, error) {
 	var ret ApplicationReference
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = ApplicationReferenceOther
-	case "TIMEELAPSED":
+	case strings.EqualFold(value, "TimeElapsed"):
 		ret = ApplicationReferenceTimeElapsed
-	case "APPLICATIONUNREACHABLE":
+	case strings.EqualFold(value, "ApplicationUnreachable"):
 		ret = ApplicationReferenceApplicationUnreachable
-	case "APPLICATIONREFERENCEINVALID":
+	case strings.EqualFold(value, "ApplicationReferenceInvalid"):
 		ret = ApplicationReferenceApplicationReferenceInvalid
-	case "APPLICATIONCONTEXTUNSUPPORTED":
+	case strings.EqualFold(value, "ApplicationContextUnsupported"):
 		ret = ApplicationReferenceApplicationContextUnsupported
-	case "PROVIDERCOMMUNICATIONERROR":
+	case strings.EqualFold(value, "ProviderCommunicationError"):
 		ret = ApplicationReferenceProviderCommunicationError
-	case "DECIPHERINGERROR":
+	case strings.EqualFold(value, "DecipheringError"):
 		ret = ApplicationReferenceDecipheringError
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -95,19 +95,32 @@ func (g ApplicationReference) String() string {
 	var ret string
 	switch g {
 	case ApplicationReferenceOther:
-		ret = "OTHER"
+		ret = "Other"
 	case ApplicationReferenceTimeElapsed:
-		ret = "TIMEELAPSED"
+		ret = "TimeElapsed"
 	case ApplicationReferenceApplicationUnreachable:
-		ret = "APPLICATIONUNREACHABLE"
+		ret = "ApplicationUnreachable"
 	case ApplicationReferenceApplicationReferenceInvalid:
-		ret = "APPLICATIONREFERENCEINVALID"
+		ret = "ApplicationReferenceInvalid"
 	case ApplicationReferenceApplicationContextUnsupported:
-		ret = "APPLICATIONCONTEXTUNSUPPORTED"
+		ret = "ApplicationContextUnsupported"
 	case ApplicationReferenceProviderCommunicationError:
-		ret = "PROVIDERCOMMUNICATIONERROR"
+		ret = "ProviderCommunicationError"
 	case ApplicationReferenceDecipheringError:
-		ret = "DECIPHERINGERROR"
+		ret = "DecipheringError"
 	}
 	return ret
+}
+
+// AllApplicationReference returns a slice containing all defined ApplicationReference values.
+func AllApplicationReference() []ApplicationReference {
+	return []ApplicationReference{
+		ApplicationReferenceOther,
+		ApplicationReferenceTimeElapsed,
+		ApplicationReferenceApplicationUnreachable,
+		ApplicationReferenceApplicationReferenceInvalid,
+		ApplicationReferenceApplicationContextUnsupported,
+		ApplicationReferenceProviderCommunicationError,
+		ApplicationReferenceDecipheringError,
+	}
 }

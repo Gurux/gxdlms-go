@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Initiate :  describes onitiate errors.
+// Initiate describes onitiate errors.
 type Initiate int
 
 const (
@@ -64,16 +64,16 @@ const (
 func InitiateParse(value string) (Initiate, error) {
 	var ret Initiate
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = InitiateOther
-	case "DLMSVERSIONTOOLOW":
+	case strings.EqualFold(value, "DlmsVersionTooLow"):
 		ret = InitiateDlmsVersionTooLow
-	case "INCOMPATIBLECONFORMANCE":
+	case strings.EqualFold(value, "IncompatibleConformance"):
 		ret = InitiateIncompatibleConformance
-	case "PDUSIZETOOSHORT":
+	case strings.EqualFold(value, "PduSizeTooShort"):
 		ret = InitiatePduSizeTooShort
-	case "REFUSEDBYTHEVDEHANDLER":
+	case strings.EqualFold(value, "RefusedByTheVDEHandler"):
 		ret = InitiateRefusedByTheVDEHandler
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g Initiate) String() string {
 	var ret string
 	switch g {
 	case InitiateOther:
-		ret = "OTHER"
+		ret = "Other"
 	case InitiateDlmsVersionTooLow:
-		ret = "DLMSVERSIONTOOLOW"
+		ret = "DlmsVersionTooLow"
 	case InitiateIncompatibleConformance:
-		ret = "INCOMPATIBLECONFORMANCE"
+		ret = "IncompatibleConformance"
 	case InitiatePduSizeTooShort:
-		ret = "PDUSIZETOOSHORT"
+		ret = "PduSizeTooShort"
 	case InitiateRefusedByTheVDEHandler:
-		ret = "REFUSEDBYTHEVDEHANDLER"
+		ret = "RefusedByTheVDEHandler"
 	}
 	return ret
+}
+
+// AllInitiate returns a slice containing all defined Initiate values.
+func AllInitiate() []Initiate {
+	return []Initiate{
+		InitiateOther,
+		InitiateDlmsVersionTooLow,
+		InitiateIncompatibleConformance,
+		InitiatePduSizeTooShort,
+		InitiateRefusedByTheVDEHandler,
+	}
 }

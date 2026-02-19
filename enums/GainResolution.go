@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func GainResolutionParse(value string) (GainResolution, error) {
 	var ret GainResolution
 	var err error
-	switch strings.ToUpper(value) {
-	case "DB6":
+	switch {
+	case strings.EqualFold(value, "dB6"):
 		ret = GainResolutiondB6
-	case "DB3":
+	case strings.EqualFold(value, "dB3"):
 		ret = GainResolutiondB3
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g GainResolution) String() string {
 	var ret string
 	switch g {
 	case GainResolutiondB6:
-		ret = "DB6"
+		ret = "dB6"
 	case GainResolutiondB3:
-		ret = "DB3"
+		ret = "dB3"
 	}
 	return ret
+}
+
+// AllGainResolution returns a slice containing all defined GainResolution values.
+func AllGainResolution() []GainResolution {
+	return []GainResolution{
+		GainResolutiondB6,
+		GainResolutiondB3,
+	}
 }

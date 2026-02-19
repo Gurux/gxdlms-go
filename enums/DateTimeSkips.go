@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -76,28 +76,28 @@ const (
 func DateTimeSkipsParse(value string) (DateTimeSkips, error) {
 	var ret DateTimeSkips
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = DateTimeSkipsNone
-	case "YEAR":
+	case strings.EqualFold(value, "Year"):
 		ret = DateTimeSkipsYear
-	case "MONTH":
+	case strings.EqualFold(value, "Month"):
 		ret = DateTimeSkipsMonth
-	case "DAY":
+	case strings.EqualFold(value, "Day"):
 		ret = DateTimeSkipsDay
-	case "DAYOFWEEK":
+	case strings.EqualFold(value, "DayOfWeek"):
 		ret = DateTimeSkipsDayOfWeek
-	case "HOUR":
+	case strings.EqualFold(value, "Hour"):
 		ret = DateTimeSkipsHour
-	case "MINUTE":
+	case strings.EqualFold(value, "Minute"):
 		ret = DateTimeSkipsMinute
-	case "SECOND":
+	case strings.EqualFold(value, "Second"):
 		ret = DateTimeSkipsSecond
-	case "MS":
+	case strings.EqualFold(value, "Ms"):
 		ret = DateTimeSkipsMs
-	case "DEVIATION":
+	case strings.EqualFold(value, "Deviation"):
 		ret = DateTimeSkipsDeviation
-	case "STATUS":
+	case strings.EqualFold(value, "Status"):
 		ret = DateTimeSkipsStatus
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -111,27 +111,44 @@ func (g DateTimeSkips) String() string {
 	var ret string
 	switch g {
 	case DateTimeSkipsNone:
-		ret = "NONE"
+		ret = "None"
 	case DateTimeSkipsYear:
-		ret = "YEAR"
+		ret = "Year"
 	case DateTimeSkipsMonth:
-		ret = "MONTH"
+		ret = "Month"
 	case DateTimeSkipsDay:
-		ret = "DAY"
+		ret = "Day"
 	case DateTimeSkipsDayOfWeek:
-		ret = "DAYOFWEEK"
+		ret = "DayOfWeek"
 	case DateTimeSkipsHour:
-		ret = "HOUR"
+		ret = "Hour"
 	case DateTimeSkipsMinute:
-		ret = "MINUTE"
+		ret = "Minute"
 	case DateTimeSkipsSecond:
-		ret = "SECOND"
+		ret = "Second"
 	case DateTimeSkipsMs:
-		ret = "MS"
+		ret = "Ms"
 	case DateTimeSkipsDeviation:
-		ret = "DEVIATION"
+		ret = "Deviation"
 	case DateTimeSkipsStatus:
-		ret = "STATUS"
+		ret = "Status"
 	}
 	return ret
+}
+
+// AllDateTimeSkips returns a slice containing all defined DateTimeSkips values.
+func AllDateTimeSkips() []DateTimeSkips {
+	return []DateTimeSkips{
+	DateTimeSkipsNone,
+	DateTimeSkipsYear,
+	DateTimeSkipsMonth,
+	DateTimeSkipsDay,
+	DateTimeSkipsDayOfWeek,
+	DateTimeSkipsHour,
+	DateTimeSkipsMinute,
+	DateTimeSkipsSecond,
+	DateTimeSkipsMs,
+	DateTimeSkipsDeviation,
+	DateTimeSkipsStatus,
+	}
 }

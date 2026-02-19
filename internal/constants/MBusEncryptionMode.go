@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -45,11 +45,11 @@ import (
 type MBusEncryptionMode int
 
 const (
-	// MBusEncryptionModeNone defines that the encryption is not used.
+	// MBusEncryptionModeNone defines that the // Encryption is not used.
 	MBusEncryptionModeNone MBusEncryptionMode = iota
-	// MBusEncryptionModeAes128 defines AES with Counter Mode (CTR) noPadding and IV.
+	// MBusEncryptionModeAes128 defines that the // AES with Counter Mode (CTR) noPadding and IV.
 	MBusEncryptionModeAes128
-	// MBusEncryptionModeDesCbc defines that the  DES with Cipher Block Chaining Mode (CBC).
+	// MBusEncryptionModeDesCbc defines that the // DES with Cipher Block Chaining Mode (CBC).
 	MBusEncryptionModeDesCbc
 	// MBusEncryptionModeDesCbcIv defines that the // DES with Cipher Block Chaining Mode (CBC) and Initial Vector.
 	MBusEncryptionModeDesCbcIv
@@ -68,20 +68,20 @@ const (
 func MBusEncryptionModeParse(value string) (MBusEncryptionMode, error) {
 	var ret MBusEncryptionMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = MBusEncryptionModeNone
-	case "AES128":
+	case strings.EqualFold(value, "Aes128"):
 		ret = MBusEncryptionModeAes128
-	case "DESCBC":
+	case strings.EqualFold(value, "DesCbc"):
 		ret = MBusEncryptionModeDesCbc
-	case "DESCBCIV":
+	case strings.EqualFold(value, "DesCbcIv"):
 		ret = MBusEncryptionModeDesCbcIv
-	case "AESCBCIV":
+	case strings.EqualFold(value, "AesCbcIv"):
 		ret = MBusEncryptionModeAesCbcIv
-	case "AESCBCIV0":
+	case strings.EqualFold(value, "AesCbcIv0"):
 		ret = MBusEncryptionModeAesCbcIv0
-	case "TLS":
+	case strings.EqualFold(value, "Tls"):
 		ret = MBusEncryptionModeTls
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -95,19 +95,32 @@ func (g MBusEncryptionMode) String() string {
 	var ret string
 	switch g {
 	case MBusEncryptionModeNone:
-		ret = "NONE"
+		ret = "None"
 	case MBusEncryptionModeAes128:
-		ret = "AES128"
+		ret = "Aes128"
 	case MBusEncryptionModeDesCbc:
-		ret = "DESCBC"
+		ret = "DesCbc"
 	case MBusEncryptionModeDesCbcIv:
-		ret = "DESCBCIV"
+		ret = "DesCbcIv"
 	case MBusEncryptionModeAesCbcIv:
-		ret = "AESCBCIV"
+		ret = "AesCbcIv"
 	case MBusEncryptionModeAesCbcIv0:
-		ret = "AESCBCIV0"
+		ret = "AesCbcIv0"
 	case MBusEncryptionModeTls:
-		ret = "TLS"
+		ret = "Tls"
 	}
 	return ret
+}
+
+// AllMBusEncryptionMode returns a slice containing all defined MBusEncryptionMode values.
+func AllMBusEncryptionMode() []MBusEncryptionMode {
+	return []MBusEncryptionMode{
+		MBusEncryptionModeNone,
+		MBusEncryptionModeAes128,
+		MBusEncryptionModeDesCbc,
+		MBusEncryptionModeDesCbcIv,
+		MBusEncryptionModeAesCbcIv,
+		MBusEncryptionModeAesCbcIv0,
+		MBusEncryptionModeTls,
+	}
 }

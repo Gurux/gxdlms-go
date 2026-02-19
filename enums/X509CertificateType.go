@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// X509CertificateType x509 Certificate.
+// X509CertificateType enumerates all x509 certificate types.
 type X509CertificateType int
 
 const (
@@ -81,60 +81,60 @@ const (
 func X509CertificateTypeParse(value string) (X509CertificateType, error) {
 	var ret X509CertificateType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = X509CertificateTypeNone
-	case "OLDAUTHORITYKEYIDENTIFIER":
+	case strings.EqualFold(value, "OldAuthorityKeyIdentifier"):
 		ret = X509CertificateTypeOldAuthorityKeyIdentifier
-	case "OLDPRIMARYKEYATTRIBUTES":
+	case strings.EqualFold(value, "OldPrimaryKeyAttributes"):
 		ret = X509CertificateTypeOldPrimaryKeyAttributes
-	case "CERTIFICATEPOLICIES":
+	case strings.EqualFold(value, "CertificatePolicies"):
 		ret = X509CertificateTypeCertificatePolicies
-	case "ORIMARYKEYUSAGERESTRICTION":
+	case strings.EqualFold(value, "OrimaryKeyUsageRestriction"):
 		ret = X509CertificateTypeOrimaryKeyUsageRestriction
-	case "SUBJECTDIRECTORYATTRIBUTES":
+	case strings.EqualFold(value, "SubjectDirectoryAttributes"):
 		ret = X509CertificateTypeSubjectDirectoryAttributes
-	case "SUBJECTKEYIDENTIFIER":
+	case strings.EqualFold(value, "SubjectKeyIdentifier"):
 		ret = X509CertificateTypeSubjectKeyIdentifier
-	case "KEYUSAGE":
+	case strings.EqualFold(value, "KeyUsage"):
 		ret = X509CertificateTypeKeyUsage
-	case "PRIVATEKEYUSAGEPERIOD":
+	case strings.EqualFold(value, "PrivateKeyUsagePeriod"):
 		ret = X509CertificateTypePrivateKeyUsagePeriod
-	case "SUBJECTALTERNATIVENAME":
+	case strings.EqualFold(value, "SubjectAlternativeName"):
 		ret = X509CertificateTypeSubjectAlternativeName
-	case "ISSUERALTERNATIVENAME":
+	case strings.EqualFold(value, "IssuerAlternativeName"):
 		ret = X509CertificateTypeIssuerAlternativeName
-	case "BASICCONSTRAINTS":
+	case strings.EqualFold(value, "BasicConstraints"):
 		ret = X509CertificateTypeBasicConstraints
-	case "CRLNUMBER":
+	case strings.EqualFold(value, "CrlNumber"):
 		ret = X509CertificateTypeCrlNumber
-	case "REASONCODE":
+	case strings.EqualFold(value, "ReasonCode"):
 		ret = X509CertificateTypeReasonCode
-	case "HOLDINSTRUCTIONCODE":
+	case strings.EqualFold(value, "HoldInstructionCode"):
 		ret = X509CertificateTypeHoldInstructionCode
-	case "INVALIDITYDATE":
+	case strings.EqualFold(value, "InvalidityDate"):
 		ret = X509CertificateTypeInvalidityDate
-	case "DELTACRLINDICATOR":
+	case strings.EqualFold(value, "DeltaCrlIndicator"):
 		ret = X509CertificateTypeDeltaCrlIndicator
-	case "ISSUINGDISTRIBUTIONPOINT":
+	case strings.EqualFold(value, "IssuingDistributionPoint"):
 		ret = X509CertificateTypeIssuingDistributionPoint
-	case "CERTIFICATEISSUER":
+	case strings.EqualFold(value, "CertificateIssuer"):
 		ret = X509CertificateTypeCertificateIssuer
-	case "NAMECONSTRAINTS":
+	case strings.EqualFold(value, "NameConstraints"):
 		ret = X509CertificateTypeNameConstraints
-	case "CRLDISTRIBUTIONPOINTS":
+	case strings.EqualFold(value, "CrlDistributionPoints"):
 		ret = X509CertificateTypeCrlDistributionPoints
-	case "CERTIFICATEPOLICIES2":
+	case strings.EqualFold(value, "CertificatePolicies2"):
 		ret = X509CertificateTypeCertificatePolicies2
-	case "POLICYMAPPINGS":
+	case strings.EqualFold(value, "PolicyMappings"):
 		ret = X509CertificateTypePolicyMappings
-	case "AUTHORITYKEYIDENTIFIER":
+	case strings.EqualFold(value, "AuthorityKeyIdentifier"):
 		ret = X509CertificateTypeAuthorityKeyIdentifier
-	case "POLICYCONSTRAINTS":
+	case strings.EqualFold(value, "PolicyConstraints"):
 		ret = X509CertificateTypePolicyConstraints
-	case "EXTENDEDKEYUSAGE":
+	case strings.EqualFold(value, "ExtendedKeyUsage"):
 		ret = X509CertificateTypeExtendedKeyUsage
-	case "FRESHESTCRL":
+	case strings.EqualFold(value, "FreshestCrl"):
 		ret = X509CertificateTypeFreshestCrl
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -148,59 +148,92 @@ func (g X509CertificateType) String() string {
 	var ret string
 	switch g {
 	case X509CertificateTypeNone:
-		ret = "NONE"
+		ret = "None"
 	case X509CertificateTypeOldAuthorityKeyIdentifier:
-		ret = "OLDAUTHORITYKEYIDENTIFIER"
+		ret = "OldAuthorityKeyIdentifier"
 	case X509CertificateTypeOldPrimaryKeyAttributes:
-		ret = "OLDPRIMARYKEYATTRIBUTES"
+		ret = "OldPrimaryKeyAttributes"
 	case X509CertificateTypeCertificatePolicies:
-		ret = "CERTIFICATEPOLICIES"
+		ret = "CertificatePolicies"
 	case X509CertificateTypeOrimaryKeyUsageRestriction:
-		ret = "ORIMARYKEYUSAGERESTRICTION"
+		ret = "OrimaryKeyUsageRestriction"
 	case X509CertificateTypeSubjectDirectoryAttributes:
-		ret = "SUBJECTDIRECTORYATTRIBUTES"
+		ret = "SubjectDirectoryAttributes"
 	case X509CertificateTypeSubjectKeyIdentifier:
-		ret = "SUBJECTKEYIDENTIFIER"
+		ret = "SubjectKeyIdentifier"
 	case X509CertificateTypeKeyUsage:
-		ret = "KEYUSAGE"
+		ret = "KeyUsage"
 	case X509CertificateTypePrivateKeyUsagePeriod:
-		ret = "PRIVATEKEYUSAGEPERIOD"
+		ret = "PrivateKeyUsagePeriod"
 	case X509CertificateTypeSubjectAlternativeName:
-		ret = "SUBJECTALTERNATIVENAME"
+		ret = "SubjectAlternativeName"
 	case X509CertificateTypeIssuerAlternativeName:
-		ret = "ISSUERALTERNATIVENAME"
+		ret = "IssuerAlternativeName"
 	case X509CertificateTypeBasicConstraints:
-		ret = "BASICCONSTRAINTS"
+		ret = "BasicConstraints"
 	case X509CertificateTypeCrlNumber:
-		ret = "CRLNUMBER"
+		ret = "CrlNumber"
 	case X509CertificateTypeReasonCode:
-		ret = "REASONCODE"
+		ret = "ReasonCode"
 	case X509CertificateTypeHoldInstructionCode:
-		ret = "HOLDINSTRUCTIONCODE"
+		ret = "HoldInstructionCode"
 	case X509CertificateTypeInvalidityDate:
-		ret = "INVALIDITYDATE"
+		ret = "InvalidityDate"
 	case X509CertificateTypeDeltaCrlIndicator:
-		ret = "DELTACRLINDICATOR"
+		ret = "DeltaCrlIndicator"
 	case X509CertificateTypeIssuingDistributionPoint:
-		ret = "ISSUINGDISTRIBUTIONPOINT"
+		ret = "IssuingDistributionPoint"
 	case X509CertificateTypeCertificateIssuer:
-		ret = "CERTIFICATEISSUER"
+		ret = "CertificateIssuer"
 	case X509CertificateTypeNameConstraints:
-		ret = "NAMECONSTRAINTS"
+		ret = "NameConstraints"
 	case X509CertificateTypeCrlDistributionPoints:
-		ret = "CRLDISTRIBUTIONPOINTS"
+		ret = "CrlDistributionPoints"
 	case X509CertificateTypeCertificatePolicies2:
-		ret = "CERTIFICATEPOLICIES2"
+		ret = "CertificatePolicies2"
 	case X509CertificateTypePolicyMappings:
-		ret = "POLICYMAPPINGS"
+		ret = "PolicyMappings"
 	case X509CertificateTypeAuthorityKeyIdentifier:
-		ret = "AUTHORITYKEYIDENTIFIER"
+		ret = "AuthorityKeyIdentifier"
 	case X509CertificateTypePolicyConstraints:
-		ret = "POLICYCONSTRAINTS"
+		ret = "PolicyConstraints"
 	case X509CertificateTypeExtendedKeyUsage:
-		ret = "EXTENDEDKEYUSAGE"
+		ret = "ExtendedKeyUsage"
 	case X509CertificateTypeFreshestCrl:
-		ret = "FRESHESTCRL"
+		ret = "FreshestCrl"
 	}
 	return ret
+}
+
+// AllX509CertificateType returns a slice containing all defined X509CertificateType values.
+func AllX509CertificateType() []X509CertificateType {
+	return []X509CertificateType{
+		X509CertificateTypeNone,
+		X509CertificateTypeOldAuthorityKeyIdentifier,
+		X509CertificateTypeOldPrimaryKeyAttributes,
+		X509CertificateTypeCertificatePolicies,
+		X509CertificateTypeOrimaryKeyUsageRestriction,
+		X509CertificateTypeSubjectDirectoryAttributes,
+		X509CertificateTypeSubjectKeyIdentifier,
+		X509CertificateTypeKeyUsage,
+		X509CertificateTypePrivateKeyUsagePeriod,
+		X509CertificateTypeSubjectAlternativeName,
+		X509CertificateTypeIssuerAlternativeName,
+		X509CertificateTypeBasicConstraints,
+		X509CertificateTypeCrlNumber,
+		X509CertificateTypeReasonCode,
+		X509CertificateTypeHoldInstructionCode,
+		X509CertificateTypeInvalidityDate,
+		X509CertificateTypeDeltaCrlIndicator,
+		X509CertificateTypeIssuingDistributionPoint,
+		X509CertificateTypeCertificateIssuer,
+		X509CertificateTypeNameConstraints,
+		X509CertificateTypeCrlDistributionPoints,
+		X509CertificateTypeCertificatePolicies2,
+		X509CertificateTypePolicyMappings,
+		X509CertificateTypeAuthorityKeyIdentifier,
+		X509CertificateTypePolicyConstraints,
+		X509CertificateTypeExtendedKeyUsage,
+		X509CertificateTypeFreshestCrl,
+	}
 }

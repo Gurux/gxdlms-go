@@ -36,8 +36,10 @@ package settings
 
 import (
 	"errors"
+	"log"
 
 	"github.com/Gurux/gxdlms-go/enums"
+	"github.com/Gurux/gxdlms-go/internal/constants"
 	"github.com/Gurux/gxdlms-go/types"
 )
 
@@ -422,7 +424,7 @@ func (s *GXDLMSSettings) CheckFrame(frame uint8, xml interface{}) bool {
 		return true
 	}
 	// If U frame.
-	if (frame & 0x3) == 0x3 { // HdlcFrameType.Uframe
+	if (frame & byte(constants.HdlcFrameTypeUframe)) == byte(constants.HdlcFrameTypeUframe) {
 		if frame == 0x93 {
 			isEcho := !s.isServer && frame == 0x93 &&
 				(s.SenderFrame == 0x10 || s.SenderFrame == 0xfe) && s.ReceiverFrame == 0xE
@@ -435,7 +437,7 @@ func (s *GXDLMSSettings) CheckFrame(frame uint8, xml interface{}) bool {
 		return true
 	}
 	// If S-frame.
-	if (frame & 0x3) == 0x1 { // HdlcFrameType.Sframe
+	if (frame & byte(constants.HdlcFrameTypeSframe)) == byte(constants.HdlcFrameTypeSframe) {
 		// If echo.
 		if frame == (s.SenderFrame & 0xF1) {
 			return false
@@ -452,13 +454,12 @@ func (s *GXDLMSSettings) CheckFrame(frame uint8, xml interface{}) bool {
 			return true
 		}
 		// If the final bit is not set.
-		// TODO: Check Hdlc.WindowSizeRX when implemented
-		if frame == (expected & ^uint8(0x10)) { // && s.Hdlc.WindowSizeRX != 1
+		if frame == (expected & ^uint8(0x10)) && s.Hdlc.WindowSizeRX() != 1 {
 			s.ReceiverFrame = frame
 			return true
 		}
 		// If Final bit is not set for the previous message.
-		if (s.ReceiverFrame & 0x10) == 0 { // && s.Hdlc.WindowSizeRX != 1
+		if (s.ReceiverFrame&0x10) == 0 && s.Hdlc.WindowSizeRX() != 1 {
 			expected = 0x10 | IncreaseSendSequence(s.ReceiverFrame)
 			if frame == expected {
 				s.ReceiverFrame = frame
@@ -481,23 +482,21 @@ func (s *GXDLMSSettings) CheckFrame(frame uint8, xml interface{}) bool {
 			s.ReceiverFrame = frame
 			return true
 		}
-		// TODO: Check Hdlc.WindowSizeRX when implemented
-		// if s.Hdlc.WindowSizeRX != 1 {
-		// If HDLC window size is bigger than one.
-		if frame == (expected | 0x10) {
-			s.ReceiverFrame = frame
-			return true
+		if s.Hdlc.WindowSizeRX() != 1 {
+			// If HDLC window size is bigger than one.
+			if frame == (expected | 0x10) {
+				s.ReceiverFrame = frame
+				return true
+			}
 		}
-		// }
 	}
-	// If try to find data from uint8stream and not real communicating.
+	// If try to find data from bytestream and not real communicating.
 	if xml != nil && ((!s.isServer && s.ReceiverFrame == 0xE) ||
 		(s.isServer && s.ReceiverFrame == 0xEE)) {
 		s.ReceiverFrame = frame
 		return true
 	}
-	// Debug output would go here
-	// fmt.Printf("Invalid HDLC Frame: %X. Expected: %X\n", frame, expected)
+	log.Printf("Invalid HDLC Frame: %X. Expected: %X\n", frame, expected)
 	return false
 }
 

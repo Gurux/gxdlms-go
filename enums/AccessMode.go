@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// AccessMode The AccessMode enumerates the access modes.
+// AccessMode enumerates the access modes.
 type AccessMode int
 
 const (
@@ -68,20 +68,20 @@ const (
 func AccessModeParse(value string) (AccessMode, error) {
 	var ret AccessMode
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOACCESS":
+	switch {
+	case strings.EqualFold(value, "NoAccess"):
 		ret = AccessModeNoAccess
-	case "READ":
+	case strings.EqualFold(value, "Read"):
 		ret = AccessModeRead
-	case "WRITE":
+	case strings.EqualFold(value, "Write"):
 		ret = AccessModeWrite
-	case "READWRITE":
+	case strings.EqualFold(value, "ReadWrite"):
 		ret = AccessModeReadWrite
-	case "AUTHENTICATEDREAD":
+	case strings.EqualFold(value, "AuthenticatedRead"):
 		ret = AccessModeAuthenticatedRead
-	case "AUTHENTICATEDWRITE":
+	case strings.EqualFold(value, "AuthenticatedWrite"):
 		ret = AccessModeAuthenticatedWrite
-	case "AUTHENTICATEDREADWRITE":
+	case strings.EqualFold(value, "AuthenticatedReadWrite"):
 		ret = AccessModeAuthenticatedReadWrite
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -95,19 +95,32 @@ func (g AccessMode) String() string {
 	var ret string
 	switch g {
 	case AccessModeNoAccess:
-		ret = "NOACCESS"
+		ret = "NoAccess"
 	case AccessModeRead:
-		ret = "READ"
+		ret = "Read"
 	case AccessModeWrite:
-		ret = "WRITE"
+		ret = "Write"
 	case AccessModeReadWrite:
-		ret = "READWRITE"
+		ret = "ReadWrite"
 	case AccessModeAuthenticatedRead:
-		ret = "AUTHENTICATEDREAD"
+		ret = "AuthenticatedRead"
 	case AccessModeAuthenticatedWrite:
-		ret = "AUTHENTICATEDWRITE"
+		ret = "AuthenticatedWrite"
 	case AccessModeAuthenticatedReadWrite:
-		ret = "AUTHENTICATEDREADWRITE"
+		ret = "AuthenticatedReadWrite"
 	}
 	return ret
+}
+
+// AllAccessMode returns a slice containing all defined AccessMode values.
+func AllAccessMode() []AccessMode {
+	return []AccessMode{
+		AccessModeNoAccess,
+		AccessModeRead,
+		AccessModeWrite,
+		AccessModeReadWrite,
+		AccessModeAuthenticatedRead,
+		AccessModeAuthenticatedWrite,
+		AccessModeAuthenticatedReadWrite,
+	}
 }

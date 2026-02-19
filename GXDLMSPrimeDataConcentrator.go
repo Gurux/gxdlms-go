@@ -54,7 +54,7 @@ type GXDLMSPrimeDataConcentrator struct {
 	Capabilities uint16
 
 	// DLMS Identifier of the reported device.
-	DlmsId []byte
+	DlmsID []byte
 
 	// EUI48 of the reported device.
 	Eui48 []byte
@@ -152,11 +152,11 @@ func (g *GXDLMSPrimeDataConcentrator) GenerateNewDeviceNotification(client *GXDL
 	if err != nil {
 		return nil, err
 	}
-	err = bb.SetUint8(uint8(len(g.DlmsId)))
+	err = bb.SetUint8(uint8(len(g.DlmsID)))
 	if err != nil {
 		return nil, err
 	}
-	err = bb.Set(g.DlmsId)
+	err = bb.Set(g.DlmsID)
 	if err != nil {
 		return nil, err
 	}

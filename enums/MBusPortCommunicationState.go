@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -64,16 +64,16 @@ const (
 func MBusPortCommunicationStateParse(value string) (MBusPortCommunicationState, error) {
 	var ret MBusPortCommunicationState
 	var err error
-	switch strings.ToUpper(value) {
-	case "NOACCESS":
+	switch {
+	case strings.EqualFold(value, "NoAccess"):
 		ret = MBusPortCommunicationStateNoAccess
-	case "TEMPORARYNOACCESS":
+	case strings.EqualFold(value, "TemporaryNoAccess"):
 		ret = MBusPortCommunicationStateTemporaryNoAccess
-	case "LIMITEDACCESS":
+	case strings.EqualFold(value, "LimitedAccess"):
 		ret = MBusPortCommunicationStateLimitedAccess
-	case "UNLIMITEDACCESS":
+	case strings.EqualFold(value, "UnlimitedAccess"):
 		ret = MBusPortCommunicationStateUnlimitedAccess
-	case "WMBUS":
+	case strings.EqualFold(value, "wMBus"):
 		ret = MBusPortCommunicationStatewMBus
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g MBusPortCommunicationState) String() string {
 	var ret string
 	switch g {
 	case MBusPortCommunicationStateNoAccess:
-		ret = "NOACCESS"
+		ret = "NoAccess"
 	case MBusPortCommunicationStateTemporaryNoAccess:
-		ret = "TEMPORARYNOACCESS"
+		ret = "TemporaryNoAccess"
 	case MBusPortCommunicationStateLimitedAccess:
-		ret = "LIMITEDACCESS"
+		ret = "LimitedAccess"
 	case MBusPortCommunicationStateUnlimitedAccess:
-		ret = "UNLIMITEDACCESS"
+		ret = "UnlimitedAccess"
 	case MBusPortCommunicationStatewMBus:
-		ret = "WMBUS"
+		ret = "wMBus"
 	}
 	return ret
+}
+
+// AllMBusPortCommunicationState returns a slice containing all defined MBusPortCommunicationState values.
+func AllMBusPortCommunicationState() []MBusPortCommunicationState {
+	return []MBusPortCommunicationState{
+		MBusPortCommunicationStateNoAccess,
+		MBusPortCommunicationStateTemporaryNoAccess,
+		MBusPortCommunicationStateLimitedAccess,
+		MBusPortCommunicationStateUnlimitedAccess,
+		MBusPortCommunicationStatewMBus,
+	}
 }

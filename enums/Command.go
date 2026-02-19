@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -200,152 +200,152 @@ const (
 func CommandParse(value string) (Command, error) {
 	var ret Command
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = CommandNone
-	case "INITIATEREQUEST":
+	case strings.EqualFold(value, "InitiateRequest"):
 		ret = CommandInitiateRequest
-	case "INITIATERESPONSE":
+	case strings.EqualFold(value, "InitiateResponse"):
 		ret = CommandInitiateResponse
-	case "READREQUEST":
+	case strings.EqualFold(value, "ReadRequest"):
 		ret = CommandReadRequest
-	case "READRESPONSE":
+	case strings.EqualFold(value, "ReadResponse"):
 		ret = CommandReadResponse
-	case "WRITEREQUEST":
+	case strings.EqualFold(value, "WriteRequest"):
 		ret = CommandWriteRequest
-	case "WRITERESPONSE":
+	case strings.EqualFold(value, "WriteResponse"):
 		ret = CommandWriteResponse
-	case "GETREQUEST":
+	case strings.EqualFold(value, "GetRequest"):
 		ret = CommandGetRequest
-	case "GETRESPONSE":
+	case strings.EqualFold(value, "GetResponse"):
 		ret = CommandGetResponse
-	case "SETREQUEST":
+	case strings.EqualFold(value, "SetRequest"):
 		ret = CommandSetRequest
-	case "SETRESPONSE":
+	case strings.EqualFold(value, "SetResponse"):
 		ret = CommandSetResponse
-	case "METHODREQUEST":
+	case strings.EqualFold(value, "MethodRequest"):
 		ret = CommandMethodRequest
-	case "METHODRESPONSE":
+	case strings.EqualFold(value, "MethodResponse"):
 		ret = CommandMethodResponse
-	case "DISCONNECTMODE":
+	case strings.EqualFold(value, "DisconnectMode"):
 		ret = CommandDisconnectMode
-	case "UNACCEPTABLEFRAME":
+	case strings.EqualFold(value, "UnacceptableFrame"):
 		ret = CommandUnacceptableFrame
-	case "SNRM":
+	case strings.EqualFold(value, "Snrm"):
 		ret = CommandSnrm
-	case "UA":
+	case strings.EqualFold(value, "Ua"):
 		ret = CommandUa
-	case "AARQ":
+	case strings.EqualFold(value, "Aarq"):
 		ret = CommandAarq
-	case "AARE":
+	case strings.EqualFold(value, "Aare"):
 		ret = CommandAare
-	case "DISCONNECTREQUEST":
+	case strings.EqualFold(value, "DisconnectRequest"):
 		ret = CommandDisconnectRequest
-	case "RELEASEREQUEST":
+	case strings.EqualFold(value, "ReleaseRequest"):
 		ret = CommandReleaseRequest
-	case "RELEASERESPONSE":
+	case strings.EqualFold(value, "ReleaseResponse"):
 		ret = CommandReleaseResponse
-	case "CONFIRMEDSERVICEERROR":
+	case strings.EqualFold(value, "ConfirmedServiceError"):
 		ret = CommandConfirmedServiceError
-	case "EXCEPTIONRESPONSE":
+	case strings.EqualFold(value, "ExceptionResponse"):
 		ret = CommandExceptionResponse
-	case "GENERALBLOCKTRANSFER":
+	case strings.EqualFold(value, "GeneralBlockTransfer"):
 		ret = CommandGeneralBlockTransfer
-	case "ACCESSREQUEST":
+	case strings.EqualFold(value, "AccessRequest"):
 		ret = CommandAccessRequest
-	case "ACCESSRESPONSE":
+	case strings.EqualFold(value, "AccessResponse"):
 		ret = CommandAccessResponse
-	case "DATANOTIFICATION":
+	case strings.EqualFold(value, "DataNotification"):
 		ret = CommandDataNotification
-	case "DATANOTIFICATIONCONFIRM":
+	case strings.EqualFold(value, "DataNotificationConfirm"):
 		ret = CommandDataNotificationConfirm
-	case "GLOGETREQUEST":
+	case strings.EqualFold(value, "GloGetRequest"):
 		ret = CommandGloGetRequest
-	case "GLOGETRESPONSE":
+	case strings.EqualFold(value, "GloGetResponse"):
 		ret = CommandGloGetResponse
-	case "GLOSETREQUEST":
+	case strings.EqualFold(value, "GloSetRequest"):
 		ret = CommandGloSetRequest
-	case "GLOSETRESPONSE":
+	case strings.EqualFold(value, "GloSetResponse"):
 		ret = CommandGloSetResponse
-	case "GLOEVENTNOTIFICATION":
+	case strings.EqualFold(value, "GloEventNotification"):
 		ret = CommandGloEventNotification
-	case "GLOMETHODREQUEST":
+	case strings.EqualFold(value, "GloMethodRequest"):
 		ret = CommandGloMethodRequest
-	case "GLOMETHODRESPONSE":
+	case strings.EqualFold(value, "GloMethodResponse"):
 		ret = CommandGloMethodResponse
-	case "GLOINITIATEREQUEST":
+	case strings.EqualFold(value, "GloInitiateRequest"):
 		ret = CommandGloInitiateRequest
-	case "GLOREADREQUEST":
+	case strings.EqualFold(value, "GloReadRequest"):
 		ret = CommandGloReadRequest
-	case "GLOWRITEREQUEST":
+	case strings.EqualFold(value, "GloWriteRequest"):
 		ret = CommandGloWriteRequest
-	case "GLOINITIATERESPONSE":
+	case strings.EqualFold(value, "GloInitiateResponse"):
 		ret = CommandGloInitiateResponse
-	case "GLOREADRESPONSE":
+	case strings.EqualFold(value, "GloReadResponse"):
 		ret = CommandGloReadResponse
-	case "GLOWRITERESPONSE":
+	case strings.EqualFold(value, "GloWriteResponse"):
 		ret = CommandGloWriteResponse
-	case "GLOCONFIRMEDSERVICEERROR":
+	case strings.EqualFold(value, "GloConfirmedServiceError"):
 		ret = CommandGloConfirmedServiceError
-	case "GLOINFORMATIONREPORT":
+	case strings.EqualFold(value, "GloInformationReport"):
 		ret = CommandGloInformationReport
-	case "GENERALGLOCIPHERING":
+	case strings.EqualFold(value, "GeneralGloCiphering"):
 		ret = CommandGeneralGloCiphering
-	case "GENERALDEDCIPHERING":
+	case strings.EqualFold(value, "GeneralDedCiphering"):
 		ret = CommandGeneralDedCiphering
-	case "GENERALCIPHERING":
+	case strings.EqualFold(value, "GeneralCiphering"):
 		ret = CommandGeneralCiphering
-	case "GENERALSIGNING":
+	case strings.EqualFold(value, "GeneralSigning"):
 		ret = CommandGeneralSigning
-	case "INFORMATIONREPORT":
+	case strings.EqualFold(value, "InformationReport"):
 		ret = CommandInformationReport
-	case "EVENTNOTIFICATION":
+	case strings.EqualFold(value, "EventNotification"):
 		ret = CommandEventNotification
-	case "DEDINITIATEREQUEST":
+	case strings.EqualFold(value, "DedInitiateRequest"):
 		ret = CommandDedInitiateRequest
-	case "DEDREADREQUEST":
+	case strings.EqualFold(value, "DedReadRequest"):
 		ret = CommandDedReadRequest
-	case "DEDWRITEREQUEST":
+	case strings.EqualFold(value, "DedWriteRequest"):
 		ret = CommandDedWriteRequest
-	case "DEDINITIATERESPONSE":
+	case strings.EqualFold(value, "DedInitiateResponse"):
 		ret = CommandDedInitiateResponse
-	case "DEDREADRESPONSE":
+	case strings.EqualFold(value, "DedReadResponse"):
 		ret = CommandDedReadResponse
-	case "DEDWRITERESPONSE":
+	case strings.EqualFold(value, "DedWriteResponse"):
 		ret = CommandDedWriteResponse
-	case "DEDCONFIRMEDSERVICEERROR":
+	case strings.EqualFold(value, "DedConfirmedServiceError"):
 		ret = CommandDedConfirmedServiceError
-	case "DEDUNCONFIRMEDWRITEREQUEST":
+	case strings.EqualFold(value, "DedUnconfirmedWriteRequest"):
 		ret = CommandDedUnconfirmedWriteRequest
-	case "DEDINFORMATIONREPORT":
+	case strings.EqualFold(value, "DedInformationReport"):
 		ret = CommandDedInformationReport
-	case "DEDGETREQUEST":
+	case strings.EqualFold(value, "DedGetRequest"):
 		ret = CommandDedGetRequest
-	case "DEDGETRESPONSE":
+	case strings.EqualFold(value, "DedGetResponse"):
 		ret = CommandDedGetResponse
-	case "DEDSETREQUEST":
+	case strings.EqualFold(value, "DedSetRequest"):
 		ret = CommandDedSetRequest
-	case "DEDSETRESPONSE":
+	case strings.EqualFold(value, "DedSetResponse"):
 		ret = CommandDedSetResponse
-	case "DEDEVENTNOTIFICATION":
+	case strings.EqualFold(value, "DedEventNotification"):
 		ret = CommandDedEventNotification
-	case "DEDMETHODREQUEST":
+	case strings.EqualFold(value, "DedMethodRequest"):
 		ret = CommandDedMethodRequest
-	case "DEDMETHODRESPONSE":
+	case strings.EqualFold(value, "DedMethodResponse"):
 		ret = CommandDedMethodResponse
-	case "GATEWAYREQUEST":
+	case strings.EqualFold(value, "GatewayRequest"):
 		ret = CommandGatewayRequest
-	case "GATEWAYRESPONSE":
+	case strings.EqualFold(value, "GatewayResponse"):
 		ret = CommandGatewayResponse
-	case "DISCOVERREQUEST":
+	case strings.EqualFold(value, "DiscoverRequest"):
 		ret = CommandDiscoverRequest
-	case "DISCOVERREPORT":
+	case strings.EqualFold(value, "DiscoverReport"):
 		ret = CommandDiscoverReport
-	case "REGISTERREQUEST":
+	case strings.EqualFold(value, "RegisterRequest"):
 		ret = CommandRegisterRequest
-	case "PINGREQUEST":
+	case strings.EqualFold(value, "PingRequest"):
 		ret = CommandPingRequest
-	case "PINGRESPONSE":
+	case strings.EqualFold(value, "PingResponse"):
 		ret = CommandPingResponse
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -359,151 +359,230 @@ func (g Command) String() string {
 	var ret string
 	switch g {
 	case CommandNone:
-		ret = "NONE"
+		ret = "None"
 	case CommandInitiateRequest:
-		ret = "INITIATEREQUEST"
+		ret = "InitiateRequest"
 	case CommandInitiateResponse:
-		ret = "INITIATERESPONSE"
+		ret = "InitiateResponse"
 	case CommandReadRequest:
-		ret = "READREQUEST"
+		ret = "ReadRequest"
 	case CommandReadResponse:
-		ret = "READRESPONSE"
+		ret = "ReadResponse"
 	case CommandWriteRequest:
-		ret = "WRITEREQUEST"
+		ret = "WriteRequest"
 	case CommandWriteResponse:
-		ret = "WRITERESPONSE"
+		ret = "WriteResponse"
 	case CommandGetRequest:
-		ret = "GETREQUEST"
+		ret = "GetRequest"
 	case CommandGetResponse:
-		ret = "GETRESPONSE"
+		ret = "GetResponse"
 	case CommandSetRequest:
-		ret = "SETREQUEST"
+		ret = "SetRequest"
 	case CommandSetResponse:
-		ret = "SETRESPONSE"
+		ret = "SetResponse"
 	case CommandMethodRequest:
-		ret = "METHODREQUEST"
+		ret = "MethodRequest"
 	case CommandMethodResponse:
-		ret = "METHODRESPONSE"
+		ret = "MethodResponse"
 	case CommandDisconnectMode:
-		ret = "DISCONNECTMODE"
+		ret = "DisconnectMode"
 	case CommandUnacceptableFrame:
-		ret = "UNACCEPTABLEFRAME"
+		ret = "UnacceptableFrame"
 	case CommandSnrm:
-		ret = "SNRM"
+		ret = "Snrm"
 	case CommandUa:
-		ret = "UA"
+		ret = "Ua"
 	case CommandAarq:
-		ret = "AARQ"
+		ret = "Aarq"
 	case CommandAare:
-		ret = "AARE"
+		ret = "Aare"
 	case CommandDisconnectRequest:
-		ret = "DISCONNECTREQUEST"
+		ret = "DisconnectRequest"
 	case CommandReleaseRequest:
-		ret = "RELEASEREQUEST"
+		ret = "ReleaseRequest"
 	case CommandReleaseResponse:
-		ret = "RELEASERESPONSE"
+		ret = "ReleaseResponse"
 	case CommandConfirmedServiceError:
-		ret = "CONFIRMEDSERVICEERROR"
+		ret = "ConfirmedServiceError"
 	case CommandExceptionResponse:
-		ret = "EXCEPTIONRESPONSE"
+		ret = "ExceptionResponse"
 	case CommandGeneralBlockTransfer:
-		ret = "GENERALBLOCKTRANSFER"
+		ret = "GeneralBlockTransfer"
 	case CommandAccessRequest:
-		ret = "ACCESSREQUEST"
+		ret = "AccessRequest"
 	case CommandAccessResponse:
-		ret = "ACCESSRESPONSE"
+		ret = "AccessResponse"
 	case CommandDataNotification:
-		ret = "DATANOTIFICATION"
+		ret = "DataNotification"
 	case CommandDataNotificationConfirm:
-		ret = "DATANOTIFICATIONCONFIRM"
+		ret = "DataNotificationConfirm"
 	case CommandGloGetRequest:
-		ret = "GLOGETREQUEST"
+		ret = "GloGetRequest"
 	case CommandGloGetResponse:
-		ret = "GLOGETRESPONSE"
+		ret = "GloGetResponse"
 	case CommandGloSetRequest:
-		ret = "GLOSETREQUEST"
+		ret = "GloSetRequest"
 	case CommandGloSetResponse:
-		ret = "GLOSETRESPONSE"
+		ret = "GloSetResponse"
 	case CommandGloEventNotification:
-		ret = "GLOEVENTNOTIFICATION"
+		ret = "GloEventNotification"
 	case CommandGloMethodRequest:
-		ret = "GLOMETHODREQUEST"
+		ret = "GloMethodRequest"
 	case CommandGloMethodResponse:
-		ret = "GLOMETHODRESPONSE"
+		ret = "GloMethodResponse"
 	case CommandGloInitiateRequest:
-		ret = "GLOINITIATEREQUEST"
+		ret = "GloInitiateRequest"
 	case CommandGloReadRequest:
-		ret = "GLOREADREQUEST"
+		ret = "GloReadRequest"
 	case CommandGloWriteRequest:
-		ret = "GLOWRITEREQUEST"
+		ret = "GloWriteRequest"
 	case CommandGloInitiateResponse:
-		ret = "GLOINITIATERESPONSE"
+		ret = "GloInitiateResponse"
 	case CommandGloReadResponse:
-		ret = "GLOREADRESPONSE"
+		ret = "GloReadResponse"
 	case CommandGloWriteResponse:
-		ret = "GLOWRITERESPONSE"
+		ret = "GloWriteResponse"
 	case CommandGloConfirmedServiceError:
-		ret = "GLOCONFIRMEDSERVICEERROR"
+		ret = "GloConfirmedServiceError"
 	case CommandGloInformationReport:
-		ret = "GLOINFORMATIONREPORT"
+		ret = "GloInformationReport"
 	case CommandGeneralGloCiphering:
-		ret = "GENERALGLOCIPHERING"
+		ret = "GeneralGloCiphering"
 	case CommandGeneralDedCiphering:
-		ret = "GENERALDEDCIPHERING"
+		ret = "GeneralDedCiphering"
 	case CommandGeneralCiphering:
-		ret = "GENERALCIPHERING"
+		ret = "GeneralCiphering"
 	case CommandGeneralSigning:
-		ret = "GENERALSIGNING"
+		ret = "GeneralSigning"
 	case CommandInformationReport:
-		ret = "INFORMATIONREPORT"
+		ret = "InformationReport"
 	case CommandEventNotification:
-		ret = "EVENTNOTIFICATION"
+		ret = "EventNotification"
 	case CommandDedInitiateRequest:
-		ret = "DEDINITIATEREQUEST"
+		ret = "DedInitiateRequest"
 	case CommandDedReadRequest:
-		ret = "DEDREADREQUEST"
+		ret = "DedReadRequest"
 	case CommandDedWriteRequest:
-		ret = "DEDWRITEREQUEST"
+		ret = "DedWriteRequest"
 	case CommandDedInitiateResponse:
-		ret = "DEDINITIATERESPONSE"
+		ret = "DedInitiateResponse"
 	case CommandDedReadResponse:
-		ret = "DEDREADRESPONSE"
+		ret = "DedReadResponse"
 	case CommandDedWriteResponse:
-		ret = "DEDWRITERESPONSE"
+		ret = "DedWriteResponse"
 	case CommandDedConfirmedServiceError:
-		ret = "DEDCONFIRMEDSERVICEERROR"
+		ret = "DedConfirmedServiceError"
 	case CommandDedUnconfirmedWriteRequest:
-		ret = "DEDUNCONFIRMEDWRITEREQUEST"
+		ret = "DedUnconfirmedWriteRequest"
 	case CommandDedInformationReport:
-		ret = "DEDINFORMATIONREPORT"
+		ret = "DedInformationReport"
 	case CommandDedGetRequest:
-		ret = "DEDGETREQUEST"
+		ret = "DedGetRequest"
 	case CommandDedGetResponse:
-		ret = "DEDGETRESPONSE"
+		ret = "DedGetResponse"
 	case CommandDedSetRequest:
-		ret = "DEDSETREQUEST"
+		ret = "DedSetRequest"
 	case CommandDedSetResponse:
-		ret = "DEDSETRESPONSE"
+		ret = "DedSetResponse"
 	case CommandDedEventNotification:
-		ret = "DEDEVENTNOTIFICATION"
+		ret = "DedEventNotification"
 	case CommandDedMethodRequest:
-		ret = "DEDMETHODREQUEST"
+		ret = "DedMethodRequest"
 	case CommandDedMethodResponse:
-		ret = "DEDMETHODRESPONSE"
+		ret = "DedMethodResponse"
 	case CommandGatewayRequest:
-		ret = "GATEWAYREQUEST"
+		ret = "GatewayRequest"
 	case CommandGatewayResponse:
-		ret = "GATEWAYRESPONSE"
+		ret = "GatewayResponse"
 	case CommandDiscoverRequest:
-		ret = "DISCOVERREQUEST"
+		ret = "DiscoverRequest"
 	case CommandDiscoverReport:
-		ret = "DISCOVERREPORT"
+		ret = "DiscoverReport"
 	case CommandRegisterRequest:
-		ret = "REGISTERREQUEST"
+		ret = "RegisterRequest"
 	case CommandPingRequest:
-		ret = "PINGREQUEST"
+		ret = "PingRequest"
 	case CommandPingResponse:
-		ret = "PINGRESPONSE"
+		ret = "PingResponse"
 	}
 	return ret
+}
+
+// AllCommand returns a slice containing all defined Command values.
+func AllCommand() []Command {
+	return []Command{
+		CommandNone,
+		CommandInitiateRequest,
+		CommandInitiateResponse,
+		CommandReadRequest,
+		CommandReadResponse,
+		CommandWriteRequest,
+		CommandWriteResponse,
+		CommandGetRequest,
+		CommandGetResponse,
+		CommandSetRequest,
+		CommandSetResponse,
+		CommandMethodRequest,
+		CommandMethodResponse,
+		CommandDisconnectMode,
+		CommandUnacceptableFrame,
+		CommandSnrm,
+		CommandUa,
+		CommandAarq,
+		CommandAare,
+		CommandDisconnectRequest,
+		CommandReleaseRequest,
+		CommandReleaseResponse,
+		CommandConfirmedServiceError,
+		CommandExceptionResponse,
+		CommandGeneralBlockTransfer,
+		CommandAccessRequest,
+		CommandAccessResponse,
+		CommandDataNotification,
+		CommandDataNotificationConfirm,
+		CommandGloGetRequest,
+		CommandGloGetResponse,
+		CommandGloSetRequest,
+		CommandGloSetResponse,
+		CommandGloEventNotification,
+		CommandGloMethodRequest,
+		CommandGloMethodResponse,
+		CommandGloInitiateRequest,
+		CommandGloReadRequest,
+		CommandGloWriteRequest,
+		CommandGloInitiateResponse,
+		CommandGloReadResponse,
+		CommandGloWriteResponse,
+		CommandGloConfirmedServiceError,
+		CommandGloInformationReport,
+		CommandGeneralGloCiphering,
+		CommandGeneralDedCiphering,
+		CommandGeneralCiphering,
+		CommandGeneralSigning,
+		CommandInformationReport,
+		CommandEventNotification,
+		CommandDedInitiateRequest,
+		CommandDedReadRequest,
+		CommandDedWriteRequest,
+		CommandDedInitiateResponse,
+		CommandDedReadResponse,
+		CommandDedWriteResponse,
+		CommandDedConfirmedServiceError,
+		CommandDedUnconfirmedWriteRequest,
+		CommandDedInformationReport,
+		CommandDedGetRequest,
+		CommandDedGetResponse,
+		CommandDedSetRequest,
+		CommandDedSetResponse,
+		CommandDedEventNotification,
+		CommandDedMethodRequest,
+		CommandDedMethodResponse,
+		CommandGatewayRequest,
+		CommandGatewayResponse,
+		CommandDiscoverRequest,
+		CommandDiscoverReport,
+		CommandRegisterRequest,
+		CommandPingRequest,
+		CommandPingResponse,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -60,12 +60,12 @@ const (
 func LteCoverageEnhancementParse(value string) (LteCoverageEnhancement, error) {
 	var ret LteCoverageEnhancement
 	var err error
-	switch strings.ToUpper(value) {
-	case "LEVEL0":
+	switch {
+	case strings.EqualFold(value, "Level0"):
 		ret = LteCoverageEnhancementLevel0
-	case "LEVEL1":
+	case strings.EqualFold(value, "Level1"):
 		ret = LteCoverageEnhancementLevel1
-	case "LEVEL2":
+	case strings.EqualFold(value, "Level2"):
 		ret = LteCoverageEnhancementLevel2
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g LteCoverageEnhancement) String() string {
 	var ret string
 	switch g {
 	case LteCoverageEnhancementLevel0:
-		ret = "LEVEL0"
+		ret = "Level0"
 	case LteCoverageEnhancementLevel1:
-		ret = "LEVEL1"
+		ret = "Level1"
 	case LteCoverageEnhancementLevel2:
-		ret = "LEVEL2"
+		ret = "Level2"
 	}
 	return ret
+}
+
+// AllLteCoverageEnhancement returns a slice containing all defined LteCoverageEnhancement values.
+func AllLteCoverageEnhancement() []LteCoverageEnhancement {
+	return []LteCoverageEnhancement{
+		LteCoverageEnhancementLevel0,
+		LteCoverageEnhancementLevel1,
+		LteCoverageEnhancementLevel2,
+	}
 }

@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -45,15 +45,15 @@ import (
 type SetResponseType int
 
 const (
-	//SetResponseTypeNormal defines normal set response.
+	// SetResponseTypeNormal defines that the // Normal set response.
 	SetResponseTypeNormal SetResponseType = 1
-	//SetResponseTypeDataBlock defines set response in data blocks.
+	// SetResponseTypeDataBlock defines that the // Set response in data blocks.
 	SetResponseTypeDataBlock SetResponseType = 2
-	//SetResponseTypeLastDataBlock defines set response in last data block.
+	// SetResponseTypeLastDataBlock defines that the // Set response in last data block.
 	SetResponseTypeLastDataBlock SetResponseType = 3
-	//SetResponseTypeLastDataBlockWithList defines set response with list in last data block.
+	// SetResponseTypeLastDataBlockWithList defines that the // Set response with list in last data block.
 	SetResponseTypeLastDataBlockWithList SetResponseType = 4
-	//SetResponseTypeWithList defines set response with list.
+	// SetResponseTypeWithList defines that the // Set with list response.
 	SetResponseTypeWithList SetResponseType = 5
 )
 
@@ -64,16 +64,16 @@ const (
 func SetResponseTypeParse(value string) (SetResponseType, error) {
 	var ret SetResponseType
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
+	switch {
+	case strings.EqualFold(value, "Normal"):
 		ret = SetResponseTypeNormal
-	case "DATABLOCK":
+	case strings.EqualFold(value, "DataBlock"):
 		ret = SetResponseTypeDataBlock
-	case "LASTDATABLOCK":
+	case strings.EqualFold(value, "LastDataBlock"):
 		ret = SetResponseTypeLastDataBlock
-	case "LASTDATABLOCKWITHLIST":
+	case strings.EqualFold(value, "LastDataBlockWithList"):
 		ret = SetResponseTypeLastDataBlockWithList
-	case "WITHLIST":
+	case strings.EqualFold(value, "WithList"):
 		ret = SetResponseTypeWithList
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -87,15 +87,26 @@ func (g SetResponseType) String() string {
 	var ret string
 	switch g {
 	case SetResponseTypeNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case SetResponseTypeDataBlock:
-		ret = "DATABLOCK"
+		ret = "DataBlock"
 	case SetResponseTypeLastDataBlock:
-		ret = "LASTDATABLOCK"
+		ret = "LastDataBlock"
 	case SetResponseTypeLastDataBlockWithList:
-		ret = "LASTDATABLOCKWITHLIST"
+		ret = "LastDataBlockWithList"
 	case SetResponseTypeWithList:
-		ret = "WITHLIST"
+		ret = "WithList"
 	}
 	return ret
+}
+
+// AllSetResponseType returns a slice containing all defined SetResponseType values.
+func AllSetResponseType() []SetResponseType {
+	return []SetResponseType{
+		SetResponseTypeNormal,
+		SetResponseTypeDataBlock,
+		SetResponseTypeLastDataBlock,
+		SetResponseTypeLastDataBlockWithList,
+		SetResponseTypeWithList,
+	}
 }

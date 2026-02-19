@@ -587,7 +587,7 @@ func (g *GXDLMSAssociationShortName) PostLoad(reader *GXXmlReader) error {
 
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSAssociationShortName) GetValues() []any {
-	return []any{g.LogicalName, g.ObjectList, nil, g.SecuritySetupReference}
+	return []any{g.LogicalName(), g.ObjectList, nil, g.SecuritySetupReference}
 }
 
 // GetDataType returns the device data type_ of selected attribute index.

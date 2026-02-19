@@ -1,4 +1,4 @@
-﻿package enums
+﻿package constants
 
 //
 // --------------------------------------------------------------------------
@@ -43,48 +43,57 @@ import (
 
 // RequestTypes enumerates the replies of the server to a client's request,
 // indicating the request type.
-type ReleaseResponseReason int
+type ReleaseRequestReason int
 
 const (
-	// ReleaseResponseReasonNormal defines that the // Client closes connection as normal.
-	ReleaseResponseReasonNormal ReleaseResponseReason = iota
-	// ReleaseResponseReasonNotFinished defines that the // Connection is not finished.
-	ReleaseResponseReasonNotFinished
-	// ReleaseResponseReasonUserDefined defines that the // Client closes connection user defined reason.
-	ReleaseResponseReasonUserDefined ReleaseResponseReason = 30
+	// ReleaseRequestReasonNormal defines that the // Client closes connection as normal.
+	ReleaseRequestReasonNormal ReleaseRequestReason = iota
+	// ReleaseRequestReasonUrgent defines that the // Client closes connection as urgent.
+	ReleaseRequestReasonUrgent
+	// ReleaseRequestReasonUserDefined defines that the // Client closes connection user defined reason.
+	ReleaseRequestReasonUserDefined ReleaseRequestReason = 30
 )
 
-// ReleaseResponseReasonParse converts the given string into a ReleaseResponseReason value.
+// ReleaseRequestReasonParse converts the given string into a ReleaseRequestReason value.
 //
-// It returns the corresponding ReleaseResponseReason constant if the string matches
+// It returns the corresponding ReleaseRequestReason constant if the string matches
 // a known level name, or an error if the input is invalid.
-func ReleaseResponseReasonParse(value string) (ReleaseResponseReason, error) {
-	var ret ReleaseResponseReason
+func ReleaseRequestReasonParse(value string) (ReleaseRequestReason, error) {
+	var ret ReleaseRequestReason
 	var err error
-	switch strings.ToUpper(value) {
-	case "NORMAL":
-		ret = ReleaseResponseReasonNormal
-	case "NOTFINISHED":
-		ret = ReleaseResponseReasonNotFinished
-	case "USERDEFINED":
-		ret = ReleaseResponseReasonUserDefined
+	switch {
+	case strings.EqualFold(value, "Normal"):
+		ret = ReleaseRequestReasonNormal
+	case strings.EqualFold(value, "Urgent"):
+		ret = ReleaseRequestReasonUrgent
+	case strings.EqualFold(value, "UserDefined"):
+		ret = ReleaseRequestReasonUserDefined
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
 	}
 	return ret, err
 }
 
-// String returns the canonical name of the ReleaseResponseReason.
+// String returns the canonical name of the ReleaseRequestReason.
 // It satisfies fmt.Stringer.
-func (g ReleaseResponseReason) String() string {
+func (g ReleaseRequestReason) String() string {
 	var ret string
 	switch g {
-	case ReleaseResponseReasonNormal:
-		ret = "NORMAL"
-	case ReleaseResponseReasonNotFinished:
-		ret = "NOTFINISHED"
-	case ReleaseResponseReasonUserDefined:
-		ret = "USERDEFINED"
+	case ReleaseRequestReasonNormal:
+		ret = "Normal"
+	case ReleaseRequestReasonUrgent:
+		ret = "Urgent"
+	case ReleaseRequestReasonUserDefined:
+		ret = "UserDefined"
 	}
 	return ret
+}
+
+// AllReleaseRequestReason returns a slice containing all defined ReleaseRequestReason values.
+func AllReleaseRequestReason() []ReleaseRequestReason {
+	return []ReleaseRequestReason{
+		ReleaseRequestReasonNormal,
+		ReleaseRequestReasonUrgent,
+		ReleaseRequestReasonUserDefined,
+	}
 }

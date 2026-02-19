@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -168,236 +168,236 @@ const (
 func PkcsObjectIdentifierParse(value string) (PkcsObjectIdentifier, error) {
 	var ret PkcsObjectIdentifier
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = PkcsObjectIdentifierNone
-	case "RSAENCRYPTION":
+	case strings.EqualFold(value, "RsaEncryption"):
 		ret = PkcsObjectIdentifierRsaEncryption
-	case "MD2WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "MD2WithRsaEncryption"):
 		ret = PkcsObjectIdentifierMD2WithRsaEncryption
-	case "MD4WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "MD4WithRsaEncryption"):
 		ret = PkcsObjectIdentifierMD4WithRsaEncryption
-	case "MD5WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "MD5WithRsaEncryption"):
 		ret = PkcsObjectIdentifierMD5WithRsaEncryption
-	case "SHA1WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "Sha1WithRsaEncryption"):
 		ret = PkcsObjectIdentifierSha1WithRsaEncryption
-	case "SRSAOAEPENCRYPTIONSET":
+	case strings.EqualFold(value, "SrsaOaepEncryptionSet"):
 		ret = PkcsObjectIdentifierSrsaOaepEncryptionSet
-	case "IDRSAESOAEP":
+	case strings.EqualFold(value, "IdRsaesOaep"):
 		ret = PkcsObjectIdentifierIdRsaesOaep
-	case "IDMGF1":
+	case strings.EqualFold(value, "IdMgf1"):
 		ret = PkcsObjectIdentifierIdMgf1
-	case "IDPSPECIFIED":
+	case strings.EqualFold(value, "IdPSpecified"):
 		ret = PkcsObjectIdentifierIdPSpecified
-	case "IDRSASSAPSS":
+	case strings.EqualFold(value, "IdRsassaPss"):
 		ret = PkcsObjectIdentifierIdRsassaPss
-	case "SHA256WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "Sha256WithRsaEncryption"):
 		ret = PkcsObjectIdentifierSha256WithRsaEncryption
-	case "SHA384WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "Sha384WithRsaEncryption"):
 		ret = PkcsObjectIdentifierSha384WithRsaEncryption
-	case "SHA512WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "Sha512WithRsaEncryption"):
 		ret = PkcsObjectIdentifierSha512WithRsaEncryption
-	case "SHA224WITHRSAENCRYPTION":
+	case strings.EqualFold(value, "Sha224WithRsaEncryption"):
 		ret = PkcsObjectIdentifierSha224WithRsaEncryption
-	case "DHKEYAGREE1MENT":
+	case strings.EqualFold(value, "DhKeyAgree1ment"):
 		ret = PkcsObjectIdentifierDhKeyAgree1ment
-	case "PBEWITHMD2ANDDESCBC":
+	case strings.EqualFold(value, "PbeWithMD2AndDesCbc"):
 		ret = PkcsObjectIdentifierPbeWithMD2AndDesCbc
-	case "PBEWITHMD2ANDRC2CBC":
+	case strings.EqualFold(value, "PbeWithMD2AndRC2Cbc"):
 		ret = PkcsObjectIdentifierPbeWithMD2AndRC2Cbc
-	case "PBEWITHMD5ANDDESCBC":
+	case strings.EqualFold(value, "PbeWithMD5AndDesCbc"):
 		ret = PkcsObjectIdentifierPbeWithMD5AndDesCbc
-	case "PBEWITHMD5ANDRC2CBC":
+	case strings.EqualFold(value, "PbeWithMD5AndRC2Cbc"):
 		ret = PkcsObjectIdentifierPbeWithMD5AndRC2Cbc
-	case "PBEWITHSHA1ANDDESCBC":
+	case strings.EqualFold(value, "PbeWithSha1AndDesCbc"):
 		ret = PkcsObjectIdentifierPbeWithSha1AndDesCbc
-	case "PBEWITHSHA1ANDRC2CBC":
+	case strings.EqualFold(value, "PbeWithSha1AndRC2Cbc"):
 		ret = PkcsObjectIdentifierPbeWithSha1AndRC2Cbc
-	case "IDPBES2":
+	case strings.EqualFold(value, "IdPbeS2"):
 		ret = PkcsObjectIdentifierIdPbeS2
-	case "IDPBKDF2":
+	case strings.EqualFold(value, "IdPbkdf2"):
 		ret = PkcsObjectIdentifierIdPbkdf2
-	case "DESEDE3CBC":
+	case strings.EqualFold(value, "DesEde3Cbc"):
 		ret = PkcsObjectIdentifierDesEde3Cbc
-	case "RC2CBC":
+	case strings.EqualFold(value, "RC2Cbc"):
 		ret = PkcsObjectIdentifierRC2Cbc
-	case "MD2":
+	case strings.EqualFold(value, "MD2"):
 		ret = PkcsObjectIdentifierMD2
-	case "MD4":
+	case strings.EqualFold(value, "MD4"):
 		ret = PkcsObjectIdentifierMD4
-	case "MD5":
+	case strings.EqualFold(value, "MD5"):
 		ret = PkcsObjectIdentifierMD5
-	case "IDHMACWITHSHA1":
+	case strings.EqualFold(value, "IdHmacWithSha1"):
 		ret = PkcsObjectIdentifierIdHmacWithSha1
-	case "IDHMACWITHSHA224":
+	case strings.EqualFold(value, "IdHmacWithSha224"):
 		ret = PkcsObjectIdentifierIdHmacWithSha224
-	case "IDHMACWITHSHA256":
+	case strings.EqualFold(value, "IdHmacWithSha256"):
 		ret = PkcsObjectIdentifierIdHmacWithSha256
-	case "IDHMACWITHSHA384":
+	case strings.EqualFold(value, "IdHmacWithSha384"):
 		ret = PkcsObjectIdentifierIdHmacWithSha384
-	case "IDHMACWITHSHA512":
+	case strings.EqualFold(value, "IdHmacWithSha512"):
 		ret = PkcsObjectIdentifierIdHmacWithSha512
-	case "DATA":
+	case strings.EqualFold(value, "Data"):
 		ret = PkcsObjectIdentifierData
-	case "SIGNEDDATA":
+	case strings.EqualFold(value, "SignedData"):
 		ret = PkcsObjectIdentifierSignedData
-	case "ENVELOPEDDATA":
+	case strings.EqualFold(value, "EnvelopedData"):
 		ret = PkcsObjectIdentifierEnvelopedData
-	case "SIGNEDANDENVELOPEDDATA":
+	case strings.EqualFold(value, "SignedAndEnvelopedData"):
 		ret = PkcsObjectIdentifierSignedAndEnvelopedData
-	case "DIGESTEDDATA":
+	case strings.EqualFold(value, "DigestedData"):
 		ret = PkcsObjectIdentifierDigestedData
-	case "ENCRYPTEDDATA":
+	case strings.EqualFold(value, "EncryptedData"):
 		ret = PkcsObjectIdentifierEncryptedData
-	case "PKCS9ATEMAILADDRESS":
+	case strings.EqualFold(value, "Pkcs9AtEmailAddress"):
 		ret = PkcsObjectIdentifierPkcs9AtEmailAddress
-	case "PKCS9ATUNSTRUCTUREDNAME":
+	case strings.EqualFold(value, "Pkcs9AtUnstructuredName"):
 		ret = PkcsObjectIdentifierPkcs9AtUnstructuredName
-	case "PKCS9ATCONTENTTYPE":
+	case strings.EqualFold(value, "Pkcs9AtContentType"):
 		ret = PkcsObjectIdentifierPkcs9AtContentType
-	case "PKCS9ATMESSAGEDIGEST":
+	case strings.EqualFold(value, "Pkcs9AtMessageDigest"):
 		ret = PkcsObjectIdentifierPkcs9AtMessageDigest
-	case "PKCS9ATSIGNINGTIME":
+	case strings.EqualFold(value, "Pkcs9AtSigningTime"):
 		ret = PkcsObjectIdentifierPkcs9AtSigningTime
-	case "PKCS9ATCOUNTERSIGNATURE":
+	case strings.EqualFold(value, "Pkcs9AtCounterSignature"):
 		ret = PkcsObjectIdentifierPkcs9AtCounterSignature
-	case "PKCS9ATCHALLENGEPASSWORD":
+	case strings.EqualFold(value, "Pkcs9AtChallengePassword"):
 		ret = PkcsObjectIdentifierPkcs9AtChallengePassword
-	case "PKCS9ATUNSTRUCTUREDADDRESS":
+	case strings.EqualFold(value, "Pkcs9AtUnstructuredAddress"):
 		ret = PkcsObjectIdentifierPkcs9AtUnstructuredAddress
-	case "PKCS9ATEXTENDEDCERTIFICATEATTRIBUTES":
+	case strings.EqualFold(value, "Pkcs9AtExtendedCertificateAttributes"):
 		ret = PkcsObjectIdentifierPkcs9AtExtendedCertificateAttributes
-	case "PKCS9ATSIGNINGDESCRIPTION":
+	case strings.EqualFold(value, "Pkcs9AtSigningDescription"):
 		ret = PkcsObjectIdentifierPkcs9AtSigningDescription
-	case "PKCS9ATEXTENSIONREQUEST":
+	case strings.EqualFold(value, "Pkcs9AtExtensionRequest"):
 		ret = PkcsObjectIdentifierPkcs9AtExtensionRequest
-	case "PKCS9ATSMIMECAPABILITIES":
+	case strings.EqualFold(value, "Pkcs9AtSmimeCapabilities"):
 		ret = PkcsObjectIdentifierPkcs9AtSmimeCapabilities
-	case "IDSMIME":
+	case strings.EqualFold(value, "IdSmime"):
 		ret = PkcsObjectIdentifierIdSmime
-	case "PKCS9ATFRIENDLYNAME":
+	case strings.EqualFold(value, "Pkcs9AtFriendlyName"):
 		ret = PkcsObjectIdentifierPkcs9AtFriendlyName
-	case "PKCS9ATLOCALKEYID":
+	case strings.EqualFold(value, "Pkcs9AtLocalKeyID"):
 		ret = PkcsObjectIdentifierPkcs9AtLocalKeyID
-	case "X509CERTIFICATE":
+	case strings.EqualFold(value, "X509Certificate"):
 		ret = PkcsObjectIdentifierX509Certificate
-	case "SDSICERTIFICATE":
+	case strings.EqualFold(value, "SdsiCertificate"):
 		ret = PkcsObjectIdentifierSdsiCertificate
-	case "X509CRL":
+	case strings.EqualFold(value, "X509Crl"):
 		ret = PkcsObjectIdentifierX509Crl
-	case "IDALG":
+	case strings.EqualFold(value, "IdAlg"):
 		ret = PkcsObjectIdentifierIdAlg
-	case "IDALGESDH":
+	case strings.EqualFold(value, "IdAlgEsdh"):
 		ret = PkcsObjectIdentifierIdAlgEsdh
-	case "IDALGCMS3DESWRAP":
+	case strings.EqualFold(value, "IdAlgCms3DesWrap"):
 		ret = PkcsObjectIdentifierIdAlgCms3DesWrap
-	case "IDALGCMSRC2WRAP":
+	case strings.EqualFold(value, "IdAlgCmsRC2Wrap"):
 		ret = PkcsObjectIdentifierIdAlgCmsRC2Wrap
-	case "IDALGPWRIKEK":
+	case strings.EqualFold(value, "IdAlgPwriKek"):
 		ret = PkcsObjectIdentifierIdAlgPwriKek
-	case "IDALGSSDH":
+	case strings.EqualFold(value, "IdAlgSsdh"):
 		ret = PkcsObjectIdentifierIdAlgSsdh
-	case "IDRSAKEM":
+	case strings.EqualFold(value, "IdRsaKem"):
 		ret = PkcsObjectIdentifierIdRsaKem
-	case "PREFERSIGNEDDATA":
+	case strings.EqualFold(value, "PreferSignedData"):
 		ret = PkcsObjectIdentifierPreferSignedData
-	case "CANNOTDECRYPTANY":
+	case strings.EqualFold(value, "CannotDecryptAny"):
 		ret = PkcsObjectIdentifierCannotDecryptAny
-	case "SMIMECAPABILITIESVERSIONS":
+	case strings.EqualFold(value, "SmimeCapabilitiesVersions"):
 		ret = PkcsObjectIdentifierSmimeCapabilitiesVersions
-	case "IDAARECEIPTREQUEST":
+	case strings.EqualFold(value, "IdAAReceiptRequest"):
 		ret = PkcsObjectIdentifierIdAAReceiptRequest
-	case "IDCTAUTHDATA":
+	case strings.EqualFold(value, "IdCTAuthData"):
 		ret = PkcsObjectIdentifierIdCTAuthData
-	case "IDCTTSTINFO":
+	case strings.EqualFold(value, "IdCTTstInfo"):
 		ret = PkcsObjectIdentifierIdCTTstInfo
-	case "IDCTCOMPRESSEDDATA":
+	case strings.EqualFold(value, "IdCTCompressedData"):
 		ret = PkcsObjectIdentifierIdCTCompressedData
-	case "IDCTAUTHENVELOPEDDATA":
+	case strings.EqualFold(value, "IdCTAuthEnvelopedData"):
 		ret = PkcsObjectIdentifierIdCTAuthEnvelopedData
-	case "IDCTTIMESTAMPEDDATA":
+	case strings.EqualFold(value, "IdCTTimestampedData"):
 		ret = PkcsObjectIdentifierIdCTTimestampedData
-	case "IDCTIETSPROOFOFORIGIN":
+	case strings.EqualFold(value, "IdCtiEtsProofOfOrigin"):
 		ret = PkcsObjectIdentifierIdCtiEtsProofOfOrigin
-	case "IDCTIETSPROOFOFRECEIPT":
+	case strings.EqualFold(value, "IdCtiEtsProofOfReceipt"):
 		ret = PkcsObjectIdentifierIdCtiEtsProofOfReceipt
-	case "IDCTIETSPROOFOFDELIVERY":
+	case strings.EqualFold(value, "IdCtiEtsProofOfDelivery"):
 		ret = PkcsObjectIdentifierIdCtiEtsProofOfDelivery
-	case "IDCTIETSPROOFOFSENDER":
+	case strings.EqualFold(value, "IdCtiEtsProofOfSender"):
 		ret = PkcsObjectIdentifierIdCtiEtsProofOfSender
-	case "IDCTIETSPROOFOFAPPROVAL":
+	case strings.EqualFold(value, "IdCtiEtsProofOfApproval"):
 		ret = PkcsObjectIdentifierIdCtiEtsProofOfApproval
-	case "IDCTIETSPROOFOFCREATION":
+	case strings.EqualFold(value, "IdCtiEtsProofOfCreation"):
 		ret = PkcsObjectIdentifierIdCtiEtsProofOfCreation
-	case "IDAACONTENTHINT":
+	case strings.EqualFold(value, "IdAAContentHint"):
 		ret = PkcsObjectIdentifierIdAAContentHint
-	case "IDAAMSGSIGDIGEST":
+	case strings.EqualFold(value, "IdAAMsgSigDigest"):
 		ret = PkcsObjectIdentifierIdAAMsgSigDigest
-	case "IDAACONTENTREFERENCE":
+	case strings.EqualFold(value, "IdAAContentReference"):
 		ret = PkcsObjectIdentifierIdAAContentReference
-	case "IDAAENCRYPKEYPREF":
+	case strings.EqualFold(value, "IdAAEncrypKeyPref"):
 		ret = PkcsObjectIdentifierIdAAEncrypKeyPref
-	case "IDAASIGNINGCERTIFICATE":
+	case strings.EqualFold(value, "IdAASigningCertificate"):
 		ret = PkcsObjectIdentifierIdAASigningCertificate
-	case "IDAASIGNINGCERTIFICATEV2":
+	case strings.EqualFold(value, "IdAASigningCertificateV2"):
 		ret = PkcsObjectIdentifierIdAASigningCertificateV2
-	case "IDAACONTENTIDENTIFIER":
+	case strings.EqualFold(value, "IdAAContentIdentifier"):
 		ret = PkcsObjectIdentifierIdAAContentIdentifier
-	case "IDAASIGNATURETIMESTAMPTOKEN":
+	case strings.EqualFold(value, "IdAASignatureTimeStampToken"):
 		ret = PkcsObjectIdentifierIdAASignatureTimeStampToken
-	case "IDAAETSSIGPOLICYID":
+	case strings.EqualFold(value, "IdAAEtsSigPolicyID"):
 		ret = PkcsObjectIdentifierIdAAEtsSigPolicyID
-	case "IDAAETSCOMMITMENTTYPE":
+	case strings.EqualFold(value, "IdAAEtsCommitmentType"):
 		ret = PkcsObjectIdentifierIdAAEtsCommitmentType
-	case "IDAAETSSIGNERLOCATION":
+	case strings.EqualFold(value, "IdAAEtsSignerLocation"):
 		ret = PkcsObjectIdentifierIdAAEtsSignerLocation
-	case "IDAAETSSIGNERATTR":
+	case strings.EqualFold(value, "IdAAEtsSignerAttr"):
 		ret = PkcsObjectIdentifierIdAAEtsSignerAttr
-	case "IDAAETSOTHERSIGCERT":
+	case strings.EqualFold(value, "IdAAEtsOtherSigCert"):
 		ret = PkcsObjectIdentifierIdAAEtsOtherSigCert
-	case "IDAAETSCONTENTTIMESTAMP":
+	case strings.EqualFold(value, "IdAAEtsContentTimestamp"):
 		ret = PkcsObjectIdentifierIdAAEtsContentTimestamp
-	case "IDAAETSCERTIFICATEREFS":
+	case strings.EqualFold(value, "IdAAEtsCertificateRefs"):
 		ret = PkcsObjectIdentifierIdAAEtsCertificateRefs
-	case "IDAAETSREVOCATIONREFS":
+	case strings.EqualFold(value, "IdAAEtsRevocationRefs"):
 		ret = PkcsObjectIdentifierIdAAEtsRevocationRefs
-	case "IDAAETSCERTVALUES":
+	case strings.EqualFold(value, "IdAAEtsCertValues"):
 		ret = PkcsObjectIdentifierIdAAEtsCertValues
-	case "IDAAETSREVOCATIONVALUES":
+	case strings.EqualFold(value, "IdAAEtsRevocationValues"):
 		ret = PkcsObjectIdentifierIdAAEtsRevocationValues
-	case "IDAAETSESCTIMESTAMP":
+	case strings.EqualFold(value, "IdAAEtsEscTimeStamp"):
 		ret = PkcsObjectIdentifierIdAAEtsEscTimeStamp
-	case "IDAAETSCERTCRLTIMESTAMP":
+	case strings.EqualFold(value, "IdAAEtsCertCrlTimestamp"):
 		ret = PkcsObjectIdentifierIdAAEtsCertCrlTimestamp
-	case "IDAAETSARCHIVETIMESTAMP":
+	case strings.EqualFold(value, "IdAAEtsArchiveTimestamp"):
 		ret = PkcsObjectIdentifierIdAAEtsArchiveTimestamp
-	case "IDSPQETSURI":
+	case strings.EqualFold(value, "IdSpqEtsUri"):
 		ret = PkcsObjectIdentifierIdSpqEtsUri
-	case "IDSPQETSUNOTICE":
+	case strings.EqualFold(value, "IdSpqEtsUNotice"):
 		ret = PkcsObjectIdentifierIdSpqEtsUNotice
-	case "KEYBAG":
+	case strings.EqualFold(value, "KeyBag"):
 		ret = PkcsObjectIdentifierKeyBag
-	case "PKCS8SHROUDEDKEYBAG":
+	case strings.EqualFold(value, "Pkcs8ShroudedKeyBag"):
 		ret = PkcsObjectIdentifierPkcs8ShroudedKeyBag
-	case "CERTBAG":
+	case strings.EqualFold(value, "CertBag"):
 		ret = PkcsObjectIdentifierCertBag
-	case "CRLBAG":
+	case strings.EqualFold(value, "CrlBag"):
 		ret = PkcsObjectIdentifierCrlBag
-	case "SECRETBAG":
+	case strings.EqualFold(value, "SecretBag"):
 		ret = PkcsObjectIdentifierSecretBag
-	case "SAFECONTENTSBAG":
+	case strings.EqualFold(value, "SafeContentsBag"):
 		ret = PkcsObjectIdentifierSafeContentsBag
-	case "PBEWITHSHAAND128BITRC4":
+	case strings.EqualFold(value, "PbeWithShaAnd128BitRC4"):
 		ret = PkcsObjectIdentifierPbeWithShaAnd128BitRC4
-	case "PBEWITHSHAAND40BITRC4":
+	case strings.EqualFold(value, "PbeWithShaAnd40BitRC4"):
 		ret = PkcsObjectIdentifierPbeWithShaAnd40BitRC4
-	case "PBEWITHSHAAND3KEYTRIPLEDESCBC":
+	case strings.EqualFold(value, "PbeWithShaAnd3KeyTripleDesCbc"):
 		ret = PkcsObjectIdentifierPbeWithShaAnd3KeyTripleDesCbc
-	case "PBEWITHSHAAND2KEYTRIPLEDESCBC":
+	case strings.EqualFold(value, "PbeWithShaAnd2KeyTripleDesCbc"):
 		ret = PkcsObjectIdentifierPbeWithShaAnd2KeyTripleDesCbc
-	case "PBEWITHSHAAND128BITRC2CBC":
+	case strings.EqualFold(value, "PbeWithShaAnd128BitRC2Cbc"):
 		ret = PkcsObjectIdentifierPbeWithShaAnd128BitRC2Cbc
-	case "PBEWITHSHAAND40BITRC2CBC":
+	case strings.EqualFold(value, "PbewithShaAnd40BitRC2Cbc"):
 		ret = PkcsObjectIdentifierPbewithShaAnd40BitRC2Cbc
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -411,57 +411,57 @@ func (g PkcsObjectIdentifier) String() string {
 	var ret string
 	switch g {
 	case PkcsObjectIdentifierNone:
-		ret = "NONE"
+		ret = "None"
 	case PkcsObjectIdentifierRsaEncryption:
-		ret = "RSAENCRYPTION"
+		ret = "RsaEncryption"
 	case PkcsObjectIdentifierMD2WithRsaEncryption:
-		ret = "MD2WITHRSAENCRYPTION"
+		ret = "MD2WithRsaEncryption"
 	case PkcsObjectIdentifierMD4WithRsaEncryption:
-		ret = "MD4WITHRSAENCRYPTION"
+		ret = "MD4WithRsaEncryption"
 	case PkcsObjectIdentifierMD5WithRsaEncryption:
-		ret = "MD5WITHRSAENCRYPTION"
+		ret = "MD5WithRsaEncryption"
 	case PkcsObjectIdentifierSha1WithRsaEncryption:
-		ret = "SHA1WITHRSAENCRYPTION"
+		ret = "Sha1WithRsaEncryption"
 	case PkcsObjectIdentifierSrsaOaepEncryptionSet:
-		ret = "SRSAOAEPENCRYPTIONSET"
+		ret = "SrsaOaepEncryptionSet"
 	case PkcsObjectIdentifierIdRsaesOaep:
-		ret = "IDRSAESOAEP"
+		ret = "IdRsaesOaep"
 	case PkcsObjectIdentifierIdMgf1:
-		ret = "IDMGF1"
+		ret = "IdMgf1"
 	case PkcsObjectIdentifierIdPSpecified:
-		ret = "IDPSPECIFIED"
+		ret = "IdPSpecified"
 	case PkcsObjectIdentifierIdRsassaPss:
-		ret = "IDRSASSAPSS"
+		ret = "IdRsassaPss"
 	case PkcsObjectIdentifierSha256WithRsaEncryption:
-		ret = "SHA256WITHRSAENCRYPTION"
+		ret = "Sha256WithRsaEncryption"
 	case PkcsObjectIdentifierSha384WithRsaEncryption:
-		ret = "SHA384WITHRSAENCRYPTION"
+		ret = "Sha384WithRsaEncryption"
 	case PkcsObjectIdentifierSha512WithRsaEncryption:
-		ret = "SHA512WITHRSAENCRYPTION"
+		ret = "Sha512WithRsaEncryption"
 	case PkcsObjectIdentifierSha224WithRsaEncryption:
-		ret = "SHA224WITHRSAENCRYPTION"
+		ret = "Sha224WithRsaEncryption"
 	case PkcsObjectIdentifierDhKeyAgree1ment:
-		ret = "DHKEYAGREE1MENT"
+		ret = "DhKeyAgree1ment"
 	case PkcsObjectIdentifierPbeWithMD2AndDesCbc:
-		ret = "PBEWITHMD2ANDDESCBC"
+		ret = "PbeWithMD2AndDesCbc"
 	case PkcsObjectIdentifierPbeWithMD2AndRC2Cbc:
-		ret = "PBEWITHMD2ANDRC2CBC"
+		ret = "PbeWithMD2AndRC2Cbc"
 	case PkcsObjectIdentifierPbeWithMD5AndDesCbc:
-		ret = "PBEWITHMD5ANDDESCBC"
+		ret = "PbeWithMD5AndDesCbc"
 	case PkcsObjectIdentifierPbeWithMD5AndRC2Cbc:
-		ret = "PBEWITHMD5ANDRC2CBC"
+		ret = "PbeWithMD5AndRC2Cbc"
 	case PkcsObjectIdentifierPbeWithSha1AndDesCbc:
-		ret = "PBEWITHSHA1ANDDESCBC"
+		ret = "PbeWithSha1AndDesCbc"
 	case PkcsObjectIdentifierPbeWithSha1AndRC2Cbc:
-		ret = "PBEWITHSHA1ANDRC2CBC"
+		ret = "PbeWithSha1AndRC2Cbc"
 	case PkcsObjectIdentifierIdPbeS2:
-		ret = "IDPBES2"
+		ret = "IdPbeS2"
 	case PkcsObjectIdentifierIdPbkdf2:
-		ret = "IDPBKDF2"
+		ret = "IdPbkdf2"
 	case PkcsObjectIdentifierDesEde3Cbc:
-		ret = "DESEDE3CBC"
+		ret = "DesEde3Cbc"
 	case PkcsObjectIdentifierRC2Cbc:
-		ret = "RC2CBC"
+		ret = "RC2Cbc"
 	case PkcsObjectIdentifierMD2:
 		ret = "MD2"
 	case PkcsObjectIdentifierMD4:
@@ -469,177 +469,298 @@ func (g PkcsObjectIdentifier) String() string {
 	case PkcsObjectIdentifierMD5:
 		ret = "MD5"
 	case PkcsObjectIdentifierIdHmacWithSha1:
-		ret = "IDHMACWITHSHA1"
+		ret = "IdHmacWithSha1"
 	case PkcsObjectIdentifierIdHmacWithSha224:
-		ret = "IDHMACWITHSHA224"
+		ret = "IdHmacWithSha224"
 	case PkcsObjectIdentifierIdHmacWithSha256:
-		ret = "IDHMACWITHSHA256"
+		ret = "IdHmacWithSha256"
 	case PkcsObjectIdentifierIdHmacWithSha384:
-		ret = "IDHMACWITHSHA384"
+		ret = "IdHmacWithSha384"
 	case PkcsObjectIdentifierIdHmacWithSha512:
-		ret = "IDHMACWITHSHA512"
+		ret = "IdHmacWithSha512"
 	case PkcsObjectIdentifierData:
-		ret = "DATA"
+		ret = "Data"
 	case PkcsObjectIdentifierSignedData:
-		ret = "SIGNEDDATA"
+		ret = "SignedData"
 	case PkcsObjectIdentifierEnvelopedData:
-		ret = "ENVELOPEDDATA"
+		ret = "EnvelopedData"
 	case PkcsObjectIdentifierSignedAndEnvelopedData:
-		ret = "SIGNEDANDENVELOPEDDATA"
+		ret = "SignedAndEnvelopedData"
 	case PkcsObjectIdentifierDigestedData:
-		ret = "DIGESTEDDATA"
+		ret = "DigestedData"
 	case PkcsObjectIdentifierEncryptedData:
-		ret = "ENCRYPTEDDATA"
+		ret = "EncryptedData"
 	case PkcsObjectIdentifierPkcs9AtEmailAddress:
-		ret = "PKCS9ATEMAILADDRESS"
+		ret = "Pkcs9AtEmailAddress"
 	case PkcsObjectIdentifierPkcs9AtUnstructuredName:
-		ret = "PKCS9ATUNSTRUCTUREDNAME"
+		ret = "Pkcs9AtUnstructuredName"
 	case PkcsObjectIdentifierPkcs9AtContentType:
-		ret = "PKCS9ATCONTENTTYPE"
+		ret = "Pkcs9AtContentType"
 	case PkcsObjectIdentifierPkcs9AtMessageDigest:
-		ret = "PKCS9ATMESSAGEDIGEST"
+		ret = "Pkcs9AtMessageDigest"
 	case PkcsObjectIdentifierPkcs9AtSigningTime:
-		ret = "PKCS9ATSIGNINGTIME"
+		ret = "Pkcs9AtSigningTime"
 	case PkcsObjectIdentifierPkcs9AtCounterSignature:
-		ret = "PKCS9ATCOUNTERSIGNATURE"
+		ret = "Pkcs9AtCounterSignature"
 	case PkcsObjectIdentifierPkcs9AtChallengePassword:
-		ret = "PKCS9ATCHALLENGEPASSWORD"
+		ret = "Pkcs9AtChallengePassword"
 	case PkcsObjectIdentifierPkcs9AtUnstructuredAddress:
-		ret = "PKCS9ATUNSTRUCTUREDADDRESS"
+		ret = "Pkcs9AtUnstructuredAddress"
 	case PkcsObjectIdentifierPkcs9AtExtendedCertificateAttributes:
-		ret = "PKCS9ATEXTENDEDCERTIFICATEATTRIBUTES"
+		ret = "Pkcs9AtExtendedCertificateAttributes"
 	case PkcsObjectIdentifierPkcs9AtSigningDescription:
-		ret = "PKCS9ATSIGNINGDESCRIPTION"
+		ret = "Pkcs9AtSigningDescription"
 	case PkcsObjectIdentifierPkcs9AtExtensionRequest:
-		ret = "PKCS9ATEXTENSIONREQUEST"
+		ret = "Pkcs9AtExtensionRequest"
 	case PkcsObjectIdentifierPkcs9AtSmimeCapabilities:
-		ret = "PKCS9ATSMIMECAPABILITIES"
+		ret = "Pkcs9AtSmimeCapabilities"
 	case PkcsObjectIdentifierIdSmime:
-		ret = "IDSMIME"
+		ret = "IdSmime"
 	case PkcsObjectIdentifierPkcs9AtFriendlyName:
-		ret = "PKCS9ATFRIENDLYNAME"
+		ret = "Pkcs9AtFriendlyName"
 	case PkcsObjectIdentifierPkcs9AtLocalKeyID:
-		ret = "PKCS9ATLOCALKEYID"
+		ret = "Pkcs9AtLocalKeyID"
 	case PkcsObjectIdentifierX509Certificate:
-		ret = "X509CERTIFICATE"
+		ret = "X509Certificate"
 	case PkcsObjectIdentifierSdsiCertificate:
-		ret = "SDSICERTIFICATE"
+		ret = "SdsiCertificate"
 	case PkcsObjectIdentifierX509Crl:
-		ret = "X509CRL"
+		ret = "X509Crl"
 	case PkcsObjectIdentifierIdAlg:
-		ret = "IDALG"
+		ret = "IdAlg"
 	case PkcsObjectIdentifierIdAlgEsdh:
-		ret = "IDALGESDH"
+		ret = "IdAlgEsdh"
 	case PkcsObjectIdentifierIdAlgCms3DesWrap:
-		ret = "IDALGCMS3DESWRAP"
+		ret = "IdAlgCms3DesWrap"
 	case PkcsObjectIdentifierIdAlgCmsRC2Wrap:
-		ret = "IDALGCMSRC2WRAP"
+		ret = "IdAlgCmsRC2Wrap"
 	case PkcsObjectIdentifierIdAlgPwriKek:
-		ret = "IDALGPWRIKEK"
+		ret = "IdAlgPwriKek"
 	case PkcsObjectIdentifierIdAlgSsdh:
-		ret = "IDALGSSDH"
+		ret = "IdAlgSsdh"
 	case PkcsObjectIdentifierIdRsaKem:
-		ret = "IDRSAKEM"
+		ret = "IdRsaKem"
 	case PkcsObjectIdentifierPreferSignedData:
-		ret = "PREFERSIGNEDDATA"
+		ret = "PreferSignedData"
 	case PkcsObjectIdentifierCannotDecryptAny:
-		ret = "CANNOTDECRYPTANY"
+		ret = "CannotDecryptAny"
 	case PkcsObjectIdentifierSmimeCapabilitiesVersions:
-		ret = "SMIMECAPABILITIESVERSIONS"
+		ret = "SmimeCapabilitiesVersions"
 	case PkcsObjectIdentifierIdAAReceiptRequest:
-		ret = "IDAARECEIPTREQUEST"
+		ret = "IdAAReceiptRequest"
 	case PkcsObjectIdentifierIdCTAuthData:
-		ret = "IDCTAUTHDATA"
+		ret = "IdCTAuthData"
 	case PkcsObjectIdentifierIdCTTstInfo:
-		ret = "IDCTTSTINFO"
+		ret = "IdCTTstInfo"
 	case PkcsObjectIdentifierIdCTCompressedData:
-		ret = "IDCTCOMPRESSEDDATA"
+		ret = "IdCTCompressedData"
 	case PkcsObjectIdentifierIdCTAuthEnvelopedData:
-		ret = "IDCTAUTHENVELOPEDDATA"
+		ret = "IdCTAuthEnvelopedData"
 	case PkcsObjectIdentifierIdCTTimestampedData:
-		ret = "IDCTTIMESTAMPEDDATA"
+		ret = "IdCTTimestampedData"
 	case PkcsObjectIdentifierIdCtiEtsProofOfOrigin:
-		ret = "IDCTIETSPROOFOFORIGIN"
+		ret = "IdCtiEtsProofOfOrigin"
 	case PkcsObjectIdentifierIdCtiEtsProofOfReceipt:
-		ret = "IDCTIETSPROOFOFRECEIPT"
+		ret = "IdCtiEtsProofOfReceipt"
 	case PkcsObjectIdentifierIdCtiEtsProofOfDelivery:
-		ret = "IDCTIETSPROOFOFDELIVERY"
+		ret = "IdCtiEtsProofOfDelivery"
 	case PkcsObjectIdentifierIdCtiEtsProofOfSender:
-		ret = "IDCTIETSPROOFOFSENDER"
+		ret = "IdCtiEtsProofOfSender"
 	case PkcsObjectIdentifierIdCtiEtsProofOfApproval:
-		ret = "IDCTIETSPROOFOFAPPROVAL"
+		ret = "IdCtiEtsProofOfApproval"
 	case PkcsObjectIdentifierIdCtiEtsProofOfCreation:
-		ret = "IDCTIETSPROOFOFCREATION"
+		ret = "IdCtiEtsProofOfCreation"
 	case PkcsObjectIdentifierIdAAContentHint:
-		ret = "IDAACONTENTHINT"
+		ret = "IdAAContentHint"
 	case PkcsObjectIdentifierIdAAMsgSigDigest:
-		ret = "IDAAMSGSIGDIGEST"
+		ret = "IdAAMsgSigDigest"
 	case PkcsObjectIdentifierIdAAContentReference:
-		ret = "IDAACONTENTREFERENCE"
+		ret = "IdAAContentReference"
 	case PkcsObjectIdentifierIdAAEncrypKeyPref:
-		ret = "IDAAENCRYPKEYPREF"
+		ret = "IdAAEncrypKeyPref"
 	case PkcsObjectIdentifierIdAASigningCertificate:
-		ret = "IDAASIGNINGCERTIFICATE"
+		ret = "IdAASigningCertificate"
 	case PkcsObjectIdentifierIdAASigningCertificateV2:
-		ret = "IDAASIGNINGCERTIFICATEV2"
+		ret = "IdAASigningCertificateV2"
 	case PkcsObjectIdentifierIdAAContentIdentifier:
-		ret = "IDAACONTENTIDENTIFIER"
+		ret = "IdAAContentIdentifier"
 	case PkcsObjectIdentifierIdAASignatureTimeStampToken:
-		ret = "IDAASIGNATURETIMESTAMPTOKEN"
+		ret = "IdAASignatureTimeStampToken"
 	case PkcsObjectIdentifierIdAAEtsSigPolicyID:
-		ret = "IDAAETSSIGPOLICYID"
+		ret = "IdAAEtsSigPolicyID"
 	case PkcsObjectIdentifierIdAAEtsCommitmentType:
-		ret = "IDAAETSCOMMITMENTTYPE"
+		ret = "IdAAEtsCommitmentType"
 	case PkcsObjectIdentifierIdAAEtsSignerLocation:
-		ret = "IDAAETSSIGNERLOCATION"
+		ret = "IdAAEtsSignerLocation"
 	case PkcsObjectIdentifierIdAAEtsSignerAttr:
-		ret = "IDAAETSSIGNERATTR"
+		ret = "IdAAEtsSignerAttr"
 	case PkcsObjectIdentifierIdAAEtsOtherSigCert:
-		ret = "IDAAETSOTHERSIGCERT"
+		ret = "IdAAEtsOtherSigCert"
 	case PkcsObjectIdentifierIdAAEtsContentTimestamp:
-		ret = "IDAAETSCONTENTTIMESTAMP"
+		ret = "IdAAEtsContentTimestamp"
 	case PkcsObjectIdentifierIdAAEtsCertificateRefs:
-		ret = "IDAAETSCERTIFICATEREFS"
+		ret = "IdAAEtsCertificateRefs"
 	case PkcsObjectIdentifierIdAAEtsRevocationRefs:
-		ret = "IDAAETSREVOCATIONREFS"
+		ret = "IdAAEtsRevocationRefs"
 	case PkcsObjectIdentifierIdAAEtsCertValues:
-		ret = "IDAAETSCERTVALUES"
+		ret = "IdAAEtsCertValues"
 	case PkcsObjectIdentifierIdAAEtsRevocationValues:
-		ret = "IDAAETSREVOCATIONVALUES"
+		ret = "IdAAEtsRevocationValues"
 	case PkcsObjectIdentifierIdAAEtsEscTimeStamp:
-		ret = "IDAAETSESCTIMESTAMP"
+		ret = "IdAAEtsEscTimeStamp"
 	case PkcsObjectIdentifierIdAAEtsCertCrlTimestamp:
-		ret = "IDAAETSCERTCRLTIMESTAMP"
+		ret = "IdAAEtsCertCrlTimestamp"
 	case PkcsObjectIdentifierIdAAEtsArchiveTimestamp:
-		ret = "IDAAETSARCHIVETIMESTAMP"
+		ret = "IdAAEtsArchiveTimestamp"
 	case PkcsObjectIdentifierIdSpqEtsUri:
-		ret = "IDSPQETSURI"
+		ret = "IdSpqEtsUri"
 	case PkcsObjectIdentifierIdSpqEtsUNotice:
-		ret = "IDSPQETSUNOTICE"
+		ret = "IdSpqEtsUNotice"
 	case PkcsObjectIdentifierKeyBag:
-		ret = "KEYBAG"
+		ret = "KeyBag"
 	case PkcsObjectIdentifierPkcs8ShroudedKeyBag:
-		ret = "PKCS8SHROUDEDKEYBAG"
+		ret = "Pkcs8ShroudedKeyBag"
 	case PkcsObjectIdentifierCertBag:
-		ret = "CERTBAG"
+		ret = "CertBag"
 	case PkcsObjectIdentifierCrlBag:
-		ret = "CRLBAG"
+		ret = "CrlBag"
 	case PkcsObjectIdentifierSecretBag:
-		ret = "SECRETBAG"
+		ret = "SecretBag"
 	case PkcsObjectIdentifierSafeContentsBag:
-		ret = "SAFECONTENTSBAG"
+		ret = "SafeContentsBag"
 	case PkcsObjectIdentifierPbeWithShaAnd128BitRC4:
-		ret = "PBEWITHSHAAND128BITRC4"
+		ret = "PbeWithShaAnd128BitRC4"
 	case PkcsObjectIdentifierPbeWithShaAnd40BitRC4:
-		ret = "PBEWITHSHAAND40BITRC4"
+		ret = "PbeWithShaAnd40BitRC4"
 	case PkcsObjectIdentifierPbeWithShaAnd3KeyTripleDesCbc:
-		ret = "PBEWITHSHAAND3KEYTRIPLEDESCBC"
+		ret = "PbeWithShaAnd3KeyTripleDesCbc"
 	case PkcsObjectIdentifierPbeWithShaAnd2KeyTripleDesCbc:
-		ret = "PBEWITHSHAAND2KEYTRIPLEDESCBC"
+		ret = "PbeWithShaAnd2KeyTripleDesCbc"
 	case PkcsObjectIdentifierPbeWithShaAnd128BitRC2Cbc:
-		ret = "PBEWITHSHAAND128BITRC2CBC"
+		ret = "PbeWithShaAnd128BitRC2Cbc"
 	case PkcsObjectIdentifierPbewithShaAnd40BitRC2Cbc:
-		ret = "PBEWITHSHAAND40BITRC2CBC"
+		ret = "PbewithShaAnd40BitRC2Cbc"
 	}
 	return ret
+}
+
+// AllPkcsObjectIdentifier returns a slice containing all defined PkcsObjectIdentifier values.
+func AllPkcsObjectIdentifier() []PkcsObjectIdentifier {
+	return []PkcsObjectIdentifier{
+	PkcsObjectIdentifierNone,
+	PkcsObjectIdentifierRsaEncryption,
+	PkcsObjectIdentifierMD2WithRsaEncryption,
+	PkcsObjectIdentifierMD4WithRsaEncryption,
+	PkcsObjectIdentifierMD5WithRsaEncryption,
+	PkcsObjectIdentifierSha1WithRsaEncryption,
+	PkcsObjectIdentifierSrsaOaepEncryptionSet,
+	PkcsObjectIdentifierIdRsaesOaep,
+	PkcsObjectIdentifierIdMgf1,
+	PkcsObjectIdentifierIdPSpecified,
+	PkcsObjectIdentifierIdRsassaPss,
+	PkcsObjectIdentifierSha256WithRsaEncryption,
+	PkcsObjectIdentifierSha384WithRsaEncryption,
+	PkcsObjectIdentifierSha512WithRsaEncryption,
+	PkcsObjectIdentifierSha224WithRsaEncryption,
+	PkcsObjectIdentifierDhKeyAgree1ment,
+	PkcsObjectIdentifierPbeWithMD2AndDesCbc,
+	PkcsObjectIdentifierPbeWithMD2AndRC2Cbc,
+	PkcsObjectIdentifierPbeWithMD5AndDesCbc,
+	PkcsObjectIdentifierPbeWithMD5AndRC2Cbc,
+	PkcsObjectIdentifierPbeWithSha1AndDesCbc,
+	PkcsObjectIdentifierPbeWithSha1AndRC2Cbc,
+	PkcsObjectIdentifierIdPbeS2,
+	PkcsObjectIdentifierIdPbkdf2,
+	PkcsObjectIdentifierDesEde3Cbc,
+	PkcsObjectIdentifierRC2Cbc,
+	PkcsObjectIdentifierMD2,
+	PkcsObjectIdentifierMD4,
+	PkcsObjectIdentifierMD5,
+	PkcsObjectIdentifierIdHmacWithSha1,
+	PkcsObjectIdentifierIdHmacWithSha224,
+	PkcsObjectIdentifierIdHmacWithSha256,
+	PkcsObjectIdentifierIdHmacWithSha384,
+	PkcsObjectIdentifierIdHmacWithSha512,
+	PkcsObjectIdentifierData,
+	PkcsObjectIdentifierSignedData,
+	PkcsObjectIdentifierEnvelopedData,
+	PkcsObjectIdentifierSignedAndEnvelopedData,
+	PkcsObjectIdentifierDigestedData,
+	PkcsObjectIdentifierEncryptedData,
+	PkcsObjectIdentifierPkcs9AtEmailAddress,
+	PkcsObjectIdentifierPkcs9AtUnstructuredName,
+	PkcsObjectIdentifierPkcs9AtContentType,
+	PkcsObjectIdentifierPkcs9AtMessageDigest,
+	PkcsObjectIdentifierPkcs9AtSigningTime,
+	PkcsObjectIdentifierPkcs9AtCounterSignature,
+	PkcsObjectIdentifierPkcs9AtChallengePassword,
+	PkcsObjectIdentifierPkcs9AtUnstructuredAddress,
+	PkcsObjectIdentifierPkcs9AtExtendedCertificateAttributes,
+	PkcsObjectIdentifierPkcs9AtSigningDescription,
+	PkcsObjectIdentifierPkcs9AtExtensionRequest,
+	PkcsObjectIdentifierPkcs9AtSmimeCapabilities,
+	PkcsObjectIdentifierIdSmime,
+	PkcsObjectIdentifierPkcs9AtFriendlyName,
+	PkcsObjectIdentifierPkcs9AtLocalKeyID,
+	PkcsObjectIdentifierX509Certificate,
+	PkcsObjectIdentifierSdsiCertificate,
+	PkcsObjectIdentifierX509Crl,
+	PkcsObjectIdentifierIdAlg,
+	PkcsObjectIdentifierIdAlgEsdh,
+	PkcsObjectIdentifierIdAlgCms3DesWrap,
+	PkcsObjectIdentifierIdAlgCmsRC2Wrap,
+	PkcsObjectIdentifierIdAlgPwriKek,
+	PkcsObjectIdentifierIdAlgSsdh,
+	PkcsObjectIdentifierIdRsaKem,
+	PkcsObjectIdentifierPreferSignedData,
+	PkcsObjectIdentifierCannotDecryptAny,
+	PkcsObjectIdentifierSmimeCapabilitiesVersions,
+	PkcsObjectIdentifierIdAAReceiptRequest,
+	PkcsObjectIdentifierIdCTAuthData,
+	PkcsObjectIdentifierIdCTTstInfo,
+	PkcsObjectIdentifierIdCTCompressedData,
+	PkcsObjectIdentifierIdCTAuthEnvelopedData,
+	PkcsObjectIdentifierIdCTTimestampedData,
+	PkcsObjectIdentifierIdCtiEtsProofOfOrigin,
+	PkcsObjectIdentifierIdCtiEtsProofOfReceipt,
+	PkcsObjectIdentifierIdCtiEtsProofOfDelivery,
+	PkcsObjectIdentifierIdCtiEtsProofOfSender,
+	PkcsObjectIdentifierIdCtiEtsProofOfApproval,
+	PkcsObjectIdentifierIdCtiEtsProofOfCreation,
+	PkcsObjectIdentifierIdAAContentHint,
+	PkcsObjectIdentifierIdAAMsgSigDigest,
+	PkcsObjectIdentifierIdAAContentReference,
+	PkcsObjectIdentifierIdAAEncrypKeyPref,
+	PkcsObjectIdentifierIdAASigningCertificate,
+	PkcsObjectIdentifierIdAASigningCertificateV2,
+	PkcsObjectIdentifierIdAAContentIdentifier,
+	PkcsObjectIdentifierIdAASignatureTimeStampToken,
+	PkcsObjectIdentifierIdAAEtsSigPolicyID,
+	PkcsObjectIdentifierIdAAEtsCommitmentType,
+	PkcsObjectIdentifierIdAAEtsSignerLocation,
+	PkcsObjectIdentifierIdAAEtsSignerAttr,
+	PkcsObjectIdentifierIdAAEtsOtherSigCert,
+	PkcsObjectIdentifierIdAAEtsContentTimestamp,
+	PkcsObjectIdentifierIdAAEtsCertificateRefs,
+	PkcsObjectIdentifierIdAAEtsRevocationRefs,
+	PkcsObjectIdentifierIdAAEtsCertValues,
+	PkcsObjectIdentifierIdAAEtsRevocationValues,
+	PkcsObjectIdentifierIdAAEtsEscTimeStamp,
+	PkcsObjectIdentifierIdAAEtsCertCrlTimestamp,
+	PkcsObjectIdentifierIdAAEtsArchiveTimestamp,
+	PkcsObjectIdentifierIdSpqEtsUri,
+	PkcsObjectIdentifierIdSpqEtsUNotice,
+	PkcsObjectIdentifierKeyBag,
+	PkcsObjectIdentifierPkcs8ShroudedKeyBag,
+	PkcsObjectIdentifierCertBag,
+	PkcsObjectIdentifierCrlBag,
+	PkcsObjectIdentifierSecretBag,
+	PkcsObjectIdentifierSafeContentsBag,
+	PkcsObjectIdentifierPbeWithShaAnd128BitRC4,
+	PkcsObjectIdentifierPbeWithShaAnd40BitRC4,
+	PkcsObjectIdentifierPbeWithShaAnd3KeyTripleDesCbc,
+	PkcsObjectIdentifierPbeWithShaAnd2KeyTripleDesCbc,
+	PkcsObjectIdentifierPbeWithShaAnd128BitRC2Cbc,
+	PkcsObjectIdentifierPbewithShaAnd40BitRC2Cbc,
+	}
 }

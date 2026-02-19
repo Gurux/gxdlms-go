@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -58,10 +58,10 @@ const (
 func ExceptionStateErrorParse(value string) (ExceptionStateError, error) {
 	var ret ExceptionStateError
 	var err error
-	switch strings.ToUpper(value) {
-	case "SERVICENOTALLOWED":
+	switch {
+	case strings.EqualFold(value, "ServiceNotAllowed"):
 		ret = ExceptionStateErrorServiceNotAllowed
-	case "SERVICEUNKNOWN":
+	case strings.EqualFold(value, "ServiceUnknown"):
 		ret = ExceptionStateErrorServiceUnknown
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -75,9 +75,17 @@ func (g ExceptionStateError) String() string {
 	var ret string
 	switch g {
 	case ExceptionStateErrorServiceNotAllowed:
-		ret = "SERVICENOTALLOWED"
+		ret = "ServiceNotAllowed"
 	case ExceptionStateErrorServiceUnknown:
-		ret = "SERVICEUNKNOWN"
+		ret = "ServiceUnknown"
 	}
 	return ret
+}
+
+// AllExceptionStateError returns a slice containing all defined ExceptionStateError values.
+func AllExceptionStateError() []ExceptionStateError {
+	return []ExceptionStateError{
+		ExceptionStateErrorServiceNotAllowed,
+		ExceptionStateErrorServiceUnknown,
+	}
 }

@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Service :  describes service errors.
+// Service describes service errors.
 type Service int
 
 const (
@@ -60,12 +60,12 @@ const (
 func ServiceParse(value string) (Service, error) {
 	var ret Service
 	var err error
-	switch strings.ToUpper(value) {
-	case "OTHER":
+	switch {
+	case strings.EqualFold(value, "Other"):
 		ret = ServiceOther
-	case "PDUSIZE":
+	case strings.EqualFold(value, "PduSize"):
 		ret = ServicePduSize
-	case "UNSUPPORTED":
+	case strings.EqualFold(value, "Unsupported"):
 		ret = ServiceUnsupported
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -79,11 +79,20 @@ func (g Service) String() string {
 	var ret string
 	switch g {
 	case ServiceOther:
-		ret = "OTHER"
+		ret = "Other"
 	case ServicePduSize:
-		ret = "PDUSIZE"
+		ret = "PduSize"
 	case ServiceUnsupported:
-		ret = "UNSUPPORTED"
+		ret = "Unsupported"
 	}
 	return ret
+}
+
+// AllService returns a slice containing all defined Service values.
+func AllService() []Service {
+	return []Service{
+		ServiceOther,
+		ServicePduSize,
+		ServiceUnsupported,
+	}
 }

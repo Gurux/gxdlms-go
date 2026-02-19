@@ -1,4 +1,4 @@
-package enums
+﻿package enums
 
 //
 // --------------------------------------------------------------------------
@@ -62,14 +62,14 @@ const (
 func MBusLinkStatusParse(value string) (MBusLinkStatus, error) {
 	var ret MBusLinkStatus
 	var err error
-	switch strings.ToUpper(value) {
-	case "NONE":
+	switch {
+	case strings.EqualFold(value, "None"):
 		ret = MBusLinkStatusNone
-	case "NORMAL":
+	case strings.EqualFold(value, "Normal"):
 		ret = MBusLinkStatusNormal
-	case "TEMPORARILYINTERRUPTED":
+	case strings.EqualFold(value, "TemporarilyInterrupted"):
 		ret = MBusLinkStatusTemporarilyInterrupted
-	case "PERMANENTLYINTERRUPTED":
+	case strings.EqualFold(value, "PermanentlyInterrupted"):
 		ret = MBusLinkStatusPermanentlyInterrupted
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
@@ -83,13 +83,23 @@ func (g MBusLinkStatus) String() string {
 	var ret string
 	switch g {
 	case MBusLinkStatusNone:
-		ret = "NONE"
+		ret = "None"
 	case MBusLinkStatusNormal:
-		ret = "NORMAL"
+		ret = "Normal"
 	case MBusLinkStatusTemporarilyInterrupted:
-		ret = "TEMPORARILYINTERRUPTED"
+		ret = "TemporarilyInterrupted"
 	case MBusLinkStatusPermanentlyInterrupted:
-		ret = "PERMANENTLYINTERRUPTED"
+		ret = "PermanentlyInterrupted"
 	}
 	return ret
+}
+
+// AllMBusLinkStatus returns a slice containing all defined MBusLinkStatus values.
+func AllMBusLinkStatus() []MBusLinkStatus {
+	return []MBusLinkStatus{
+		MBusLinkStatusNone,
+		MBusLinkStatusNormal,
+		MBusLinkStatusTemporarilyInterrupted,
+		MBusLinkStatusPermanentlyInterrupted,
+	}
 }
