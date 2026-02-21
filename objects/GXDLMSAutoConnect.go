@@ -35,10 +35,10 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -73,7 +73,7 @@ type GXDLMSAutoConnect struct {
 	Destinations []string
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSAutoConnect) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -327,8 +327,15 @@ func (g *GXDLMSAutoConnect) Load(reader *GXXmlReader) error {
 	}
 	g.RepetitionDelay = uint16(ret)
 	g.CallingWindow = g.CallingWindow[:0]
-	if reader.isStartElementNamed2("CallingWindow", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("CallingWindow", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			start, err := reader.ReadElementContentAsDateTime("Start", nil)
 			if err != nil {
 				return err
@@ -421,7 +428,7 @@ func (g *GXDLMSAutoConnect) GetDataType(index int) (enums.DataType, error) {
 	} else if index == 6 {
 		ret = enums.DataTypeArray
 	} else {
-		return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+		return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
@@ -439,9 +446,10 @@ func (g *GXDLMSAutoConnect) Connect(client IGXDLMSClient) ([][]byte, error) {
 	return client.Method(g, 1, int8(0), enums.DataTypeInt8)
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSAutoConnect creates a new auto connect object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSAutoConnect(ln string, sn int16) (*GXDLMSAutoConnect, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

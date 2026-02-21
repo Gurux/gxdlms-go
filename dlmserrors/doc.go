@@ -1,4 +1,4 @@
-// Package gxerrors defines DLMS errors.
+// Package dlmserrors defines DLMS-related error values and types.
 package dlmserrors
 
 // --------------------------------------------------------------------------

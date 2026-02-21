@@ -35,9 +35,9 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -67,7 +67,7 @@ type GXDLMSAutoAnswer struct {
 	AllowedCallers []types.GXKeyValuePair[string, enums.CallType]
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSAutoAnswer) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -329,8 +329,15 @@ func (g *GXDLMSAutoAnswer) Load(reader *GXXmlReader) error {
 	}
 	g.Mode = enums.AutoAnswerMode(ret)
 	g.ListeningWindow = g.ListeningWindow[:0]
-	if reader.isStartElementNamed2("ListeningWindow", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("ListeningWindow", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			start, err := reader.ReadElementContentAsDateTime("Start", nil)
 			if err != nil {
 				return err
@@ -363,13 +370,21 @@ func (g *GXDLMSAutoAnswer) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.NumberOfRingsOutListeningWindow = uint8(ret)
-	if reader.isStartElementNamed2("AllowedCallers", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("AllowedCallers", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
+
 			callerId, err := reader.ReadElementContentAsString("Id", "")
 			if err != nil {
 				return err
 			}
-			ret, err = reader.ReadElementContentAsInt("Type", 0)
+			ret, err := reader.ReadElementContentAsInt("Type", 0)
 			if err != nil {
 				return err
 			}
@@ -486,14 +501,15 @@ func (g *GXDLMSAutoAnswer) GetDataType(index int) (enums.DataType, error) {
 		}
 	}
 	if ret == enums.DataTypeNone {
-		return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+		return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSAutoAnswer creates a new auto answer object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSAutoAnswer(ln string, sn int16) (*GXDLMSAutoAnswer, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

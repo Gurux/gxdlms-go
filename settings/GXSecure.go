@@ -157,7 +157,7 @@ func GenerateKDF(securitySuite enums.SecuritySuite, z []byte, otherInfo []byte) 
 	}
 }
 
-func GenerateKDFWithInfo(securitySuite enums.SecuritySuite, z []byte, algorithmID enums.AlgorithmId, partyUInfo []byte, partyVInfo []byte, suppPubInfo []byte, suppPrivInfo []byte) ([]byte, error) {
+func GenerateKDFWithInfo(securitySuite enums.SecuritySuite, z []byte, algorithmID enums.AlgorithmID, partyUInfo []byte, partyVInfo []byte, suppPubInfo []byte, suppPrivInfo []byte) ([]byte, error) {
 	bb := types.NewGXByteBuffer()
 	_ = bb.Set([]byte{0x60, 0x85, 0x74, 0x05, 0x08, 0x03, byte(algorithmID)})
 	_ = bb.Set(partyUInfo)

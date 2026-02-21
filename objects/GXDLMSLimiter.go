@@ -35,8 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
-
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -89,7 +88,7 @@ type GXDLMSLimiter struct {
 	ActionUnderThreshold GXDLMSActionItem
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSLimiter) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -395,11 +394,10 @@ func (g *GXDLMSLimiter) SetValue(settings *settings.GXDLMSSettings, e *internal.
 		if ot != enums.ObjectTypeNone {
 			g.MonitoredValue = getObjectCollection(settings.Objects).FindByLN(ot, ln)
 			if g.MonitoredValue == nil {
-				g.MonitoredValue = CreateObject(ot)
+				g.MonitoredValue, err = CreateObject(ot, ln, 0)
 				if err != nil {
 					return err
 				}
-				g.MonitoredValue.Base().SetLogicalName(ln)
 			}
 		} else {
 			g.MonitoredValue = nil
@@ -490,8 +488,10 @@ func (g *GXDLMSLimiter) Load(reader *GXXmlReader) error {
 			g.MonitoredValue = reader.Objects.FindByLN(ot, ln)
 			// If item is not serialized yet.
 			if g.MonitoredValue == nil {
-				g.MonitoredValue = CreateObject(ot)
-				g.MonitoredValue.Base().SetLogicalName(ln)
+				g.MonitoredValue, err = CreateObject(ot, ln, 0)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		reader.ReadEndElement("MonitoredValue")
@@ -745,14 +745,15 @@ func (g *GXDLMSLimiter) GetDataType(index int) (enums.DataType, error) {
 	} else if index == 11 {
 		ret = enums.DataTypeStructure
 	} else {
-		return 0, errors.New("GetDataType failed. Invalid attribute index.")
+		return 0, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSLimiter creates a new limiter object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSLimiter(ln string, sn int16) (*GXDLMSLimiter, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

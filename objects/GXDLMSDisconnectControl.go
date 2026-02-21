@@ -35,8 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
-
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -58,7 +57,7 @@ type GXDLMSDisconnectControl struct {
 	ControlMode enums.ControlMode
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSDisconnectControl) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -295,12 +294,13 @@ func (g *GXDLMSDisconnectControl) GetDataType(index int) (enums.DataType, error)
 	if index == 4 {
 		return enums.DataTypeEnum, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSDisconnectControl creates a new disconnect control object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSDisconnectControl(ln string, sn int16) (*GXDLMSDisconnectControl, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

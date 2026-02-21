@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 
@@ -54,7 +53,10 @@ func (g *GXDLMSObjectCollection) Clear() {
 	*g = (*g)[:0]
 }
 
-// Clear removes all elements from the collection.
+func (g *GXDLMSObjectCollection) Length() int {
+	return len(*g)
+}
+
 func (g *GXDLMSObjectCollection) Add(item IGXDLMSBase) {
 	*g = append(*g, item)
 }
@@ -148,7 +150,10 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 	var obj IGXDLMSBase
 	reader := NewGXXmlReaderFromStream(stream)
 	defer reader.Close()
-	reader.Objects = *g
+	g.Clear()
+	reader.Objects = g
+	var err error
+	var ot enums.ObjectType
 	for !reader.EOF() {
 		if reader.IsStartElement() {
 			target := reader.Name()
@@ -163,12 +168,10 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 				if err := reader.Read(); err != nil {
 					return err
 				}
-				t, err := enums.ObjectTypeParse(str)
+				ot, err = enums.ObjectTypeParse(str)
 				if err != nil {
 					return err
 				}
-				obj = CreateObject(t)
-				obj.Base().Version = 0
 			} else if strings.EqualFold("SN", target) {
 				v, err := reader.ReadElementContentAsInt("SN", 0)
 				if err != nil {
@@ -182,6 +185,12 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 				if err != nil {
 					return err
 				}
+				obj, err = CreateObject(ot, s, 0)
+				ot = enums.ObjectTypeNone
+				if err != nil {
+					return err
+				}
+				obj.Base().Version = 0
 				if obj != nil && s != "" {
 					err := obj.Base().SetLogicalName(s)
 					if err != nil {
@@ -234,7 +243,7 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 					tmp := s
 					for pos := 0; pos != len(tmp)/4; pos++ {
 						part := tmp[4*pos : 4*pos+4]
-						v, err := strconv.ParseInt(part, 16, 32)
+						v, err := strconv.ParseUint(part, 16, 32)
 						if err != nil {
 							return err
 						}
@@ -263,7 +272,7 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 					tmp := s
 					for pos := 0; pos != len(tmp)/4; pos++ {
 						part := tmp[4*pos : 4*pos+4]
-						v, err := strconv.ParseInt(part, 16, 32)
+						v, err := strconv.ParseUint(part, 16, 32)
 						if err != nil {
 							return err
 						}
@@ -271,10 +280,8 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 					}
 				}
 			} else if obj != nil {
-				if base, ok := any(obj).(IGXDLMSBase); ok {
-					if err := base.Load(reader); err != nil {
-						return err
-					}
+				if err := obj.Load(reader); err != nil {
+					return err
 				}
 				obj = nil
 			}
@@ -285,7 +292,7 @@ func (g *GXDLMSObjectCollection) LoadFromStream(stream *bufio.Reader) error {
 		}
 	}
 	// PostLoad for all objects.
-	for _, it := range reader.Objects {
+	for _, it := range *g {
 		if err := it.PostLoad(reader); err != nil {
 			return err
 		}
@@ -305,37 +312,13 @@ func (c GXDLMSObjectCollection) SaveToFile(filename string, settings *GXXmlWrite
 	return c.SaveToStream(writer, settings)
 }
 
-func MissingMethods(v any, ifacePtr any) []string {
-	tIface := reflect.TypeOf(ifacePtr).Elem() // ifacePtr pitää olla *SomeInterface
-	tVal := reflect.TypeOf(v)
-	if tVal == nil {
-		return []string{"<nil value>"}
-	}
-
-	// Jos v ei ole pointer, mutta metodit on pointer receiverilla, tämä voi olla syy:
-	// tValPtr := tVal; if tVal.Kind() != reflect.Pointer { tValPtr = reflect.PointerTo(tVal) }
-
-	missing := []string{}
-	for i := 0; i < tIface.NumMethod(); i++ {
-		m := tIface.Method(i)
-
-		// MethodByName löytää vain exportatut metodit toisesta paketista.
-		// Jos interface sisältää unexportattuja metodeja toisesta paketista, reflect ei auta.
-		if _, ok := tVal.MethodByName(m.Name); !ok {
-			missing = append(missing, m.Name)
-		}
-	}
-	return missing
-}
-
 func (c GXDLMSObjectCollection) SaveToStream(stream *bufio.Writer, settings *GXXmlWriterSettings) error {
 	ignoreDescription := settings != nil && settings.IgnoreDescription
-	omitXmlDeclaration := settings != nil && settings.OmitXmlDeclaration
+	omitXMLDeclaration := settings != nil && settings.OmitXmlDeclaration
 	index := 0
 	if settings != nil {
 		index = settings.Index
 	}
-
 	lnVersion := 2
 	for _, it := range c {
 		if _, ok := any(it).(*GXDLMSAssociationLogicalName); ok {
@@ -343,10 +326,10 @@ func (c GXDLMSObjectCollection) SaveToStream(stream *bufio.Writer, settings *GXX
 			break
 		}
 	}
-	writer := NewGXXmlWriterStream(stream, settings)
-	defer writer.Close()
+	writer := newGXXmlWriterStream(stream, settings)
+	defer writer.close()
 
-	if !omitXmlDeclaration && !ignoreDescription {
+	if !omitXMLDeclaration && !ignoreDescription {
 		if err := writer.WriteStartDocument(); err != nil {
 			return err
 		}
@@ -355,27 +338,20 @@ func (c GXDLMSObjectCollection) SaveToStream(stream *bufio.Writer, settings *GXX
 	if err := writer.WriteStartElement("Objects"); err != nil {
 		return err
 	}
-
+	count := 0
 	for _, it := range c {
+		count++
+		if count == 200 {
+			break
+		}
 		base, ok := any(it).(IGXDLMSBase)
 		if !ok {
 			fmt.Printf("Type %T does NOT implement IGXDLMSBase\n", it)
-			fmt.Println("Missing:", MissingMethods(it, (*IGXDLMSBase)(nil)))
 			continue
 		}
 		if index < 2 {
-			if settings == nil {
-				// <GXDLMS{ObjectType}>
-				if err := writer.WriteStartElement("GXDLMS" + fmt.Sprint(it.Base().ObjectType())); err != nil {
-					return err
-				}
-			} else {
-				// <Object Type="...">
-				if err := writer.WriteStartElementWithAttrs("Object", map[string]string{
-					"Type": strconv.Itoa(int(it.Base().ObjectType())),
-				}); err != nil {
-					return err
-				}
+			if err := writer.WriteStartElement(fmt.Sprintf("GXDLMS%s", it.Base().ObjectType())); err != nil {
+				return err
 			}
 		}
 
@@ -444,29 +420,24 @@ func (c GXDLMSObjectCollection) SaveToStream(stream *bufio.Writer, settings *GXX
 				}
 			}
 		}
-
 		if settings == nil || settings.Values {
 			if err := base.Save(writer); err != nil {
 				return err
 			}
 		}
-
 		if index < 2 {
 			if err := writer.WriteEndElement(); err != nil {
 				return err
 			}
 		}
 	}
-
-	if err := writer.WriteEndElement(); err != nil { // </Objects>
+	if err := writer.WriteEndElement(); err != nil {
 		return err
 	}
-
-	if !omitXmlDeclaration && !ignoreDescription {
+	if !omitXMLDeclaration && !ignoreDescription {
 		if err := writer.WriteEndDocument(); err != nil {
 			return err
 		}
 	}
-	writer.Flush()
-	return nil
+	return writer.Flush()
 }

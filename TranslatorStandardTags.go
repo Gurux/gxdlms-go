@@ -612,7 +612,7 @@ func standardGetError(serviceError enums.ServiceError, value string) (uint8, err
 		}
 	default:
 	}
-	return uint8(ret), nil
+	return uint8(ret), err
 }
 
 func standardvalueOfConformance(value string) (enums.Conformance, error) {
@@ -863,7 +863,7 @@ func standardStateErrorToString(error enums.ExceptionStateError) (string, error)
 	}
 }
 
-// ExceptionServiceErrorToString returns the gets service error description.
+// standardExceptionServiceErrorToString returns the gets service error description.
 //
 // Parameters:
 //
@@ -891,7 +891,7 @@ func standardExceptionServiceErrorToString(error enums.ExceptionServiceError) (s
 	}
 }
 
-// ValueofStateError returns the parameters:
+// standardvalueofStateError returns the parameters:
 //
 //	value: State error string value.
 //
@@ -908,7 +908,7 @@ func standardvalueofStateError(value string) (enums.ExceptionStateError, error) 
 	return 0, gxcommon.ErrInvalidArgument
 }
 
-// ValueOfExceptionServiceError returns the parameters:
+// standardvalueOfExceptionServiceError returns the parameters:
 //
 //	value: Service error string value.
 //
@@ -916,22 +916,22 @@ func standardvalueofStateError(value string) (enums.ExceptionStateError, error) 
 //
 //	Service error enum value.
 func standardvalueOfExceptionServiceError(value string) (enums.ExceptionServiceError, error) {
-	if "operation-not-possible" == value {
+	if value == "operation-not-possible" {
 		return enums.ExceptionServiceErrorOperationNotPossible, nil
 	}
-	if "service-not-supported" == value {
+	if value == "service-not-supported" {
 		return enums.ExceptionServiceErrorServiceNotSupported, nil
 	}
-	if "other-reason" == value {
+	if value == "other-reason" {
 		return enums.ExceptionServiceErrorOtherReason, nil
 	}
-	if "pdu-too-long" == value {
+	if value == "pdu-too-long" {
 		return enums.ExceptionServiceErrorPduTooLong, nil
 	}
-	if "deciphering-error" == value {
+	if value == "deciphering-error" {
 		return enums.ExceptionServiceErrorDecipheringError, nil
 	}
-	if "invocation-counter-error" == value {
+	if value == "invocation-counter-error" {
 		return enums.ExceptionServiceErrorInvocationCounterError, nil
 	}
 	return 0, gxcommon.ErrInvalidArgument

@@ -41,65 +41,65 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// Used Algorithm ID.
-type AlgorithmId int
+// AlgorithmID enumerates Available algorithms.
+type AlgorithmID int
 
 const (
-	// AlgorithmIdAesGcm128 defines that the // AES-GCM-128
-	AlgorithmIdAesGcm128 AlgorithmId = iota
-	// AlgorithmIdAesGcm256 defines that the // AES-GCM-256
-	AlgorithmIdAesGcm256
-	// AlgorithmIdAesWrap128 defines that the // AES-WRAP-128
-	AlgorithmIdAesWrap128
-	// AlgorithmIdAesWrap256 defines that the // AES-WRAP-256.
-	AlgorithmIdAesWrap256
+	// AlgorithmIDAesGcm128 defines that the // AES-GCM-128
+	AlgorithmIDAesGcm128 AlgorithmID = iota
+	// AlgorithmIDAesGcm256 defines that the // AES-GCM-256
+	AlgorithmIDAesGcm256
+	// AlgorithmIDAesWrap128 defines that the // AES-WRAP-128
+	AlgorithmIDAesWrap128
+	// AlgorithmIDAesWrap256 defines that the // AES-WRAP-256.
+	AlgorithmIDAesWrap256
 )
 
-// AlgorithmIdParse converts the given string into a AlgorithmId value.
+// AlgorithmIDParse converts the given string into a AlgorithmId value.
 //
 // It returns the corresponding AlgorithmId constant if the string matches
 // a known level name, or an error if the input is invalid.
-func AlgorithmIdParse(value string) (AlgorithmId, error) {
-	var ret AlgorithmId
+func AlgorithmIDParse(value string) (AlgorithmID, error) {
+	var ret AlgorithmID
 	var err error
 	switch {
 	case strings.EqualFold(value, "AesGcm128"):
-		ret = AlgorithmIdAesGcm128
+		ret = AlgorithmIDAesGcm128
 	case strings.EqualFold(value, "AesGcm256"):
-		ret = AlgorithmIdAesGcm256
+		ret = AlgorithmIDAesGcm256
 	case strings.EqualFold(value, "AesWrap128"):
-		ret = AlgorithmIdAesWrap128
+		ret = AlgorithmIDAesWrap128
 	case strings.EqualFold(value, "AesWrap256"):
-		ret = AlgorithmIdAesWrap256
+		ret = AlgorithmIDAesWrap256
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
 	}
 	return ret, err
 }
 
-// String returns the canonical name of the AlgorithmId.
+// String returns the canonical name of the AlgorithmID.
 // It satisfies fmt.Stringer.
-func (g AlgorithmId) String() string {
+func (g AlgorithmID) String() string {
 	var ret string
 	switch g {
-	case AlgorithmIdAesGcm128:
+	case AlgorithmIDAesGcm128:
 		ret = "AesGcm128"
-	case AlgorithmIdAesGcm256:
+	case AlgorithmIDAesGcm256:
 		ret = "AesGcm256"
-	case AlgorithmIdAesWrap128:
+	case AlgorithmIDAesWrap128:
 		ret = "AesWrap128"
-	case AlgorithmIdAesWrap256:
+	case AlgorithmIDAesWrap256:
 		ret = "AesWrap256"
 	}
 	return ret
 }
 
-// AllAlgorithmId returns a slice containing all defined AlgorithmId values.
-func AllAlgorithmId() []AlgorithmId {
-	return []AlgorithmId{
-	AlgorithmIdAesGcm128,
-	AlgorithmIdAesGcm256,
-	AlgorithmIdAesWrap128,
-	AlgorithmIdAesWrap256,
+// AllAlgorithmID returns a slice containing all defined AlgorithmID values.
+func AllAlgorithmID() []AlgorithmID {
+	return []AlgorithmID{
+		AlgorithmIDAesGcm128,
+		AlgorithmIDAesGcm256,
+		AlgorithmIDAesWrap128,
+		AlgorithmIDAesWrap256,
 	}
 }

@@ -53,12 +53,12 @@ type GXAuthenticationMechanismName struct {
 
 	AuthenticationMechanismName uint8
 
-	MechanismId enums.Authentication
+	MechanismID enums.Authentication
 }
 
 // String returns string presentation of GXAuthenticationMechanismName struct.
 func (g *GXAuthenticationMechanismName) String() string {
 	return strconv.Itoa(int(g.JointIsoCtt)) + " " + strconv.Itoa(int(g.Country)) + " " +
 		strconv.Itoa(int(g.CountryName)) + " " + strconv.Itoa(int(g.IdentifiedOrganization)) + " " +
-		strconv.Itoa(int(g.DlmsUA)) + " " + strconv.Itoa(int(g.AuthenticationMechanismName)) + " " + g.MechanismId.String()
+		strconv.Itoa(int(g.DlmsUA)) + " " + strconv.Itoa(int(g.AuthenticationMechanismName)) + " " + g.MechanismID.String()
 }

@@ -35,8 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
-
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -333,9 +332,11 @@ func (g *GXDLMSCommunicationPortProtection) Load(reader *GXXmlReader) error {
 		g.Port = reader.Objects.FindByLN(enums.ObjectTypeNone, port)
 		// Save port object for data object if it's not loaded yet.
 		if g.Port == nil {
-			g.Port = CreateObject(enums.ObjectTypeData)
+			g.Port, err = CreateObject(enums.ObjectTypeData, port, 0)
+			if err != nil {
+				return err
+			}
 			g.Port.Base().Version = 0
-			g.Port.Base().SetLogicalName(port)
 		}
 	}
 	i, err = reader.ReadElementContentAsInt("ProtectionStatus", 0)
@@ -467,14 +468,15 @@ func (g *GXDLMSCommunicationPortProtection) GetDataType(index int) (enums.DataTy
 	case 10:
 		ret = enums.DataTypeUint32
 	default:
-		return 0, errors.New("GetDataType failed. Invalid attribute index.")
+		return 0, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSCommunicationPortProtection creates a new communication port protection object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSCommunicationPortProtection(ln string, sn int16) (*GXDLMSCommunicationPortProtection, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

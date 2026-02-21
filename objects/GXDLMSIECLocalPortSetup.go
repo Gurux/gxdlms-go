@@ -35,9 +35,9 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -75,7 +75,7 @@ type GXDLMSIECLocalPortSetup struct {
 	Password5 string
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSIECLocalPortSetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -402,12 +402,13 @@ func (g *GXDLMSIECLocalPortSetup) GetDataType(index int) (enums.DataType, error)
 	case 9:
 		return enums.DataTypeOctetString, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSIECLocalPortSetup creates a new IEC local port setup object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSIECLocalPortSetup(ln string, sn int16) (*GXDLMSIECLocalPortSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

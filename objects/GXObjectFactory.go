@@ -38,163 +38,161 @@ import (
 )
 
 // CreateObject creates a COSEM object based on the object type.
-func CreateObject(objectType enums.ObjectType) IGXDLMSBase {
+func CreateObject(objectType enums.ObjectType, ln string, sn int16) (IGXDLMSBase, error) {
 	var ret IGXDLMSBase
+	var err error
 	switch objectType {
 	case enums.ObjectTypeActionSchedule:
-		ret = &GXDLMSActionSchedule{}
+		ret, err = NewGXDLMSActionSchedule(ln, sn)
 	case enums.ObjectTypeActivityCalendar:
-		ret = &GXDLMSActivityCalendar{}
+		ret, err = NewGXDLMSActivityCalendar(ln, sn)
 	case enums.ObjectTypeAssociationLogicalName:
-		ret = &GXDLMSAssociationLogicalName{}
+		ret, err = NewGXDLMSAssociationLogicalName(ln, sn)
 	case enums.ObjectTypeAssociationShortName:
-		ret = &GXDLMSAssociationShortName{}
+		ret, err = NewGXDLMSAssociationShortName(ln, sn)
 	case enums.ObjectTypeAutoAnswer:
-		ret = &GXDLMSAutoAnswer{}
+		ret, err = NewGXDLMSAutoAnswer(ln, sn)
 	case enums.ObjectTypeAutoConnect:
-		ret = &GXDLMSAutoConnect{}
+		ret, err = NewGXDLMSAutoConnect(ln, sn)
 	case enums.ObjectTypeClock:
-		ret = &GXDLMSClock{}
+		ret, err = NewGXDLMSClock(ln, sn)
 	case enums.ObjectTypeData:
-		ret = &GXDLMSData{}
+		ret, err = NewGXDLMSData(ln, sn)
 	case enums.ObjectTypeDemandRegister:
-		ret = &GXDLMSDemandRegister{}
+		ret, err = NewGXDLMSDemandRegister(ln, sn)
 	case enums.ObjectTypeMacAddressSetup:
-		ret = &GXDLMSMacAddressSetup{}
+		ret, err = NewGXDLMSMacAddressSetup(ln, sn)
 	case enums.ObjectTypeExtendedRegister:
-		ret = &GXDLMSExtendedRegister{}
+		ret, err = NewGXDLMSExtendedRegister(ln, sn)
 	case enums.ObjectTypeGprsSetup:
-		ret = &GXDLMSGprsSetup{}
+		ret, err = NewGXDLMSGprsSetup(ln, sn)
 	case enums.ObjectTypeIecHdlcSetup:
-		ret = &GXDLMSHdlcSetup{}
+		ret, err = NewGXDLMSHdlcSetup(ln, sn)
 	case enums.ObjectTypeIecLocalPortSetup:
-		ret = &GXDLMSIECLocalPortSetup{}
+		ret, err = NewGXDLMSIECLocalPortSetup(ln, sn)
 	case enums.ObjectTypeIecTwistedPairSetup:
-		ret = &GXDLMSIecTwistedPairSetup{}
+		ret, err = NewGXDLMSIecTwistedPairSetup(ln, sn)
 	case enums.ObjectTypeIP4Setup:
-		//TODO: ret = &GXDLMSIp4Setup{}
+		//TODO: ret, err = NewGXDLMSIp4Setup(ln, sn)
 	case enums.ObjectTypeIP6Setup:
-		//TODO: ret = &GXDLMSIp6Setup{}
+		//TODO: ret, err = NewGXDLMSIp6Setup(ln, sn)
 	case enums.ObjectTypeMBusSlavePortSetup:
-		ret = &GXDLMSMBusSlavePortSetup{}
+		ret, err = NewGXDLMSMBusSlavePortSetup(ln, sn)
 	case enums.ObjectTypeImageTransfer:
-		//TODO: ret = &GXDLMSImageTransfer{}
+		//TODO: ret, err = NewGXDLMSImageTransfer(ln, sn)
 	case enums.ObjectTypeSecuritySetup:
-		ret = &GXDLMSSecuritySetup{}
+		ret, err = NewGXDLMSSecuritySetup(ln, sn)
 	case enums.ObjectTypeDisconnectControl:
-		ret = &GXDLMSDisconnectControl{}
+		ret, err = NewGXDLMSDisconnectControl(ln, sn)
 	case enums.ObjectTypeLimiter:
-		ret = &GXDLMSLimiter{}
+		ret, err = NewGXDLMSLimiter(ln, sn)
 	case enums.ObjectTypeMBusClient:
-		ret = &GXDLMSMBusClient{}
+		ret, err = NewGXDLMSMBusClient(ln, sn)
 	case enums.ObjectTypeModemConfiguration:
-		ret = &GXDLMSModemConfiguration{}
+		ret, err = NewGXDLMSModemConfiguration(ln, sn)
 	case enums.ObjectTypePppSetup:
-		ret = &GXDLMSPppSetup{}
+		ret, err = NewGXDLMSPppSetup(ln, sn)
 	case enums.ObjectTypeProfileGeneric:
-		ret = &GXDLMSProfileGeneric{}
+		ret, err = NewGXDLMSProfileGeneric(ln, sn)
 	case enums.ObjectTypeRegister:
-		ret = &GXDLMSRegister{}
+		ret, err = NewGXDLMSRegister(ln, sn)
 	case enums.ObjectTypeRegisterActivation:
-		ret = &GXDLMSRegisterActivation{}
+		ret, err = NewGXDLMSRegisterActivation(ln, sn)
 	case enums.ObjectTypeRegisterMonitor:
-		ret = &GXDLMSRegisterMonitor{}
+		ret, err = NewGXDLMSRegisterMonitor(ln, sn)
 	case enums.ObjectTypeSapAssignment:
-		ret = &GXDLMSSapAssignment{}
+		ret, err = NewGXDLMSSapAssignment(ln, sn)
 	case enums.ObjectTypeSchedule:
-		ret = &GXDLMSSchedule{}
+		ret, err = NewGXDLMSSchedule(ln, sn)
 	case enums.ObjectTypeScriptTable:
-		ret = &GXDLMSScriptTable{}
+		ret, err = NewGXDLMSScriptTable(ln, sn)
 	case enums.ObjectTypeSpecialDaysTable:
-		ret = &GXDLMSSpecialDaysTable{}
+		ret, err = NewGXDLMSSpecialDaysTable(ln, sn)
 	case enums.ObjectTypeTCPUDPSetup:
-		ret = &GXDLMSTcpUdpSetup{}
+		ret, err = NewGXDLMSTcpUdpSetup(ln, sn)
+	case enums.ObjectTypeUtilityTables:
+		ret, err = NewGXDLMSUtilityTables(ln, sn)
+	case enums.ObjectTypePushSetup:
+		ret, err = NewGXDLMSPushSetup(ln, sn)
+	case enums.ObjectTypeMBusMasterPortSetup:
+		ret, err = NewGXDLMSMBusMasterPortSetup(ln, sn)
+	case enums.ObjectTypeGSMDiagnostic:
+		ret, err = NewGXDLMSGSMDiagnostic(ln, sn)
+	case enums.ObjectTypeAccount:
+		ret, err = NewGXDLMSAccount(ln, sn)
 		/*
-		   case enums.ObjectTypeUtilityTables:
-		       ret = &GXDLMSUtilityTables{}
-		   case enums.ObjectTypePushSetup:
-		       ret = &GXDLMSPushSetup{}
-		   case enums.ObjectTypeMBusMasterPortSetup:
-		       ret = &GXDLMSMBusMasterPortSetup{}
-		   case enums.ObjectTypeGsmDiagnostic:
-		       ret = &GXDLMSGsmDiagnostic{}
-		   case enums.ObjectTypeAccount:
-		       ret = &GXDLMSAccount{}
 		   case enums.ObjectTypeCredit:
-		       ret = &GXDLMSCredit{}
+		       ret, err = NewGXDLMSCredit(ln, sn)
 		   case enums.ObjectTypeCharge:
-		       ret = &GXDLMSCharge{}
+		       ret, err = NewGXDLMSCharge(ln, sn)
 		   case enums.ObjectTypeTokenGateway:
-		       ret = &GXDLMSTokenGateway{}
+		       ret, err = NewGXDLMSTokenGateway(ln, sn)
 		   case enums.ObjectTypeParameterMonitor:
-		       ret = &GXDLMSParameterMonitor{}
+		       ret, err = NewGXDLMSParameterMonitor(ln, sn)
 		   case enums.ObjectTypeCompactData:
-		       ret = &GXDLMSCompactData{}
+		       ret, err = NewGXDLMSCompactData(ln, sn)
 		   case enums.ObjectTypeLLCSSCSSetup:
-		       ret = &GXDLMSLlcSscsSetup{}
+		       ret, err = NewGXDLMSLlcSscsSetup(ln, sn)
 		   case enums.ObjectTypePRIMENBOFDMPLCPHYSICALLAYERCOUNTERS:
-		       ret = &GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters{}
+		       ret, err = NewGXDLMSPrimeNbOfdmPlcPhysicalLayerCounters(ln, sn)
 		   case enums.ObjectTypePRIMENBOFDMPLCMACSETUP:
-		       ret = &GXDLMSPrimeNbOfdmPlcMacSetup{}
+		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacSetup(ln, sn)
 		   case enums.ObjectTypePRIMENBOFDMPLCMACFUNCTIONALPARAMETERS:
-		       ret = &GXDLMSPrimeNbOfdmPlcMacFunctionalParameters{}
+		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacFunctionalParameters(ln, sn)
 		   case enums.ObjectTypePRIMENBOFDMPLCMACCOUNTERS:
-		       ret = &GXDLMSPrimeNbOfdmPlcMacCounters{}
+		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacCounters(ln, sn)
 		   case enums.ObjectTypePRIMENBOFDMPLCMACNETWORKADMINISTRATIONDATA:
-		       ret = &GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData{}
+		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData(ln, sn)
 		   case enums.ObjectTypePRIMENBOFDMPLCAPPLICATIONSIDENTIFICATION:
-		       ret = &GXDLMSPrimeNbOfdmPlcApplicationsIdentification{}
+		       ret, err = NewGXDLMSPrimeNbOfdmPlcApplicationsIdentification(ln, sn)
 		   case enums.ObjectTypeIEC8802LLCTYPE1SETUP:
-		       ret = &GXDLMSIec8802LlcType1Setup{}
+		       ret, err = NewGXDLMSIec8802LlcType1Setup(ln, sn)
 		   case enums.ObjectTypeIEC8802LLCTYPE2SETUP:
-		       ret = &GXDLMSIec8802LlcType2Setup{}
+		       ret, err = NewGXDLMSIec8802LlcType2Setup(ln, sn)
 		   case enums.ObjectTypeIEC8802LLCTYPE3SETUP:
-		       ret = &GXDLMSIec8802LlcType3Setup{}
+		       ret, err = NewGXDLMSIec8802LlcType3Setup(ln, sn)
 		   case enums.ObjectTypeSFSKREPORTINGSYSTEMLIST:
-		       ret = &GXDLMSSFSKReportingSystemList{}
+		       ret, err = NewGXDLMSSFSKReportingSystemList(ln, sn)
 		   case enums.ObjectTypeArbitrator:
-		       ret = &GXDLMSArbitrator{}
+		       ret, err = NewGXDLMSArbitrator(ln, sn)
 		   case enums.ObjectTypeSFSKMacCounters:
-		       ret = &GXDLMSSFSKMacCounters{}
+		       ret, err = NewGXDLMSSFSKMacCounters(ln, sn)
 		   case enums.ObjectTypeSFSKMacSynchronizationTimeouts:
-		       ret = &GXDLMSSFSKMacSynchronizationTimeouts{}
+		       ret, err = NewGXDLMSSFSKMacSynchronizationTimeouts(ln, sn)
 		   case enums.ObjectTypeSFSKActiveInitiator:
-		       ret = &GXDLMSSFSKActiveInitiator{}
+		       ret, err = NewGXDLMSSFSKActiveInitiator(ln, sn)
 		   case enums.ObjectTypeSFSKPhyMacSetup:
-		       ret = &GXDLMSSFSKPhyMacSetup{}
+		       ret, err = NewGXDLMSSFSKPhyMacSetup(ln, sn)
 		   case enums.ObjectTypeNtpSetup:
-		       ret = &GXDLMSNtpSetup{}
+		       ret, err = NewGXDLMSNtpSetup(ln, sn)
 		*/
 	case enums.ObjectTypeCommunicationPortProtection:
-		ret = &GXDLMSCommunicationPortProtection{}
+		ret, err = NewGXDLMSCommunicationPortProtection(ln, sn)
 		/*
 		   case enums.ObjectTypeG3PlcMacLayerCounters:
-		       ret = &GXDLMSG3PlcMacLayerCounters{}
+		       ret, err = NewGXDLMSG3PlcMacLayerCounters(ln, sn)
 		   case enums.ObjectTypeG3PPlc6LoWPan:
-		       ret = &GXDLMSG3Plc6LoWPan{}
+		       ret, err = NewGXDLMSG3Plc6LoWPan(ln, sn)
 		   case enums.ObjectTypeG3PlcMacSetup:
-		       ret = &GXDLMSG3PlcMacSetup{}
+		       ret, err = NewGXDLMSG3PlcMacSetup(ln, sn)
 		   case enums.ObjectTypeArrayManager:
-		       ret = &GXDLMSArrayManager{}
+		       ret, err = NewGXDLMSArrayManager(ln, sn)
 		   case enums.ObjectTypeLteMonitoring:
-		       ret = &GXDLMSLteMonitoring{}
+		       ret, err = NewGXDLMSLteMonitoring(ln, sn)
 		   case enums.ObjectTypeFunctionControl:
-		       ret = &GXDLMSFunctionControl{}
+		       ret, err = NewGXDLMSFunctionControl(ln, sn)
 		   case enums.ObjectTypeCoapSetup:
-		       ret = &GXDLMSCoAPSetup{}
+		       ret, err = NewGXDLMSCoAPSetup(ln, sn)
 		   case enums.ObjectTypeCoapDiagnostic:
-		       ret = &GXDLMSCoAPDiagnostic{}
+		       ret, err = NewGXDLMSCoAPDiagnostic(ln, sn)
 		   case enums.ObjectTypeMBusPortSetup:
-		       ret = &GXDLMSMBusPortSetup{}
+		       ret, err = NewGXDLMSMBusPortSetup(ln, sn)
 		   case enums.ObjectTypeMBusDiagnostic:
-		       ret = &GXDLMSMBusDiagnostic{}
+		       ret, err = NewGXDLMSMBusDiagnostic(ln, sn)
 		   case enums.ObjectTypeIEC6205541Attributes:
-		       ret = &GXDLMSIec6205541Attributes{}
+		       ret, err = NewGXDLMSIec6205541Attributes(ln, sn)
 		*/
 	default:
 	}
-	if ret != nil {
-		ret.Base().objectType = objectType
-	}
-	return ret
+	return ret, err
 }

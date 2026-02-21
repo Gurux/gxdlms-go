@@ -51,7 +51,7 @@ type GXDate struct {
 func NewGXDateFromString(value string, language *language.Tag) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Skip = enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
-	err := ret.parseInternal(value, language)
+	err := parseInternal(ret, value, language)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +89,14 @@ func (g *GXDate) String() string {
 }
 
 func (g *GXDate) ToString(language *language.Tag, useLocalTime bool) string {
-	g.GXDateTime.Skip |= enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
-	return g.GXDateTime.ToString(language, useLocalTime)
+	g.Skip |= enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
+	return toString(g, language, useLocalTime, false)
+}
+
+func (g *GXDate) ToFormatString(language *language.Tag, useLocalTime bool) string {
+	return toString(g, language, useLocalTime, true)
+}
+
+func (g *GXDate) ToFormatMeterString(language *language.Tag) string {
+	return toString(g, language, false, true)
 }

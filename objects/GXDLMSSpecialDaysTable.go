@@ -37,6 +37,7 @@
 import (
 	"errors"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -52,7 +53,7 @@ type GXDLMSSpecialDaysTable struct {
 	Entries []GXDLMSSpecialDay
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSSpecialDaysTable) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -270,8 +271,15 @@ func (g *GXDLMSSpecialDaysTable) Invoke(settings *settings.GXDLMSSettings, e *in
 func (g *GXDLMSSpecialDaysTable) Load(reader *GXXmlReader) error {
 	var err error
 	list := []GXDLMSSpecialDay{}
-	if reader.isStartElementNamed2("Entries", true) {
-		for reader.isStartElementNamed2("Entry", true) {
+	if ret, err := reader.IsStartElementNamed("Entries", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Entry", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it := GXDLMSSpecialDay{}
 			ret, err := reader.ReadElementContentAsInt("Index", 0)
 			if err != nil {
@@ -391,12 +399,13 @@ func (g *GXDLMSSpecialDaysTable) GetDataType(index int) (enums.DataType, error) 
 	if index == 2 {
 		return enums.DataTypeArray, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSSpecialDaysTable creates a new special days table object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSSpecialDaysTable(ln string, sn int16) (*GXDLMSSpecialDaysTable, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -35,10 +35,10 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"reflect"
 	"strings"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -66,7 +66,7 @@ type GXDLMSPppSetup struct {
 	Password []byte
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSPppSetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -514,7 +514,7 @@ func (g *GXDLMSPppSetup) GetValues() []any {
 		}
 		sb.WriteString(string(g.Password))
 	}
-	return []any{g.LogicalName, g.PHYReference, g.LCPOptions, g.IPCPOptions, sb.String()}
+	return []any{g.LogicalName(), g.PHYReference, g.LCPOptions, g.IPCPOptions, sb.String()}
 }
 
 // GetDataType returns the device data type of selected attribute index.
@@ -545,12 +545,13 @@ func (g *GXDLMSPppSetup) GetDataType(index int) (enums.DataType, error) {
 		}
 		return enums.DataTypeStructure, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSPppSetup creates a new PPP setup object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSPppSetup(ln string, sn int16) (*GXDLMSPppSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

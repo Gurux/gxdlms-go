@@ -40,6 +40,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -92,7 +93,7 @@ func getObjects(settings *settings.GXDLMSSettings) *GXDLMSObjectCollection {
 	return &ret
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSProfileGeneric) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -131,7 +132,7 @@ func (g *GXDLMSProfileGeneric) Invoke(settings *settings.GXDLMSSettings, e *inte
 //
 //	Collection of attributes to read.
 func (g *GXDLMSProfileGeneric) GetAttributeIndexToRead(all bool) []int {
-	attributes := []int{}
+	var attributes []int
 	// LN is static and read only once.
 	if all || g.LogicalName() == "" {
 		attributes = append(attributes, 1)
@@ -586,7 +587,10 @@ func (g *GXDLMSProfileGeneric) setCaptureObjects(parent any,
 		}
 		// Create a new instance to avoid circular references.
 		if obj == nil || obj == parent.(IGXDLMSBase) {
-			obj = CreateObject(type_)
+			obj, err = CreateObject(type_, ln, 0)
+			if err != nil {
+				return err
+			}
 			/*TODO:
 			if c == nil {
 				c = GXDLMSConverter(enums.StandardDLMS if settings == nil else settings.Standard())
@@ -667,8 +671,10 @@ func (g *GXDLMSProfileGeneric) SetValue(settings *settings.GXDLMSSettings, e *in
 					}
 				}
 				if g.SortObject == nil {
-					g.SortObject = CreateObject(type_)
-					g.SortObject.Base().SetLogicalName(ln)
+					g.SortObject, err = CreateObject(type_, ln, 0)
+					if err != nil {
+						return err
+					}
 				}
 			} else {
 				g.SortObject = nil
@@ -700,10 +706,17 @@ func (g *GXDLMSProfileGeneric) SetValue(settings *settings.GXDLMSSettings, e *in
 func (g *GXDLMSProfileGeneric) Load(reader *GXXmlReader) error {
 	var err error
 	g.Buffer = g.Buffer[:0]
-	if reader.isStartElementNamed2("Buffer", true) {
-		for reader.isStartElementNamed2("Row", true) {
+	if ret, err := reader.IsStartElementNamed("Buffer", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Row", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			row := [][]any{}
-			for reader.isStartElementNamed2("Cell", false) {
+			if ret, err := reader.IsStartElementNamed("Cell", true); ret && err == nil {
 				ret, err := reader.ReadElementContentAsObject("Cell", nil, nil, 0)
 				row = append(row, ret.([]any))
 				if err != nil {
@@ -715,8 +728,15 @@ func (g *GXDLMSProfileGeneric) Load(reader *GXXmlReader) error {
 		reader.ReadEndElement("Buffer")
 	}
 	g.CaptureObjects = g.CaptureObjects[:0]
-	if reader.isStartElementNamed2("CaptureObjects", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("CaptureObjects", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			ret, err := reader.ReadElementContentAsInt("ObjectType", 0)
 			if err != nil {
 				return err
@@ -737,8 +757,10 @@ func (g *GXDLMSProfileGeneric) Load(reader *GXXmlReader) error {
 			co := NewGXDLMSCaptureObject(ai, di)
 			obj := reader.Objects.FindByLN(ot, ln)
 			if obj == nil {
-				obj = CreateObject(ot)
-				obj.Base().SetLogicalName(ln)
+				obj, err = CreateObject(ot, ln, 0)
+				if err != nil {
+					return err
+				}
 			}
 			g.CaptureObjects = append(g.CaptureObjects, *types.NewGXKeyValuePair(obj, co))
 		}
@@ -754,7 +776,7 @@ func (g *GXDLMSProfileGeneric) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.SortMethod = enums.SortMethod(ret)
-	if reader.isStartElementNamed2("SortObject", true) {
+	if ret, err := reader.IsStartElementNamed("SortObject", true); ret && err == nil {
 		ret, err := reader.ReadElementContentAsInt("ObjectType", 0)
 		if err != nil {
 			return err
@@ -1020,7 +1042,7 @@ func (g *GXDLMSProfileGeneric) GetDataType(index int) (enums.DataType, error) {
 	case 8:
 		ret = enums.DataTypeUint32
 	default:
-		return 0, errors.New("GetDataType failed. Invalid attribute index.")
+		return 0, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
@@ -1036,9 +1058,10 @@ func (g *GXDLMSProfileGeneric) GetCaptureObjects(array []any) []types.GXKeyValue
 	return list
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSProfileGeneric creates a new profile generic object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSProfileGeneric(ln string, sn int16) (*GXDLMSProfileGeneric, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

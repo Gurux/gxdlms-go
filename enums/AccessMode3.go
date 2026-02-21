@@ -41,7 +41,7 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// AccessMode3 enumerates the access modes for Logical Name Association version 3.
+// AccessMode3 enumerates allowed access rights.
 type AccessMode3 int
 
 const (

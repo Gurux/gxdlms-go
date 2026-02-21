@@ -41,13 +41,15 @@ import (
 	"strings"
 
 	"github.com/Gurux/gxdlms-go/enums"
+	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/types"
+	"golang.org/x/text/language"
 )
 
 type GXXmlReader struct {
 	dec     *xml.Decoder
 	tok     xml.Token // current token
-	Objects GXDLMSObjectCollection
+	Objects *GXDLMSObjectCollection
 }
 
 func NewGXXmlReaderFromStream(stream *bufio.Reader) *GXXmlReader {
@@ -68,12 +70,21 @@ func (r *GXXmlReader) EOF() bool {
 }
 
 func (r *GXXmlReader) IsStartElement() bool {
+	r.getNext()
 	r.nodeType()
 	_, ok := r.tok.(xml.StartElement)
 	return ok
 }
 
-func (r *GXXmlReader) Name() string { return r.tok.(xml.StartElement).Name.Local }
+func (r *GXXmlReader) Name() string {
+	switch r.tok.(type) {
+	case xml.StartElement:
+		return r.tok.(xml.StartElement).Name.Local
+	case xml.EndElement:
+		return r.tok.(xml.EndElement).Name.Local
+	}
+	return ""
+}
 
 func (r *GXXmlReader) Read() error {
 	v, err := r.dec.Token()
@@ -84,6 +95,7 @@ func (r *GXXmlReader) Read() error {
 	}
 	return err
 }
+
 func (r *GXXmlReader) GetAttribute(index int) string { return "" }
 
 func (x *GXXmlReader) nodeType() string {
@@ -136,14 +148,6 @@ func (x *GXXmlReader) isStartElementNamed(name string) bool {
 	return strings.EqualFold(se.Name.Local, name)
 }
 
-func (x *GXXmlReader) isStartElementNamed2(name string, getNext bool) bool {
-	se, ok := x.tok.(xml.StartElement)
-	if !ok {
-		return false
-	}
-	return strings.EqualFold(se.Name.Local, name)
-}
-
 // ReadEndElement(name)
 func (x *GXXmlReader) ReadEndElement(name string) error {
 	if err := x.getNext(); err != nil {
@@ -158,7 +162,6 @@ func (x *GXXmlReader) ReadEndElement(name string) error {
 	return nil
 }
 
-// IsStartElement(name, getNext) with roughly same behavior.
 func (x *GXXmlReader) IsStartElementNamed(name string, getNext bool) (bool, error) {
 	if err := x.getNext(); err != nil {
 		return false, err
@@ -223,47 +226,29 @@ func (x *GXXmlReader) ReadElementContentAsString(name string, def string) (strin
 }
 
 func (x *GXXmlReader) ReadElementContentAsGXDateTime(name string) (types.GXDateTime, error) {
-	if err := x.getNext(); err != nil {
+	ret, err := x.ReadElementContentAsString(name, "")
+	if err != nil || ret == "" {
 		return types.GXDateTime{}, err
 	}
-	if !strings.EqualFold(x.Name(), name) {
-		return types.GXDateTime{}, nil
-	}
-	s, err := x.readElementText(name)
-	if err != nil {
-		return types.GXDateTime{}, err
-	}
-	sdt, err := types.NewGXDateTimeFromString(s, nil)
-	return *sdt, err
+	ret2, err := types.NewGXDateTimeFromString(ret, &language.AmericanEnglish)
+	return *ret2, err
 }
 
 func (x *GXXmlReader) ReadElementContentAsGXDate(name string) (types.GXDate, error) {
-	if err := x.getNext(); err != nil {
+	ret, err := x.ReadElementContentAsString(name, "")
+	if err != nil || ret == "" {
 		return types.GXDate{}, err
 	}
-	if !strings.EqualFold(x.Name(), name) {
-		return types.GXDate{}, nil
-	}
-	s, err := x.readElementText(name)
-	if err != nil {
-		return types.GXDate{}, err
-	}
-	sdt, err := types.NewGXDateFromString(s, nil)
+	sdt, err := types.NewGXDateFromString(ret, &language.AmericanEnglish)
 	return *sdt, err
 }
 
 func (x *GXXmlReader) ReadElementContentAsTime(name string) (types.GXTime, error) {
-	if err := x.getNext(); err != nil {
+	ret, err := x.ReadElementContentAsString(name, "")
+	if err != nil || ret == "" {
 		return types.GXTime{}, err
 	}
-	if !strings.EqualFold(x.Name(), name) {
-		return types.GXTime{}, nil
-	}
-	s, err := x.readElementText(name)
-	if err != nil {
-		return types.GXTime{}, err
-	}
-	sdt, err := types.NewGXTimeFromString(s, nil)
+	sdt, err := types.NewGXTimeFromString(ret, &language.AmericanEnglish)
 	return *sdt, err
 }
 
@@ -286,11 +271,11 @@ func (x *GXXmlReader) ReadElementContentAsInt(name string, def int) (int, error)
 }
 
 func (x *GXXmlReader) ReadElementContentAsBool(name string, def bool) (bool, error) {
-	ret, err := x.ReadElementContentAsInt(name, 0)
+	ret, err := x.ReadElementContentAsString(name, "")
 	if err != nil {
 		return false, err
 	}
-	return ret != 0, nil
+	return strconv.ParseBool(ret)
 }
 
 func (x *GXXmlReader) ReadElementContentAsInt8(name string, def int) (int8, error) {
@@ -388,21 +373,25 @@ func (x *GXXmlReader) ReadElementContentAsDouble(name string, def float64) (floa
 }
 
 func (x *GXXmlReader) ReadElementContentAsDateTime(name string, def *types.GXDateTime) (types.GXDateTime, error) {
-	if err := x.getNext(); err != nil {
+	ret, err := x.ReadElementContentAsString(name, "")
+	if err != nil {
+		if def == nil {
+			return types.GXDateTime{}, err
+		}
 		return *def, err
 	}
-	return *def, nil
+
+	ret2, err := types.NewGXDateTimeFromString(ret, &language.AmericanEnglish)
+	if err != nil {
+		return types.GXDateTime{}, err
+	}
+	return *ret2, err
 }
 
-// ReadElementContentAsObject(name, defaultValue, obj, index)
 func (x *GXXmlReader) ReadElementContentAsObject(name string, def any, obj IGXDLMSBase, index int) (any, error) {
-	if err := x.getNext(); err != nil {
-		return def, err
-	}
 	if !strings.EqualFold(x.Name(), name) {
 		return def, nil
 	}
-
 	se, _ := x.tok.(xml.StartElement)
 	attrCount := len(se.Attr)
 
@@ -438,6 +427,10 @@ func (x *GXXmlReader) ReadElementContentAsObject(name string, def any, obj IGXDL
 		obj.Base().SetUIDataType(index, uiType)
 	}
 
+	ret, err := x.readElementText(name)
+	if err != nil {
+		return def, err
+	}
 	if dt == enums.DataTypeArray || dt == enums.DataTypeStructure {
 		// Move inside element and read items.
 		if err := x.Read(); err != nil {
@@ -455,7 +448,10 @@ func (x *GXXmlReader) ReadElementContentAsObject(name string, def any, obj IGXDL
 		}
 		return arr, nil
 	}
-	return nil, nil
+	if dt != enums.DataTypeNone {
+		return internal.Convert(ret, dt)
+	}
+	return ret, err
 }
 
 func (x *GXXmlReader) readArray() ([]any, error) {

@@ -37,6 +37,7 @@
 import (
 	"errors"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -68,7 +69,7 @@ type GXDLMSActivityCalendar struct {
 	Time types.GXDateTime
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSActivityCalendar) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -513,8 +514,15 @@ func (g *GXDLMSActivityCalendar) Invoke(settings *settings.GXDLMSSettings, e *in
 func (g *GXDLMSActivityCalendar) LoadSeasonProfile(reader *GXXmlReader, name string) ([]GXDLMSSeasonProfile, error) {
 	var err error
 	list := []GXDLMSSeasonProfile{}
-	if reader.isStartElementNamed2(name, true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed(name, true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return nil, err
+			}
+			if !ret {
+				break
+			}
 			it := GXDLMSSeasonProfile{}
 			ret, err := reader.ReadElementContentAsString("Name", "")
 			if err != nil {
@@ -540,8 +548,15 @@ func (g *GXDLMSActivityCalendar) LoadSeasonProfile(reader *GXXmlReader, name str
 func (g *GXDLMSActivityCalendar) LoadWeekProfileTable(reader *GXXmlReader, name string) ([]GXDLMSWeekProfile, error) {
 	var err error
 	list := []GXDLMSWeekProfile{}
-	if reader.isStartElementNamed2(name, true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed(name, true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return nil, err
+			}
+			if !ret {
+				break
+			}
 			it := GXDLMSWeekProfile{}
 			ret1, err := reader.ReadElementContentAsString("Name", "")
 			if err != nil {
@@ -592,8 +607,16 @@ func (g *GXDLMSActivityCalendar) LoadWeekProfileTable(reader *GXXmlReader, name 
 
 func (g *GXDLMSActivityCalendar) LoadDayProfileTable(reader *GXXmlReader, name string) ([]GXDLMSDayProfile, error) {
 	list := []GXDLMSDayProfile{}
-	if reader.isStartElementNamed2(name, true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed(name, true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return nil, err
+			}
+			if !ret {
+				break
+			}
+
 			it := GXDLMSDayProfile{}
 			ret, err := reader.ReadElementContentAsInt("DayId", 0)
 			if err != nil {
@@ -602,8 +625,15 @@ func (g *GXDLMSActivityCalendar) LoadDayProfileTable(reader *GXXmlReader, name s
 			it.DayId = uint8(ret)
 			list = append(list, it)
 			var actions []GXDLMSDayProfileAction
-			if reader.isStartElementNamed2("Actions", true) {
-				for reader.isStartElementNamed2("Action", true) {
+			if ret, err := reader.IsStartElementNamed("Actions", true); ret && err == nil {
+				for {
+					ret, err = reader.IsStartElementNamed("Action", true)
+					if err != nil {
+						return nil, err
+					}
+					if !ret {
+						break
+					}
 					d := GXDLMSDayProfileAction{}
 					actions = append(actions, d)
 					d.StartTime, err = reader.ReadElementContentAsTime("Start")
@@ -874,14 +904,15 @@ func (g *GXDLMSActivityCalendar) GetDataType(index int) (enums.DataType, error) 
 			ret = enums.DataTypeOctetString
 		}
 	} else {
-		return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+		return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSActivityCalendar creates a new activity calendar object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSActivityCalendar(ln string, sn int16) (*GXDLMSActivityCalendar, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

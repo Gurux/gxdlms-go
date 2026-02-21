@@ -77,9 +77,26 @@ func NewGXTime(hour int, minute int, second int, millisecond int) (*GXTime, erro
 func NewGXTimeFromString(value string, language *language.Tag) (*GXTime, error) {
 	ret := &GXTime{}
 	ret.Skip |= enums.DateTimeSkipsYear | enums.DateTimeSkipsMonth | enums.DateTimeSkipsDay | enums.DateTimeSkipsDayOfWeek
-	err := ret.parseInternal(value, language)
+	err := parseInternal(ret, value, language)
 	if err != nil {
 		return nil, err
 	}
 	return ret, err
+}
+
+func (g *GXTime) String() string {
+	return g.ToString(nil, true)
+}
+
+func (g *GXTime) ToString(language *language.Tag, useLocalTime bool) string {
+	g.Skip |= enums.DateTimeSkipsYear | enums.DateTimeSkipsMonth | enums.DateTimeSkipsDay | enums.DateTimeSkipsDayOfWeek
+	return toString(g, language, useLocalTime, false)
+}
+
+func (g *GXTime) ToFormatString(language *language.Tag, useLocalTime bool) string {
+	return toString(g, language, useLocalTime, true)
+}
+
+func (g *GXTime) ToFormatMeterString(language *language.Tag) string {
+	return toString(g, language, false, true)
 }

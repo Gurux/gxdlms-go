@@ -36,8 +36,8 @@
 
 import (
 	"bytes"
-	"errors"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -59,7 +59,7 @@ type GXDLMSAssociationShortName struct {
 	SecuritySetupReference string
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSAssociationShortName) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -75,7 +75,7 @@ func (g *GXDLMSAssociationShortName) Base() *GXDLMSObject {
 //
 //	Collection of attributes to read.
 func (g *GXDLMSAssociationShortName) GetAttributeIndexToRead(all bool) []int {
-	attributes := []int{}
+	var attributes []int
 	// LN is static and read only once.
 	if all || g.LogicalName() == "" {
 		attributes = append(attributes, 1)
@@ -412,10 +412,12 @@ func (g *GXDLMSAssociationShortName) SetValue(settings *settings.GXDLMSSettings,
 					obj = settings.Objects.(*GXDLMSObjectCollection).FindBySN(uint16(sn))
 				}
 				if obj == nil {
-					obj = CreateObject(type_)
+					obj, err = CreateObject(type_, ln, sn)
+					if err != nil {
+						e.Error = enums.ErrorCodeReadWriteDenied
+						return err
+					}
 					if obj != nil {
-						obj.Base().SetLogicalName(ln)
-						obj.Base().ShortName = sn
 						obj.Base().Version = version
 					}
 				}
@@ -610,12 +612,13 @@ func (g *GXDLMSAssociationShortName) GetDataType(index int) (enums.DataType, err
 	case 4:
 		return enums.DataTypeOctetString, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSAssociationShortName creates a new association short name object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSAssociationShortName(ln string, sn int16) (*GXDLMSAssociationShortName, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -1,7 +1,6 @@
 linters:
   enable:
     - revive
-  disable:
     - stylecheck
 
 linters-settings:

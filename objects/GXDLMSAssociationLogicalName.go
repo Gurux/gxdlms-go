@@ -42,6 +42,7 @@ import (
 	"strings"
 
 	"github.com/Gurux/gxcommon-go"
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/constants"
@@ -89,7 +90,7 @@ type GXDLMSAssociationLogicalName struct {
 	CurrentUser *types.GXKeyValuePair[byte, string]
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSAssociationLogicalName) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -853,7 +854,7 @@ func (g *GXDLMSAssociationLogicalName) GetValue(settings *settings.GXDLMSSetting
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, &data, enums.DataTypeUint8, g.ApplicationContextName.ContextId)
+		err = internal.SetData(settings, &data, enums.DataTypeUint8, g.ApplicationContextName.ContextID)
 		if err != nil {
 			return nil, err
 		}
@@ -935,7 +936,7 @@ func (g *GXDLMSAssociationLogicalName) GetValue(settings *settings.GXDLMSSetting
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, &data, enums.DataTypeUint8, g.AuthenticationMechanismName.MechanismId)
+		err = internal.SetData(settings, &data, enums.DataTypeUint8, g.AuthenticationMechanismName.MechanismID)
 		if err != nil {
 			return nil, err
 		}
@@ -998,9 +999,11 @@ func (g *GXDLMSAssociationLogicalName) getObject(settings *settings.GXDLMSSettin
 		obj = getObjectCollection(settings.Objects).FindByLN(type_, ln)
 	}
 	if obj == nil {
-		obj = CreateObject(type_)
+		obj, err = CreateObject(type_, ln, 0)
+		if err != nil {
+			return nil
+		}
 		if obj != nil {
-			obj.Base().SetLogicalName(ln)
 			obj.Base().Version = version
 			if add && settings.IsServer() {
 				objects := getObjectCollection(settings.Objects)
@@ -1077,8 +1080,8 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 				if err != nil {
 					return err
 				}
-				g.ApplicationContextName.ContextId = enums.ApplicationContextName(val)
-				if g.ApplicationContextName.ContextId > enums.ApplicationContextNameShortNameWithCiphering {
+				g.ApplicationContextName.ContextID = enums.ApplicationContextName(val)
+				if g.ApplicationContextName.ContextID > enums.ApplicationContextNameShortNameWithCiphering {
 					e.Error = enums.ErrorCodeReadWriteDenied
 				}
 			} else {
@@ -1186,7 +1189,7 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 				if err != nil {
 					return err
 				}
-				g.ApplicationContextName.ContextId = enums.ApplicationContextName(ret)
+				g.ApplicationContextName.ContextID = enums.ApplicationContextName(ret)
 			}
 		} else if e.Value != nil {
 			arr := e.Value.(types.GXStructure)
@@ -1196,8 +1199,8 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 			g.ApplicationContextName.IdentifiedOrganization = arr[3].(byte)
 			g.ApplicationContextName.DlmsUA = arr[4].(byte)
 			g.ApplicationContextName.ApplicationContext = arr[5].(byte)
-			g.ApplicationContextName.ContextId = enums.ApplicationContextName(arr[6].(byte))
-			if g.ApplicationContextName.ContextId > enums.ApplicationContextNameShortNameWithCiphering {
+			g.ApplicationContextName.ContextID = enums.ApplicationContextName(arr[6].(byte))
+			if g.ApplicationContextName.ContextID > enums.ApplicationContextNameShortNameWithCiphering {
 				return gxcommon.ErrInvalidArgument
 			}
 		}
@@ -1259,8 +1262,8 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 				if err != nil {
 					return err
 				}
-				g.AuthenticationMechanismName.MechanismId = enums.Authentication(ret)
-				if g.AuthenticationMechanismName.MechanismId > enums.AuthenticationHighECDSA {
+				g.AuthenticationMechanismName.MechanismID = enums.Authentication(ret)
+				if g.AuthenticationMechanismName.MechanismID > enums.AuthenticationHighECDSA {
 					return gxcommon.ErrInvalidArgument
 				}
 			} else {
@@ -1373,8 +1376,8 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 				if err != nil {
 					return err
 				}
-				g.AuthenticationMechanismName.MechanismId = enums.Authentication(tag)
-				if g.AuthenticationMechanismName.MechanismId > enums.AuthenticationHighECDSA {
+				g.AuthenticationMechanismName.MechanismID = enums.Authentication(tag)
+				if g.AuthenticationMechanismName.MechanismID > enums.AuthenticationHighECDSA {
 					return gxcommon.ErrInvalidArgument
 				}
 			}
@@ -1386,8 +1389,8 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 			g.AuthenticationMechanismName.IdentifiedOrganization = arr[3].(byte)
 			g.AuthenticationMechanismName.DlmsUA = arr[4].(byte)
 			g.AuthenticationMechanismName.AuthenticationMechanismName = arr[5].(byte)
-			g.AuthenticationMechanismName.MechanismId = enums.Authentication(arr[6].(byte))
-			if g.AuthenticationMechanismName.MechanismId > enums.AuthenticationHighECDSA {
+			g.AuthenticationMechanismName.MechanismID = enums.Authentication(arr[6].(byte))
+			if g.AuthenticationMechanismName.MechanismID > enums.AuthenticationHighECDSA {
 				return gxcommon.ErrInvalidArgument
 			}
 		}
@@ -1485,9 +1488,11 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 					}
 					obj = reader.Objects.FindByLN(type_, ln)
 					if obj == nil {
-						obj = CreateObject(type_)
+						obj, err = CreateObject(type_, ln, 0)
+						if err != nil {
+							return err
+						}
 						obj.Base().Version = 0
-						obj.Base().SetLogicalName(ln)
 						reader.Objects.Add(obj)
 					}
 					if obj.Base() != g.Base() {
@@ -1515,11 +1520,11 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 					if access != "" {
 						buff = make([]int, len(access)/4)
 						for pos := 0; pos != len(buff); pos++ {
-							ret, err := strconv.ParseInt(access[4*pos:4+4*pos], 16, 16)
+							ret, err := strconv.ParseUint(access[4*pos:4+4*pos], 16, 16)
 							if err != nil {
 								return err
 							}
-							buff[pos] = int(ret & ^0x8000)
+							buff[pos] = int(int(ret) & ^0x8000)
 						}
 						g.accessRights[obj] = buff
 						pos = 0
@@ -1543,23 +1548,27 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 					if access != "" {
 						buff = make([]int, len(access)/4)
 						for pos = 0; pos != len(buff); pos++ {
-							ret, err := strconv.ParseInt(access[4*pos:4+4*pos], 16, 16)
+							ret, err := strconv.ParseUint(access[4*pos:4+4*pos], 16, 16)
 							if err != nil {
 								return err
 							}
-							buff[pos] = int(ret & ^0x8000)
+							buff[pos] = int(int(ret) & ^0x8000)
 						}
 						g.methodAccessRights[obj] = buff
 					}
 				}
 			} else {
-				if reader.Name() == "ObjectList" {
+				target = reader.Name()
+				if target == "ObjectList" {
 					break
 				}
 				reader.Read()
 			}
 		}
-		reader.ReadEndElement("ObjectList")
+		err := reader.ReadEndElement("ObjectList")
+		if err != nil {
+			return err
+		}
 	}
 	if g.ObjectList.FindByLN(enums.ObjectTypeAssociationLogicalName, g.Base().LogicalName()) == nil {
 		g.ObjectList.Add(g)
@@ -1616,7 +1625,7 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 		if err != nil {
 			return err
 		}
-		g.ApplicationContextName.ContextId = enums.ApplicationContextName(ret)
+		g.ApplicationContextName.ContextID = enums.ApplicationContextName(ret)
 
 		err = reader.ReadEndElement("ApplicationContextName")
 		if err != nil {
@@ -1712,7 +1721,7 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 			return err
 		}
 
-		g.AuthenticationMechanismName.MechanismId = enums.Authentication(ret)
+		g.AuthenticationMechanismName.MechanismID = enums.Authentication(ret)
 		err = reader.ReadEndElement("AuthenticationMechanismName")
 		if err != nil {
 			return err
@@ -1763,11 +1772,10 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 		}
 		reader.ReadEndElement("Users")
 	}
-	ret, err = reader.ReadElementContentAsInt("MultipleAssociationViews", 0)
+	g.MultipleAssociationViews, err = reader.ReadElementContentAsBool("MultipleAssociationViews", false)
 	if err != nil {
 		return err
 	}
-	g.MultipleAssociationViews = ret != 0
 	return nil
 }
 
@@ -1861,8 +1869,8 @@ func (g *GXDLMSAssociationLogicalName) Save(writer *GXXmlWriter) error {
 				}
 			}
 		}
+		writer.WriteEndElement()
 	}
-	writer.WriteEndElement()
 	err := writer.WriteElementString("ClientSAP", g.ClientSAP)
 	if err != nil {
 		return err
@@ -1896,13 +1904,18 @@ func (g *GXDLMSAssociationLogicalName) Save(writer *GXXmlWriter) error {
 	if err != nil {
 		return err
 	}
-	err = writer.WriteElementString("ContextId", int(g.ApplicationContextName.ContextId))
+	err = writer.WriteElementString("ContextId", int(g.ApplicationContextName.ContextID))
+	if err != nil {
+		return err
+	}
 	err = writer.WriteEndElement()
 	if err != nil {
 		return err
 	}
 	err = writer.WriteStartElement("XDLMSContextInfo")
-
+	if err != nil {
+		return err
+	}
 	err = writer.WriteElementString("Conformance", int(g.XDLMSContextInfo.Conformance))
 	if err != nil {
 		return err
@@ -1928,7 +1941,13 @@ func (g *GXDLMSAssociationLogicalName) Save(writer *GXXmlWriter) error {
 		return err
 	}
 	err = writer.WriteEndElement()
+	if err != nil {
+		return err
+	}
 	err = writer.WriteStartElement("AuthenticationMechanismName")
+	if err != nil {
+		return err
+	}
 	err = writer.WriteElementString("JointIsoCtt", g.AuthenticationMechanismName.JointIsoCtt)
 	if err != nil {
 		return err
@@ -1953,7 +1972,7 @@ func (g *GXDLMSAssociationLogicalName) Save(writer *GXXmlWriter) error {
 	if err != nil {
 		return err
 	}
-	err = writer.WriteElementString("MechanismId", int(g.AuthenticationMechanismName.MechanismId))
+	err = writer.WriteElementString("MechanismId", int(g.AuthenticationMechanismName.MechanismID))
 	if err != nil {
 		return err
 	}
@@ -1995,11 +2014,7 @@ func (g *GXDLMSAssociationLogicalName) Save(writer *GXXmlWriter) error {
 		}
 		writer.WriteEndElement()
 	}
-	err = writer.WriteElementString("MultipleAssociationViews", g.MultipleAssociationViews)
-	if err != nil {
-		return err
-	}
-	return err
+	return writer.WriteElementString("MultipleAssociationViews", g.MultipleAssociationViews)
 }
 
 // PostLoad returns the handle actions after Load.
@@ -2129,13 +2144,13 @@ func (g *GXDLMSAssociationLogicalName) GetValues() []any {
 //
 //	Action bytes.
 func (g *GXDLMSAssociationLogicalName) UpdateSecret(client IGXDLMSClient) ([][]byte, error) {
-	if g.AuthenticationMechanismName.MechanismId == enums.AuthenticationNone {
+	if g.AuthenticationMechanismName.MechanismID == enums.AuthenticationNone {
 		return nil, errors.New("Invalid authentication level in MechanismId.")
 	}
-	if g.AuthenticationMechanismName.MechanismId == enums.AuthenticationHighGMAC {
+	if g.AuthenticationMechanismName.MechanismID == enums.AuthenticationHighGMAC {
 		return nil, errors.New("HighGMAC secret is updated using Security setup.")
 	}
-	if g.AuthenticationMechanismName.MechanismId == enums.AuthenticationLow {
+	if g.AuthenticationMechanismName.MechanismID == enums.AuthenticationLow {
 		return client.Write(g, 7)
 	}
 	// Action is used to update High authentication password.
@@ -2331,7 +2346,7 @@ func (g *GXDLMSAssociationLogicalName) GetDataType(index int) (enums.DataType, e
 	if ret != enums.DataTypeNone {
 		return enums.DataType(ret), nil
 	}
-	return ret, errors.New("GetDataType failed. Invalid attribute index.")
+	return ret, dlmserrors.ErrInvalidAttributeIndex
 }
 
 // IsAccessRightSet returns the are access right sets for the given object.
@@ -2569,7 +2584,7 @@ func (g *GXDLMSAssociationLogicalName) SetMethodAccessArray(target IGXDLMSBase, 
 // String produces logical or Short Name of DLMS object.
 func (g *GXDLMSAssociationLogicalName) String() string {
 	str := g.Base().String()
-	str = str + " " + g.AuthenticationMechanismName.MechanismId.String()
+	str = str + " " + g.AuthenticationMechanismName.MechanismID.String()
 	return str
 }
 
@@ -2695,10 +2710,15 @@ func (g *GXDLMSAssociationLogicalName) SetMethodAccess3(target IGXDLMSBase, acce
 	return nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSAssociationLogicalName creates a new association logical name object instance.
+//
+// The function validates `ln` before creating the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSAssociationLogicalName(ln string, sn int16) (*GXDLMSAssociationLogicalName, error) {
+	if ln == "" {
+		//Use default logican name if it's not given.
+		ln = "0.0.40.0.0.255"
+	}
 	err := ValidateLogicalName(ln)
 	if err != nil {
 		return nil, err
@@ -2709,5 +2729,7 @@ func NewGXDLMSAssociationLogicalName(ln string, sn int16) (*GXDLMSAssociationLog
 			logicalName: ln,
 			ShortName:   sn,
 		},
+		accessRights:       make(map[IGXDLMSBase][]int),
+		methodAccessRights: make(map[IGXDLMSBase][]int),
 	}, nil
 }

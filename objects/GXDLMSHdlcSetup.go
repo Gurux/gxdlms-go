@@ -37,6 +37,7 @@
 import (
 	"errors"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -58,7 +59,7 @@ type GXDLMSHdlcSetup struct {
 	DeviceAddress             uint16
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSHdlcSetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -411,14 +412,15 @@ func (g *GXDLMSHdlcSetup) GetDataType(index int) (enums.DataType, error) {
 	} else if index == 9 {
 		dt = enums.DataTypeUint16
 	} else {
-		return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+		return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return dt, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSHdlcSetup creates a new HDLC setup object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSHdlcSetup(ln string, sn int16) (*GXDLMSHdlcSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

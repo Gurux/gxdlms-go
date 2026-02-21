@@ -41,30 +41,30 @@ import (
 	"github.com/Gurux/gxcommon-go"
 )
 
-// BaudRate Defines the baudrates.
+// BaudRate enumerates available baudrates.
 type BaudRate int
 
 const (
-	// BaudRateBaudrate300 defines that the baudrate is 300.
-	BaudRateBaudrate300 BaudRate = iota
-	// BaudRateBaudrate600 defines that the baudrate is 600.
-	BaudRateBaudrate600
-	// BaudRateBaudrate1200 defines that the baudrate is 1200.
-	BaudRateBaudrate1200
-	// BaudRateBaudrate2400 defines that the baudrate is 2400.
-	BaudRateBaudrate2400
-	// BaudRateBaudrate4800 defines that the baudrate is 4800.
-	BaudRateBaudrate4800
-	// BaudRateBaudrate9600 defines that the baudrate is 9600.
-	BaudRateBaudrate9600
-	// BaudRateBaudrate19200 defines that the baudrate is 19200.
-	BaudRateBaudrate19200
-	// BaudRateBaudrate38400 defines that the baudrate is 38400.
-	BaudRateBaudrate38400
-	// BaudRateBaudrate57600 defines that the baudrate is 57600.
-	BaudRateBaudrate57600
-	// BaudRateBaudrate115200 defines that the baudrate is 115200.
-	BaudRateBaudrate115200
+	// BaudRate300 defines that the baudrate is 300.
+	BaudRate300 BaudRate = iota
+	// BaudRate600 defines that the baudrate is 600.
+	BaudRate600
+	// BaudRate1200 defines that the baudrate is 1200.
+	BaudRate1200
+	// BaudRate2400 defines that the baudrate is 2400.
+	BaudRate2400
+	// BaudRate4800 defines that the baudrate is 4800.
+	BaudRate4800
+	// BaudRate9600 defines that the baudrate is 9600.
+	BaudRate9600
+	// BaudRate19200 defines that the baudrate is 19200.
+	BaudRate19200
+	// BaudRate38400 defines that the baudrate is 38400.
+	BaudRate38400
+	// BaudRate57600 defines that the baudrate is 57600.
+	BaudRate57600
+	// BaudRate115200 defines that the baudrate is 115200.
+	BaudRate115200
 )
 
 // BaudRateParse converts the given string into a BaudRate value.
@@ -76,25 +76,25 @@ func BaudRateParse(value string) (BaudRate, error) {
 	var err error
 	switch {
 	case strings.EqualFold(value, "Baudrate300"):
-		ret = BaudRateBaudrate300
+		ret = BaudRate300
 	case strings.EqualFold(value, "Baudrate600"):
-		ret = BaudRateBaudrate600
+		ret = BaudRate600
 	case strings.EqualFold(value, "Baudrate1200"):
-		ret = BaudRateBaudrate1200
+		ret = BaudRate1200
 	case strings.EqualFold(value, "Baudrate2400"):
-		ret = BaudRateBaudrate2400
+		ret = BaudRate2400
 	case strings.EqualFold(value, "Baudrate4800"):
-		ret = BaudRateBaudrate4800
+		ret = BaudRate4800
 	case strings.EqualFold(value, "Baudrate9600"):
-		ret = BaudRateBaudrate9600
+		ret = BaudRate9600
 	case strings.EqualFold(value, "Baudrate19200"):
-		ret = BaudRateBaudrate19200
+		ret = BaudRate19200
 	case strings.EqualFold(value, "Baudrate38400"):
-		ret = BaudRateBaudrate38400
+		ret = BaudRate38400
 	case strings.EqualFold(value, "Baudrate57600"):
-		ret = BaudRateBaudrate57600
+		ret = BaudRate57600
 	case strings.EqualFold(value, "Baudrate115200"):
-		ret = BaudRateBaudrate115200
+		ret = BaudRate115200
 	default:
 		err = fmt.Errorf("%w: %q", gxcommon.ErrUnknownEnum, value)
 	}
@@ -106,25 +106,25 @@ func BaudRateParse(value string) (BaudRate, error) {
 func (g BaudRate) String() string {
 	var ret string
 	switch g {
-	case BaudRateBaudrate300:
+	case BaudRate300:
 		ret = "Baudrate300"
-	case BaudRateBaudrate600:
+	case BaudRate600:
 		ret = "Baudrate600"
-	case BaudRateBaudrate1200:
+	case BaudRate1200:
 		ret = "Baudrate1200"
-	case BaudRateBaudrate2400:
+	case BaudRate2400:
 		ret = "Baudrate2400"
-	case BaudRateBaudrate4800:
+	case BaudRate4800:
 		ret = "Baudrate4800"
-	case BaudRateBaudrate9600:
+	case BaudRate9600:
 		ret = "Baudrate9600"
-	case BaudRateBaudrate19200:
+	case BaudRate19200:
 		ret = "Baudrate19200"
-	case BaudRateBaudrate38400:
+	case BaudRate38400:
 		ret = "Baudrate38400"
-	case BaudRateBaudrate57600:
+	case BaudRate57600:
 		ret = "Baudrate57600"
-	case BaudRateBaudrate115200:
+	case BaudRate115200:
 		ret = "Baudrate115200"
 	}
 	return ret
@@ -133,15 +133,15 @@ func (g BaudRate) String() string {
 // AllBaudRate returns a slice containing all defined BaudRate values.
 func AllBaudRate() []BaudRate {
 	return []BaudRate{
-	BaudRateBaudrate300,
-	BaudRateBaudrate600,
-	BaudRateBaudrate1200,
-	BaudRateBaudrate2400,
-	BaudRateBaudrate4800,
-	BaudRateBaudrate9600,
-	BaudRateBaudrate19200,
-	BaudRateBaudrate38400,
-	BaudRateBaudrate57600,
-	BaudRateBaudrate115200,
+		BaudRate300,
+		BaudRate600,
+		BaudRate1200,
+		BaudRate2400,
+		BaudRate4800,
+		BaudRate9600,
+		BaudRate19200,
+		BaudRate38400,
+		BaudRate57600,
+		BaudRate115200,
 	}
 }

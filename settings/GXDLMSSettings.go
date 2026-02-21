@@ -271,8 +271,8 @@ type GXDLMSSettings struct {
 }
 
 // NewGXDLMSSettings creates a new DLMS settings instance with default values.
-func NewGXDLMSSettings() *GXDLMSSettings {
-	return NewGXDLMSSettingsWithParams(false, true, enums.InterfaceTypeHDLC)
+func NewGXDLMSSettings(objects any) *GXDLMSSettings {
+	return NewGXDLMSSettingsWithParams(false, true, enums.InterfaceTypeHDLC, objects)
 }
 
 // getInitialConformance returns the get initial Conformance
@@ -292,7 +292,7 @@ func getInitialConformance(useLogicalNameReferencing bool) enums.Conformance {
 }
 
 // NewGXDLMSSettingsWithParams creates a new DLMS settings instance with specified parameters.
-func NewGXDLMSSettingsWithParams(server bool, ln bool, interfaceType enums.InterfaceType) *GXDLMSSettings {
+func NewGXDLMSSettingsWithParams(server bool, ln bool, interfaceType enums.InterfaceType, objects any) *GXDLMSSettings {
 	s := &GXDLMSSettings{
 		InterfaceType:      interfaceType,
 		UseCustomChallenge: false,
@@ -324,6 +324,7 @@ func NewGXDLMSSettingsWithParams(server bool, ln bool, interfaceType enums.Inter
 		s.Coap = &GXCoAPSettings{}
 	default:
 	}
+	s.Objects = objects
 	s.useLogicalNameReferencing = ln
 	s.ProposedConformance = getInitialConformance(ln)
 	if server {
@@ -376,7 +377,7 @@ func (s *GXDLMSSettings) SetChallengeSize(value uint8) error {
 	return nil
 }
 
-// GetCtoSChallenge returns the Client to Server challenge.
+// CtoSChallenge returns the Client to Server challenge.
 func (s *GXDLMSSettings) CtoSChallenge() []byte {
 	return s.ctoSChallenge
 }
@@ -386,7 +387,7 @@ func (s *GXDLMSSettings) SetCtoSChallenge(value []byte) {
 	s.ctoSChallenge = value
 }
 
-// GetStoCChallenge returns the Server to Client challenge.
+// StoCChallenge returns the Server to Client challenge.
 func (s *GXDLMSSettings) StoCChallenge() []byte {
 	return s.stoCChallenge
 }
@@ -533,7 +534,7 @@ func (s *GXDLMSSettings) IncreaseBlockIndex() {
 	s.BlockIndex++
 }
 
-// GetGbtWindowSize returns the General Block Transfer window size.
+// GbtWindowSize returns the General Block Transfer window size.
 func (s *GXDLMSSettings) GbtWindowSize() uint8 {
 	return s.gbtWindowSize
 }
@@ -583,11 +584,10 @@ func (s *GXDLMSSettings) UseLogicalNameReferencing() bool {
 func (s *GXDLMSSettings) SetUseLogicalNameReferencing(value bool) {
 	if s.useLogicalNameReferencing != value {
 		s.useLogicalNameReferencing = value
-		// TODO: Set ProposedConformance when GXDLMSClient is implemented
-		// s.ProposedConformance = GXDLMSClient.GetInitialConformance(value)
-		// if s.isServer {
-		//     s.ProposedConformance |= enums.ConformanceGeneralProtection
-		// }
+		s.ProposedConformance = getInitialConformance(value)
+		if s.isServer {
+			s.ProposedConformance |= enums.ConformanceGeneralProtection
+		}
 	}
 }
 
@@ -598,29 +598,29 @@ func (s *GXDLMSSettings) AssignedAssociation() any {
 
 // SetAssignedAssociation sets the assigned association for the server.
 func (s *GXDLMSSettings) SetAssignedAssociation(value any) {
-	// TODO: Implement when GXDLMSAssociationLogicalName is available
-	// if ln, ok := s.assignedAssociation.(*GXDLMSAssociationLogicalName); ok {
-	//     ln.AssociationStatus = objectenums.AssociationStatusNonAssociated
-	//     ln.XDLMSContextInfo.CypheringInfo = nil
-	//     s.InvocationCounter = nil
-	//     s.Cipher.SecurityPolicy = SecurityPolicy.None
-	//     s.EphemeralBlockCipherKey = nil
-	//     s.EphemeralBroadcastBlockCipherKey = nil
-	//     s.EphemeralAuthenticationKey = nil
-	//     s.Cipher.SecuritySuite = SecuritySuite.Suite0
-	//     s.Cipher.Signing = Signing.None
-	// }
-	s.assignedAssociation = value
-	// TODO: Update settings from association when implemented
-	// if ln2, ok := s.assignedAssociation.(*GXDLMSAssociationLogicalName); ok {
-	//     s.ProposedConformance = ln2.XDLMSContextInfo.Conformance
-	//     s.maxServerPDUSize = ln2.XDLMSContextInfo.MaxReceivePduSize
-	//     s.Authentication = ln2.AuthenticationMechanismName.MechanismId
-	//     s.UpdateSecuritySettings(nil)
-	// }
+	/*
+		if ln, ok := s.assignedAssociation.(*objects.GXDLMSAssociationLogicalName); ok {
+			ln.AssociationStatus = enums.AssociationStatusNonAssociated
+			ln.XDLMSContextInfo.CypheringInfo = nil
+			s.InvocationCounter = nil
+			s.Cipher.SetSecurityPolicy(enums.SecurityPolicyNone)
+			s.EphemeralBlockCipherKey = nil
+			s.EphemeralBroadcastBlockCipherKey = nil
+			s.EphemeralAuthenticationKey = nil
+			s.Cipher.SetSecuritySuite(enums.SecuritySuite0)
+			s.Cipher.SetSigning(enums.SigningNone)
+		}
+		s.assignedAssociation = value
+		if ln2, ok := s.assignedAssociation.(*objects.GXDLMSAssociationLogicalName); ok {
+			s.ProposedConformance = ln2.XDLMSContextInfo.Conformance
+			s.maxServerPDUSize = ln2.XDLMSContextInfo.MaxReceivePduSize
+			s.Authentication = ln2.AuthenticationMechanismName.MechanismId
+			s.UpdateSecuritySettings(nil)
+		}
+	*/
 }
 
-// GetInvokeID returns the Invoke ID.
+// InvokeID returns the Invoke ID.
 func (s *GXDLMSSettings) InvokeID() uint8 {
 	return s.invokeID
 }
@@ -701,11 +701,10 @@ func (s *GXDLMSSettings) CopyTo(target *GXDLMSSettings) {
 	// TODO: Copy Objects when implemented
 	// target.Objects.Clear()
 	// target.Objects.AddRange(s.Objects)
-	// TODO: Copy Hdlc settings when implemented
-	// target.Hdlc.MaxInfoRX = s.Hdlc.MaxInfoRX
-	// target.Hdlc.MaxInfoTX = s.Hdlc.MaxInfoTX
-	// target.Hdlc.WindowSizeRX = s.Hdlc.WindowSizeRX
-	// target.Hdlc.WindowSizeTX = s.Hdlc.WindowSizeTX
+	target.Hdlc.SetMaxInfoRX(s.Hdlc.MaxInfoRX())
+	target.Hdlc.SetMaxInfoTX(s.Hdlc.MaxInfoTX())
+	target.Hdlc.SetWindowSizeRX(s.Hdlc.WindowSizeRX())
+	target.Hdlc.SetWindowSizeTX(s.Hdlc.WindowSizeTX())
 	// TODO: Copy Gateway when implemented
 	// if s.Gateway != nil {
 	//     target.Gateway = &GXDLMSGateway{}
@@ -723,9 +722,22 @@ func (s *GXDLMSSettings) UpdateSecurity(systemTitle []byte, ss interface{}) {
 
 // UpdateSecuritySettings updates security settings from assigned association.
 func (s *GXDLMSSettings) UpdateSecuritySettings(systemTitle []byte) {
-	// TODO: Implement when GXDLMSAssociationLogicalName is available
-	// This method finds the security setup object from the association
-	// and calls UpdateSecurity
+	/*
+		ln, ok := s.assignedAssociation.(*objects.GXDLMSAssociationLogicalName)
+		if ok {
+			// Update security settings.
+			if ln.SecuritySetupReference != "" &&
+				(ln.ApplicationContextName.ContextID == enums.ApplicationContextNameLogicalNameWithCiphering ||
+					ln.AuthenticationMechanismName.MechanismId == enums.AuthenticationHighGMAC ||
+					ln.AuthenticationMechanismName.MechanismId == enums.AuthenticationHighECDSA) {
+				ss := ln.ObjectList.FindByLN(enums.ObjectTypeSecuritySetup, ln.SecuritySetupReference)
+				s.UpdateSecurity(systemTitle, ss.(*objects.GXDLMSSecuritySetup))
+			} else {
+				ss := ln.ObjectList.FindByLN(enums.ObjectTypeSecuritySetup, ln.SecuritySetupReference)
+				s.UpdateSecurity(systemTitle, ss.(*objects.GXDLMSSecuritySetup))
+			}
+		}
+	*/
 }
 
 // Crypt encrypts or decrypts data using external Hardware Security Module.

@@ -35,8 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
-
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -55,7 +54,7 @@ type GXDLMSRegisterMonitor struct {
 	Actions []GXDLMSActionSet
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSRegisterMonitor) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -316,14 +315,21 @@ func (g *GXDLMSRegisterMonitor) Invoke(settings *settings.GXDLMSSettings, e *int
 func (g *GXDLMSRegisterMonitor) Load(reader *GXXmlReader) error {
 	var err error
 	g.Thresholds = []any{}
-	if reader.isStartElementNamed2("Thresholds", true) {
-		for reader.isStartElementNamed2("Value", false) {
+	if ret, err := reader.IsStartElementNamed("Thresholds", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Value", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			//TODO: it := reader.ReadElementContentAsObject("Value", nil, nil, 0)
 			//TODO: g.Thresholds = append(g.Thresholds, it)
 		}
 		reader.ReadEndElement("Thresholds")
 	}
-	if reader.isStartElementNamed2("MonitoredValue", true) {
+	if ret, err := reader.IsStartElementNamed("MonitoredValue", true); ret && err == nil {
 		ret, err := reader.ReadElementContentAsInt("ObjectType", 0)
 		if err != nil {
 			return err
@@ -343,11 +349,18 @@ func (g *GXDLMSRegisterMonitor) Load(reader *GXXmlReader) error {
 		reader.ReadEndElement("MonitoredValue")
 	}
 	g.Actions = g.Actions[:0]
-	if reader.isStartElementNamed2("Actions", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("Actions", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it := GXDLMSActionSet{}
 			g.Actions = append(g.Actions, it)
-			if reader.isStartElementNamed2("Up", true) {
+			if ret, err := reader.IsStartElementNamed("Up", true); ret && err == nil {
 				it.ActionUp.LogicalName, err = reader.ReadElementContentAsString("LN", "0.0.0.0.0.0")
 				if err != nil {
 					return err
@@ -361,7 +374,7 @@ func (g *GXDLMSRegisterMonitor) Load(reader *GXXmlReader) error {
 				}
 				reader.ReadEndElement("Up")
 			}
-			if reader.isStartElementNamed2("Down", true) {
+			if ret, err := reader.IsStartElementNamed("Down", true); ret && err == nil {
 				it.ActionDown.LogicalName, err = reader.ReadElementContentAsString("LN", "0.0.0.0.0.0")
 				if err != nil {
 					return err
@@ -479,12 +492,13 @@ func (g *GXDLMSRegisterMonitor) GetDataType(index int) (enums.DataType, error) {
 	if index == 4 {
 		return enums.DataTypeArray, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSRegisterMonitor creates a new register monitor object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSRegisterMonitor(ln string, sn int16) (*GXDLMSRegisterMonitor, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

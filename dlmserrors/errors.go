@@ -37,20 +37,26 @@ import (
 	"errors"
 )
 
-//ErrInvalidGloCommand
+// ErrInvalidGloCommand is returned when an invalid global ciphering command is received.
 var ErrInvalidGloCommand = errors.New("invalid glo command")
 
-//ErrUnknownPduTag
+// ErrUnknownPduTag is returned when a PDU tag is unknown or unsupported.
 var ErrUnknownPduTag = errors.New("invalid pdu tag")
 
-//ErrPduTooSmall
+// ErrPduTooSmall is returned when a received PDU does not contain enough bytes.
 var ErrPduTooSmall = errors.New("PDU is too small")
 
-//ErrInvalidApplicationContextName
+// ErrInvalidApplicationContextName is returned when the application context name is invalid.
 var ErrInvalidApplicationContextName = errors.New("Invalid application context name")
 
-//ErrInvalidDLMSVersionNumber
+// ErrInvalidDLMSVersionNumber is returned when the DLMS version number is invalid.
 var ErrInvalidDLMSVersionNumber = errors.New("invalid DLMS version number")
 
-//ErrInvalidVAA
+// ErrInvalidVAA is returned when the VAA value is invalid.
 var ErrInvalidVAA = errors.New("invalid VAA")
+
+// ErrInvalidAttributeIndex is returned when an attribute index is invalid.
+var ErrInvalidAttributeIndex = errors.New("invalid attribute index")
+
+// ErrDataTooShort is returned when a message cannot be parsed because it does not contain enough data.
+var ErrDataTooShort = errors.New("data too short")

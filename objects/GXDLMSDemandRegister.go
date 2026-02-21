@@ -39,6 +39,7 @@ import (
 	"math"
 	"reflect"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -83,7 +84,7 @@ type GXDLMSDemandRegister struct {
 	NumberOfPeriods uint16
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSDemandRegister) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -109,7 +110,7 @@ func (g *GXDLMSDemandRegister) SetScaler(value float64) {
 //
 //	Collection of attributes to read.
 func (g *GXDLMSDemandRegister) GetAttributeIndexToRead(all bool) []int {
-	attributes := []int{}
+	var attributes []int
 	// LN is static and read only once.
 	if all || g.LogicalName() == "" {
 		attributes = append(attributes, 1)
@@ -589,7 +590,7 @@ func (g *GXDLMSDemandRegister) GetDataType(index int) (enums.DataType, error) {
 	case 9:
 		dt = enums.DataTypeUint16
 	default:
-		return 0, errors.New("GetDataType failed. Invalid attribute index.")
+		return 0, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return dt, nil
 }
@@ -620,9 +621,10 @@ func (g *GXDLMSDemandRegister) NextPeriod(client IGXDLMSClient) ([][]uint8, erro
 	return client.Method(g, 2, int8(0), enums.DataTypeInt8)
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSDemandRegister creates a new demand register object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSDemandRegister(ln string, sn int16) (*GXDLMSDemandRegister, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

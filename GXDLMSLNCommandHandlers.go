@@ -63,7 +63,10 @@ func appendAttributeDescriptor(xml *settings.GXDLMSTranslatorStructure, ci int, 
 	}
 	xml.AppendComment(ret)
 	xml.AppendLine(internal.TranslatorTagsInstanceId.String(), "Value", types.ToHex(ln, false))
-	obj := objects.CreateObject(enums.ObjectType(ci))
+	obj, err := objects.CreateObject(enums.ObjectType(ci), ret, 0)
+	if err != nil {
+		return err
+	}
 	if obj != nil {
 		xml.AppendComment(obj.GetNames()[attributeIndex-1])
 	}
@@ -84,7 +87,10 @@ func AppendMethodDescriptor(xml *settings.GXDLMSTranslatorStructure, ci int, ln 
 	}
 	xml.AppendComment(ret)
 	xml.AppendLine(internal.TranslatorTagsInstanceId.String(), "Value", types.ToHex(ln, false))
-	obj := objects.CreateObject(enums.ObjectType(ci))
+	obj, err := objects.CreateObject(enums.ObjectType(ci), ret, 0)
+	if err != nil {
+		return err
+	}
 	if obj != nil {
 		xml.AppendComment(obj.GetMethodNames()[attributeIndex-1])
 	}

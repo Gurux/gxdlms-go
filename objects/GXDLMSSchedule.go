@@ -35,9 +35,9 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -53,7 +53,7 @@ type GXDLMSSchedule struct {
 	Entries []GXScheduleEntry
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSSchedule) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -370,8 +370,15 @@ func (g *GXDLMSSchedule) SetValue(settings *settings.GXDLMSSettings, e *internal
 func (g *GXDLMSSchedule) Load(reader *GXXmlReader) error {
 	var err error
 	g.Entries = g.Entries[:0]
-	if reader.isStartElementNamed2("Entries", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("Entries", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it := GXScheduleEntry{}
 			it.Index, err = reader.ReadElementContentAsUInt16("Index", 0)
 			if err != nil {
@@ -646,12 +653,13 @@ func (g *GXDLMSSchedule) GetDataType(index int) (enums.DataType, error) {
 	if index == 2 {
 		return enums.DataTypeArray, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSSchedule creates a new schedule object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSSchedule(ln string, sn int16) (*GXDLMSSchedule, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

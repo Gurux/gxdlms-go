@@ -36,6 +36,7 @@ package types
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -71,19 +72,36 @@ func isNumeric(value byte) bool {
 var dateTimeFormats = map[string]string{
 	"FI": "02.01.2006 15.04.05.000 -0700",
 	"SE": "2006-01-02 15:04:05.000 -0700",
-	"US": "01/02/2006 03:04:05.000 PM -0700",
+	"US": "01/02/2006 03:04:05.000 AM -0700",
 	"DE": "02.01.2006 15:04:05.000 -0700",
 	"GB": "02/01/2006 15:04:05.000 -0700",
 	"ES": "02/01/2006 15:04:05.000 -0700",
 	"ET": "02.01.2006 15:04:05.000 -0700",
 	"FR": "02/01/2006 15:04:05.000 -0700",
 	"IT": "02/01/2006 15:04:05.000 -0700",
-	"HI": "02/01/2006 03:04:05.000 PM -0700",
+	"HI": "02/01/2006 03:04:05.000 AM -0700",
 	"SV": "02/01/2006 15:04:05.000 -0700",
+}
+
+// currentLanguage returns current user language.
+func currentLanguage() *language.Tag {
+	langEnv := os.Getenv("LANG")
+	if langEnv == "" {
+		return &language.AmericanEnglish
+	}
+	langEnv = strings.Split(langEnv, ".")[0]
+	tag, err := language.Parse(langEnv)
+	if err != nil {
+		return &language.AmericanEnglish
+	}
+	return &tag
 }
 
 // Returns the date time format for the given culture.
 func getDateTimeFormat(language *language.Tag, skip enums.DateTimeSkips) string {
+	if language == nil {
+		language = currentLanguage()
+	}
 	region, _ := language.Region()
 	format, ok := dateTimeFormats[region.String()]
 	if !ok {
@@ -138,7 +156,7 @@ func getDateTimeFormat(language *language.Tag, skip enums.DateTimeSkips) string 
 //	Returns:
 func timeZonePosition(value string) int {
 	if len(value) > 5 {
-		pos := len(value) - 6
+		pos := len(value) - 5
 		sep := value[pos]
 		if sep == '-' || sep == '+' {
 			return pos
@@ -204,71 +222,95 @@ func detectSeparators(layout string, timeSeparator *string, dateSeparator *strin
 }
 
 func (g *GXDateTime) ToString(language *language.Tag, useLocalTime bool) string {
-	return g.toString(g, language, useLocalTime)
+	return toString(g, language, useLocalTime, false)
 }
 
-func (g *GXDateTime) toString(target any, language *language.Tag, useLocalTime bool) string {
+func toString(target any, language *language.Tag, useLocalTime bool, useFormat bool) string {
 	//Get current date time format.
-	format := getDateTimeFormat(language, g.Skip)
+	var skip, formatSkip enums.DateTimeSkips
+	var value time.Time
+	if v, ok := target.(*GXDateTime); ok {
+		value = v.Value
+		skip = v.Skip
+		//Don't show ms if it's not used.
+		if (skip&enums.DateTimeSkipsMs) != 0 || value.Nanosecond()/int(time.Millisecond) == 0 {
+			formatSkip |= enums.DateTimeSkipsMs
+		}
+	} else if v, ok := target.(*GXDate); ok {
+		value = v.Value
+		skip = v.Skip
+		if useFormat {
+			formatSkip = enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
+		} else {
+			formatSkip = skip
+		}
+	} else if v, ok := target.(*GXTime); ok {
+		value = v.Value
+		skip = v.Skip
+		if useFormat {
+			formatSkip = enums.DateTimeSkipsYear | enums.DateTimeSkipsMonth | enums.DateTimeSkipsDay | enums.DateTimeSkipsDayOfWeek
+		} else {
+			formatSkip = skip
+		}
+		//Don't show ms if it's not used.
+		if (skip&enums.DateTimeSkipsMs) != 0 || value.Nanosecond()/int(time.Millisecond) == 0 {
+			formatSkip |= enums.DateTimeSkipsMs
+		}
+	}
+	format := getDateTimeFormat(language, formatSkip)
+	if value.Hour() > 11 {
+		format = strings.ReplaceAll(format, "AM", "PM")
+	}
 	if useLocalTime {
 		//Remove time zone if year is removed.
 		format = remove(format, "-0700", "")
 		format = strings.TrimSpace(format)
 	}
-	if g.Skip != enums.DateTimeSkipsNone {
-		var timeSeparator, dateSeparator string
-		detectSeparators(format, &timeSeparator, &dateSeparator)
-		// FormatException is thrown if length of format is 1.
-		if !strings.Contains(format, dateSeparator) && !strings.Contains(format, timeSeparator) {
-			if (g.Skip & enums.DateTimeSkipsYear) == 0 {
-				return fmt.Sprint()
-			}
-			if (g.Skip & enums.DateTimeSkipsMonth) == 0 {
-				return fmt.Sprint()
-			}
-			if (g.Skip & enums.DateTimeSkipsDay) == 0 {
-				return fmt.Sprint()
-			}
-			if (g.Skip & enums.DateTimeSkipsHour) == 0 {
-				return fmt.Sprint()
-			}
-			if (g.Skip & enums.DateTimeSkipsMinute) == 0 {
-				return fmt.Sprint()
-			}
-			if (g.Skip & enums.DateTimeSkipsSecond) == 0 {
-				return fmt.Sprint()
-			}
-			if (g.Skip & enums.DateTimeSkipsMs) == 0 {
-				return fmt.Sprint()
-			}
+	if skip != enums.DateTimeSkipsNone {
+		if (skip & enums.DateTimeSkipsYear) != 0 {
+			format = strings.ReplaceAll(format, "2006", "*")
+		}
+		if (skip & enums.DateTimeSkipsMonth) != 0 {
+			format = strings.ReplaceAll(format, "01", "*")
+		}
+		if (skip & enums.DateTimeSkipsDay) != 0 {
+			format = strings.ReplaceAll(format, "02", "*")
+		}
+		if (skip & enums.DateTimeSkipsHour) != 0 {
+			format = strings.ReplaceAll(format, "15", "*")
+		}
+		if (skip & enums.DateTimeSkipsMinute) != 0 {
+			format = strings.ReplaceAll(format, "04", "*")
+		}
+		if (skip & enums.DateTimeSkipsSecond) != 0 {
+			format = strings.ReplaceAll(format, "05", "*")
 		}
 		if useLocalTime {
-			return g.Value.Local().Format(format)
+			return value.Local().Format(format)
 		}
-		ret := g.Value.Format(format)
-		_, offset := g.Value.Zone()
+		ret := value.Format(format)
+		_, offset := value.Zone()
 		if offset == 0 {
 			ret = ret[:len(ret)-6] + "Z"
 		}
 		return ret
 	}
 	if useLocalTime {
-		return g.Value.Local().Format(format)
+		return value.Local().Format(format)
 	}
-	return g.Value.Format(format)
+	return value.Format(format)
 }
 
 func (g *GXDateTime) ToFormatString(language *language.Tag, useLocalTime bool) string {
-	//TODO:
-	return g.toString(g, language, useLocalTime)
+	return toString(g, language, useLocalTime, true)
 }
 
 func (g *GXDateTime) ToFormatMeterString(language *language.Tag) string {
-	//TODO:
-	return g.toString(g, language, false)
+	return toString(g, language, false, true)
 }
 
-// fromUnixTime returns the get date time from Epoch time.unixTime: Unix time.
+// GXDateTimeFromUnixTime creater the  date time from Epoch time.
+// unixTime: Unix time.
 //
 //	Returns:
 //	    Date and time.
@@ -278,7 +320,7 @@ func GXDateTimeFromUnixTime(unixTime int64) *GXDateTime {
 	}
 }
 
-// fromHighResolutionTime returns the get date time from high resolution clock time.highResolution: High resolution clock time.
+// GXDateTimeFromHighResolutionTime returns the get date time from high resolution clock time.highResolution: High resolution clock time.
 //
 //	Returns:
 //	    Date and time.
@@ -315,13 +357,56 @@ func (g *GXDateTime) ToHex(addSpace bool, useMeterTimeZone bool) string {
 	return buff.ToHexByIndex(addSpace, 0)
 }
 
+func getDateTimeToken(format string, index int) (string, enums.DateTimeSkips) {
+	if index < 0 || index >= len(format) {
+		return "", enums.DateTimeSkipsNone
+	}
+	tokens := []struct {
+		token string
+		field enums.DateTimeSkips
+	}{
+		{"-0700", enums.DateTimeSkipsDeviation},
+		{"2006", enums.DateTimeSkipsYear},
+		{".000", enums.DateTimeSkipsMs},
+		{"15", enums.DateTimeSkipsHour},
+		{"03", enums.DateTimeSkipsHour},
+		{"04", enums.DateTimeSkipsMinute},
+		{"05", enums.DateTimeSkipsSecond},
+		{"01", enums.DateTimeSkipsMonth},
+		{"02", enums.DateTimeSkipsDay},
+	}
+	for _, it := range tokens {
+		if strings.HasPrefix(format[index:], it.token) {
+			return it.token, it.field
+		}
+	}
+	return "", enums.DateTimeSkipsNone
+}
+
 // Constructorvalue: Date time value as a string.
 // culture: Used culture.
-func (g *GXDateTime) parseInternal(value string, language *language.Tag) error {
+func parseInternal(target any, value string, language *language.Tag) error {
 	addTimeZone := true
+	var g *GXDateTime
+	//Get current date time format.
+	var skip enums.DateTimeSkips
+	if v, ok := target.(*GXDateTime); ok {
+		g = v
+	} else if v, ok := target.(*GXDate); ok {
+		g = &v.GXDateTime
+		skip = v.Skip
+	} else if v, ok := target.(*GXTime); ok {
+		g = &v.GXDateTime
+		skip = v.Skip
+	}
 	g.DayOfWeek = 0xFF
 	if value != "" {
-		format := getDateTimeFormat(language, g.Skip)
+		format := getDateTimeFormat(language, skip)
+		if strings.Contains(value, "PM") {
+			format = strings.ReplaceAll(format, "AM", "PM")
+		}
+		var timeSeparator, dateSeparator string
+		detectSeparators(format, &timeSeparator, &dateSeparator)
 		if strings.Contains(value, "BEGIN") {
 			g.Extra |= enums.DateTimeExtraInfoDstBegin
 			value = strings.ReplaceAll(value, "BEGIN", "01")
@@ -338,16 +423,68 @@ func (g *GXDateTime) parseInternal(value string, language *language.Tag) error {
 			g.Extra |= enums.DateTimeExtraInfoLastDay
 			value = strings.ReplaceAll(value, "LASTDAY", "01")
 		}
+
 		v := value
 		if strings.IndexByte(value, '*') != -1 {
+			//Day of week is not supported when date time is give as a string.
 			g.Skip |= enums.DateTimeSkipsDayOfWeek
+			lastFormatIndex := -1
+			offset := 0
+			for pos := 0; pos < len(value); pos++ {
+				c := value[pos]
+				if !isNumeric(c) {
+					if c == '*' {
+						token, field := getDateTimeToken(format, lastFormatIndex+1)
+						if token == "" {
+							return fmt.Errorf("invalid date time format")
+						}
+						val := "1" + strings.Repeat("0", len(token)-1)
+						switch field {
+						case enums.DateTimeSkipsYear:
+							val = "2006"
+							addTimeZone = false
+							g.Skip |= enums.DateTimeSkipsYear
+						case enums.DateTimeSkipsMonth:
+							addTimeZone = false
+							g.Skip |= enums.DateTimeSkipsMonth
+						case enums.DateTimeSkipsDay:
+							addTimeZone = false
+							g.Skip |= enums.DateTimeSkipsDay
+						case enums.DateTimeSkipsHour:
+							addTimeZone = false
+							g.Skip |= enums.DateTimeSkipsHour
+						case enums.DateTimeSkipsMinute:
+							addTimeZone = false
+							g.Skip |= enums.DateTimeSkipsMinute
+						case enums.DateTimeSkipsSecond:
+							g.Skip |= enums.DateTimeSkipsSecond
+						default:
+							return fmt.Errorf("invalid date time format")
+						}
+						v = v[:pos+offset] + val + value[pos+1:]
+						offset += len(val) - 1
+					} else {
+						start := lastFormatIndex + 1
+						tmp := strings.IndexByte(format[start:], c)
+						if tmp != -1 {
+							lastFormatIndex = start + tmp
+						} else {
+							lastFormatIndex = -1
+						}
+						//Dot is used time separator in some countries.
+						if lastFormatIndex == -1 && c == byte(timeSeparator[0]) {
+							tmp = strings.IndexByte(format[start:], '.')
+							if tmp != -1 {
+								lastFormatIndex = start + tmp
+							}
+						}
+					}
+				}
+			}
 		}
 		// If time zone is used.
 		pos := timeZonePosition(value)
 		if !addTimeZone || pos == -1 {
-			//Remove time zone.
-			var timeSeparator, dateSeparator string
-			detectSeparators(format, &timeSeparator, &dateSeparator)
 			format = remove(format, "-0700", timeSeparator)
 			// Trim
 			format = strings.TrimSpace(format)
@@ -355,24 +492,40 @@ func (g *GXDateTime) parseInternal(value string, language *language.Tag) error {
 				g.Skip |= enums.DateTimeSkipsDeviation
 			}
 		}
-		var err error
-		if language == nil {
-			g.Value, err = time.Parse(v, format)
-		} else {
-			g.Value, err = time.ParseInLocation(format, v, time.Local)
+		parseWithLayout := func(layout string) (time.Time, error) {
+			if language == nil {
+				return time.Parse(layout, v)
+			}
+			return time.ParseInLocation(layout, v, time.Local)
 		}
-		if err != nil {
+		var err error
+		g.Value, err = parseWithLayout(format)
+		if err != nil && g.Skip&enums.DateTimeSkipsMs == 0 {
 			//Remove ms.
 			format = remove(format, ".000", "")
 			// Trim
 			format = strings.TrimSpace(format)
-			g.Value, err = time.ParseInLocation(format, v, time.Local)
+			g.Value, err = parseWithLayout(format)
+			if err != nil && g.Skip&enums.DateTimeSkipsSecond == 0 {
+				//Remove seconds.
+				format = remove(format, "05", timeSeparator)
+				// Trim
+				format = strings.TrimSpace(format)
+				g.Value, err = parseWithLayout(format)
+				if err == nil {
+					g.Skip |= enums.DateTimeSkipsMs | enums.DateTimeSkipsSecond
+				}
+			} else {
+				g.Skip |= enums.DateTimeSkipsMs
+			}
 		}
 		if err != nil {
 			return err
 		}
+		if strings.Contains(value, "AM") {
+			g.Value = g.Value.Add(-12 * time.Hour)
+		}
 		g.Skip |= enums.DateTimeSkipsDayOfWeek
-		g.Skip |= enums.DateTimeSkipsMs
 		if (g.Skip & (enums.DateTimeSkipsYear | enums.DateTimeSkipsMonth | enums.DateTimeSkipsDay | enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute)) == 0 {
 			if g.Value.IsDST() {
 				g.Status |= enums.ClockStatusDaylightSavingActive
@@ -386,7 +539,7 @@ func (g *GXDateTime) parseInternal(value string, language *language.Tag) error {
 // culture: Used culture.
 func NewGXDateTimeFromString(value string, language *language.Tag) (*GXDateTime, error) {
 	g := &GXDateTime{}
-	err := g.parseInternal(value, language)
+	err := parseInternal(g, value, language)
 	if err != nil {
 		return nil, err
 	}

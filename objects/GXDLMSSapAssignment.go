@@ -35,9 +35,9 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -52,7 +52,7 @@ type GXDLMSSapAssignment struct {
 	SapAssignmentList []types.GXKeyValuePair[uint16, string]
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSSapAssignment) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -232,8 +232,15 @@ func (g *GXDLMSSapAssignment) Load(reader *GXXmlReader) error {
 	var err error
 	var ldn string
 	g.SapAssignmentList = g.SapAssignmentList[:0]
-	if reader.isStartElementNamed2("SapAssignmentList", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("SapAssignmentList", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			sap, err = reader.ReadElementContentAsUInt16("SAP", 0)
 			if err != nil {
 				return err
@@ -360,12 +367,13 @@ func (g *GXDLMSSapAssignment) GetDataType(index int) (enums.DataType, error) {
 	if index == 2 {
 		return enums.DataTypeArray, nil
 	}
-	return 0, errors.New("GetDataType failed. Invalid attribute index.")
+	return 0, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSSapAssignment creates a new Sap assignment object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSSapAssignment(ln string, sn int16) (*GXDLMSSapAssignment, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

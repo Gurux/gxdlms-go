@@ -904,6 +904,6 @@ func (g *GXByteBuffer) ToHexByIndex(addSpace bool, index int) string {
 //	Returns:
 //	    Data as hex string.
 func (g *GXByteBuffer) ToHexByIndexCount(addSpace bool, index int, count int) (string, error) {
-	return GXCommon.ToHex(g.Data, addSpace, index, count)
+	return types.ToHex(g.Data, addSpace, index, count)
 }
 */

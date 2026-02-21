@@ -40,6 +40,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Gurux/gxcommon-go"
 	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
@@ -139,7 +140,7 @@ func setBitString(buff *types.GXByteBuffer, value any, addCount bool) error {
 			if it == '1' {
 				val |= 1 << index
 			} else if it != '0' {
-				return errors.New("Not a bit string.")
+				return gxcommon.ErrInvalidArgument
 			}
 			index--
 			if index == -1 {
@@ -164,7 +165,7 @@ func setBitString(buff *types.GXByteBuffer, value any, addCount bool) error {
 		types.SetObjectCount(8, buff)
 		return buff.SetUint8(v)
 	default:
-		return errors.New("BitString must give as string.")
+		return gxcommon.ErrInvalidArgument
 	}
 }
 
@@ -308,6 +309,9 @@ func getInitiateRequest(settings *settings.GXDLMSSettings, data *types.GXByteBuf
 			return err
 		}
 		err = types.SetObjectCount(len(settings.Cipher.DedicatedKey()), data)
+		if err != nil {
+			return err
+		}
 		err = data.Set(settings.Cipher.DedicatedKey())
 		if err != nil {
 			return err
@@ -758,7 +762,7 @@ func parseApplicationContextName(settings *settings.GXDLMSSettings,
 		return enums.ApplicationContextNameUnknown, nil
 	}
 	if ln, ok := settings.AssignedAssociation().(*objects.GXDLMSAssociationLogicalName); ok {
-		if byte(ln.ApplicationContextName.ContextId) == name {
+		if byte(ln.ApplicationContextName.ContextID) == name {
 			return enums.ApplicationContextNameUnknown, nil
 		}
 		//All connections are accepted if the There might be only one association view in some test meters.
@@ -770,7 +774,7 @@ func parseApplicationContextName(settings *settings.GXDLMSSettings,
 			len(settings.Objects.(*objects.GXDLMSObjectCollection).GetObjects(enums.ObjectTypeAssociationShortName)) == 1 {
 			return enums.ApplicationContextNameUnknown, nil
 		}
-		return ln.ApplicationContextName.ContextId, nil
+		return ln.ApplicationContextName.ContextID, nil
 	}
 	if settings.UseLogicalNameReferencing() {
 		if name == uint8(enums.ApplicationContextNameLogicalName) && (settings.Cipher == nil || settings.Cipher.Security() == enums.SecurityNone) {
@@ -1213,7 +1217,8 @@ func parsePDU(settings *settings.GXDLMSSettings,
 	size := buff.Size() - buff.Position()
 	if len > size {
 		if xml == nil {
-			return nil, errors.New("Not enough data.")
+
+			return nil, dlmserrors.ErrDataTooShort
 		}
 		xml.AppendComment("Error: Invalid data size.")
 	}

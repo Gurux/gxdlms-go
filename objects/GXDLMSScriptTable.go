@@ -35,10 +35,10 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -55,7 +55,7 @@ type GXDLMSScriptTable struct {
 	Scripts []GXDLMSScript
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSScriptTable) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -251,8 +251,10 @@ func (g *GXDLMSScriptTable) SetValue(settings *settings.GXDLMSSettings, e *inter
 				}
 				it.Target = getObjectCollection(settings.Objects).FindByLN(ot, ln)
 				if it.Target == nil {
-					it.Target = CreateObject(ot)
-					it.Target.Base().SetLogicalName(ln)
+					it.Target, err = CreateObject(ot, ln, 0)
+					if err != nil {
+						return err
+					}
 				}
 				it.Index = arr[3].(int8)
 				it.Parameter = arr[4]
@@ -279,8 +281,15 @@ func (g *GXDLMSScriptTable) SetValue(settings *settings.GXDLMSSettings, e *inter
 func (g *GXDLMSScriptTable) Load(reader *GXXmlReader) error {
 	g.Scripts = g.Scripts[:0]
 	var err error
-	if reader.isStartElementNamed2("Scripts", true) {
-		for reader.isStartElementNamed2("Script", true) {
+	if ret, err := reader.IsStartElementNamed("Scripts", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Script", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it := GXDLMSScript{}
 			g.Scripts = append(g.Scripts, it)
 			ret, err := reader.ReadElementContentAsInt("ID", 0)
@@ -288,10 +297,17 @@ func (g *GXDLMSScriptTable) Load(reader *GXXmlReader) error {
 				return err
 			}
 			it.Id = uint16(ret)
-			if reader.isStartElementNamed2("Actions", true) {
-				for reader.isStartElementNamed2("Action", true) {
+			if ret, err := reader.IsStartElementNamed("Actions", true); ret && err == nil {
+				for {
+					ret, err = reader.IsStartElementNamed("Action", true)
+					if err != nil {
+						return err
+					}
+					if !ret {
+						break
+					}
 					a := GXDLMSScriptAction{}
-					ret, err = reader.ReadElementContentAsInt("Type", 0)
+					ret, err := reader.ReadElementContentAsInt("Type", 0)
 					if err != nil {
 						return err
 					}
@@ -312,8 +328,7 @@ func (g *GXDLMSScriptTable) Load(reader *GXXmlReader) error {
 					a.Index = int8(ret)
 					a.Target = reader.Objects.FindByLN(ot, ln)
 					if a.Target == nil {
-						a.Target = CreateObject(ot)
-						err = a.Target.Base().SetLogicalName(ln)
+						a.Target, err = CreateObject(ot, ln, 0)
 						if err != nil {
 							return err
 						}
@@ -480,12 +495,13 @@ func (g *GXDLMSScriptTable) GetDataType(index int) (enums.DataType, error) {
 	if index == 2 {
 		return enums.DataTypeArray, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSScriptTable creates a new script table object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSScriptTable(ln string, sn int16) (*GXDLMSScriptTable, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

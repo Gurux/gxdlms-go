@@ -35,8 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
-
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -71,7 +70,7 @@ type GXDLMSTcpUdpSetup struct {
 	InactivityTimeout uint16
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSTcpUdpSetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -319,14 +318,15 @@ func (g *GXDLMSTcpUdpSetup) GetDataType(index int) (enums.DataType, error) {
 	} else if index == 6 {
 		ret = enums.DataTypeUint16
 	} else {
-		return 0, errors.New("GetDataType failed. Invalid attribute index.")
+		return 0, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSTcpUdpSetup creates a new TcpUdp setup object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSTcpUdpSetup(ln string, sn int16) (*GXDLMSTcpUdpSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -35,8 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
-
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -57,7 +56,7 @@ type GXDLMSGprsSetup struct {
 	RequestedQualityOfService GXDLMSQosElement
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSGprsSetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -298,7 +297,7 @@ func (g *GXDLMSGprsSetup) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.PINCode = uint16(ret)
-	if reader.isStartElementNamed2("DefaultQualityOfService", true) {
+	if ret, err := reader.IsStartElementNamed("DefaultQualityOfService", true); ret && err == nil {
 		ret, err := reader.ReadElementContentAsInt("Precedence", 0)
 		if err != nil {
 			return err
@@ -326,32 +325,27 @@ func (g *GXDLMSGprsSetup) Load(reader *GXXmlReader) error {
 		g.DefaultQualityOfService.MeanThroughput = uint8(ret)
 		reader.ReadEndElement("DefaultQualityOfService")
 	}
-	if reader.isStartElementNamed2("RequestedQualityOfService", true) {
-		ret, err = reader.ReadElementContentAsInt("Precedence", 0)
+	if ret, err := reader.IsStartElementNamed("RequestedQualityOfService", true); ret && err == nil {
+		g.RequestedQualityOfService.Precedence, err = reader.ReadElementContentAsUInt8("Precedence", 0)
 		if err != nil {
 			return err
 		}
-		g.RequestedQualityOfService.Precedence = uint8(ret)
-		ret, err = reader.ReadElementContentAsInt("Delay", 0)
+		g.RequestedQualityOfService.Delay, err = reader.ReadElementContentAsUInt8("Delay", 0)
 		if err != nil {
 			return err
 		}
-		g.RequestedQualityOfService.Delay = uint8(ret)
-		ret, err = reader.ReadElementContentAsInt("Reliability", 0)
+		g.RequestedQualityOfService.Reliability, err = reader.ReadElementContentAsUInt8("Reliability", 0)
 		if err != nil {
 			return err
 		}
-		g.RequestedQualityOfService.Reliability = uint8(ret)
-		ret, err = reader.ReadElementContentAsInt("PeakThroughput", 0)
+		g.RequestedQualityOfService.PeakThroughput, err = reader.ReadElementContentAsUInt8("PeakThroughput", 0)
 		if err != nil {
 			return err
 		}
-		g.RequestedQualityOfService.PeakThroughput = uint8(ret)
-		ret, err = reader.ReadElementContentAsInt("MeanThroughput", 0)
+		g.RequestedQualityOfService.MeanThroughput, err = reader.ReadElementContentAsUInt8("MeanThroughput", 0)
 		if err != nil {
 			return err
 		}
-		g.RequestedQualityOfService.MeanThroughput = uint8(ret)
 		reader.ReadEndElement("RequestedQualityOfService")
 	}
 	return err
@@ -470,12 +464,13 @@ func (g *GXDLMSGprsSetup) GetDataType(index int) (enums.DataType, error) {
 	if index == 4 {
 		return enums.DataTypeArray, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSGprsSetup creates a new GPRS setup object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSGprsSetup(ln string, sn int16) (*GXDLMSGprsSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -39,6 +39,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -325,5 +326,23 @@ func (g *GXDLMSExtendedRegister) GetDataType(index int) (enums.DataType, error) 
 	if index == 5 {
 		return enums.DataTypeOctetString, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
+}
+
+// NewGXDLMSExtendedRegister creates a new extended register object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
+func NewGXDLMSExtendedRegister(ln string, sn int16) (*GXDLMSMacAddressSetup, error) {
+	err := ValidateLogicalName(ln)
+	if err != nil {
+		return nil, err
+	}
+	return &GXDLMSMacAddressSetup{
+		GXDLMSObject: GXDLMSObject{
+			objectType:  enums.ObjectTypeExtendedRegister,
+			logicalName: ln,
+			ShortName:   sn,
+		},
+	}, nil
 }

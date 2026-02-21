@@ -37,6 +37,7 @@ import (
 	"errors"
 	"reflect"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -44,8 +45,7 @@ import (
 	"github.com/Gurux/gxdlms-go/types"
 )
 
-// Online help:
-//
+// GXDLMSData Online is available at:
 //	https://www.gurux.fi/Gurux.internal.Objects.GXDLMSData
 type GXDLMSData struct {
 	GXDLMSObject
@@ -53,7 +53,7 @@ type GXDLMSData struct {
 	Value any
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSData) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -197,7 +197,7 @@ func (g *GXDLMSData) GetDataType(index int) (enums.DataType, error) {
 		}
 		return dt, err
 	default:
-		return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+		return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 	}
 }
 
@@ -210,9 +210,10 @@ func (g *GXDLMSData) GetUIDataType(index int) enums.DataType {
 	return g.Base().GetUIDataType(index)
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSData creates a new data object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSData(ln string, sn int16) (*GXDLMSData, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

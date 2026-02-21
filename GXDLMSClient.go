@@ -627,21 +627,35 @@ func (g *GXDLMSClient) SetOverwriteAttributeAccessRights(value bool) error {
 	return nil
 }
 
-func createDLMSObject(settings *settings.GXDLMSSettings, ClassID uint16, Version any, baseName any, LN any, accessRights any, lnVersion uint8) objects.IGXDLMSBase {
+func createDLMSObject(settings *settings.GXDLMSSettings,
+	ClassID uint16,
+	Version any,
+	baseName any, LN any,
+	accessRights any,
+	lnVersion uint8) (objects.IGXDLMSBase, error) {
 	type_ := enums.ObjectType(ClassID)
-	obj := objects.CreateObject(type_)
-	if obj != nil {
-		updateObjectData(obj, type_, Version, baseName, LN, accessRights.(types.GXStructure), lnVersion)
+	var shortName int16
+	var logicalName string
+	if baseName != nil {
+		shortName = baseName.(int16)
 	}
-	return obj
+	if LN != nil {
+		logicalName, _ = helpers.ToLogicalName(LN)
+	}
+	obj, err := objects.CreateObject(type_, logicalName, shortName)
+	if err != nil {
+		return nil, err
+	}
+	if obj != nil {
+		updateObjectData(obj, type_, Version, accessRights.(types.GXStructure), lnVersion)
+	}
+	return obj, nil
 }
 
 func updateObjectData(
 	obj objects.IGXDLMSBase,
 	objectType enums.ObjectType,
 	version any,
-	baseName any,
-	logicalName any,
 	accessRights types.GXStructure,
 	lnVersion uint8) {
 	var tmp int
@@ -726,15 +740,8 @@ func updateObjectData(
 			}
 		}
 	}
-	if baseName != nil {
-		obj.Base().ShortName = baseName.(int16)
-	}
 	if version != nil {
 		obj.Base().Version = version.(uint8)
-	}
-	if logicalName != nil {
-		ret, _ := helpers.ToLogicalName(logicalName)
-		obj.Base().SetLogicalName(ret)
 	}
 }
 
@@ -772,7 +779,10 @@ func (g *GXDLMSClient) parseSNObjects(buff *types.GXByteBuffer,
 		}
 		baseName := objects[0].(int8)
 		ot := objects[1].(uint16)
-		comp := createDLMSObject(g.settings, ot, objects[2], baseName, objects[3], nil, 2)
+		comp, err := createDLMSObject(g.settings, ot, objects[2], baseName, objects[3], nil, 2)
+		if err != nil {
+			return nil, err
+		}
 		if comp != nil {
 			if !ignoreInactiveObjects || comp.Base().LogicalName() != "0.0.127.0.0.0" {
 				items.Add(comp)
@@ -842,7 +852,10 @@ func (g *GXDLMSClient) parseLNObjects(buff *types.GXByteBuffer,
 		}
 		objectCnt++
 		ot := objects[0].(uint16)
-		comp := createDLMSObject(g.settings, ot, objects[1], nil, objects[2], objects[3], lnVersion)
+		comp, err := createDLMSObject(g.settings, ot, objects[1], nil, objects[2], objects[3], lnVersion)
+		if err != nil {
+			return nil, err
+		}
 		if comp != nil {
 			if !ignoreInactiveObjects || comp.Base().LogicalName() != "0.0.127.0.0.0" {
 				items.Add(comp)
@@ -1720,9 +1733,11 @@ func (g *GXDLMSClient) ParseObjects(data *types.GXByteBuffer,
 	if g.CustomObisCodes != nil {
 		for _, it := range g.CustomObisCodes {
 			if it.Append {
-				obj := objects.CreateObject(it.ObjectType)
+				obj, err := objects.CreateObject(it.ObjectType, it.LogicalName, 0)
+				if err != nil {
+					return nil, err
+				}
 				obj.Base().Version = it.Version
-				obj.Base().SetLogicalName(it.LogicalName)
 				obj.Base().Description = it.Description
 				objects_ = append(objects_, obj)
 			}
@@ -1760,7 +1775,10 @@ func (g *GXDLMSClient) ParsePushObjects(data []any) ([]*types.GXKeyValuePair[obj
 				}
 				comp := g.Objects().FindByLN(enums.ObjectType(classID), ret)
 				if comp == nil {
-					comp = createDLMSObject(g.settings, classID, 0, 0, it[1], nil, 2)
+					comp, err = createDLMSObject(g.settings, classID, 0, 0, it[1], nil, 2)
+					if err != nil {
+						return nil, err
+					}
 					c.UpdateOBISCodeInformation(comp)
 				}
 				if comp != nil {
@@ -3329,7 +3347,7 @@ func (g *GXDLMSClient) CanInvoke(target *objects.GXDLMSObject, index int) bool {
 func NewGXDLMSClient(useLogicalNameReferencing bool, clientAddress int, serverAddress int, authentication enums.Authentication,
 	password []byte, interfaceType enums.InterfaceType) (*GXDLMSClient, error) {
 	ret := &GXDLMSClient{}
-	ret.settings = settings.NewGXDLMSSettingsWithParams(false, useLogicalNameReferencing, interfaceType)
+	ret.settings = settings.NewGXDLMSSettingsWithParams(false, useLogicalNameReferencing, interfaceType, objects.GXDLMSObjectCollection{})
 	ret.settings.Cipher = &secure.GXCiphering{}
 	err := ret.SetClientAddress(clientAddress)
 	if err != nil {

@@ -35,10 +35,10 @@
 package objects
 
 import (
-	"errors"
 	"math"
 	"reflect"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -229,9 +229,10 @@ func (g *GXDLMSRegister) SetValue(settings *settings.GXDLMSSettings, e *internal
 	return err
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSRegister creates a new register object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSRegister(ln string, sn int16) (*GXDLMSRegister, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {
@@ -333,7 +334,7 @@ func (g *GXDLMSRegister) GetDataType(index int) (enums.DataType, error) {
 	if index == 3 {
 		return enums.DataTypeStructure, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 }
 
 // GetUIDataType returns UI data type of selected index.

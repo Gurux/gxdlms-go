@@ -38,6 +38,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -492,12 +493,13 @@ func (g *GXDLMSClock) GetDataType(index int) (enums.DataType, error) {
 	if index == 9 {
 		return enums.DataTypeEnum, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSClock creates a new clock object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSClock(ln string, sn int16) (*GXDLMSClock, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -53,9 +53,9 @@ type GXApplicationContextName struct {
 
 	ApplicationContext uint8
 
-	ContextId enums.ApplicationContextName
+	ContextID enums.ApplicationContextName
 }
 
 func (g *GXApplicationContextName) String() string {
-	return strconv.Itoa(int(g.JointIsoCtt)) + " " + strconv.Itoa(int(g.Country)) + " " + strconv.Itoa(int(g.CountryName)) + " " + strconv.Itoa(int(g.IdentifiedOrganization)) + " " + strconv.Itoa(int(g.DlmsUA)) + " " + strconv.Itoa(int(g.ApplicationContext)) + " " + g.ContextId.String()
+	return strconv.Itoa(int(g.JointIsoCtt)) + " " + strconv.Itoa(int(g.Country)) + " " + strconv.Itoa(int(g.CountryName)) + " " + strconv.Itoa(int(g.IdentifiedOrganization)) + " " + strconv.Itoa(int(g.DlmsUA)) + " " + strconv.Itoa(int(g.ApplicationContext)) + " " + g.ContextID.String()
 }

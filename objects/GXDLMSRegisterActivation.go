@@ -36,9 +36,9 @@
 
 import (
 	"bytes"
-	"errors"
 	"strings"
 
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -58,7 +58,7 @@ type GXDLMSRegisterActivation struct {
 	ActiveMask []byte
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSRegisterActivation) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -345,8 +345,15 @@ func (g *GXDLMSRegisterActivation) SetValue(settings *settings.GXDLMSSettings, e
 //	reader: XML reader.
 func (g *GXDLMSRegisterActivation) Load(reader *GXXmlReader) error {
 	list := []GXDLMSObjectDefinition{}
-	if reader.isStartElementNamed2("RegisterAssignment", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("RegisterAssignment", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it := GXDLMSObjectDefinition{}
 			ret, err := reader.ReadElementContentAsInt("ObjectType", 0)
 			if err != nil {
@@ -366,8 +373,15 @@ func (g *GXDLMSRegisterActivation) Load(reader *GXXmlReader) error {
 	}
 	g.RegisterAssignment = list
 	g.MaskList = g.MaskList[:0]
-	if reader.isStartElementNamed2("MaskList", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("MaskList", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			ret, err := reader.ReadElementContentAsString("Mask", "")
 			if err != nil {
 				return err
@@ -556,14 +570,15 @@ func (g *GXDLMSRegisterActivation) GetDataType(index int) (enums.DataType, error
 	} else if index == 4 {
 		ret = enums.DataTypeOctetString
 	} else {
-		return 0, errors.New("GetDataType failed. Invalid attribute index.")
+		return 0, dlmserrors.ErrInvalidAttributeIndex
 	}
 	return ret, nil
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSRegisterActivation creates a new register activation object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSRegisterActivation(ln string, sn int16) (*GXDLMSRegisterActivation, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

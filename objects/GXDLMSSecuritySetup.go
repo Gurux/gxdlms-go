@@ -42,6 +42,7 @@ import (
 	"strings"
 
 	"github.com/Gurux/gxcommon-go"
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/buffer"
@@ -87,7 +88,7 @@ type GXDLMSSecuritySetup struct {
 	Certificates GXDLMSCertificateCollection
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSSecuritySetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -867,9 +868,10 @@ func (g *GXDLMSSecuritySetup) SetValue(settings *settings.GXDLMSSettings, e *int
 	return err
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSSecuritySetup creates a new security setup object instance.
+//
+// The function validates `ln` before creating the object.
+//`ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSSecuritySetup(ln string, sn int16) (*GXDLMSSecuritySetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {
@@ -922,8 +924,15 @@ func (g *GXDLMSSecuritySetup) Load(reader *GXXmlReader) error {
 		g.ServerSystemTitle = types.HexToBytes(str)
 	}
 	g.Certificates.Clear()
-	if reader.isStartElementNamed2("Certificates", true) {
-		for reader.isStartElementNamed2("Item", true) {
+	if ret, err := reader.IsStartElementNamed("Certificates", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Item", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it := &GXDLMSCertificateInfo{}
 			g.Certificates = append(g.Certificates, it)
 			ret, err := reader.ReadElementContentAsInt("Entity", 0)
@@ -1001,8 +1010,16 @@ func (g *GXDLMSSecuritySetup) Load(reader *GXXmlReader) error {
 		g.tlsKey = types.NewGXKeyValuePair(pk.PublicKey(), pk.PrivateKey())
 	}
 	g.serverCertificates.Clear()
-	if reader.isStartElementNamed2("ServerCertificates", true) {
-		for reader.isStartElementNamed2("Cert", false) {
+	if ret, err := reader.IsStartElementNamed("ServerCertificates", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Cert", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
+
 			ret, err := reader.ReadElementContentAsString("Cert", "")
 			if err != nil {
 				return err
@@ -1795,14 +1812,14 @@ func (g *GXDLMSSecuritySetup) UpdateEphemeralKeysFromByteBuffer(client IGXDLMSCl
 		}
 		log.Printf("Shared secret: %s\n", types.ToHex(z, true))
 		kdf := types.GXByteBuffer{}
-		ret3, err := settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIdAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
+		ret3, err := settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
 		err = kdf.Set(ret3)
 		if err != nil {
 			return nil, err
 		}
 		log.Printf("Shared secret: %s\n", types.ToHex(z, true))
 		kdf = types.GXByteBuffer{}
-		ret3, err = settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIdAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
+		ret3, err = settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -1861,5 +1878,5 @@ func (g *GXDLMSSecuritySetup) GetDataType(index int) (enums.DataType, error) {
 	if g.Version > 0 && index == 6 {
 		return enums.DataTypeArray, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 }

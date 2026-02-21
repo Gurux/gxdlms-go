@@ -35,10 +35,11 @@
 //---------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
+	"github.com/Gurux/gxcommon-go"
+	"github.com/Gurux/gxdlms-go/dlmserrors"
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/internal"
 	"github.com/Gurux/gxdlms-go/internal/helpers"
@@ -47,8 +48,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-// Online help:
-// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSActionSchedule
+// GXDLMSActionSchedule represents the DLMS Action Schedule object.
+// Online help: https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSActionSchedule
 type GXDLMSActionSchedule struct {
 	GXDLMSObject
 	// Script to execute.
@@ -64,7 +65,7 @@ type GXDLMSActionSchedule struct {
 	ExecutionTime []types.GXDateTime
 }
 
-// base returns the base GXDLMSObject of the object.
+// Base returns the base GXDLMSObject of the object.
 func (g *GXDLMSActionSchedule) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
@@ -177,6 +178,9 @@ func (g *GXDLMSActionSchedule) GetValue(settings *settings.GXDLMSSettings, e *in
 			return nil, err
 		}
 		err = types.SetObjectCount(len(g.ExecutionTime), data)
+		if err != nil {
+			return nil, err
+		}
 		for _, it := range g.ExecutionTime {
 			err = data.SetUint8(uint8(enums.DataTypeStructure))
 			if err != nil {
@@ -188,10 +192,19 @@ func (g *GXDLMSActionSchedule) GetValue(settings *settings.GXDLMSSettings, e *in
 			}
 			if settings != nil && settings.Standard == enums.StandardSaudiArabia {
 				err = internal.SetData(settings, data, enums.DataTypeTime, *types.NewGXTimeFromDateTime(&it))
+				if err != nil {
+					return nil, err
+				}
 				err = internal.SetData(settings, data, enums.DataTypeDate, *types.NewGXDateFromDateTime(&it))
 			} else {
 				err = internal.SetData(settings, data, enums.DataTypeOctetString, *types.NewGXTimeFromDateTime(&it))
+				if err != nil {
+					return nil, err
+				}
 				err = internal.SetData(settings, data, enums.DataTypeOctetString, *types.NewGXDateFromDateTime(&it))
+			}
+			if err != nil {
+				return nil, err
 			}
 		}
 		return data.Array(), nil
@@ -257,7 +270,7 @@ func (g *GXDLMSActionSchedule) SetValue(settings *settings.GXDLMSSettings, e *in
 				} else if v, ok := it[0].(types.GXDateTime); ok {
 					time_ = *types.NewGXTimeFromDateTime(&v)
 				} else {
-					return errors.New("Invalid time.")
+					return gxcommon.ErrInvalidArgument
 				}
 				time_.Skip &^= (enums.DateTimeSkipsYear | enums.DateTimeSkipsMonth | enums.DateTimeSkipsDay | enums.DateTimeSkipsDayOfWeek)
 				var date_ types.GXDate
@@ -270,7 +283,7 @@ func (g *GXDLMSActionSchedule) SetValue(settings *settings.GXDLMSSettings, e *in
 				} else if v, ok := it[1].(types.GXDate); ok {
 					date_ = v
 				} else {
-					return errors.New("Invalid date.")
+					return gxcommon.ErrInvalidArgument
 				}
 				date_.Skip &^= (enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsMs)
 				tmp := types.GXDateTime{
@@ -338,8 +351,15 @@ func (g *GXDLMSActionSchedule) Load(reader *GXXmlReader) error {
 	}
 	g.Type = enums.SingleActionScheduleType(ret)
 	list := []types.GXDateTime{}
-	if reader.isStartElementNamed2("ExecutionTime", true) {
-		for reader.isStartElementNamed2("Time", false) {
+	if ret, err := reader.IsStartElementNamed("ExecutionTime", true); ret && err == nil {
+		for {
+			ret, err = reader.IsStartElementNamed("Time", true)
+			if err != nil {
+				return err
+			}
+			if !ret {
+				break
+			}
 			it, err := reader.ReadElementContentAsString("Time", "")
 			if err != nil {
 				return err
@@ -413,9 +433,9 @@ func (g *GXDLMSActionSchedule) PostLoad(reader *GXXmlReader) error {
 // GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSActionSchedule) GetValues() []any {
 	if g.Target != nil {
-		return []any{g.LogicalName(), fmt.Sprint("%s %d", g.Target.LogicalName(), g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
+		return []any{g.LogicalName(), fmt.Sprintf("%s %d", g.Target.LogicalName(), g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
 	}
-	return []any{g.LogicalName(), fmt.Sprint("%s %d", g.ExecutedScriptLogicalName, g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
+	return []any{g.LogicalName(), fmt.Sprintf("%s %d", g.ExecutedScriptLogicalName, g.ExecutedScriptSelector), g.Type, g.ExecutionTime}
 }
 
 // GetDataType returns the device data type of selected attribute index.
@@ -440,12 +460,13 @@ func (g *GXDLMSActionSchedule) GetDataType(index int) (enums.DataType, error) {
 	if index == 4 {
 		return enums.DataTypeArray, nil
 	}
-	return enums.DataTypeNone, errors.New("GetDataType failed. Invalid attribute index.")
+	return enums.DataTypeNone, dlmserrors.ErrInvalidAttributeIndex
 }
 
-// Constructor.
-// ln: Logical Name of the object.
-// sn: Short Name of the object.
+// NewGXDLMSActionSchedule creates a new Action Schedule object instance.
+//
+// The var attributes []int` before creating the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSActionSchedule(ln string, sn int16) (*GXDLMSActionSchedule, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

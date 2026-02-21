@@ -220,7 +220,10 @@ func primeDcAppendAttributeDescriptor(xml *settings.GXDLMSTranslatorStructure, c
 	}
 	xml.AppendComment(ret)
 	xml.AppendLineFromTag(int(internal.TranslatorTagsInstanceId), "Value", types.ToHex(ln, false))
-	obj := objects.CreateObject(enums.ObjectType(ci))
+	obj, err := objects.CreateObject(enums.ObjectType(ci), ret, 0)
+	if err != nil {
+		return err
+	}
 	if obj != nil {
 		xml.AppendComment(obj.GetNames()[attributeIndex-1])
 	}
@@ -242,7 +245,11 @@ func primeDcappendMethodDescriptor(xml *settings.GXDLMSTranslatorStructure, ci i
 	}
 	xml.AppendComment(ret)
 	xml.AppendLineFromTag(int(internal.TranslatorTagsInstanceId), "Value", types.ToHex(ln, false))
-	obj := objects.CreateObject(enums.ObjectType(ci))
+	obj, err := objects.CreateObject(enums.ObjectType(ci), ret, 0)
+	if err != nil {
+		return err
+	}
+
 	if obj != nil {
 		xml.AppendComment(obj.GetMethodNames()[attributeIndex-1])
 	}

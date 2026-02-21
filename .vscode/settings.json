@@ -1,0 +1,28 @@
+{
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "editor.parameterHints.enabled": true,
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.inlineSuggest.enabled": true,
+
+  "go.useLanguageServer": true,
+  "go.formatTool": "gofmt",
+  "go.lintOnSave": "off",
+  "go.vetOnSave": "off",
+
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  "gopls": {
+    "ui.completion.usePlaceholders": true,
+    "staticcheck": true
+  }
+}

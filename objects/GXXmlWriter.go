@@ -1,3 +1,5 @@
+package objects
+
 // --------------------------------------------------------------------------
 //
 //	Gurux Ltd
@@ -30,7 +32,6 @@
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 // ---------------------------------------------------------------------------
-package objects
 
 import (
 	"bufio"
@@ -41,6 +42,7 @@ import (
 
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/types"
+	"golang.org/x/text/language"
 )
 
 type GXXmlWriter struct {
@@ -53,15 +55,17 @@ type GXXmlWriter struct {
 	open []string
 }
 
-func NewGXXmlWriterStream(stream *bufio.Writer, settings *GXXmlWriterSettings) *GXXmlWriter {
+func newGXXmlWriterStream(stream *bufio.Writer, settings *GXXmlWriterSettings) *GXXmlWriter {
 	w := bufio.NewWriter(stream)
+	encoder := xml.NewEncoder(w)
+	encoder.Indent("", "  ")
 	return &GXXmlWriter{
 		out:      w,
-		enc:      xml.NewEncoder(w),
+		enc:      encoder,
 		settings: settings,
 	}
 }
-func (w *GXXmlWriter) Close() error { return nil }
+func (w *GXXmlWriter) close() error { return nil }
 
 func (x *GXXmlWriter) ignoreDefaultValues() bool {
 	return x.settings != nil && x.settings.IgnoreDefaultValues
@@ -92,7 +96,6 @@ func (x *GXXmlWriter) WriteAttributeString(name, value string) error {
 	return fmt.Errorf("use WriteStartElementWithAttrs in Go version (attributes must be known at start)")
 }
 
-// Idiomatic helper: start element with attributes in one go.
 func (x *GXXmlWriter) WriteStartElementWithAttrs(name string, attrs map[string]string) error {
 	x.open = append(x.open, name)
 	var a []xml.Attr
@@ -158,6 +161,15 @@ func (x *GXXmlWriter) WriteElementStringInt(name string, value int) error {
 
 func (x *GXXmlWriter) WriteElementString(name string, value any) error {
 	if value != nil {
+		if v, ok := value.(types.GXDate); ok {
+			return x.writeSimpleElement(name, v.ToFormatMeterString(&language.AmericanEnglish))
+		}
+		if v, ok := value.(types.GXTime); ok {
+			return x.writeSimpleElement(name, v.ToFormatMeterString(&language.AmericanEnglish))
+		}
+		if v, ok := value.(types.GXDateTime); ok {
+			return x.writeSimpleElement(name, v.ToFormatMeterString(&language.AmericanEnglish))
+		}
 		return x.writeSimpleElement(name, fmt.Sprint(value))
 	}
 	if !x.ignoreDefaultValues() {
