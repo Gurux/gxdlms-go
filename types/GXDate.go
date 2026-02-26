@@ -40,14 +40,12 @@ import (
 	"golang.org/x/text/language"
 )
 
-// This class is used because in COSEM object model some fields from date time can be ignored.
-//
-//	Default behavior of DateTime do not allow this.
+// GXDate represents a COSEM date value where time fields are skipped.
 type GXDate struct {
 	GXDateTime
 }
 
-// Constructor.
+// NewGXDateFromString creates a GXDate by parsing the given string.
 func NewGXDateFromString(value string, language *language.Tag) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Skip = enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
@@ -58,7 +56,7 @@ func NewGXDateFromString(value string, language *language.Tag) (*GXDate, error) 
 	return ret, err
 }
 
-// Constructor.
+// NewGXDateFromTime creates a GXDate from time.Time.
 func NewGXDateFromTime(value time.Time) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Value = value
@@ -66,7 +64,7 @@ func NewGXDateFromTime(value time.Time) (*GXDate, error) {
 	return ret, nil
 }
 
-// Constructor.
+// NewGXDateFromDateTime creates a GXDate from GXDateTime.
 func NewGXDateFromDateTime(value *GXDateTime) *GXDate {
 	ret := &GXDate{}
 	ret.Value = value.Value
@@ -75,7 +73,7 @@ func NewGXDateFromDateTime(value *GXDateTime) *GXDate {
 	return ret
 }
 
-// Constructor.
+// NewGXDate creates a GXDate from year, month, and day.
 func NewGXDate(year int, month int, day int) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Value = time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
@@ -84,19 +82,25 @@ func NewGXDate(year int, month int, day int) (*GXDate, error) {
 	return ret, nil
 }
 
+// String returns the date as a localized string using local time.
 func (g *GXDate) String() string {
 	return g.ToString(nil, true)
 }
 
+// ToString returns the date formatted for the given language.
+// If useLocalTime is true, the value is formatted using the local timezone.
 func (g *GXDate) ToString(language *language.Tag, useLocalTime bool) string {
 	g.Skip |= enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
 	return toString(g, language, useLocalTime, false)
 }
 
+// ToFormatString returns the date using a full fixed output format.
+// If useLocalTime is true, the value is formatted using the local timezone.
 func (g *GXDate) ToFormatString(language *language.Tag, useLocalTime bool) string {
 	return toString(g, language, useLocalTime, true)
 }
 
+// ToFormatMeterString returns the date using meter timezone formatting.
 func (g *GXDate) ToFormatMeterString(language *language.Tag) string {
 	return toString(g, language, false, true)
 }

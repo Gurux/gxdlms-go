@@ -698,6 +698,17 @@ func getDate(buff *types.GXByteBuffer, info *GXDataInfo) (any, error) {
 	return *value, nil
 }
 
+func makeUTC(minutes int16) string {
+	sign := "+"
+	if minutes < 0 {
+		sign = "-"
+	}
+	absMinutes := int(math.Abs(float64(minutes)))
+	hours := absMinutes / 60
+	mins := absMinutes % 60
+	return fmt.Sprintf("UTC%s%02d:%02d", sign, hours, mins)
+}
+
 // getDateTime retrieves a DateTime value from DLMS data.
 func getDateTime(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, info *GXDataInfo) (any, error) {
 
@@ -792,9 +803,20 @@ func getDateTime(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, in
 	//0x8000 == -32768
 	//deviation = -1 if skipped.
 	if deviation != -1 && deviation != -32768 && year != 1 && (dt.Skip&enums.DateTimeSkipsYear) == 0 {
+		loc := time.Local
+		now := time.Date(int(year), time.Month(month), int(day),
+			int(hours), int(minutes), int(seconds),
+			int(milliseconds)*int(time.Millisecond), time.Local)
+
+		offset := int(time.Duration(deviation) * 60)
+		_, o := now.Zone()
+		if o != -offset {
+			//If meter is in different time zone as reader.
+			loc = time.FixedZone(makeUTC(-deviation), -offset)
+		}
 		dt.Value = time.Date(int(year), time.Month(month), int(day),
 			int(hours), int(minutes), int(seconds),
-			int(milliseconds)*int(time.Millisecond), time.UTC).Add(time.Duration(deviation) * time.Minute)
+			int(milliseconds)*int(time.Millisecond), loc)
 	} else {
 		//Use current time if deviation is not defined.
 		dt.Skip |= enums.DateTimeSkipsDeviation
@@ -1012,6 +1034,24 @@ func SetData(s any, buff *types.GXByteBuffer, dt enums.DataType, value any) erro
 	case enums.DataTypeOctetString:
 		var b []byte
 		switch v := value.(type) {
+		case types.GXDate:
+			//Add size
+			if err := buff.SetUint8(5); err != nil {
+				return err
+			}
+			return setDate(conf, buff, value)
+		case types.GXTime:
+			//Add size
+			if err := buff.SetUint8(4); err != nil {
+				return err
+			}
+			return setTime(conf, buff, value)
+		case types.GXDateTime:
+			//Add size
+			if err := buff.SetUint8(12); err != nil {
+				return err
+			}
+			return setDateTime(conf, buff, value)
 		case []byte:
 			b = v
 		case string:
@@ -1043,6 +1083,334 @@ func SetData(s any, buff *types.GXByteBuffer, dt enums.DataType, value any) erro
 		return fmt.Errorf("%v serialization is not implemented", dt)
 	default:
 		return fmt.Errorf("unsupported DLMS data type: %v", dt)
+	}
+}
+func valueToGXDateTime(value any) (types.GXDateTime, error) {
+	switch v := value.(type) {
+	case types.GXDateTime:
+		return v, nil
+	case *types.GXDateTime:
+		if v == nil {
+			return types.GXDateTime{}, errors.New("invalid date format")
+		}
+		return *v, nil
+	case types.GXDate:
+		return v.GXDateTime, nil
+	case *types.GXDate:
+		if v == nil {
+			return types.GXDateTime{}, errors.New("invalid date format")
+		}
+		return v.GXDateTime, nil
+	case types.GXTime:
+		return v.GXDateTime, nil
+	case *types.GXTime:
+		if v == nil {
+			return types.GXDateTime{}, errors.New("invalid date format")
+		}
+		return v.GXDateTime, nil
+	case time.Time:
+		return *types.NewGXDateTimeFromTime(v), nil
+	case *time.Time:
+		if v == nil {
+			return types.GXDateTime{}, errors.New("invalid date format")
+		}
+		return *types.NewGXDateTimeFromTime(*v), nil
+	case string:
+		dt, err := types.NewGXDateTimeFromString(v, nil)
+		if err != nil {
+			return types.GXDateTime{}, err
+		}
+		return *dt, nil
+	default:
+		return types.GXDateTime{}, fmt.Errorf("invalid date format: %T", value)
+	}
+}
+
+func setTime(conf *settings.GXDLMSSettings, buff *types.GXByteBuffer, value any) error {
+	dt, err := valueToGXDateTime(value)
+	if err != nil {
+		return err
+	}
+	if conf != nil && conf.DateTimeSkips != enums.DateTimeSkipsNone {
+		dt.Skip |= conf.DateTimeSkips
+	}
+	if (dt.Skip & enums.DateTimeSkipsHour) != 0 {
+		if err = buff.SetUint8(0xFF); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint8(uint8(dt.Value.Hour())); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsMinute) != 0 {
+		if err = buff.SetUint8(0xFF); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint8(uint8(dt.Value.Minute())); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsSecond) != 0 {
+		if err = buff.SetUint8(0xFF); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint8(uint8(dt.Value.Second())); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsMs) != 0 {
+		return buff.SetUint8(0xFF)
+	}
+	return buff.SetUint8(uint8((dt.Value.Nanosecond() / int(time.Millisecond)) / 10))
+}
+
+func setDate(conf *settings.GXDLMSSettings, buff *types.GXByteBuffer, value any) error {
+	dt, err := valueToGXDateTime(value)
+	if err != nil {
+		return err
+	}
+	if conf != nil && conf.DateTimeSkips != enums.DateTimeSkipsNone {
+		dt.Skip |= conf.DateTimeSkips
+	}
+	if (dt.Skip & enums.DateTimeSkipsYear) != 0 {
+		if err = buff.SetUint16(0xFFFF); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint16(uint16(dt.Value.Year())); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsMonth) != 0 {
+		if err = buff.SetUint8(0xFF); err != nil {
+			return err
+		}
+	} else if (dt.Extra & enums.DateTimeExtraInfoDstBegin) != 0 {
+		if err = buff.SetUint8(0xFE); err != nil {
+			return err
+		}
+	} else if (dt.Extra & enums.DateTimeExtraInfoDstEnd) != 0 {
+		if err = buff.SetUint8(0xFD); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint8(uint8(dt.Value.Month())); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsDay) != 0 {
+		if err = buff.SetUint8(0xFF); err != nil {
+			return err
+		}
+	} else if (dt.Extra & enums.DateTimeExtraInfoLastDay) != 0 {
+		if err = buff.SetUint8(0xFE); err != nil {
+			return err
+		}
+	} else if (dt.Extra & enums.DateTimeExtraInfoLastDay2) != 0 {
+		if err = buff.SetUint8(0xFD); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint8(uint8(dt.Value.Day())); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsDayOfWeek) != 0 {
+		return buff.SetUint8(0xFF)
+	}
+	if dt.DayOfWeek != 0 {
+		return buff.SetUint8(uint8(dt.DayOfWeek))
+	}
+	wd := uint8(dt.Value.Weekday())
+	if wd == 0 {
+		wd = 7
+	}
+	return buff.SetUint8(wd)
+}
+
+func setDateTime(conf *settings.GXDLMSSettings, buff *types.GXByteBuffer, value any) error {
+	dt, err := valueToGXDateTime(value)
+	if err != nil {
+		return err
+	}
+	if _, ok := value.(time.Time); ok {
+		dt.Skip |= enums.DateTimeSkipsMs
+	}
+	if _, ok := value.(*time.Time); ok {
+		dt.Skip |= enums.DateTimeSkipsMs
+	}
+	if _, ok := value.(string); ok {
+		dt.Skip |= enums.DateTimeSkipsMs
+	}
+	if conf != nil && conf.DateTimeSkips != enums.DateTimeSkipsNone {
+		dt.Skip |= conf.DateTimeSkips
+	}
+	if dt.Value.IsZero() {
+		dt.Value = time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)
+	}
+	if err = setDate(conf, buff, dt); err != nil {
+		return err
+	}
+	if err = setTime(conf, buff, dt); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsDeviation) == 0 {
+		_, offsetSeconds := dt.Value.Zone()
+		deviation := int16(offsetSeconds / 60)
+		if conf != nil && conf.UseUtc2NormalTime {
+			if err = buff.SetInt16(deviation); err != nil {
+				return err
+			}
+		} else if err = buff.SetInt16(-deviation); err != nil {
+			return err
+		}
+	} else if err = buff.SetUint16(0x8000); err != nil {
+		return err
+	}
+	if (dt.Skip & enums.DateTimeSkipsStatus) == 0 {
+		return buff.SetUint8(uint8(dt.Status))
+	}
+	return buff.SetUint8(0xFF)
+}
+
+func toUint8(value any) (uint8, error) {
+	switch v := value.(type) {
+	case uint8:
+		return v, nil
+	case int8:
+		return uint8(v), nil
+	case uint16:
+		return uint8(v), nil
+	case int16:
+		return uint8(v), nil
+	case uint32:
+		return uint8(v), nil
+	case int32:
+		return uint8(v), nil
+	case uint64:
+		return uint8(v), nil
+	case int64:
+		return uint8(v), nil
+	case uint:
+		return uint8(v), nil
+	case int:
+		return uint8(v), nil
+	case string:
+		parsed, err := strconv.ParseUint(v, 10, 8)
+		if err != nil {
+			return 0, err
+		}
+		return uint8(parsed), nil
+	default:
+		return 0, fmt.Errorf("invalid data type: %T", value)
+	}
+}
+
+func setBcd(buff *types.GXByteBuffer, value any) error {
+	v, err := toUint8(value)
+	if err != nil {
+		return err
+	}
+	return buff.SetUint8(v)
+}
+
+func setOctetString(buff *types.GXByteBuffer, value any) error {
+	switch v := value.(type) {
+	case string:
+		tmp, err := HexToBytes(v)
+		if err != nil {
+			return err
+		}
+		if err = types.SetObjectCount(len(tmp), buff); err != nil {
+			return err
+		}
+		return buff.Set(tmp)
+	case []byte:
+		if err := types.SetObjectCount(len(v), buff); err != nil {
+			return err
+		}
+		return buff.Set(v)
+	case nil:
+		return types.SetObjectCount(0, buff)
+	default:
+		return fmt.Errorf("invalid data type: %T", value)
+	}
+}
+
+func setUtcString(buff *types.GXByteBuffer, value any) error {
+	if value == nil {
+		return buff.SetUint8(0)
+	}
+	tmp := []byte(fmt.Sprint(value))
+	if err := types.SetObjectCount(len(tmp), buff); err != nil {
+		return err
+	}
+	return buff.Set(tmp)
+}
+
+func setString(buff *types.GXByteBuffer, value any) error {
+	switch v := value.(type) {
+	case []byte:
+		if err := types.SetObjectCount(len(v), buff); err != nil {
+			return err
+		}
+		return buff.Set(v)
+	case nil:
+		return buff.SetUint8(0)
+	default:
+		str := fmt.Sprint(v)
+		if err := types.SetObjectCount(len(str), buff); err != nil {
+			return err
+		}
+		return buff.Set([]byte(str))
+	}
+}
+
+func setBitString(buff *types.GXByteBuffer, value any, addCount bool) error {
+	switch v := value.(type) {
+	case types.GXBitString:
+		value = v.Value()
+	case *types.GXBitString:
+		if v == nil {
+			value = nil
+		} else {
+			value = v.Value()
+		}
+	}
+	switch v := value.(type) {
+	case string:
+		if addCount {
+			if err := types.SetObjectCount(len(v), buff); err != nil {
+				return err
+			}
+		}
+		val := byte(0)
+		index := 7
+		for pos := 0; pos < len(v); pos++ {
+			it := v[pos]
+			if it == '1' {
+				val |= 1 << index
+			} else if it != '0' {
+				return gxcommon.ErrInvalidArgument
+			}
+			index--
+			if index == -1 {
+				index = 7
+				if err := buff.SetUint8(val); err != nil {
+					return err
+				}
+				val = 0
+			}
+		}
+		if index != 7 {
+			return buff.SetUint8(val)
+		}
+		return nil
+	case []byte:
+		if err := types.SetObjectCount(8*len(v), buff); err != nil {
+			return err
+		}
+		return buff.Set(v)
+	case nil:
+		return buff.SetUint8(0)
+	case byte:
+		if err := types.SetObjectCount(8, buff); err != nil {
+			return err
+		}
+		return buff.SetUint8(v)
+	default:
+		return fmt.Errorf("bit string must be given as string: %T", value)
 	}
 }
 

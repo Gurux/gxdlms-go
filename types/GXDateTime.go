@@ -44,9 +44,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-// This class is used because in COSEM object model some fields from date time can be ignored.
-//
-//	Default behavior of DateTime do not allow this.
+// GXDateTime represents a COSEM date-time value where selected fields can be skipped.
 type GXDateTime struct {
 	// Used date time value.
 	Value time.Time
@@ -97,7 +95,7 @@ func currentLanguage() *language.Tag {
 	return &tag
 }
 
-// Returns the date time format for the given culture.
+// getDateTimeFormat returns a date-time layout for the given language and skipped fields.
 func getDateTimeFormat(language *language.Tag, skip enums.DateTimeSkips) string {
 	if language == nil {
 		language = currentLanguage()
@@ -151,9 +149,7 @@ func getDateTimeFormat(language *language.Tag, skip enums.DateTimeSkips) string 
 	return format
 }
 
-// timeZonePosition returns the check is time zone included and return index of time zone.value:
-//
-//	Returns:
+// timeZonePosition returns the start index of a trailing timezone offset (+/-HHMM), or -1.
 func timeZonePosition(value string) int {
 	if len(value) > 5 {
 		pos := len(value) - 5
@@ -179,6 +175,7 @@ func remove(value string, tag string, sep string) string {
 	return value
 }
 
+// String returns the date-time as a localized string using local time.
 func (g *GXDateTime) String() string {
 	return g.ToString(nil, true)
 }
@@ -221,6 +218,8 @@ func detectSeparators(layout string, timeSeparator *string, dateSeparator *strin
 	}
 }
 
+// ToString returns the date-time formatted for the given language.
+// If useLocalTime is true, the value is formatted using the local timezone.
 func (g *GXDateTime) ToString(language *language.Tag, useLocalTime bool) string {
 	return toString(g, language, useLocalTime, false)
 }
@@ -301,47 +300,37 @@ func toString(target any, language *language.Tag, useLocalTime bool, useFormat b
 	return value.Format(format)
 }
 
+// ToFormatString returns the date-time using a full fixed output format.
+// If useLocalTime is true, the value is formatted using the local timezone.
 func (g *GXDateTime) ToFormatString(language *language.Tag, useLocalTime bool) string {
 	return toString(g, language, useLocalTime, true)
 }
 
+// ToFormatMeterString returns the date-time using meter timezone formatting.
 func (g *GXDateTime) ToFormatMeterString(language *language.Tag) string {
 	return toString(g, language, false, true)
 }
 
-// GXDateTimeFromUnixTime creater the  date time from Epoch time.
-// unixTime: Unix time.
-//
-//	Returns:
-//	    Date and time.
+// GXDateTimeFromUnixTime creates a GXDateTime from Unix epoch seconds.
 func GXDateTimeFromUnixTime(unixTime int64) *GXDateTime {
 	return &GXDateTime{
 		Value: time.Unix(unixTime, 0),
 	}
 }
 
-// GXDateTimeFromHighResolutionTime returns the get date time from high resolution clock time.highResolution: High resolution clock time.
-//
-//	Returns:
-//	    Date and time.
+// GXDateTimeFromHighResolutionTime creates a GXDateTime from high-resolution clock seconds.
 func GXDateTimeFromHighResolutionTime(highResolution int64) *GXDateTime {
 	return &GXDateTime{
 		Value: time.Unix(int64(highResolution), 0),
 	}
 }
 
-// ToUnixTime returns the convert date time to Epoch
-//
-//	Returns:
-//	    Unix time.
+// ToUnixTime converts the date-time to Unix epoch seconds.
 func (g *GXDateTime) ToUnixTime() int64 {
 	return g.Value.Unix()
 }
 
-// ToHighResolutionTime returns the convert date time to high resolution time.
-//
-//	Returns:
-//	    High resolution time.
+// ToHighResolutionTime converts the date-time to high-resolution clock seconds.
 func (g *GXDateTime) ToHighResolutionTime() uint64 {
 	if g.Value.IsZero() {
 		return 0
@@ -349,9 +338,9 @@ func (g *GXDateTime) ToHighResolutionTime() uint64 {
 	return uint64(g.Value.Unix())
 }
 
-// ToHex returns the get date time as hex string.
-// addSpace: Add space between bytes.
-// useMeterTimeZone: Date-Time values are shown using meter's time zone and it's not localized to use PC time.
+// ToHex returns the date-time as a hexadecimal string.
+// If addSpace is true, spaces are added between bytes.
+// If useMeterTimeZone is true, meter timezone is used instead of local PC timezone.
 func (g *GXDateTime) ToHex(addSpace bool, useMeterTimeZone bool) string {
 	buff := GXByteBuffer{}
 	return buff.ToHexByIndex(addSpace, 0)
@@ -383,8 +372,7 @@ func getDateTimeToken(format string, index int) (string, enums.DateTimeSkips) {
 	return "", enums.DateTimeSkipsNone
 }
 
-// Constructorvalue: Date time value as a string.
-// culture: Used culture.
+// parseInternal parses a date-time string into GXDateTime, GXDate, or GXTime targets.
 func parseInternal(target any, value string, language *language.Tag) error {
 	addTimeZone := true
 	var g *GXDateTime
@@ -535,8 +523,7 @@ func parseInternal(target any, value string, language *language.Tag) error {
 	return nil
 }
 
-// Constructorvalue: Date time value as a string.
-// culture: Used culture.
+// NewGXDateTimeFromString creates a GXDateTime by parsing the given string.
 func NewGXDateTimeFromString(value string, language *language.Tag) (*GXDateTime, error) {
 	g := &GXDateTime{}
 	err := parseInternal(g, value, language)
@@ -546,7 +533,7 @@ func NewGXDateTimeFromString(value string, language *language.Tag) (*GXDateTime,
 	return g, nil
 }
 
-// Constructorvalue: Date time value.
+// NewGXDateTimeFromTime creates a GXDateTime from time.Time.
 func NewGXDateTimeFromTime(value time.Time) *GXDateTime {
 	return &GXDateTime{Value: value}
 }
