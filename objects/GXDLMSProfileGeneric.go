@@ -275,6 +275,9 @@ func (g *GXDLMSProfileGeneric) GetData(settings *settings.GXDLMSSettings,
 				} else {
 					err = internal.SetData(settings, &data, tp, value)
 				}
+				if err != nil {
+					return nil, err
+				}
 			}
 			pos++
 		}
@@ -438,6 +441,9 @@ func (g *GXDLMSProfileGeneric) GetValue(settings *settings.GXDLMSSettings, e *in
 				return nil, err
 			}
 			err = internal.SetData(settings, data, enums.DataTypeUint16, 0)
+			if err != nil {
+				return nil, err
+			}
 		} else {
 			err = internal.SetData(settings, data, enums.DataTypeUint16, g.SortObject.Base().ObjectType())
 			if err != nil {
@@ -456,9 +462,9 @@ func (g *GXDLMSProfileGeneric) GetValue(settings *settings.GXDLMSSettings, e *in
 				return nil, err
 			}
 			err = internal.SetData(settings, data, enums.DataTypeUint16, g.SortDataIndex)
-		}
-		if err != nil {
-			return nil, err
+			if err != nil {
+				return nil, err
+			}
 		}
 		return data.Array(), nil
 	}
@@ -476,8 +482,8 @@ func (g *GXDLMSProfileGeneric) setBuffer(settings *settings.GXDLMSSettings,
 	e *internal.ValueEventArgs) error {
 	var err error
 	var cols []types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject]
-	if _, ok := e.Parameters.(types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject]); ok {
-		//TODO:  cols = v
+	if v, ok := e.Parameters.([]types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject]); ok {
+		cols = v
 	}
 	if cols == nil {
 		cols = g.CaptureObjects
@@ -485,9 +491,8 @@ func (g *GXDLMSProfileGeneric) setBuffer(settings *settings.GXDLMSSettings,
 	if e.Value != nil {
 		var index2 int
 		var lastDate time.Time
-		for _, tmp := range e.Value.([]any) {
-			row := []any{}
-			row = append(row, tmp.([]any)...)
+		for _, tmp := range e.Value.(types.GXArray) {
+			row := tmp.(types.GXStructure)
 			if len(cols) != 0 {
 				if len(row) != len(cols) {
 					return errors.New("The number of columns does not match.")
@@ -511,13 +516,13 @@ func (g *GXDLMSProfileGeneric) setBuffer(settings *settings.GXDLMSSettings,
 							if err != nil {
 								return err
 							}
-							if dt, ok := row[pos].(*types.GXDateTime); ok {
+							if dt, ok := row[pos].(types.GXDateTime); ok {
 								lastDate = dt.Value
 							}
 						}
 					} else if type_ == enums.DataTypeDateTime && row[pos] == nil && g.CapturePeriod != 0 {
 						if !lastDate.IsZero() && len(g.Buffer) != 0 {
-							lastDate = g.Buffer[len(g.Buffer)-1][pos].(*types.GXDateTime).Value
+							lastDate = g.Buffer[len(g.Buffer)-1][pos].(types.GXDateTime).Value
 						}
 						if !lastDate.IsZero() {
 							if g.SortMethod == enums.SortMethodFiFo || g.SortMethod == enums.SortMethodSmallest {
@@ -537,12 +542,12 @@ func (g *GXDLMSProfileGeneric) setBuffer(settings *settings.GXDLMSSettings,
 					if r, ok := cols[pos].Key.(*GXDLMSRegister); ok && index2 == 2 {
 						scaler := r.Scaler()
 						if scaler != 1 {
-							row[pos] = row[pos].(float64) * scaler
+							row[pos] = internal.AnyToDouble(row[pos]) * scaler
 						}
 					} else if dr, ok := cols[pos].Key.(*GXDLMSDemandRegister); ok && (index2 == 2 || index2 == 3) {
 						scaler := dr.Scaler()
 						if scaler != 1 {
-							row[pos] = row[pos].(float64) * scaler
+							row[pos] = internal.AnyToDouble(row[pos]) * scaler
 						}
 					} else if r, ok := cols[pos].Key.(*GXDLMSRegister); ok && index2 == 3 {
 						v := internal.NewValueEventArgs3(r, 3, 0, nil)
@@ -563,7 +568,7 @@ func (g *GXDLMSProfileGeneric) setBuffer(settings *settings.GXDLMSSettings,
 
 func (g *GXDLMSProfileGeneric) setCaptureObjects(parent any,
 	settings *settings.GXDLMSSettings,
-	list []types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject],
+	list *[]types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject],
 	array types.GXArray) error {
 	for _, it := range array {
 		tmp := it.(types.GXStructure)
@@ -598,7 +603,7 @@ func (g *GXDLMSProfileGeneric) setCaptureObjects(parent any,
 			c.UpdateOBISCodeInformation(obj)
 			*/
 		}
-		list = append(list, *types.NewGXKeyValuePair(obj, NewGXDLMSCaptureObject(int(attributeIndex), int(dataIndex))))
+		*list = append(*list, *types.NewGXKeyValuePair(obj, NewGXDLMSCaptureObject(int(attributeIndex), int(dataIndex))))
 	}
 	return nil
 }
@@ -618,7 +623,7 @@ func (g *GXDLMSProfileGeneric) SetValue(settings *settings.GXDLMSSettings, e *in
 		}
 		return g.SetLogicalName(ln)
 	} else if e.Index == 2 {
-		g.setBuffer(settings, e)
+		return g.setBuffer(settings, e)
 	} else if e.Index == 3 {
 		if settings != nil && settings.IsServer() {
 			g.reset()
@@ -631,7 +636,7 @@ func (g *GXDLMSProfileGeneric) SetValue(settings *settings.GXDLMSSettings, e *in
 		}
 		g.CaptureObjects = g.CaptureObjects[:0]
 		if e.Value != nil {
-			g.setCaptureObjects(g, settings, g.CaptureObjects, e.Value.(types.GXArray))
+			g.setCaptureObjects(g, settings, &g.CaptureObjects, e.Value.(types.GXArray))
 		}
 	} else if e.Index == 4 {
 		// Any write access to one of the attributes will automatically call a resetand this call will propagate to all other profiles capturing this profile.
@@ -644,7 +649,7 @@ func (g *GXDLMSProfileGeneric) SetValue(settings *settings.GXDLMSSettings, e *in
 		if settings != nil && settings.IsServer() {
 			g.reset()
 		}
-		g.SortMethod = enums.SortMethod(e.Value.(int))
+		g.SortMethod = enums.SortMethod(e.Value.(types.GXEnum).Value)
 	} else if e.Index == 6 {
 		// Any write access to one of the attributes will automatically call a resetand this call will propagate to all other profiles capturing this profile.
 		if settings != nil && settings.IsServer() {
@@ -1054,14 +1059,14 @@ func (g *GXDLMSProfileGeneric) GetDataType(index int) (enums.DataType, error) {
 //	array: Received data.
 func (g *GXDLMSProfileGeneric) GetCaptureObjects(array []any) []types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject] {
 	list := []types.GXKeyValuePair[IGXDLMSBase, *GXDLMSCaptureObject]{}
-	g.setCaptureObjects(nil, nil, list, array)
+	g.setCaptureObjects(nil, nil, &list, array)
 	return list
 }
 
 // NewGXDLMSProfileGeneric creates a new profile generic object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSProfileGeneric(ln string, sn int16) (*GXDLMSProfileGeneric, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

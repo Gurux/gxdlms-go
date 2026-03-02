@@ -2406,7 +2406,7 @@ func (g *GXDLMSClient) ReadRowsByEntryWithColumns(pg *objects.GXDLMSProfileGener
 			}
 		}
 	}
-	return g.ReadRowsByEntryWithColumns2(pg, index, count, columnIndex, columnEnd)
+	return g.ReadRowsByEntryWithColumns2(pg, index, count, uint16(columnIndex), uint16(columnEnd))
 }
 
 // ReadRowsByEntry returns the read rows by entry.
@@ -2442,8 +2442,8 @@ func (g *GXDLMSClient) ReadRowsByEntry(pg *objects.GXDLMSProfileGeneric, index u
 func (g *GXDLMSClient) ReadRowsByEntryWithColumns2(pg *objects.GXDLMSProfileGeneric,
 	index uint32,
 	count uint32,
-	columnStart int,
-	columnEnd int) ([][]byte, error) {
+	columnStart uint16,
+	columnEnd uint16) ([][]byte, error) {
 	var err error
 	if index < 0 {
 		return nil, errors.New("index")
@@ -2515,7 +2515,7 @@ func (g *GXDLMSClient) ReadRowsByRange2(pg *objects.GXDLMSProfileGeneric, start 
 
 	s := types.NewGXDateTimeFromTime(start)
 	e := types.NewGXDateTimeFromTime(end)
-	return g.ReadRowsByRangeWithColumns(pg, s, e, nil)
+	return g.ReadRowsByRangeWithColumns(pg, *s, *e, nil)
 }
 
 // ReadRowsByRange returns the read rows by range.
@@ -2532,7 +2532,9 @@ func (g *GXDLMSClient) ReadRowsByRange2(pg *objects.GXDLMSProfileGeneric, start 
 // Returns:
 //
 //	Read message as byte array.
-func (g *GXDLMSClient) ReadRowsByRange(pg *objects.GXDLMSProfileGeneric, start *types.GXDateTime, end *types.GXDateTime) ([][]byte, error) {
+func (g *GXDLMSClient) ReadRowsByRange(pg *objects.GXDLMSProfileGeneric,
+	start types.GXDateTime,
+	end types.GXDateTime) ([][]byte, error) {
 	return g.ReadRowsByRangeWithColumns(pg, start, end, nil)
 }
 
@@ -2552,8 +2554,8 @@ func (g *GXDLMSClient) ReadRowsByRange(pg *objects.GXDLMSProfileGeneric, start *
 //
 //	Read message as byte array.
 func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGeneric,
-	start *types.GXDateTime,
-	end *types.GXDateTime,
+	start types.GXDateTime,
+	end types.GXDateTime,
 	columns *[]types.GXKeyValuePair[objects.IGXDLMSBase, objects.GXDLMSCaptureObject]) ([][]byte, error) {
 	if len(pg.CaptureObjects) == 0 {
 		return nil, errors.New("Capture objects not read.")
@@ -2600,7 +2602,7 @@ func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGener
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, type_)
+	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, uint16(type_))
 	if err != nil {
 		return nil, err
 	}
@@ -2612,24 +2614,25 @@ func (g *GXDLMSClient) ReadRowsByRangeWithColumns(pg *objects.GXDLMSProfileGener
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(g.settings, buff, enums.DataTypeInt8, 2)
+	err = internal.SetData(g.settings, buff, enums.DataTypeInt8, int8(2))
 	if err != nil {
 		return nil, err
 	}
-	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, 0)
-	if clockType == ClockTypeClock {
+	err = internal.SetData(g.settings, buff, enums.DataTypeUint16, uint16(0))
+	switch clockType {
+	case ClockTypeClock:
 		err = internal.SetData(g.settings, buff, enums.DataTypeOctetString, start)
 		if err != nil {
 			return nil, err
 		}
 		err = internal.SetData(g.settings, buff, enums.DataTypeOctetString, end)
-	} else if clockType == ClockTypeUnix {
-		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, start.ToUnixTime())
+	case ClockTypeUnix:
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, uint32(start.ToUnixTime()))
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, end.ToUnixTime())
-	} else if clockType == ClockTypeHighResolution {
+		err = internal.SetData(g.settings, buff, enums.DataTypeUint32, uint32(end.ToUnixTime()))
+	case ClockTypeHighResolution:
 		err = internal.SetData(g.settings, buff, enums.DataTypeUint64, start.ToHighResolutionTime())
 		if err != nil {
 			return nil, err

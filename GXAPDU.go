@@ -2039,6 +2039,9 @@ func generateAARE(conf *settings.GXDLMSSettings,
 				tmp = errorData.Array()
 			} else {
 				tmp, err = getUserInformation(conf, cipher)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		err = data.SetUint8(uint8((2 + len(tmp))))
