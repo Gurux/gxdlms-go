@@ -157,8 +157,7 @@ func (g *GXDLMSRegister) GetValue(settings *settings.GXDLMSSettings,
 			}
 			tmp := internal.AnyToDouble(e.Value) / g.Scaler()
 			if dt != enums.DataTypeNone {
-				//TODO: ret, err := internal.ChangeType(tmp, dt)
-				// return ret, err
+				return internal.Convert(tmp, dt)
 			}
 			return tmp, nil
 		}

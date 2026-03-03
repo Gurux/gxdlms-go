@@ -1592,8 +1592,8 @@ func (g *GXDLMSClient) ReleaseRequest2(force bool) ([][]byte, error) {
 	}
 	var reply [][]byte
 	if g.UseLogicalNameReferencing() {
-		p := GXDLMSLNParameters{settings: g.settings, requestType: enums.CommandReleaseRequest, attributeDescriptor: &buff, status: 0xff}
-		reply, err = getLnMessages(&p)
+		p := NewGXDLMSLNParameters(g.settings, 0, enums.CommandReleaseRequest, 0, &buff, nil, 0xff, enums.CommandNone)
+		reply, err = getLnMessages(p)
 	} else {
 		reply, err = getSnMessages(NewGXDLMSSNParameters(g.settings, enums.CommandReleaseRequest, 0xFF, 0xFF, nil, &buff))
 	}

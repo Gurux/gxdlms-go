@@ -120,51 +120,52 @@ func CreateObject(objectType enums.ObjectType, ln string, sn int16) (IGXDLMSBase
 		ret, err = NewGXDLMSGSMDiagnostic(ln, sn)
 	case enums.ObjectTypeAccount:
 		ret, err = NewGXDLMSAccount(ln, sn)
+	case enums.ObjectTypeCredit:
+		ret, err = NewGXDLMSCredit(ln, sn)
+	case enums.ObjectTypeCharge:
+		ret, err = NewGXDLMSCharge(ln, sn)
+	case enums.ObjectTypeTokenGateway:
+		ret, err = NewGXDLMSTokenGateway(ln, sn)
+	case enums.ObjectTypeParameterMonitor:
+		ret, err = NewGXDLMSParameterMonitor(ln, sn)
 		/*
-		   case enums.ObjectTypeCredit:
-		       ret, err = NewGXDLMSCredit(ln, sn)
-		   case enums.ObjectTypeCharge:
-		       ret, err = NewGXDLMSCharge(ln, sn)
-		   case enums.ObjectTypeTokenGateway:
-		       ret, err = NewGXDLMSTokenGateway(ln, sn)
-		   case enums.ObjectTypeParameterMonitor:
-		       ret, err = NewGXDLMSParameterMonitor(ln, sn)
 		   case enums.ObjectTypeCompactData:
 		       ret, err = NewGXDLMSCompactData(ln, sn)
-		   case enums.ObjectTypeLLCSSCSSetup:
-		       ret, err = NewGXDLMSLlcSscsSetup(ln, sn)
-		   case enums.ObjectTypePRIMENBOFDMPLCPHYSICALLAYERCOUNTERS:
-		       ret, err = NewGXDLMSPrimeNbOfdmPlcPhysicalLayerCounters(ln, sn)
-		   case enums.ObjectTypePRIMENBOFDMPLCMACSETUP:
-		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacSetup(ln, sn)
-		   case enums.ObjectTypePRIMENBOFDMPLCMACFUNCTIONALPARAMETERS:
-		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacFunctionalParameters(ln, sn)
-		   case enums.ObjectTypePRIMENBOFDMPLCMACCOUNTERS:
-		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacCounters(ln, sn)
-		   case enums.ObjectTypePRIMENBOFDMPLCMACNETWORKADMINISTRATIONDATA:
-		       ret, err = NewGXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData(ln, sn)
-		   case enums.ObjectTypePRIMENBOFDMPLCAPPLICATIONSIDENTIFICATION:
-		       ret, err = NewGXDLMSPrimeNbOfdmPlcApplicationsIdentification(ln, sn)
-		   case enums.ObjectTypeIEC8802LLCTYPE1SETUP:
-		       ret, err = NewGXDLMSIec8802LlcType1Setup(ln, sn)
-		   case enums.ObjectTypeIEC8802LLCTYPE2SETUP:
-		       ret, err = NewGXDLMSIec8802LlcType2Setup(ln, sn)
-		   case enums.ObjectTypeIEC8802LLCTYPE3SETUP:
-		       ret, err = NewGXDLMSIec8802LlcType3Setup(ln, sn)
-		   case enums.ObjectTypeSFSKREPORTINGSYSTEMLIST:
-		       ret, err = NewGXDLMSSFSKReportingSystemList(ln, sn)
-		   case enums.ObjectTypeArbitrator:
-		       ret, err = NewGXDLMSArbitrator(ln, sn)
-		   case enums.ObjectTypeSFSKMacCounters:
-		       ret, err = NewGXDLMSSFSKMacCounters(ln, sn)
-		   case enums.ObjectTypeSFSKMacSynchronizationTimeouts:
-		       ret, err = NewGXDLMSSFSKMacSynchronizationTimeouts(ln, sn)
-		   case enums.ObjectTypeSFSKActiveInitiator:
-		       ret, err = NewGXDLMSSFSKActiveInitiator(ln, sn)
-		   case enums.ObjectTypeSFSKPhyMacSetup:
-		       ret, err = NewGXDLMSSFSKPhyMacSetup(ln, sn)
-		   case enums.ObjectTypeNtpSetup:
-		       ret, err = NewGXDLMSNtpSetup(ln, sn)
+		*/
+	case enums.ObjectTypeLlcSscsSetup:
+		ret, err = NewGXDLMSLlcSscsSetup(ln, sn)
+		/*		   case enums.ObjectTypePRIMENBOFDMPLCPHYSICALLAYERCOUNTERS:
+				       ret, err = NewGXDLMSPrimeNbOfdmPlcPhysicalLayerCounters(ln, sn)
+				   case enums.ObjectTypePRIMENBOFDMPLCMACSETUP:
+				       ret, err = NewGXDLMSPrimeNbOfdmPlcMacSetup(ln, sn)
+				   case enums.ObjectTypePRIMENBOFDMPLCMACFUNCTIONALPARAMETERS:
+				       ret, err = NewGXDLMSPrimeNbOfdmPlcMacFunctionalParameters(ln, sn)
+				   case enums.ObjectTypePRIMENBOFDMPLCMACCOUNTERS:
+				       ret, err = NewGXDLMSPrimeNbOfdmPlcMacCounters(ln, sn)
+				   case enums.ObjectTypePRIMENBOFDMPLCMACNETWORKADMINISTRATIONDATA:
+				       ret, err = NewGXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData(ln, sn)
+				   case enums.ObjectTypePRIMENBOFDMPLCAPPLICATIONSIDENTIFICATION:
+				       ret, err = NewGXDLMSPrimeNbOfdmPlcApplicationsIdentification(ln, sn)
+				   case enums.ObjectTypeIEC8802LLCTYPE1SETUP:
+				       ret, err = NewGXDLMSIec8802LlcType1Setup(ln, sn)
+				   case enums.ObjectTypeIEC8802LLCTYPE2SETUP:
+				       ret, err = NewGXDLMSIec8802LlcType2Setup(ln, sn)
+				   case enums.ObjectTypeIEC8802LLCTYPE3SETUP:
+				       ret, err = NewGXDLMSIec8802LlcType3Setup(ln, sn)
+				   case enums.ObjectTypeSFSKREPORTINGSYSTEMLIST:
+				       ret, err = NewGXDLMSSFSKReportingSystemList(ln, sn)
+				   case enums.ObjectTypeArbitrator:
+				       ret, err = NewGXDLMSArbitrator(ln, sn)
+				   case enums.ObjectTypeSFSKMacCounters:
+				       ret, err = NewGXDLMSSFSKMacCounters(ln, sn)
+				   case enums.ObjectTypeSFSKMacSynchronizationTimeouts:
+				       ret, err = NewGXDLMSSFSKMacSynchronizationTimeouts(ln, sn)
+				   case enums.ObjectTypeSFSKActiveInitiator:
+				       ret, err = NewGXDLMSSFSKActiveInitiator(ln, sn)
+				   case enums.ObjectTypeSFSKPhyMacSetup:
+				       ret, err = NewGXDLMSSFSKPhyMacSetup(ln, sn)
+				   case enums.ObjectTypeNtpSetup:
+				       ret, err = NewGXDLMSNtpSetup(ln, sn)
 		*/
 	case enums.ObjectTypeCommunicationPortProtection:
 		ret, err = NewGXDLMSCommunicationPortProtection(ln, sn)

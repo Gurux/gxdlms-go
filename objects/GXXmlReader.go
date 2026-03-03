@@ -278,6 +278,14 @@ func (x *GXXmlReader) ReadElementContentAsBool(name string, def bool) (bool, err
 	return strconv.ParseBool(ret)
 }
 
+func (x *GXXmlReader) ReadElementContentAsInt32(name string, def int32) (int32, error) {
+	ret, err := x.ReadElementContentAsInt(name, int(def))
+	if err != nil {
+		return 0, err
+	}
+	return int32(ret), nil
+}
+
 func (x *GXXmlReader) ReadElementContentAsInt8(name string, def int) (int8, error) {
 	ret, err := x.ReadElementContentAsInt(name, def)
 	if err != nil {

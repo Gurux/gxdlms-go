@@ -73,22 +73,22 @@ type GXDLMSAccount struct {
 	// The available_credit attribute is the sum of the positive current credit amount values in the instances of the Credit class.
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	AvailableCredit int
+	AvailableCredit int32
 
 	// Amount to clear.
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	AmountToClear int
+	AmountToClear int32
 
 	// Conjunction with the amount to clear, and is included in the description of that attribute.
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	ClearanceThreshold int
+	ClearanceThreshold int32
 
 	// Simple sum of total_amount_remaining of all the Charge objects which are listed in the Account object.
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	AggregatedDebt int
+	AggregatedDebt int32
 
 	// Credit references.
 	// Online help:
@@ -128,12 +128,12 @@ type GXDLMSAccount struct {
 	// Low credit threshold.
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	LowCreditThreshold int
+	LowCreditThreshold int32
 
 	// Next credit available threshold.
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	NextCreditAvailableThreshold int
+	NextCreditAvailableThreshold int32
 
 	// Max provision.
 	// Online help:
@@ -142,7 +142,7 @@ type GXDLMSAccount struct {
 
 	// Online help:
 	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-	MaxProvisionPeriod int
+	MaxProvisionPeriod int32
 }
 
 // Base returns the base GXDLMSObject of the object.
@@ -150,11 +150,12 @@ func (g *GXDLMSAccount) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
 
-//Invoke returns the invokes method.
+// Invoke returns the invokes method.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Invoke parameters.
+//
+//	settings: DLMS settings.
+//	e: Invoke parameters.
 func (g *GXDLMSAccount) Invoke(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) ([]byte, error) {
 	switch e.Index {
 	case 1:
@@ -171,14 +172,16 @@ func (g *GXDLMSAccount) Invoke(settings *settings.GXDLMSSettings, e *internal.Va
 	return nil, nil
 }
 
-//GetAttributeIndexToRead returns the collection of attributes to read.
+// GetAttributeIndexToRead returns the collection of attributes to read.
 // If attribute is static and already read or device is returned HW error it is not returned.
 //
 // Parameters:
-//   all: All items are returned even if they are read already.
+//
+//	all: All items are returned even if they are read already.
 //
 // Returns:
-//   Collection of attributes to read.
+//
+//	Collection of attributes to read.
 func (g *GXDLMSAccount) GetAttributeIndexToRead(all bool) []int {
 	var attributes []int
 	// LN is static and read only once.
@@ -260,7 +263,7 @@ func (g *GXDLMSAccount) GetAttributeIndexToRead(all bool) []int {
 	return attributes
 }
 
-//GetNames returns the names of attribute indexes.
+// GetNames returns the names of attribute indexes.
 func (g *GXDLMSAccount) GetNames() []string {
 	return []string{"Logical Name", "Payment mode",
 		"Current credit in use", "Current credit status",
@@ -272,33 +275,36 @@ func (g *GXDLMSAccount) GetNames() []string {
 		"Max provision", "Max provision period"}
 }
 
-//GetMethodNames returns the names of method indexes.
+// GetMethodNames returns the names of method indexes.
 func (g *GXDLMSAccount) GetMethodNames() []string {
 	return []string{"Activate account", "Close account", "Reset account"}
 }
 
-//GetAttributeCount returns the amount of attributes.
+// GetAttributeCount returns the amount of attributes.
 //
 // Returns:
-//   Count of attributes.
+//
+//	Count of attributes.
 func (g *GXDLMSAccount) GetAttributeCount() int {
 	return 19
 }
 
-//GetMethodCount returns the amount of methods.
+// GetMethodCount returns the amount of methods.
 func (g *GXDLMSAccount) GetMethodCount() int {
 	return 3
 }
 
-//GetValue returns the value of given attribute.
+// GetValue returns the value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Get parameters.
+//
+//	settings: DLMS settings.
+//	e: Get parameters.
 //
 // Returns:
-//   Value of the attribute index.
+//
+//	Value of the attribute index.
 func (g *GXDLMSAccount) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	switch e.Index {
 	case 1:
@@ -471,12 +477,13 @@ func (g *GXDLMSAccount) GetValue(settings *settings.GXDLMSSettings, e *internal.
 	}
 }
 
-//SetValue returns the set value of given attribute.
+// SetValue returns the set value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Set parameters.
+//
+//	settings: DLMS settings.
+//	e: Set parameters.
 func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
 	toSlice := func(value any) ([]any, bool) {
 		switch v := value.(type) {
@@ -536,56 +543,25 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 			return nil
 		}
 		arr, ok := toSlice(e.Value)
-		if !ok || len(arr) < 2 {
+		if !ok || len(arr) != 2 {
 			e.Error = enums.ErrorCodeReadWriteDenied
 			return fmt.Errorf("invalid payment mode structure: %T", e.Value)
 		}
-		paymentMode, err := toInt(arr[0])
-		if err != nil {
-			return err
-		}
-		accountStatus, err := toInt(arr[1])
-		if err != nil {
-			return err
-		}
-		g.PaymentMode = enums.PaymentMode(paymentMode)
-		g.AccountStatus = enums.AccountStatus(accountStatus)
+		g.PaymentMode = enums.PaymentMode(arr[0].(types.GXEnum).Value)
+		g.AccountStatus = enums.AccountStatus(arr[1].(types.GXEnum).Value)
 	case 3:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.CurrentCreditInUse = uint8(value)
+		g.CurrentCreditInUse = e.Value.(uint8)
 	case 4:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.CurrentCreditStatus = enums.AccountCreditStatus(value)
+		bs := e.Value.(types.GXBitString)
+		g.CurrentCreditStatus = enums.AccountCreditStatus(bs.ToInteger())
 	case 5:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AvailableCredit = value
+		g.AvailableCredit = e.Value.(int32)
 	case 6:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AmountToClear = value
+		g.AmountToClear = e.Value.(int32)
 	case 7:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ClearanceThreshold = value
+		g.ClearanceThreshold = e.Value.(int32)
 	case 8:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AggregatedDebt = value
+		g.AggregatedDebt = e.Value.(int32)
 	case 9:
 		g.CreditReferences = make([]string, 0)
 		if e.Value != nil {
@@ -751,29 +727,13 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 		g.Currency.Scale = int8(scale)
 		g.Currency.Unit = enums.Currency(unit)
 	case 16:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.LowCreditThreshold = value
+		g.LowCreditThreshold = e.Value.(int32)
 	case 17:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.NextCreditAvailableThreshold = value
+		g.NextCreditAvailableThreshold = e.Value.(int32)
 	case 18:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxProvision = uint16(value)
+		g.MaxProvision = e.Value.(uint16)
 	case 19:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxProvisionPeriod = value
+		g.MaxProvisionPeriod = e.Value.(int32)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
@@ -864,10 +824,11 @@ func (g *GXDLMSAccount) LoadTokenGatewayConfigurations(reader *GXXmlReader, list
 	return err
 }
 
-//Load returns the load object content from XML.
+// Load returns the load object content from XML.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSAccount) Load(reader *GXXmlReader) error {
 	ret, err := reader.ReadElementContentAsInt("PaymentMode", 0)
 	if err != nil {
@@ -888,19 +849,19 @@ func (g *GXDLMSAccount) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.CurrentCreditStatus = enums.AccountCreditStatus(ret)
-	g.AvailableCredit, err = reader.ReadElementContentAsInt("AvailableCredit", 0)
+	g.AvailableCredit, err = reader.ReadElementContentAsInt32("AvailableCredit", 0)
 	if err != nil {
 		return err
 	}
-	g.AmountToClear, err = reader.ReadElementContentAsInt("AmountToClear", 0)
+	g.AmountToClear, err = reader.ReadElementContentAsInt32("AmountToClear", 0)
 	if err != nil {
 		return err
 	}
-	g.ClearanceThreshold, err = reader.ReadElementContentAsInt("ClearanceThreshold", 0)
+	g.ClearanceThreshold, err = reader.ReadElementContentAsInt32("ClearanceThreshold", 0)
 	if err != nil {
 		return err
 	}
-	g.AggregatedDebt, err = reader.ReadElementContentAsInt("AggregatedDebt", 0)
+	g.AggregatedDebt, err = reader.ReadElementContentAsInt32("AggregatedDebt", 0)
 	if err != nil {
 		return err
 	}
@@ -941,11 +902,11 @@ func (g *GXDLMSAccount) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.Currency.Unit = enums.Currency(ret)
-	g.LowCreditThreshold, err = reader.ReadElementContentAsInt("LowCreditThreshold", 0)
+	g.LowCreditThreshold, err = reader.ReadElementContentAsInt32("LowCreditThreshold", 0)
 	if err != nil {
 		return err
 	}
-	g.NextCreditAvailableThreshold, err = reader.ReadElementContentAsInt("NextCreditAvailableThreshold", 0)
+	g.NextCreditAvailableThreshold, err = reader.ReadElementContentAsInt32("NextCreditAvailableThreshold", 0)
 	if err != nil {
 		return err
 	}
@@ -953,7 +914,7 @@ func (g *GXDLMSAccount) Load(reader *GXXmlReader) error {
 	if err != nil {
 		return err
 	}
-	g.MaxProvisionPeriod, err = reader.ReadElementContentAsInt("MaxProvisionPeriod", 0)
+	g.MaxProvisionPeriod, err = reader.ReadElementContentAsInt32("MaxProvisionPeriod", 0)
 	return err
 }
 
@@ -1016,10 +977,11 @@ func (g *GXDLMSAccount) SaveTokenGatewayConfigurations(writer *GXXmlWriter, list
 	return err
 }
 
-//Save returns the save object content to XML.
+// Save returns the save object content to XML.
 //
 // Parameters:
-//   writer: XML writer.
+//
+//	writer: XML writer.
 func (g *GXDLMSAccount) Save(writer *GXXmlWriter) error {
 	err := writer.WriteElementString("PaymentMode", int(g.PaymentMode))
 	if err != nil {
@@ -1087,15 +1049,16 @@ func (g *GXDLMSAccount) Save(writer *GXXmlWriter) error {
 	return err
 }
 
-//PostLoad returns the handle actions after Load.
+// PostLoad returns the handle actions after Load.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSAccount) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-//GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSAccount) GetValues() []any {
 	return []any{g.LogicalName(), []any{g.PaymentMode, g.AccountStatus}, g.CurrentCreditInUse, g.CurrentCreditStatus,
 		g.AvailableCredit, g.AmountToClear, g.ClearanceThreshold, g.AggregatedDebt,
@@ -1105,46 +1068,54 @@ func (g *GXDLMSAccount) GetValues() []any {
 		g.MaxProvision, g.MaxProvisionPeriod}
 }
 
-//Activate returns the activate account.
+// Activate returns the activate account.
 //
 // Parameters:
-//   client: DLMS client.
+//
+//	client: DLMS client.
 //
 // Returns:
-//   Action bytes.
+//
+//	Action bytes.
 func (g *GXDLMSAccount) Activate(client IGXDLMSClient) ([][]uint8, error) {
 	return client.Method(g, 1, int8(0), enums.DataTypeInt8)
 }
 
-//Close returns the close account.
+// Close returns the close account.
 //
 // Parameters:
-//   client: DLMS client.
+//
+//	client: DLMS client.
 //
 // Returns:
-//   Action bytes.
+//
+//	Action bytes.
 func (g *GXDLMSAccount) Close(client IGXDLMSClient) ([][]uint8, error) {
 	return client.Method(g, 2, int8(0), enums.DataTypeInt8)
 }
 
-//Reset returns the reset account.
+// Reset returns the reset account.
 //
 // Parameters:
-//   client: DLMS client.
+//
+//	client: DLMS client.
 //
 // Returns:
-//   Action bytes.
+//
+//	Action bytes.
 func (g *GXDLMSAccount) Reset(client IGXDLMSClient) ([][]uint8, error) {
 	return client.Method(g, 3, int8(0), enums.DataTypeInt8)
 }
 
-//GetUIDataType returns the UI data type of selected index.
+// GetUIDataType returns the UI data type of selected index.
 //
 // Parameters:
-//   index: Attribute index of the object.
+//
+//	index: Attribute index of the object.
 //
 // Returns:
-//   UI data type of the object.
+//
+//	UI data type of the object.
 func (g *GXDLMSAccount) GetUIDataType(index int) enums.DataType {
 	// AccountActivationTime or AccountClosureTime
 	if index == 13 || index == 14 {
@@ -1153,13 +1124,15 @@ func (g *GXDLMSAccount) GetUIDataType(index int) enums.DataType {
 	return g.Base().GetUIDataType(index)
 }
 
-//GetDataType returns the device data type of selected attribute index.
+// GetDataType returns the device data type of selected attribute index.
 //
 // Parameters:
-//   index: Attribute index of the object.
+//
+//	index: Attribute index of the object.
 //
 // Returns:
-//   Device data type of the object.
+//
+//	Device data type of the object.
 func (g *GXDLMSAccount) GetDataType(index int) (enums.DataType, error) {
 	switch index {
 	case 1:
@@ -1208,7 +1181,7 @@ func (g *GXDLMSAccount) GetDataType(index int) (enums.DataType, error) {
 // NewGXDLMSAccount creates a new Account object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSAccount(ln string, sn int16) (*GXDLMSAccount, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {
