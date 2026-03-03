@@ -616,6 +616,11 @@ func (g *GXDLMSClient) Objects() *objects.GXDLMSObjectCollection {
 	return &ret
 }
 
+// SetObjects sets the available objects.
+func (g *GXDLMSClient) SetObjects(value objects.GXDLMSObjectCollection) {
+	g.settings.Objects = value
+}
+
 // OverwriteAttributeAccessRights returns the overwrite attribute access rights if association view tells wrong access rights and they are overwritten.
 func (g *GXDLMSClient) OverwriteAttributeAccessRights() bool {
 	return g.settings.OverwriteAttributeAccessRights
