@@ -284,11 +284,7 @@ func (g *GXDLMSIp6Setup) SetValue(settings *settings.GXDLMSSettings, e *internal
 		}
 		g.DataLinkLayerReference = ln
 	case 3:
-		value, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AddressConfigMode = enums.AddressConfigMode(value)
+		g.AddressConfigMode = enums.AddressConfigMode(e.Value.(types.GXEnum).Value)
 	case 4:
 		g.UnicastIPAddress = decodeIPv6Array(e.Value.(types.GXArray), true)
 	case 5:

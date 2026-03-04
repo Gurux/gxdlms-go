@@ -151,7 +151,7 @@ func (g *GXDLMSRegister) GetValue(settings *settings.GXDLMSSettings,
 					dt = enums.DataTypeNone
 				}
 			}
-			tmp := internal.AnyToDouble(e.Value) / g.Scaler()
+			tmp := internal.AnyToDouble(g.Value) / g.Scaler()
 			if dt != enums.DataTypeNone {
 				return internal.Convert(tmp, dt)
 			}
@@ -175,7 +175,7 @@ func (g *GXDLMSRegister) GetValue(settings *settings.GXDLMSSettings,
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, data, enums.DataTypeEnum, g.Unit)
+		err = internal.SetData(settings, data, enums.DataTypeEnum, uint8(g.Unit))
 		if err != nil {
 			return nil, err
 		}
@@ -227,7 +227,7 @@ func (g *GXDLMSRegister) SetValue(settings *settings.GXDLMSSettings, e *internal
 // NewGXDLMSRegister creates a new register object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSRegister(ln string, sn int16) (*GXDLMSRegister, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

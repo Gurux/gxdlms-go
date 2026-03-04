@@ -185,6 +185,7 @@ func (g *GXDLMSSFSKPhyMacSetup) GetValue(settings *settings.GXDLMSSettings, e *i
 }
 
 func (g *GXDLMSSFSKPhyMacSetup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -194,13 +195,13 @@ func (g *GXDLMSSFSKPhyMacSetup) SetValue(settings *settings.GXDLMSSettings, e *i
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toUint32(e.Value)
+		v, err := toEnum(e.Value)
 		if err != nil {
 			return err
 		}
 		g.InitiatorElectricalPhase = enums.InitiatorElectricalPhase(v)
 	case 3:
-		v, err := toUint32(e.Value)
+		v, err := toEnum(e.Value)
 		if err != nil {
 			return err
 		}
@@ -212,17 +213,9 @@ func (g *GXDLMSSFSKPhyMacSetup) SetValue(settings *settings.GXDLMSSettings, e *i
 		}
 		g.MaxReceivingGain = v
 	case 5:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxTransmittingGain = v
+		g.MaxTransmittingGain, err = toUint8(e.Value)
 	case 6:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.SearchInitiatorThreshold = v
+		g.SearchInitiatorThreshold, err = toUint8(e.Value)
 	case 7:
 		if e.Value == nil {
 			g.MarkFrequency = 0
@@ -244,40 +237,32 @@ func (g *GXDLMSSFSKPhyMacSetup) SetValue(settings *settings.GXDLMSSettings, e *i
 		g.MarkFrequency = mark
 		g.SpaceFrequency = space
 	case 8:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MacAddress = uint16(v)
+		g.MacAddress, err = toUint16(e.Value)
 	case 9:
 		if e.Value == nil {
 			g.MacGroupAddresses = nil
 			return nil
 		}
-		tmp, ok := e.Value.(types.GXStructure)
+		tmp, ok := e.Value.(types.GXArray)
 		if !ok {
 			return fmt.Errorf("invalid mac group addresses: %T", e.Value)
 		}
 		g.MacGroupAddresses = make([]uint16, 0, len(tmp))
 		for _, it := range tmp {
-			v, err := toUint32(it)
+			v, err := toUint16(it)
 			if err != nil {
 				return err
 			}
-			g.MacGroupAddresses = append(g.MacGroupAddresses, uint16(v))
+			g.MacGroupAddresses = append(g.MacGroupAddresses, v)
 		}
 	case 10:
-		v, err := toUint32(e.Value)
+		v, err := toEnum(e.Value)
 		if err != nil {
 			return err
 		}
 		g.Repeater = enums.Repeater(v)
 	case 11:
-		v, err := toBool(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RepeaterStatus = v
+		g.RepeaterStatus, err = toBool(e.Value)
 	case 12:
 		v, err := toUint8(e.Value)
 		if err != nil {
@@ -285,19 +270,11 @@ func (g *GXDLMSSFSKPhyMacSetup) SetValue(settings *settings.GXDLMSSettings, e *i
 		}
 		g.MinDeltaCredit = v
 	case 13:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.InitiatorMacAddress = uint16(v)
+		g.InitiatorMacAddress, err = toUint16(e.Value)
 	case 14:
-		v, err := toBool(e.Value)
-		if err != nil {
-			return err
-		}
-		g.SynchronizationLocked = v
+		g.SynchronizationLocked, err = toBool(e.Value)
 	case 15:
-		v, err := toUint32(e.Value)
+		v, err := toEnum(e.Value)
 		if err != nil {
 			return err
 		}
@@ -305,7 +282,7 @@ func (g *GXDLMSSFSKPhyMacSetup) SetValue(settings *settings.GXDLMSSettings, e *i
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSSFSKPhyMacSetup) Load(reader *GXXmlReader) error {

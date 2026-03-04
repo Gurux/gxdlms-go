@@ -165,7 +165,7 @@ func (g *GXDLMSActionSchedule) GetValue(settings *settings.GXDLMSSettings, e *in
 		return data.Array(), nil
 	}
 	if e.Index == 3 {
-		return int(g.Type), nil
+		return uint8(g.Type), nil
 	}
 	if e.Index == 4 {
 		data := types.NewGXByteBuffer()

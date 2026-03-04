@@ -41,7 +41,7 @@ type GXDLMSCaptureObject struct {
 	AttributeIndex int
 
 	// Data index of DLMS object in the profile generic table.
-	DataIndex int
+	DataIndex uint16
 
 	// Restriction element for compact or push data.
 	Restriction GXDLMSRestriction
@@ -51,7 +51,7 @@ type GXDLMSCaptureObject struct {
 }
 
 // NewGXDLMSCaptureObject creates a new instance of GXDLMSCaptureObject.
-func NewGXDLMSCaptureObject(attributeIndex int, dataIndex int) *GXDLMSCaptureObject {
+func NewGXDLMSCaptureObject(attributeIndex int, dataIndex uint16) *GXDLMSCaptureObject {
 	return &GXDLMSCaptureObject{
 		AttributeIndex: attributeIndex,
 		DataIndex:      dataIndex,

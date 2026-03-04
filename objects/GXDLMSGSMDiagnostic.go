@@ -77,24 +77,27 @@ func (g *GXDLMSGSMDiagnostic) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
 
-//Invoke returns the invokes method.
+// Invoke returns the invokes method.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Invoke parameters.
+//
+//	settings: DLMS settings.
+//	e: Invoke parameters.
 func (g *GXDLMSGSMDiagnostic) Invoke(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) ([]byte, error) {
 	e.Error = enums.ErrorCodeReadWriteDenied
 	return nil, nil
 }
 
-//GetAttributeIndexToRead returns the collection of attributes to read.
+// GetAttributeIndexToRead returns the collection of attributes to read.
 // If attribute is static and already read or device is returned HW error it is not returned.
 //
 // Parameters:
-//   all: All items are returned even if they are read already.
+//
+//	all: All items are returned even if they are read already.
 //
 // Returns:
-//   Collection of attributes to read.
+//
+//	Collection of attributes to read.
 func (g *GXDLMSGSMDiagnostic) GetAttributeIndexToRead(all bool) []int {
 	var attributes []int
 	// LN is static and read only once.
@@ -132,25 +135,26 @@ func (g *GXDLMSGSMDiagnostic) GetAttributeIndexToRead(all bool) []int {
 	return attributes
 }
 
-//GetNames returns the names of attribute indexes.
+// GetNames returns the names of attribute indexes.
 func (g *GXDLMSGSMDiagnostic) GetNames() []string {
 	return []string{"Logical Name", "Operator", "Status", "CircuitSwitchStatus", "PacketSwitchStatus", "CellInfo", "AdjacentCells", "CaptureTime"}
 }
 
-//GetMethodNames returns the names of method indexes.
+// GetMethodNames returns the names of method indexes.
 func (g *GXDLMSGSMDiagnostic) GetMethodNames() []string {
 	return []string{}
 }
 
-//GetAttributeCount returns the amount of attributes.
+// GetAttributeCount returns the amount of attributes.
 //
 // Returns:
-//   Count of attributes.
+//
+//	Count of attributes.
 func (g *GXDLMSGSMDiagnostic) GetAttributeCount() int {
 	return 8
 }
 
-//GetMethodCount returns the amount of methods.
+// GetMethodCount returns the amount of methods.
 func (g *GXDLMSGSMDiagnostic) GetMethodCount() int {
 	return 0
 }
@@ -180,15 +184,17 @@ func anyToUInt32(v any) uint32 {
 	}
 }
 
-//GetValue returns the value of given attribute.
+// GetValue returns the value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Get parameters.
+//
+//	settings: DLMS settings.
+//	e: Get parameters.
 //
 // Returns:
-//   Value of the attribute index.
+//
+//	Value of the attribute index.
 func (g *GXDLMSGSMDiagnostic) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	switch e.Index {
 	case 1:
@@ -199,11 +205,11 @@ func (g *GXDLMSGSMDiagnostic) GetValue(settings *settings.GXDLMSSettings, e *int
 		}
 		return []byte(g.Operator), nil
 	case 3:
-		return g.Status, nil
+		return uint8(g.Status), nil
 	case 4:
-		return g.CircuitSwitchStatus, nil
+		return uint8(g.CircuitSwitchStatus), nil
 	case 5:
-		return g.PacketSwitchStatus, nil
+		return uint8(g.PacketSwitchStatus), nil
 	case 6:
 		bb := types.NewGXByteBuffer()
 		if err := bb.SetUint8(uint8(enums.DataTypeStructure)); err != nil {
@@ -284,12 +290,13 @@ func (g *GXDLMSGSMDiagnostic) GetValue(settings *settings.GXDLMSSettings, e *int
 	}
 }
 
-//SetValue returns the set value of given attribute.
+// SetValue returns the set value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Set parameters.
+//
+//	settings: DLMS settings.
+//	e: Set parameters.
 func (g *GXDLMSGSMDiagnostic) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
 	switch e.Index {
 	case 1:
@@ -407,10 +414,11 @@ func (g *GXDLMSGSMDiagnostic) SetValue(settings *settings.GXDLMSSettings, e *int
 	return nil
 }
 
-//Load returns the load object content from XML.
+// Load returns the load object content from XML.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSGSMDiagnostic) Load(reader *GXXmlReader) error {
 	var err error
 	g.Operator, err = reader.ReadElementContentAsString("Operator", "")
@@ -481,10 +489,11 @@ func (g *GXDLMSGSMDiagnostic) Load(reader *GXXmlReader) error {
 	return err
 }
 
-//Save returns the save object content to XML.
+// Save returns the save object content to XML.
 //
 // Parameters:
-//   writer: XML writer.
+//
+//	writer: XML writer.
 func (g *GXDLMSGSMDiagnostic) Save(writer *GXXmlWriter) error {
 	err := writer.WriteElementString("Operator", g.Operator)
 	if err != nil {
@@ -543,28 +552,31 @@ func (g *GXDLMSGSMDiagnostic) Save(writer *GXXmlWriter) error {
 	return err
 }
 
-//PostLoad returns the handle actions after Load.
+// PostLoad returns the handle actions after Load.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSGSMDiagnostic) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-//GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSGSMDiagnostic) GetValues() []any {
 	return []any{g.LogicalName(), g.Operator, g.Status,
 		g.CircuitSwitchStatus, g.PacketSwitchStatus,
 		g.CellInfo, g.AdjacentCells, g.CaptureTime}
 }
 
-//GetDataType returns the device data type of selected attribute index.
+// GetDataType returns the device data type of selected attribute index.
 //
 // Parameters:
-//   index: Attribute index of the object.
+//
+//	index: Attribute index of the object.
 //
 // Returns:
-//   Device data type of the object.
+//
+//	Device data type of the object.
 func (g *GXDLMSGSMDiagnostic) GetDataType(index int) (enums.DataType, error) {
 	switch index {
 	case 1:
@@ -590,7 +602,7 @@ func (g *GXDLMSGSMDiagnostic) GetDataType(index int) (enums.DataType, error) {
 // NewGXDLMGSMDiagnostic creates a new G S M Diagnostic object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSGSMDiagnostic(ln string, sn int16) (*GXDLMSGSMDiagnostic, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

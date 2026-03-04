@@ -80,6 +80,7 @@ func (g *GXDLMSSFSKMacSynchronizationTimeouts) GetValue(settings *settings.GXDLM
 }
 
 func (g *GXDLMSSFSKMacSynchronizationTimeouts) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -89,33 +90,17 @@ func (g *GXDLMSSFSKMacSynchronizationTimeouts) SetValue(settings *settings.GXDLM
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.SearchInitiatorTimeout = uint16(v)
+		g.SearchInitiatorTimeout, err = toUint16(e.Value)
 	case 3:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.SynchronizationConfirmationTimeout = uint16(v)
+		g.SynchronizationConfirmationTimeout, err = toUint16(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TimeOutNotAddressed = uint16(v)
+		g.TimeOutNotAddressed, err = toUint16(e.Value)
 	case 5:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TimeOutFrameNotOK = uint16(v)
+		g.TimeOutFrameNotOK, err = toUint16(e.Value)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSSFSKMacSynchronizationTimeouts) Load(reader *GXXmlReader) error {

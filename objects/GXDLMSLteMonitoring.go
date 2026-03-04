@@ -230,7 +230,7 @@ func (g *GXDLMSLteMonitoring) GetValue(settings *settings.GXDLMSSettings, e *int
 		if err := internal.SetData(settings, buff, enums.DataTypeInt8, g.QualityOfService.SignalToNoiseRatio); err != nil {
 			return nil, err
 		}
-		if err := internal.SetData(settings, buff, enums.DataTypeEnum, g.QualityOfService.CoverageEnhancement); err != nil {
+		if err := internal.SetData(settings, buff, enums.DataTypeEnum, uint8(g.QualityOfService.CoverageEnhancement)); err != nil {
 			return nil, err
 		}
 		return buff.Array(), nil

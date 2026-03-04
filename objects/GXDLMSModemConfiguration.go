@@ -133,13 +133,13 @@ func (g *GXDLMSModemConfiguration) GetMethodCount() int {
 //	Value of the attribute index.
 func (g *GXDLMSModemConfiguration) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
-	if e.Index == 1 {
-		return helpers.LogicalNameToBytes(g.LogicalName())
-	}
-	if e.Index == 2 {
-		return g.CommunicationSpeed, nil
-	}
-	if e.Index == 3 {
+	var ret any
+	switch e.Index {
+	case 1:
+		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
+	case 2:
+		ret = uint8(g.CommunicationSpeed)
+	case 3:
 		data := types.NewGXByteBuffer()
 		err = data.SetUint8(uint8(enums.DataTypeArray))
 		if err != nil {
@@ -175,9 +175,8 @@ func (g *GXDLMSModemConfiguration) GetValue(settings *settings.GXDLMSSettings, e
 				}
 			}
 		}
-		return data.Array(), nil
-	}
-	if e.Index == 4 {
+		ret = data.Array()
+	case 4:
 		data := types.NewGXByteBuffer()
 		err = data.SetUint8(uint8(enums.DataTypeArray))
 		if err != nil {
@@ -197,10 +196,12 @@ func (g *GXDLMSModemConfiguration) GetValue(settings *settings.GXDLMSSettings, e
 				}
 			}
 		}
-		return data.Array(), nil
+		ret = data.Array()
+	default:
+		e.Error = enums.ErrorCodeReadWriteDenied
+
 	}
-	e.Error = enums.ErrorCodeReadWriteDenied
-	return nil, nil
+	return ret, err
 }
 
 // SetValue returns the set value of given attribute.
@@ -400,7 +401,7 @@ func (g *GXDLMSModemConfiguration) GetDataType(index int) (enums.DataType, error
 // NewGXDLMSModemConfiguration creates a new modem configuration object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSModemConfiguration(ln string, sn int16) (*GXDLMSModemConfiguration, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

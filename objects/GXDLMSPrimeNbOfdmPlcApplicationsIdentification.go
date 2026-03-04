@@ -12,8 +12,8 @@ import (
 type GXDLMSPrimeNbOfdmPlcApplicationsIdentification struct {
 	GXDLMSObject
 	FirmwareVersion string
-	VendorId        uint16
-	ProductId       uint16
+	VendorID        uint16
+	ProductID       uint16
 }
 
 // Base returns the base GXDLMSObject of the object.
@@ -63,15 +63,16 @@ func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) GetValue(settings *sett
 		}
 		return []byte(g.FirmwareVersion), nil
 	case 3:
-		return g.VendorId, nil
+		return g.VendorID, nil
 	case 4:
-		return g.ProductId, nil
+		return g.ProductID, nil
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 		return nil, nil
 	}
 }
 func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -87,21 +88,13 @@ func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) SetValue(settings *sett
 			g.FirmwareVersion = ""
 		}
 	case 3:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.VendorId = uint16(v)
+		g.VendorID, err = toUint16(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ProductId = uint16(v)
+		g.ProductID, err = toUint16(e.Value)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) Load(reader *GXXmlReader) error {
 	var err error
@@ -109,27 +102,27 @@ func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) Load(reader *GXXmlReade
 	if err != nil {
 		return err
 	}
-	g.VendorId, err = reader.ReadElementContentAsUInt16("VendorId", 0)
+	g.VendorID, err = reader.ReadElementContentAsUInt16("VendorId", 0)
 	if err != nil {
 		return err
 	}
-	g.ProductId, err = reader.ReadElementContentAsUInt16("ProductId", 0)
+	g.ProductID, err = reader.ReadElementContentAsUInt16("ProductId", 0)
 	return err
 }
 func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) Save(writer *GXXmlWriter) error {
 	if err := writer.WriteElementString("FirmwareVersion", g.FirmwareVersion); err != nil {
 		return err
 	}
-	if err := writer.WriteElementString("VendorId", g.VendorId); err != nil {
+	if err := writer.WriteElementString("VendorId", g.VendorID); err != nil {
 		return err
 	}
-	return writer.WriteElementString("ProductId", g.ProductId)
+	return writer.WriteElementString("ProductId", g.ProductID)
 }
 func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 func (g *GXDLMSPrimeNbOfdmPlcApplicationsIdentification) GetValues() []any {
-	return []any{g.LogicalName(), g.FirmwareVersion, g.VendorId, g.ProductId}
+	return []any{g.LogicalName(), g.FirmwareVersion, g.VendorID, g.ProductID}
 }
 func NewGXDLMSPrimeNbOfdmPlcApplicationsIdentification(ln string, sn int16) (*GXDLMSPrimeNbOfdmPlcApplicationsIdentification, error) {
 	if err := ValidateLogicalName(ln); err != nil {

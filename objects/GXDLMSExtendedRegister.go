@@ -36,6 +36,7 @@
 
 import (
 	"errors"
+	"math"
 	"reflect"
 	"time"
 
@@ -50,12 +51,34 @@ import (
 // Online help:
 // https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSExtendedRegister
 type GXDLMSExtendedRegister struct {
-	GXDLMSRegister
+	GXDLMSObject
+	scaler int8
+
+	// Unit of COSEM Register object.
+	Unit enums.Unit
+
+	// Value of COSEM Register object.
+	Value any
 	// Status
 	Status any
 
 	// Capture time.
 	CaptureTime time.Time
+}
+
+// Base returns the base GXDLMSObject of the object.
+func (g *GXDLMSExtendedRegister) Base() *GXDLMSObject {
+	return &g.GXDLMSObject
+}
+
+// Scaler returns the scaler of COSEM Register object.
+func (g *GXDLMSExtendedRegister) Scaler() float64 {
+	return math.Pow(10, float64(g.scaler))
+}
+
+// SetScaler sets the scaler of COSEM Register object.
+func (g *GXDLMSExtendedRegister) SetScaler(value float64) {
+	g.scaler = int8(math.Round(math.Log10(value)))
 }
 
 func (g *GXDLMSExtendedRegister) Invoke(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) ([]byte, error) {
@@ -98,8 +121,18 @@ func (g *GXDLMSExtendedRegister) GetNames() []string {
 	return []string{"Logical Name", "Value", "Scaler and Unit", "Status", "CaptureTime"}
 }
 
+// GetMethodNames returns the returns names of method indexes.
+func (g *GXDLMSExtendedRegister) GetMethodNames() []string {
+	return []string{"Reset"}
+}
+
 func (g *GXDLMSExtendedRegister) GetAttributeCount() int {
 	return 5
+}
+
+// GetMethodCount returns the returns amount of methods.
+func (g *GXDLMSExtendedRegister) GetMethodCount() int {
+	return 1
 }
 
 func (g *GXDLMSExtendedRegister) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
@@ -330,12 +363,12 @@ func (g *GXDLMSExtendedRegister) GetDataType(index int) (enums.DataType, error) 
 //
 // The function validates `ln` before creating the object.
 //`ln` is the Logical Name and `sn` is the Short Name of the object.
-func NewGXDLMSExtendedRegister(ln string, sn int16) (*GXDLMSMacAddressSetup, error) {
+func NewGXDLMSExtendedRegister(ln string, sn int16) (*GXDLMSExtendedRegister, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {
 		return nil, err
 	}
-	return &GXDLMSMacAddressSetup{
+	return &GXDLMSExtendedRegister{
 		GXDLMSObject: GXDLMSObject{
 			objectType:  enums.ObjectTypeExtendedRegister,
 			logicalName: ln,

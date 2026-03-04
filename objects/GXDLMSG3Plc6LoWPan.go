@@ -190,6 +190,7 @@ func (g *GXDLMSG3Plc6LoWPan) GetValue(settings *settings.GXDLMSSettings, e *inte
 }
 
 func (g *GXDLMSG3Plc6LoWPan) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -204,53 +205,23 @@ func (g *GXDLMSG3Plc6LoWPan) SetValue(settings *settings.GXDLMSSettings, e *inte
 	case 4:
 		g.SecurityLevel = e.Value.(uint8)
 	case 5:
-		v, err := lowpanParseU8Array(e.Value)
-		if err != nil {
-			return err
-		}
-		g.PrefixTable = v
+		g.PrefixTable, err = lowpanParseU8Array(e.Value)
 	case 6:
-		v, err := lowpanParseRoutingConfiguration(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RoutingConfiguration = v
+		g.RoutingConfiguration, err = lowpanParseRoutingConfiguration(e.Value)
 	case 7:
-		v, _ := toUint32(e.Value)
-		g.BroadcastLogTableTtl = uint16(v)
+		g.BroadcastLogTableTtl, err = toUint16(e.Value)
 	case 8:
-		v, err := lowpanParseRoutingTable(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RoutingTable = v
+		g.RoutingTable, err = lowpanParseRoutingTable(e.Value)
 	case 9:
-		v, err := lowpanParseContextInfo(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ContextInformation = v
+		g.ContextInformation, err = lowpanParseContextInfo(e.Value)
 	case 10:
-		v, err := lowpanParseBlacklist(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BlacklistTable = v
+		g.BlacklistTable, err = lowpanParseBlacklist(e.Value)
 	case 11:
-		v, err := lowpanParseBroadcastLog(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BroadcastLogTable = v
+		g.BroadcastLogTable, err = lowpanParseBroadcastLog(e.Value)
 	case 12:
-		v, err := lowpanParseU16Array(e.Value)
-		if err != nil {
-			return err
-		}
-		g.GroupTable = v
+		g.GroupTable, err = lowpanParseU16Array(e.Value)
 	case 13:
-		v, _ := toUint32(e.Value)
-		g.MaxJoinWaitTime = uint16(v)
+		g.MaxJoinWaitTime, err = toUint16(e.Value)
 	case 14:
 		g.PathDiscoveryTime = e.Value.(uint8)
 	case 15:
@@ -258,23 +229,15 @@ func (g *GXDLMSG3Plc6LoWPan) SetValue(settings *settings.GXDLMSSettings, e *inte
 	case 16:
 		g.MetricType = e.Value.(uint8)
 	case 17:
-		v, _ := toUint32(e.Value)
-		g.CoordShortAddress = uint16(v)
+		g.CoordShortAddress, err = toUint16(e.Value)
 	case 18:
-		v, _ := toBool(e.Value)
-		g.DisableDefaultRouting = v
+		g.DisableDefaultRouting, err = toBool(e.Value)
 	case 19:
-		v, _ := toUint32(e.Value)
-		g.DeviceType = enums.DeviceType(v)
+		g.DeviceType = enums.DeviceType(e.Value.(types.GXEnum).Value)
 	case 20:
-		v, _ := toBool(e.Value)
-		g.DefaultCoordRoute = v
+		g.DefaultCoordRoute, err = toBool(e.Value)
 	case 21:
-		v, err := lowpanParseU16Array(e.Value)
-		if err != nil {
-			return err
-		}
-		g.DestinationAddress = v
+		g.DestinationAddress, err = lowpanParseU16Array(e.Value)
 	case 22:
 		g.LowLQI = e.Value.(uint8)
 	case 23:
@@ -282,7 +245,7 @@ func (g *GXDLMSG3Plc6LoWPan) SetValue(settings *settings.GXDLMSSettings, e *inte
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSG3Plc6LoWPan) Load(reader *GXXmlReader) error {
@@ -413,11 +376,11 @@ func lowpanParseU16Array(value any) ([]uint16, error) {
 	}
 	ret := make([]uint16, 0, len(rows))
 	for _, it := range rows {
-		v, err := toUint32(it)
+		v, err := toUint16(it)
 		if err != nil {
 			return nil, err
 		}
-		ret = append(ret, uint16(v))
+		ret = append(ret, v)
 	}
 	return ret, nil
 }
@@ -503,15 +466,15 @@ func lowpanParseRoutingTable(value any) ([]GXDLMSRoutingTable, error) {
 		if !ok || len(it) < 6 {
 			return nil, gxcommon.ErrArgumentOutOfRange
 		}
-		d, err := toUint32(it[0])
+		d, err := toUint16(it[0])
 		if err != nil {
 			return nil, err
 		}
-		n, err := toUint32(it[1])
+		n, err := toUint16(it[1])
 		if err != nil {
 			return nil, err
 		}
-		c, err := toUint32(it[2])
+		c, err := toUint16(it[2])
 		if err != nil {
 			return nil, err
 		}
@@ -523,12 +486,12 @@ func lowpanParseRoutingTable(value any) ([]GXDLMSRoutingTable, error) {
 		if err != nil {
 			return nil, err
 		}
-		v, err := toUint32(it[5])
+		v, err := toUint16(it[5])
 		if err != nil {
 			return nil, err
 		}
-		ret = append(ret, GXDLMSRoutingTable{DestinationAddress: uint16(d), NextHopAddress: uint16(n),
-			RouteCost: uint16(c), HopCount: h, WeakLinkCount: w, ValidTime: uint16(v)})
+		ret = append(ret, GXDLMSRoutingTable{DestinationAddress: d, NextHopAddress: n,
+			RouteCost: c, HopCount: h, WeakLinkCount: w, ValidTime: v})
 	}
 	return ret, nil
 }
@@ -589,8 +552,8 @@ func lowpanParseContextInfo(value any) ([]GXDLMSContextInformationTable, error) 
 		}
 		ctx, _ := it[2].([]byte)
 		comp, _ := toBool(it[3])
-		vl, _ := toUint32(it[4])
-		ret = append(ret, GXDLMSContextInformationTable{CID: cid, Context: ctx, Compression: comp, ValidLifetime: uint16(vl)})
+		vl, _ := toUint16(it[4])
+		ret = append(ret, GXDLMSContextInformationTable{CID: cid, Context: ctx, Compression: comp, ValidLifetime: vl})
 	}
 	return ret, nil
 }
@@ -618,9 +581,9 @@ func lowpanParseBlacklist(value any) ([]types.GXKeyValuePair[uint16, uint16], er
 		if !ok || len(it) < 2 {
 			continue
 		}
-		k, _ := toUint32(it[0])
-		v, _ := toUint32(it[1])
-		ret = append(ret, *types.NewGXKeyValuePair(uint16(k), uint16(v)))
+		k, _ := toUint16(it[0])
+		v, _ := toUint16(it[1])
+		ret = append(ret, *types.NewGXKeyValuePair(k, v))
 	}
 	return ret, nil
 }
@@ -647,12 +610,12 @@ func lowpanParseBroadcastLog(value any) ([]GXDLMSBroadcastLogTable, error) {
 	for _, row := range rows {
 		it, ok := lowpanToAnySlice(row)
 		if !ok || len(it) < 3 {
-			continue
+			return nil, gxcommon.ErrArgumentOutOfRange
 		}
-		s, _ := toUint32(it[0])
+		s, _ := toUint16(it[0])
 		q, _ := toUint8(it[1])
-		v, _ := toUint32(it[2])
-		ret = append(ret, GXDLMSBroadcastLogTable{SourceAddress: uint16(s), SequenceNumber: q, ValidTime: uint16(v)})
+		v, _ := toUint16(it[2])
+		ret = append(ret, GXDLMSBroadcastLogTable{SourceAddress: s, SequenceNumber: q, ValidTime: v})
 	}
 	return ret, nil
 }

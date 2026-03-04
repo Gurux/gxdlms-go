@@ -21,7 +21,7 @@ type GXDLMSMBusDiagnostic struct {
 	ReceivedSignalStrength uint8
 
 	// Currently used channel ID.
-	ChannelId uint8
+	ChannelID uint8
 
 	// Link status.
 	LinkStatus enums.MBusLinkStatus
@@ -236,9 +236,9 @@ func (g *GXDLMSMBusDiagnostic) GetValue(settings *settings.GXDLMSSettings, e *in
 	case 2:
 		return g.ReceivedSignalStrength, nil
 	case 3:
-		return g.ChannelId, nil
+		return g.ChannelID, nil
 	case 4:
-		return g.LinkStatus, nil
+		return uint8(g.LinkStatus), nil
 	case 5:
 		data := types.NewGXByteBuffer()
 		if err := data.SetUint8(uint8(enums.DataTypeArray)); err != nil {
@@ -315,7 +315,7 @@ func (g *GXDLMSMBusDiagnostic) SetValue(settings *settings.GXDLMSSettings, e *in
 			e.Error = enums.ErrorCodeReadWriteDenied
 			return err
 		}
-		g.ChannelId = uint8(v)
+		g.ChannelID = uint8(v)
 	case 4:
 		v, err := mbusDiagToUInt32(e.Value)
 		if err != nil {
@@ -411,7 +411,7 @@ func (g *GXDLMSMBusDiagnostic) Load(reader *GXXmlReader) error {
 	if err != nil {
 		return err
 	}
-	g.ChannelId, err = reader.ReadElementContentAsUInt8("ChannelId", 0)
+	g.ChannelID, err = reader.ReadElementContentAsUInt8("ChannelId", 0)
 	if err != nil {
 		return err
 	}
@@ -481,7 +481,7 @@ func (g *GXDLMSMBusDiagnostic) Save(writer *GXXmlWriter) error {
 	if err := writer.WriteElementString("ReceivedSignalStrength", g.ReceivedSignalStrength); err != nil {
 		return err
 	}
-	if err := writer.WriteElementString("ChannelId", g.ChannelId); err != nil {
+	if err := writer.WriteElementString("ChannelId", g.ChannelID); err != nil {
 		return err
 	}
 	if err := writer.WriteElementString("LinkStatus", int(g.LinkStatus)); err != nil {
@@ -534,7 +534,7 @@ func (g *GXDLMSMBusDiagnostic) GetValues() []any {
 	return []any{
 		g.LogicalName(),
 		g.ReceivedSignalStrength,
-		g.ChannelId,
+		g.ChannelID,
 		g.LinkStatus,
 		g.BroadcastFrames,
 		g.Transmissions,

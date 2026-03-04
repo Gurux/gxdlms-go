@@ -220,7 +220,7 @@ func (g *GXDLMSParameterMonitor) GetValue(settings *settings.GXDLMSSettings, e *
 					return nil, err
 				}
 			} else {
-				err = internal.SetData(settings, data, enums.DataTypeUint16, g.ChangedParameter.Target.Base().ObjectType())
+				err = internal.SetData(settings, data, enums.DataTypeUint16, uint16(g.ChangedParameter.Target.Base().ObjectType()))
 				if err != nil {
 					return nil, err
 				}
@@ -233,7 +233,7 @@ func (g *GXDLMSParameterMonitor) GetValue(settings *settings.GXDLMSSettings, e *
 				if err != nil {
 					return nil, err
 				}
-				err = internal.SetData(settings, data, enums.DataTypeInt8, g.ChangedParameter.AttributeIndex)
+				err = internal.SetData(settings, data, enums.DataTypeInt8, int8(g.ChangedParameter.AttributeIndex))
 				if err != nil {
 					return nil, err
 				}
@@ -276,7 +276,7 @@ func (g *GXDLMSParameterMonitor) GetValue(settings *settings.GXDLMSSettings, e *
 					if err != nil {
 						return nil, err
 					}
-					err = internal.SetData(settings, data, enums.DataTypeUint16, it.Target.Base().ObjectType())
+					err = internal.SetData(settings, data, enums.DataTypeUint16, uint16(it.Target.Base().ObjectType()))
 					if err != nil {
 						return nil, err
 					}
@@ -288,7 +288,7 @@ func (g *GXDLMSParameterMonitor) GetValue(settings *settings.GXDLMSSettings, e *
 					if err != nil {
 						return nil, err
 					}
-					err = internal.SetData(settings, data, enums.DataTypeInt8, it.AttributeIndex)
+					err = internal.SetData(settings, data, enums.DataTypeInt8, int8(it.AttributeIndex))
 					if err != nil {
 						return nil, err
 					}

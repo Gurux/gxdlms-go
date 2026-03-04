@@ -511,7 +511,7 @@ func decodeFunctionObjects(value any) ([]IGXDLMSBase, error) {
 		if !ok || len(it) < 2 {
 			continue
 		}
-		ot32, err := toUint32(it[0])
+		ot32, err := toUint16(it[0])
 		if err != nil {
 			return nil, err
 		}

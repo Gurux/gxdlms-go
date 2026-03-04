@@ -164,7 +164,7 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
-		return g.Mode, nil
+		return uint8(g.Mode), nil
 	}
 	if e.Index == 3 {
 		cnt := len(g.ListeningWindow)
@@ -201,7 +201,7 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 		return data.Array(), nil
 	}
 	if e.Index == 4 {
-		return g.Status, nil
+		return uint8(g.Status), nil
 	}
 	if e.Index == 5 {
 		return g.NumberOfCalls, nil

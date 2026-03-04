@@ -762,26 +762,25 @@ func (g *GXDLMSSecuritySetup) getSertificates() ([]byte, error) {
 //
 //	Value of the attribute index.
 func (g *GXDLMSSecuritySetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
-	if e.Index == 1 {
-		return helpers.LogicalNameToBytes(g.LogicalName())
+	var ret any
+	var err error
+	switch e.Index {
+	case 1:
+		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
+	case 2:
+		ret = uint8(g.SecurityPolicy())
+	case 3:
+		ret = uint8(g.SecuritySuite)
+	case 4:
+		ret = g.ClientSystemTitle
+	case 5:
+		ret = g.ServerSystemTitle
+	case 6:
+		ret, err = g.getSertificates()
+	default:
+		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	if e.Index == 2 {
-		return g.SecurityPolicy, nil
-	}
-	if e.Index == 3 {
-		return g.SecuritySuite, nil
-	}
-	if e.Index == 4 {
-		return g.ClientSystemTitle, nil
-	}
-	if e.Index == 5 {
-		return g.ServerSystemTitle, nil
-	}
-	if e.Index == 6 {
-		return g.getSertificates()
-	}
-	e.Error = enums.ErrorCodeReadWriteDenied
-	return nil, nil
+	return ret, err
 }
 
 func getStringFromAsn1(value []byte) (string, error) {
@@ -867,7 +866,7 @@ func (g *GXDLMSSecuritySetup) SetValue(settings *settings.GXDLMSSettings, e *int
 // NewGXDLMSSecuritySetup creates a new security setup object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSSecuritySetup(ln string, sn int16) (*GXDLMSSecuritySetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

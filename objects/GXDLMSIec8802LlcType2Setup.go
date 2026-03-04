@@ -86,6 +86,7 @@ func (g *GXDLMSIec8802LlcType2Setup) GetValue(settings *settings.GXDLMSSettings,
 	}
 }
 func (g *GXDLMSIec8802LlcType2Setup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -95,57 +96,25 @@ func (g *GXDLMSIec8802LlcType2Setup) SetValue(settings *settings.GXDLMSSettings,
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TransmitWindowSizeK = v
+		g.TransmitWindowSizeK, err = toUint8(e.Value)
 	case 3:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TransmitWindowSizeRW = v
+		g.TransmitWindowSizeRW, err = toUint8(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaximumOctetsPdu = uint16(v)
+		g.MaximumOctetsPdu, err = toUint16(e.Value)
 	case 5:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaximumNumberTransmissions = v
+		g.MaximumNumberTransmissions, err = toUint8(e.Value)
 	case 6:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AcknowledgementTimer = uint16(v)
+		g.AcknowledgementTimer, err = toUint16(e.Value)
 	case 7:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BitTimer = uint16(v)
+		g.BitTimer, err = toUint16(e.Value)
 	case 8:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RejectTimer = uint16(v)
+		g.RejectTimer, err = toUint16(e.Value)
 	case 9:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BusyStateTimer = uint16(v)
+		g.BusyStateTimer, err = toUint16(e.Value)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 func (g *GXDLMSIec8802LlcType2Setup) Load(reader *GXXmlReader) error {
 	var err error

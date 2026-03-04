@@ -149,27 +149,26 @@ func (g *GXDLMSMBusSlavePortSetup) GetMethodCount() int {
 //
 //	Value of the attribute index.
 func (g *GXDLMSMBusSlavePortSetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
-	if e.Index == 1 {
+	var ret any
+	switch e.Index {
+	case 1:
 		v, err := helpers.LogicalNameToBytes(g.LogicalName())
 		if err != nil {
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		return v, err
+	case 2:
+		ret = uint8(g.DefaultBaud)
+	case 3:
+		ret = uint8(g.AvailableBaud)
+	case 4:
+		ret = uint8(g.AddressState)
+	case 5:
+		ret = g.BusAddress
+	default:
+		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	if e.Index == 2 {
-		return g.DefaultBaud, nil
-	}
-	if e.Index == 3 {
-		return g.AvailableBaud, nil
-	}
-	if e.Index == 4 {
-		return g.AddressState, nil
-	}
-	if e.Index == 5 {
-		return g.BusAddress, nil
-	}
-	e.Error = enums.ErrorCodeReadWriteDenied
-	return nil, nil
+	return ret, nil
 }
 
 // SetValue returns the set value of given attribute.
@@ -315,7 +314,7 @@ func (g *GXDLMSMBusSlavePortSetup) GetDataType(index int) (enums.DataType, error
 // NewGXDLMSMBusSlavePortSetup creates a new M-Bus slave port setup object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSMBusSlavePortSetup(ln string, sn int16) (*GXDLMSMBusSlavePortSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

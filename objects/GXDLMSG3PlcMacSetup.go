@@ -239,6 +239,7 @@ func (g *GXDLMSG3PlcMacSetup) GetValue(settings *settings.GXDLMSSettings, e *int
 }
 
 func (g *GXDLMSG3PlcMacSetup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -248,155 +249,59 @@ func (g *GXDLMSG3PlcMacSetup) SetValue(settings *settings.GXDLMSSettings, e *int
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ShortAddress = uint16(v)
+		g.ShortAddress, err = toUint16(e.Value)
 	case 3:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RcCoord = uint16(v)
+		g.RcCoord, err = toUint16(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.PANId = uint16(v)
+		g.PANId, err = toUint16(e.Value)
 	case 5:
-		keys, err := decodeMacKeyTable(e.Value)
-		if err != nil {
-			return err
-		}
-		g.KeyTable = keys
+		g.KeyTable, err = decodeMacKeyTable(e.Value)
 	case 6:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.FrameCounter = v
+		g.FrameCounter, err = toUint32(e.Value)
 	case 7:
 		g.ToneMask = toBitStringValue(e.Value)
 	case 8:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TmrTtl = v
+		g.TmrTtl, err = toUint8(e.Value)
 	case 9:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxFrameRetries = v
+		g.MaxFrameRetries, err = toUint8(e.Value)
 	case 10:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.NeighbourTableEntryTtl = v
+		g.NeighbourTableEntryTtl, err = toUint8(e.Value)
 	case 11:
-		table, err := parseNeighbourTableEntry(e.Value)
-		if err != nil {
-			return err
-		}
-		g.NeighbourTable = table
+		g.NeighbourTable, err = parseNeighbourTableEntry(e.Value)
 	case 12:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.HighPriorityWindowSize = v
+		g.HighPriorityWindowSize, err = toUint8(e.Value)
 	case 13:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.CscmFairnessLimit = v
+		g.CscmFairnessLimit, err = toUint8(e.Value)
 	case 14:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BeaconRandomizationWindowLen = v
+		g.BeaconRandomizationWindowLen, err = toUint8(e.Value)
 	case 15:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.A = v
+		g.A, err = toUint8(e.Value)
 	case 16:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.K = v
+		g.K, err = toUint8(e.Value)
 	case 17:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MinCwAttempts = v
+		g.MinCwAttempts, err = toUint8(e.Value)
 	case 18:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.CenelecLegacyMode = v
+		g.CenelecLegacyMode, err = toUint8(e.Value)
 	case 19:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.FccLegacyMode = v
+		g.FccLegacyMode, err = toUint8(e.Value)
 	case 20:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxBe = v
+		g.MaxBe, err = toUint8(e.Value)
 	case 21:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxCsmaBackoffs = v
+		g.MaxCsmaBackoffs, err = toUint8(e.Value)
 	case 22:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MinBe = v
+		g.MinBe, err = toUint8(e.Value)
 	case 23:
-		v, err := toBool(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MacBroadcastMaxCwEnabled = v
+		g.MacBroadcastMaxCwEnabled, err = toBool(e.Value)
 	case 24:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MacTransmitAtten = v
+		g.MacTransmitAtten, err = toUint8(e.Value)
 	case 25:
-		table, err := parsePosTableEntry(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MacPosTable = table
+		g.MacPosTable, err = parsePosTableEntry(e.Value)
 	case 26:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MacDuplicateDetectionTtl = v
+		g.MacDuplicateDetectionTtl, err = toUint8(e.Value)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSG3PlcMacSetup) Load(reader *GXXmlReader) error {
@@ -775,18 +680,12 @@ func parseNeighbourTableEntry(value any) ([]GXDLMSNeighbourTable, error) {
 		if !ok || len(it) < 11 {
 			continue
 		}
-		sa, err := toUint32(it[0])
+		sa, err := toUint16(it[0])
 		if err != nil {
 			return nil, err
 		}
-		mod, err := toUint32(it[3])
-		if err != nil {
-			return nil, err
-		}
-		txr, err := toUint32(it[5])
-		if err != nil {
-			return nil, err
-		}
+		mod := it[3].(types.GXEnum).Value
+		txr := it[5].(types.GXEnum).Value
 		lqi, err := toUint8(it[7])
 		if err != nil {
 			return nil, err
@@ -803,16 +702,16 @@ func parseNeighbourTableEntry(value any) ([]GXDLMSNeighbourTable, error) {
 		if err != nil {
 			return nil, err
 		}
-		txg, err := toInt8Value(it[4])
+		txg, err := toInt8(it[4])
 		if err != nil {
 			return nil, err
 		}
-		pd, err := toInt8Value(it[8])
+		pd, err := toInt8(it[8])
 		if err != nil {
 			return nil, err
 		}
 		ret = append(ret, GXDLMSNeighbourTable{
-			ShortAddress:       uint16(sa),
+			ShortAddress:       sa,
 			Enabled:            en,
 			ToneMap:            toBitStringValue(it[2]),
 			Modulation:         enums.Modulation(mod),
@@ -842,7 +741,7 @@ func parsePosTableEntry(value any) ([]GXDLMSMacPosTable, error) {
 		if !ok || len(it) < 3 {
 			continue
 		}
-		sa, err := toUint32(it[0])
+		sa, err := toUint16(it[0])
 		if err != nil {
 			return nil, err
 		}
@@ -854,7 +753,7 @@ func parsePosTableEntry(value any) ([]GXDLMSMacPosTable, error) {
 		if err != nil {
 			return nil, err
 		}
-		ret = append(ret, GXDLMSMacPosTable{ShortAddress: uint16(sa), LQI: lqi, ValidTime: vt})
+		ret = append(ret, GXDLMSMacPosTable{ShortAddress: sa, LQI: lqi, ValidTime: vt})
 	}
 	return ret, nil
 }

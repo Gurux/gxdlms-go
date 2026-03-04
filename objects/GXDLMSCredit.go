@@ -229,7 +229,7 @@ func (g *GXDLMSCredit) GetValue(settings *settings.GXDLMSSettings, e *internal.V
 	case 2:
 		ret = g.CurrentCreditAmount
 	case 3:
-		ret = g.Type
+		ret = uint8(g.Type)
 	case 4:
 		ret = g.Priority
 	case 5:
@@ -239,7 +239,7 @@ func (g *GXDLMSCredit) GetValue(settings *settings.GXDLMSSettings, e *internal.V
 	case 7:
 		ret, err = types.NewGXBitStringFromInteger(int(g.CreditConfiguration), 5)
 	case 8:
-		ret = g.Status
+		ret = uint8(g.Status)
 	case 9:
 		ret = g.PresetCreditAmount
 	case 10:

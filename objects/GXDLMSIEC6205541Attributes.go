@@ -201,7 +201,7 @@ func (g *GXDLMSIec6205541Attributes) SetValue(settings *settings.GXDLMSSettings,
 			g.TokenCarrierTypes = nil
 			return nil
 		}
-		tmp, ok := e.Value.(types.GXStructure)
+		tmp, ok := e.Value.(types.GXArray)
 		if !ok {
 			return fmt.Errorf("invalid token carrier types: %T", e.Value)
 		}

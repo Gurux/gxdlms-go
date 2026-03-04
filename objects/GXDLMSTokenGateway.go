@@ -205,7 +205,7 @@ func (g *GXDLMSTokenGateway) GetValue(settings *settings.GXDLMSSettings, e *inte
 		}
 		ret = bb.Array()
 	case 5:
-		ret = g.DeliveryMethod
+		ret = uint8(g.DeliveryMethod)
 	case 6:
 		bb := types.GXByteBuffer{}
 		err = bb.SetUint8(byte(enums.DataTypeStructure))
@@ -216,7 +216,7 @@ func (g *GXDLMSTokenGateway) GetValue(settings *settings.GXDLMSSettings, e *inte
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, &bb, enums.DataTypeEnum, g.StatusCode)
+		err = internal.SetData(settings, &bb, enums.DataTypeEnum, uint8(g.StatusCode))
 		if err != nil {
 			return nil, err
 		}

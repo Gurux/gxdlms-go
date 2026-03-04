@@ -182,10 +182,11 @@ func (g *GXDLMSDemandRegister) GetMethodCount() int {
 //	    Value of the attribute index.
 func (g *GXDLMSDemandRegister) GetValue(settings *settings.GXDLMSSettings,
 	e *internal.ValueEventArgs) (any, error) {
+	var ret any
+	var err error
 	if e.Index == 1 {
 		return helpers.LogicalNameToBytes(g.LogicalName())
-	}
-	if e.Index == 2 {
+	} else if e.Index == 2 {
 		// If client set new value.
 		if !settings.IsServer() && g.scaler != 1 && g.CurrentAverageValue != nil {
 			dt, _ := g.Base().GetDataType(2)
@@ -202,9 +203,26 @@ func (g *GXDLMSDemandRegister) GetValue(settings *settings.GXDLMSSettings,
 			}
 			return tmp, nil
 		}
-		return g.CurrentAverageValue, nil
-	}
-	if e.Index == 3 {
+		ret = g.CurrentAverageValue
+	} else if e.Index == 3 {
+		//If client set new value.
+		if !settings.IsServer() && g.Scaler() != 1 && g.LastAverageValue != nil {
+			dt, _ := g.Base().GetDataType(3)
+			if dt == enums.DataTypeNone && g.LastAverageValue != nil {
+				dt, _ = internal.GetDLMSDataType(reflect.TypeOf(g.LastAverageValue))
+				// If user has set initial value.
+				if dt == enums.DataTypeString {
+					dt = enums.DataTypeNone
+				}
+			}
+			ret = internal.AnyToDouble(g.LastAverageValue) / g.Scaler()
+			if dt != enums.DataTypeNone {
+				ret, err = internal.Convert(ret, dt)
+			}
+		} else {
+			ret = g.LastAverageValue
+		}
+	} else if e.Index == 4 {
 		var err error
 		e.ByteArray = true
 		data := types.NewGXByteBuffer()
@@ -220,14 +238,25 @@ func (g *GXDLMSDemandRegister) GetValue(settings *settings.GXDLMSSettings,
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, data, enums.DataTypeEnum, g.Unit)
+		err = internal.SetData(settings, data, enums.DataTypeEnum, uint8(g.Unit))
 		if err != nil {
 			return nil, err
 		}
-		return data.Array(), nil
+		ret = data.Array()
+	} else if e.Index == 5 {
+		ret = g.Status
+	} else if e.Index == 6 {
+		ret = g.CaptureTime
+	} else if e.Index == 7 {
+		ret = g.StartTimeCurrent
+	} else if e.Index == 8 {
+		ret = g.Period
+	} else if e.Index == 9 {
+		ret = g.NumberOfPeriods
+	} else {
+		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	e.Error = enums.ErrorCodeReadWriteDenied
-	return nil, nil
+	return ret, err
 }
 
 // SetValue returns the set value of given attribute.
@@ -620,7 +649,7 @@ func (g *GXDLMSDemandRegister) NextPeriod(client IGXDLMSClient) ([][]uint8, erro
 // NewGXDLMSDemandRegister creates a new demand register object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSDemandRegister(ln string, sn int16) (*GXDLMSDemandRegister, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

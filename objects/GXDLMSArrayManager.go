@@ -555,7 +555,7 @@ func (g *GXDLMSArrayManager) SetValue(settings *settings.GXDLMSSettings, e *inte
 				if len(a) < 3 {
 					continue
 				}
-				otv, err := toUint32(a[0])
+				otv, err := toUint16(a[0])
 				if err != nil {
 					return err
 				}
@@ -563,7 +563,7 @@ func (g *GXDLMSArrayManager) SetValue(settings *settings.GXDLMSSettings, e *inte
 				if err != nil {
 					return err
 				}
-				attr32, err := toUint32(a[2])
+				attr32, err := toInt8(a[2])
 				if err != nil {
 					return err
 				}

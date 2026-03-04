@@ -287,8 +287,8 @@ func parseMulticastEntries(value any) []GXMacMulticastEntry {
 		if len(it) < 2 {
 			continue
 		}
-		id, err1 := toInt8Value(it[0])
-		members, err2 := toInt16Value(it[1])
+		id, err1 := toInt8(it[0])
+		members, err2 := toInt16(it[1])
 		if err1 == nil && err2 == nil {
 			ret = append(ret, GXMacMulticastEntry{Id: id, Members: members})
 		}
@@ -298,7 +298,7 @@ func parseMulticastEntries(value any) []GXMacMulticastEntry {
 func parseSwitchTable(value any) []int16 {
 	ret := make([]int16, 0)
 	for _, it := range value.(types.GXArray) {
-		v, err := toInt16Value(it)
+		v, err := toInt16(it)
 		if err == nil {
 			ret = append(ret, v)
 		}
@@ -313,12 +313,12 @@ func parseDirectTable(value any) []GXMacDirectTable {
 			continue
 		}
 		v := GXMacDirectTable{}
-		v.SourceSId, _ = toInt16Value(it[0])
-		v.SourceLnId, _ = toInt16Value(it[1])
-		v.SourceLcId, _ = toInt16Value(it[2])
-		v.DestinationSId, _ = toInt16Value(it[3])
-		v.DestinationLnId, _ = toInt16Value(it[4])
-		v.DestinationLcId, _ = toInt16Value(it[5])
+		v.SourceSId, _ = toInt16(it[0])
+		v.SourceLnId, _ = toInt16(it[1])
+		v.SourceLcId, _ = toInt16(it[2])
+		v.DestinationSId, _ = toInt16(it[3])
+		v.DestinationLnId, _ = toInt16(it[4])
+		v.DestinationLcId, _ = toInt16(it[5])
 		if b, ok := it[6].([]byte); ok {
 			v.Did = b
 		}
@@ -327,6 +327,7 @@ func parseDirectTable(value any) []GXMacDirectTable {
 	return ret
 }
 func parseAvailableSwitches(value any) ([]GXMacAvailableSwitch, error) {
+	var err error
 	ret := make([]GXMacAvailableSwitch, 0)
 	for _, tmp := range value.(types.GXArray) {
 		it := tmp.(types.GXStructure)
@@ -337,10 +338,22 @@ func parseAvailableSwitches(value any) ([]GXMacAvailableSwitch, error) {
 		if b, ok := it[0].([]byte); ok {
 			v.Sna = b
 		}
-		v.LsId, _ = toInt16Value(it[1])
-		v.Level, _ = toInt8Value(it[2])
-		v.RxLevel, _ = toInt8Value(it[3])
-		v.RxSnr, _ = toInt8Value(it[4])
+		v.LsId, err = toInt16(it[1])
+		if err != nil {
+			return nil, err
+		}
+		v.Level, err = toInt8(it[2])
+		if err != nil {
+			return nil, err
+		}
+		v.RxLevel, err = toInt8(it[3])
+		if err != nil {
+			return nil, err
+		}
+		v.RxSnr, err = toInt8(it[4])
+		if err != nil {
+			return nil, err
+		}
 		ret = append(ret, v)
 	}
 	return ret, nil
@@ -357,14 +370,14 @@ func parseCommunications(value any) ([]GXMacPhyCommunication, error) {
 		if b, ok := it[0].([]byte); ok {
 			v.Eui = b
 		}
-		v.TxPower, _ = toInt8Value(it[1])
-		v.TxCoding, _ = toInt8Value(it[2])
-		v.RxCoding, _ = toInt8Value(it[3])
-		v.RxLvl, _ = toInt8Value(it[4])
-		v.Snr, _ = toInt8Value(it[5])
-		v.TxPowerModified, _ = toInt8Value(it[6])
-		v.TxCodingModified, _ = toInt8Value(it[7])
-		v.RxCodingModified, _ = toInt8Value(it[8])
+		v.TxPower, _ = toInt8(it[1])
+		v.TxCoding, _ = toInt8(it[2])
+		v.RxCoding, _ = toInt8(it[3])
+		v.RxLvl, _ = toInt8(it[4])
+		v.Snr, _ = toInt8(it[5])
+		v.TxPowerModified, _ = toInt8(it[6])
+		v.TxCodingModified, _ = toInt8(it[7])
+		v.RxCodingModified, _ = toInt8(it[8])
 		ret = append(ret, v)
 	}
 	return ret, nil

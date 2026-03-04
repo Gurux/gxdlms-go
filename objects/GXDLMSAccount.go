@@ -317,10 +317,10 @@ func (g *GXDLMSAccount) GetValue(settings *settings.GXDLMSSettings, e *internal.
 		if err := data.SetUint8(2); err != nil {
 			return nil, err
 		}
-		if err := internal.SetData(settings, data, enums.DataTypeEnum, g.PaymentMode); err != nil {
+		if err := internal.SetData(settings, data, enums.DataTypeEnum, uint8(g.PaymentMode)); err != nil {
 			return nil, err
 		}
-		if err := internal.SetData(settings, data, enums.DataTypeEnum, g.AccountStatus); err != nil {
+		if err := internal.SetData(settings, data, enums.DataTypeEnum, uint8(g.AccountStatus)); err != nil {
 			return nil, err
 		}
 		return data.Array(), nil
@@ -459,7 +459,7 @@ func (g *GXDLMSAccount) GetValue(settings *settings.GXDLMSSettings, e *internal.
 		if err := internal.SetData(settings, data, enums.DataTypeInt8, g.Currency.Scale); err != nil {
 			return nil, err
 		}
-		if err := internal.SetData(settings, data, enums.DataTypeEnum, g.Currency.Unit); err != nil {
+		if err := internal.SetData(settings, data, enums.DataTypeEnum, uint8(g.Currency.Unit)); err != nil {
 			return nil, err
 		}
 		return data.Array(), nil
@@ -485,49 +485,6 @@ func (g *GXDLMSAccount) GetValue(settings *settings.GXDLMSSettings, e *internal.
 //	settings: DLMS settings.
 //	e: Set parameters.
 func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
-	toSlice := func(value any) ([]any, bool) {
-		switch v := value.(type) {
-		case types.GXArray:
-			return []any(v), true
-		case types.GXStructure:
-			return []any(v), true
-		case []any:
-			return v, true
-		default:
-			return nil, false
-		}
-	}
-	toInt := func(value any) (int, error) {
-		switch v := value.(type) {
-		case int:
-			return v, nil
-		case int8:
-			return int(v), nil
-		case int16:
-			return int(v), nil
-		case int32:
-			return int(v), nil
-		case int64:
-			return int(v), nil
-		case uint8:
-			return int(v), nil
-		case uint16:
-			return int(v), nil
-		case uint32:
-			return int(v), nil
-		case uint64:
-			return int(v), nil
-		case types.GXEnum:
-			return int(v.Value), nil
-		case types.GXBitString:
-			return v.ToInteger(), nil
-		case *types.GXBitString:
-			return v.ToInteger(), nil
-		default:
-			return 0, fmt.Errorf("unsupported numeric value type: %T", value)
-		}
-	}
-
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -542,8 +499,8 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 			g.PaymentMode = enums.PaymentModeCredit
 			return nil
 		}
-		arr, ok := toSlice(e.Value)
-		if !ok || len(arr) != 2 {
+		arr := e.Value.(types.GXStructure)
+		if len(arr) != 2 {
 			e.Error = enums.ErrorCodeReadWriteDenied
 			return fmt.Errorf("invalid payment mode structure: %T", e.Value)
 		}
@@ -565,7 +522,7 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 	case 9:
 		g.CreditReferences = make([]string, 0)
 		if e.Value != nil {
-			arr, ok := toSlice(e.Value)
+			arr, ok := e.Value.(types.GXArray)
 			if !ok {
 				return fmt.Errorf("invalid credit references type: %T", e.Value)
 			}
@@ -580,7 +537,7 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 	case 10:
 		g.ChargeReferences = make([]string, 0)
 		if e.Value != nil {
-			arr, ok := toSlice(e.Value)
+			arr, ok := e.Value.(types.GXArray)
 			if !ok {
 				return fmt.Errorf("invalid charge references type: %T", e.Value)
 			}
@@ -595,12 +552,12 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 	case 11:
 		g.CreditChargeConfigurations = make([]GXCreditChargeConfiguration, 0)
 		if e.Value != nil {
-			arr, ok := toSlice(e.Value)
+			arr, ok := e.Value.(types.GXArray)
 			if !ok {
 				return fmt.Errorf("invalid credit-charge configuration type: %T", e.Value)
 			}
 			for _, tmp := range arr {
-				it, ok := toSlice(tmp)
+				it, ok := tmp.(types.GXStructure)
 				if !ok || len(it) < 3 {
 					return fmt.Errorf("invalid credit-charge item type: %T", tmp)
 				}
@@ -612,26 +569,23 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 				if err != nil {
 					return err
 				}
-				configuration, err := toInt(it[2])
-				if err != nil {
-					return err
-				}
+				configuration := it[2].(types.GXBitString)
 				g.CreditChargeConfigurations = append(g.CreditChargeConfigurations, GXCreditChargeConfiguration{
 					CreditReference:         creditLN,
 					ChargeReference:         chargeLN,
-					CollectionConfiguration: enums.CreditCollectionConfiguration(configuration),
+					CollectionConfiguration: enums.CreditCollectionConfiguration(configuration.ToInteger()),
 				})
 			}
 		}
 	case 12:
 		g.TokenGatewayConfigurations = make([]GXTokenGatewayConfiguration, 0)
 		if e.Value != nil {
-			arr, ok := toSlice(e.Value)
+			arr, ok := e.Value.(types.GXArray)
 			if !ok {
 				return fmt.Errorf("invalid token gateway configuration type: %T", e.Value)
 			}
 			for _, tmp := range arr {
-				it, ok := toSlice(tmp)
+				it, ok := tmp.(types.GXStructure)
 				if !ok || len(it) < 2 {
 					return fmt.Errorf("invalid token gateway item type: %T", tmp)
 				}
@@ -639,10 +593,7 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 				if err != nil {
 					return err
 				}
-				tokenProportion, err := toInt(it[1])
-				if err != nil {
-					return err
-				}
+				tokenProportion := it[1].(uint8)
 				g.TokenGatewayConfigurations = append(g.TokenGatewayConfigurations, GXTokenGatewayConfiguration{
 					CreditReference: creditLN,
 					TokenProportion: uint8(tokenProportion),
@@ -704,7 +655,7 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 			g.Currency = GXCurrency{}
 			return nil
 		}
-		tmp, ok := toSlice(e.Value)
+		tmp, ok := e.Value.(types.GXStructure)
 		if !ok || len(tmp) < 3 {
 			return fmt.Errorf("invalid currency value type: %T", e.Value)
 		}
@@ -716,14 +667,8 @@ func (g *GXDLMSAccount) SetValue(settings *settings.GXDLMSSettings, e *internal.
 		default:
 			return fmt.Errorf("invalid currency name type: %T", tmp[0])
 		}
-		scale, err := toInt(tmp[1])
-		if err != nil {
-			return err
-		}
-		unit, err := toInt(tmp[2])
-		if err != nil {
-			return err
-		}
+		scale := tmp[1].(int8)
+		unit := tmp[2].(types.GXEnum).Value
 		g.Currency.Scale = int8(scale)
 		g.Currency.Unit = enums.Currency(unit)
 	case 16:

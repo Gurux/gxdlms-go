@@ -137,6 +137,7 @@ func (g *GXDLMSCoAPSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 }
 
 func (g *GXDLMSCoAPSetup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -175,47 +176,19 @@ func (g *GXDLMSCoAPSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 			g.UdpReference = udp
 		}
 	case 3:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AckTimeout = uint16(v)
+		g.AckTimeout, err = toUint16(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AckRandomFactor = uint16(v)
+		g.AckRandomFactor, err = toUint16(e.Value)
 	case 5:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaxRetransmit = uint16(v)
+		g.MaxRetransmit, err = toUint16(e.Value)
 	case 6:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.NStart = uint16(v)
+		g.NStart, err = toUint16(e.Value)
 	case 7:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.DelayAckTimeout = uint16(v)
+		g.DelayAckTimeout, err = toUint16(e.Value)
 	case 8:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ExponentialBackOff = uint16(v)
+		g.ExponentialBackOff, err = toUint16(e.Value)
 	case 9:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ProbingRate = uint16(v)
+		g.ProbingRate, err = toUint16(e.Value)
 	case 10:
 		if e.Value == nil {
 			g.CoAPUriPath = ""
@@ -233,7 +206,7 @@ func (g *GXDLMSCoAPSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSCoAPSetup) Load(reader *GXXmlReader) error {

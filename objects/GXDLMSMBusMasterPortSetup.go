@@ -56,24 +56,27 @@ func (g *GXDLMSMBusMasterPortSetup) Base() *GXDLMSObject {
 	return &g.GXDLMSObject
 }
 
-//Invoke returns the invokes method.
+// Invoke returns the invokes method.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Invoke parameters.
+//
+//	settings: DLMS settings.
+//	e: Invoke parameters.
 func (g *GXDLMSMBusMasterPortSetup) Invoke(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) ([]byte, error) {
 	e.Error = enums.ErrorCodeReadWriteDenied
 	return nil, nil
 }
 
-//GetAttributeIndexToRead returns the collection of attributes to read.
+// GetAttributeIndexToRead returns the collection of attributes to read.
 // If attribute is static and already read or device is returned HW error it is not returned.
 //
 // Parameters:
-//   all: All items are returned even if they are read already.
+//
+//	all: All items are returned even if they are read already.
 //
 // Returns:
-//   Collection of attributes to read.
+//
+//	Collection of attributes to read.
 func (g *GXDLMSMBusMasterPortSetup) GetAttributeIndexToRead(all bool) []int {
 	var attributes []int
 	// LN is static and read only once.
@@ -87,55 +90,59 @@ func (g *GXDLMSMBusMasterPortSetup) GetAttributeIndexToRead(all bool) []int {
 	return attributes
 }
 
-//GetNames returns the names of attribute indexes.
+// GetNames returns the names of attribute indexes.
 func (g *GXDLMSMBusMasterPortSetup) GetNames() []string {
 	return []string{"Logical Name", "Comm Speed"}
 }
 
-//GetMethodNames returns the names of method indexes.
+// GetMethodNames returns the names of method indexes.
 func (g *GXDLMSMBusMasterPortSetup) GetMethodNames() []string {
 	return []string{}
 }
 
-//GetAttributeCount returns the amount of attributes.
+// GetAttributeCount returns the amount of attributes.
 //
 // Returns:
-//   Count of attributes.
+//
+//	Count of attributes.
 func (g *GXDLMSMBusMasterPortSetup) GetAttributeCount() int {
 	return 2
 }
 
-//GetMethodCount returns the amount of methods.
+// GetMethodCount returns the amount of methods.
 func (g *GXDLMSMBusMasterPortSetup) GetMethodCount() int {
 	return 0
 }
 
-//GetValue returns the value of given attribute.
+// GetValue returns the value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Get parameters.
+//
+//	settings: DLMS settings.
+//	e: Get parameters.
 //
 // Returns:
-//   Value of the attribute index.
+//
+//	Value of the attribute index.
 func (g *GXDLMSMBusMasterPortSetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
 		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
-		return g.CommSpeed, nil
+		return uint8(g.CommSpeed), nil
 	}
 	e.Error = enums.ErrorCodeReadWriteDenied
 	return nil, nil
 }
 
-//SetValue returns the set value of given attribute.
+// SetValue returns the set value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Set parameters.
+//
+//	settings: DLMS settings.
+//	e: Set parameters.
 func (g *GXDLMSMBusMasterPortSetup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
 	if e.Index == 1 {
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -151,10 +158,11 @@ func (g *GXDLMSMBusMasterPortSetup) SetValue(settings *settings.GXDLMSSettings, 
 	return nil
 }
 
-//Load returns the load object content from XML.
+// Load returns the load object content from XML.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSMBusMasterPortSetup) Load(reader *GXXmlReader) error {
 	ret, err := reader.ReadElementContentAsInt("CommSpeed", 0)
 	if err != nil {
@@ -164,10 +172,11 @@ func (g *GXDLMSMBusMasterPortSetup) Load(reader *GXXmlReader) error {
 	return err
 }
 
-//Save returns the save object content to XML.
+// Save returns the save object content to XML.
 //
 // Parameters:
-//   writer: XML writer.
+//
+//	writer: XML writer.
 func (g *GXDLMSMBusMasterPortSetup) Save(writer *GXXmlWriter) error {
 	err := writer.WriteElementString("CommSpeed", int(g.CommSpeed))
 	if err != nil {
@@ -176,26 +185,29 @@ func (g *GXDLMSMBusMasterPortSetup) Save(writer *GXXmlWriter) error {
 	return err
 }
 
-//PostLoad returns the handle actions after Load.
+// PostLoad returns the handle actions after Load.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSMBusMasterPortSetup) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-//GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSMBusMasterPortSetup) GetValues() []any {
 	return []any{g.LogicalName(), g.CommSpeed}
 }
 
-//GetDataType returns the device data type of selected attribute index.
+// GetDataType returns the device data type of selected attribute index.
 //
 // Parameters:
-//   index: Attribute index of the object.
+//
+//	index: Attribute index of the object.
 //
 // Returns:
-//   Device data type of the object.
+//
+//	Device data type of the object.
 func (g *GXDLMSMBusMasterPortSetup) GetDataType(index int) (enums.DataType, error) {
 	if index == 1 {
 		return enums.DataTypeOctetString, nil
@@ -210,7 +222,7 @@ func (g *GXDLMSMBusMasterPortSetup) GetDataType(index int) (enums.DataType, erro
 // NewGXDLMMBusMasterPortSetup creates a new M Bus Master Port Setup object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSMBusMasterPortSetup(ln string, sn int16) (*GXDLMSMBusMasterPortSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

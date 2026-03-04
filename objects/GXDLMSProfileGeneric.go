@@ -311,7 +311,7 @@ func (g *GXDLMSProfileGeneric) GetColumns(cols []any) ([]types.GXKeyValuePair[IG
 				return nil, err
 			}
 			attributeIndex := it[2].(int)
-			dataIndex := it[3].(int)
+			dataIndex := it[3].(uint16)
 			for _, c := range g.CaptureObjects {
 				if c.Key.Base().ObjectType() == ot && c.Value.AttributeIndex == attributeIndex && c.Value.DataIndex == dataIndex && strings.Compare(c.Key.Base().LogicalName(), ln) == 0 {
 					columns = append(columns, c)
@@ -597,7 +597,7 @@ func (g *GXDLMSProfileGeneric) setCaptureObjects(parent any,
 			c.UpdateOBISCodeInformation(obj)
 			*/
 		}
-		*list = append(*list, *types.NewGXKeyValuePair(obj, NewGXDLMSCaptureObject(int(attributeIndex), int(dataIndex))))
+		*list = append(*list, *types.NewGXKeyValuePair(obj, NewGXDLMSCaptureObject(int(attributeIndex), dataIndex)))
 	}
 	return nil
 }
@@ -749,7 +749,7 @@ func (g *GXDLMSProfileGeneric) Load(reader *GXXmlReader) error {
 			if err != nil {
 				return err
 			}
-			di, err := reader.ReadElementContentAsInt("Data", 0)
+			di, err := reader.ReadElementContentAsUInt16("Data", 0)
 			if err != nil {
 				return err
 			}

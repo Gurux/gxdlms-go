@@ -108,6 +108,7 @@ func (g *GXDLMSPrimeNbOfdmPlcMacFunctionalParameters) GetValue(settings *setting
 	}
 }
 func (g *GXDLMSPrimeNbOfdmPlcMacFunctionalParameters) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -117,23 +118,11 @@ func (g *GXDLMSPrimeNbOfdmPlcMacFunctionalParameters) SetValue(settings *setting
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toInt16Value(e.Value)
-		if err != nil {
-			return err
-		}
-		g.LnId = v
+		g.LnId, err = toInt16(e.Value)
 	case 3:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.LsId = v
+		g.LsId, err = toUint8(e.Value)
 	case 4:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.SId = v
+		g.SId, err = toUint8(e.Value)
 	case 5:
 		if b, ok := e.Value.([]byte); ok {
 			g.Sna = b
@@ -141,55 +130,23 @@ func (g *GXDLMSPrimeNbOfdmPlcMacFunctionalParameters) SetValue(settings *setting
 			g.Sna = types.HexToBytes(s)
 		}
 	case 6:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.State = enums.MacState(v)
+		g.State = enums.MacState(e.Value.(types.GXEnum).Value)
 	case 7:
-		v, err := toInt16Value(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ScpLength = v
+		g.ScpLength, err = toInt16(e.Value)
 	case 8:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.NodeHierarchyLevel = v
+		g.NodeHierarchyLevel, err = toUint8(e.Value)
 	case 9:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BeaconSlotCount = v
+		g.BeaconSlotCount, err = toUint8(e.Value)
 	case 10:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BeaconRxSlot = v
+		g.BeaconRxSlot, err = toUint8(e.Value)
 	case 11:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BeaconTxSlot = v
+		g.BeaconTxSlot, err = toUint8(e.Value)
 	case 12:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BeaconRxFrequency = v
+		g.BeaconRxFrequency, err = toUint8(e.Value)
 	case 13:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.BeaconTxFrequency = v
+		g.BeaconTxFrequency, err = toUint8(e.Value)
 	case 14:
-		v, err := toUint32(e.Value)
+		v, err := toUint16(e.Value)
 		if err != nil {
 			return err
 		}
@@ -197,7 +154,7 @@ func (g *GXDLMSPrimeNbOfdmPlcMacFunctionalParameters) SetValue(settings *setting
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 func (g *GXDLMSPrimeNbOfdmPlcMacFunctionalParameters) Load(reader *GXXmlReader) error {
 	var err error

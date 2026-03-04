@@ -65,14 +65,16 @@ func (g *GXDLMSUtilityTables) Invoke(settings *settings.GXDLMSSettings, e *inter
 	return nil, errors.New("Invoke method is not supported in GXDLMSUtilityTables object.")
 }
 
-//GetAttributeIndexToRead returns the collection of attributes to read.
+// GetAttributeIndexToRead returns the collection of attributes to read.
 // If attribute is static and already read or device is returned HW error it is not returned.
 //
 // Parameters:
-//   all: All items are returned even if they are read already.
+//
+//	all: All items are returned even if they are read already.
 //
 // Returns:
-//   Collection of attributes to read.
+//
+//	Collection of attributes to read.
 func (g *GXDLMSUtilityTables) GetAttributeIndexToRead(all bool) []int {
 	var attributes []int
 	// LN is static and read only once.
@@ -94,38 +96,41 @@ func (g *GXDLMSUtilityTables) GetAttributeIndexToRead(all bool) []int {
 	return attributes
 }
 
-//GetNames returns the names of attribute indexes.
+// GetNames returns the names of attribute indexes.
 func (g *GXDLMSUtilityTables) GetNames() []string {
 	return []string{"Logical Name", "Table Id", "Length", "Buffer"}
 }
 
-//GetMethodNames returns the names of method indexes.
+// GetMethodNames returns the names of method indexes.
 func (g *GXDLMSUtilityTables) GetMethodNames() []string {
 	return []string{}
 }
 
-//GetAttributeCount returns the amount of attributes.
+// GetAttributeCount returns the amount of attributes.
 //
 // Returns:
-//   Count of attributes.
+//
+//	Count of attributes.
 func (g *GXDLMSUtilityTables) GetAttributeCount() int {
 	return 4
 }
 
-//GetMethodCount returns the amount of methods.
+// GetMethodCount returns the amount of methods.
 func (g *GXDLMSUtilityTables) GetMethodCount() int {
 	return 0
 }
 
-//GetValue returns the value of given attribute.
+// GetValue returns the value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Get parameters.
+//
+//	settings: DLMS settings.
+//	e: Get parameters.
 //
 // Returns:
-//   Value of the attribute index.
+//
+//	Value of the attribute index.
 func (g *GXDLMSUtilityTables) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	switch e.Index {
 	case 1:
@@ -133,22 +138,22 @@ func (g *GXDLMSUtilityTables) GetValue(settings *settings.GXDLMSSettings, e *int
 	case 2:
 		return g.TableId, nil
 	case 3:
-		return len(g.Buffer), nil
+		return uint32(len(g.Buffer)), nil
 	case 4:
 		return g.Buffer, nil
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
-		break
 	}
 	return nil, nil
 }
 
-//SetValue returns the set value of given attribute.
+// SetValue returns the set value of given attribute.
 // When raw parameter us not used example register multiplies value by scalar.
 //
 // Parameters:
-//   settings: DLMS settings.
-//   e: Set parameters.
+//
+//	settings: DLMS settings.
+//	e: Set parameters.
 func (g *GXDLMSUtilityTables) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
 	switch e.Index {
 	case 1:
@@ -172,10 +177,11 @@ func (g *GXDLMSUtilityTables) SetValue(settings *settings.GXDLMSSettings, e *int
 	return nil
 }
 
-//Load returns the load object content from XML.
+// Load returns the load object content from XML.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSUtilityTables) Load(reader *GXXmlReader) error {
 	var err error
 	g.TableId, err = reader.ReadElementContentAsUInt16("Id", 0)
@@ -190,10 +196,11 @@ func (g *GXDLMSUtilityTables) Load(reader *GXXmlReader) error {
 	return err
 }
 
-//Save returns the save object content to XML.
+// Save returns the save object content to XML.
 //
 // Parameters:
-//   writer: XML writer.
+//
+//	writer: XML writer.
 func (g *GXDLMSUtilityTables) Save(writer *GXXmlWriter) error {
 	err := writer.WriteElementString("Id", g.TableId)
 	if err != nil {
@@ -206,26 +213,29 @@ func (g *GXDLMSUtilityTables) Save(writer *GXXmlWriter) error {
 	return err
 }
 
-//PostLoad returns the handle actions after Load.
+// PostLoad returns the handle actions after Load.
 //
 // Parameters:
-//   reader: XML reader.
+//
+//	reader: XML reader.
 func (g *GXDLMSUtilityTables) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-//GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns the an array containing the COSEM object's attribute values.
 func (g *GXDLMSUtilityTables) GetValues() []any {
 	return []any{g.LogicalName(), g.TableId, uint16(len(g.Buffer)), g.Buffer}
 }
 
-//GetDataType returns the device data type of selected attribute index.
+// GetDataType returns the device data type of selected attribute index.
 //
 // Parameters:
-//   index: Attribute index of the object.
+//
+//	index: Attribute index of the object.
 //
 // Returns:
-//   Device data type of the object.
+//
+//	Device data type of the object.
 func (g *GXDLMSUtilityTables) GetDataType(index int) (enums.DataType, error) {
 	switch index {
 	case 1:
@@ -244,7 +254,7 @@ func (g *GXDLMSUtilityTables) GetDataType(index int) (enums.DataType, error) {
 // NewGXDLMSUtilityTables creates a new Utility Tables object instance.
 //
 // The var attributes []int` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSUtilityTables(ln string, sn int16) (*GXDLMSUtilityTables, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

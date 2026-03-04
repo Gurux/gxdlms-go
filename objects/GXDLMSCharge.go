@@ -252,7 +252,7 @@ func (g *GXDLMSCharge) GetUnitCharge(settings *settings.GXDLMSSettings, charge *
 		return nil, err
 	}
 	if charge.Commodity.Target == nil {
-		err = internal.SetData(settings, bb, enums.DataTypeUint16, 0)
+		err = internal.SetData(settings, bb, enums.DataTypeUint16, uint16(0))
 		if err != nil {
 			return nil, err
 		}
@@ -288,7 +288,7 @@ func (g *GXDLMSCharge) GetUnitCharge(settings *settings.GXDLMSSettings, charge *
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, bb, enums.DataTypeInt8, 0)
+		err = internal.SetData(settings, bb, enums.DataTypeInt8, int8(0))
 		if err != nil {
 			return nil, err
 		}
@@ -363,7 +363,7 @@ func (g *GXDLMSCharge) GetValue(settings *settings.GXDLMSSettings, e *internal.V
 	case 2:
 		ret = g.TotalAmountPaid
 	case 3:
-		ret = g.ChargeType
+		ret = uint8(g.ChargeType)
 	case 4:
 		ret = g.Priority
 	case 5:

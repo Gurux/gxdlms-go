@@ -266,7 +266,7 @@ func (g *GXDLMSMBusClient) GetValue(settings *settings.GXDLMSSettings, e *intern
 		return g.DataHeaderVersion, nil
 	}
 	if e.Index == 9 {
-		return g.DeviceType, nil
+		return uint8(g.DeviceType), nil
 	}
 	if e.Index == 10 {
 		return g.AccessNumber, nil
@@ -282,7 +282,7 @@ func (g *GXDLMSMBusClient) GetValue(settings *settings.GXDLMSSettings, e *intern
 			return g.Configuration, nil
 		}
 		if e.Index == 14 {
-			return g.EncryptionKeyStatus, nil
+			return uint8(g.EncryptionKeyStatus), nil
 		}
 	}
 	e.Error = enums.ErrorCodeReadWriteDenied
@@ -799,7 +799,7 @@ func (g *GXDLMSMBusClient) GetDataType(index int) (enums.DataType, error) {
 // NewGXDLMSMBusClient creates a new M-Bus client object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSMBusClient(ln string, sn int16) (*GXDLMSMBusClient, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

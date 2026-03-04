@@ -32,7 +32,7 @@ type GXDLMSMBusPortSetup struct {
 	IdentificationNumber uint32
 
 	// Manufacturer Identification element.
-	ManufacturerId uint16
+	ManufacturerID uint16
 
 	// M-Bus version.
 	MBusVersion uint8
@@ -208,27 +208,29 @@ func (g *GXDLMSMBusPortSetup) GetDataType(index int) (enums.DataType, error) {
 
 // GetValue returns the value of given attribute.
 func (g *GXDLMSMBusPortSetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
+	var ret any
+	var err error
 	switch e.Index {
 	case 1:
-		return helpers.LogicalNameToBytes(g.LogicalName())
+		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
-		return helpers.LogicalNameToBytes(g.ProfileSelection)
+		ret, err = helpers.LogicalNameToBytes(g.ProfileSelection)
 	case 3:
-		return g.PortCommunicationStatus, nil
+		ret = uint8(g.PortCommunicationStatus)
 	case 4:
-		return g.DataHeaderType, nil
+		ret = uint8(g.DataHeaderType)
 	case 5:
-		return g.PrimaryAddress, nil
+		ret = g.PrimaryAddress
 	case 6:
-		return g.IdentificationNumber, nil
+		ret = g.IdentificationNumber
 	case 7:
-		return g.ManufacturerId, nil
+		ret = g.ManufacturerID
 	case 8:
-		return g.MBusVersion, nil
+		ret = g.MBusVersion
 	case 9:
-		return g.DeviceType, nil
+		ret = uint8(g.DeviceType)
 	case 10:
-		return g.MaxPduSize, nil
+		ret = g.MaxPduSize
 	case 11:
 		data := types.NewGXByteBuffer()
 		if err := data.SetUint8(uint8(enums.DataTypeArray)); err != nil {
@@ -251,11 +253,11 @@ func (g *GXDLMSMBusPortSetup) GetValue(settings *settings.GXDLMSSettings, e *int
 				return nil, err
 			}
 		}
-		return data.Array(), nil
+		ret = data.Array()
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
-		return nil, nil
 	}
+	return ret, err
 }
 
 // SetValue sets value of given attribute.
@@ -309,7 +311,7 @@ func (g *GXDLMSMBusPortSetup) SetValue(settings *settings.GXDLMSSettings, e *int
 			e.Error = enums.ErrorCodeReadWriteDenied
 			return err
 		}
-		g.ManufacturerId = uint16(v)
+		g.ManufacturerID = uint16(v)
 	case 8:
 		v, err := mbusPortToUInt32(e.Value)
 		if err != nil {
@@ -388,7 +390,7 @@ func (g *GXDLMSMBusPortSetup) Load(reader *GXXmlReader) error {
 	if err != nil {
 		return err
 	}
-	g.ManufacturerId, err = reader.ReadElementContentAsUInt16("ManufacturerId", 0)
+	g.ManufacturerID, err = reader.ReadElementContentAsUInt16("ManufacturerId", 0)
 	if err != nil {
 		return err
 	}
@@ -447,7 +449,7 @@ func (g *GXDLMSMBusPortSetup) Save(writer *GXXmlWriter) error {
 	if err := writer.WriteElementString("IdentificationNumber", g.IdentificationNumber); err != nil {
 		return err
 	}
-	if err := writer.WriteElementString("ManufacturerId", g.ManufacturerId); err != nil {
+	if err := writer.WriteElementString("ManufacturerId", g.ManufacturerID); err != nil {
 		return err
 	}
 	if err := writer.WriteElementString("Version", g.MBusVersion); err != nil {
@@ -490,7 +492,7 @@ func (g *GXDLMSMBusPortSetup) GetValues() []any {
 		g.DataHeaderType,
 		g.PrimaryAddress,
 		g.IdentificationNumber,
-		g.ManufacturerId,
+		g.ManufacturerID,
 		g.MBusVersion,
 		g.DeviceType,
 		g.MaxPduSize,

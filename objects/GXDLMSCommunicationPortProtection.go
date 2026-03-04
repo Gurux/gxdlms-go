@@ -204,7 +204,7 @@ func (g *GXDLMSCommunicationPortProtection) GetValue(settings *settings.GXDLMSSe
 	case 1:
 		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
-		ret = g.ProtectionMode
+		ret = uint8(g.ProtectionMode)
 	case 3:
 		ret = g.AllowedFailedAttempts
 	case 4:
@@ -227,7 +227,7 @@ func (g *GXDLMSCommunicationPortProtection) GetValue(settings *settings.GXDLMSSe
 		}
 		return ret, err
 	case 8:
-		ret = g.ProtectionStatus
+		ret = uint8(g.ProtectionStatus)
 	case 9:
 		ret = g.FailedAttempts
 	case 10:

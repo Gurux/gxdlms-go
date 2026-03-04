@@ -147,10 +147,10 @@ func (g *GXDLMSDisconnectControl) GetValue(settings *settings.GXDLMSSettings, e 
 		return g.OutputState, nil
 	}
 	if e.Index == 3 {
-		return g.ControlState, nil
+		return uint8(g.ControlState), nil
 	}
 	if e.Index == 4 {
-		return g.ControlMode, nil
+		return uint8(g.ControlMode), nil
 	}
 	e.Error = enums.ErrorCodeReadWriteDenied
 	return nil, nil
@@ -300,7 +300,7 @@ func (g *GXDLMSDisconnectControl) GetDataType(index int) (enums.DataType, error)
 // NewGXDLMSDisconnectControl creates a new disconnect control object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSDisconnectControl(ln string, sn int16) (*GXDLMSDisconnectControl, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

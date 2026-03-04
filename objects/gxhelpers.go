@@ -1,6 +1,10 @@
 package objects
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Gurux/gxdlms-go/types"
+)
 
 func toUint8(value any) (uint8, error) {
 	switch v := value.(type) {
@@ -43,7 +47,7 @@ func toBool(value any) (bool, error) {
 	return false, fmt.Errorf("invalid bool type: %T", value)
 }
 
-func toInt8Value(value any) (int8, error) {
+func toInt8(value any) (int8, error) {
 	switch v := value.(type) {
 	case int8:
 		return v, nil
@@ -52,11 +56,19 @@ func toInt8Value(value any) (int8, error) {
 	}
 }
 
-func toInt16Value(value any) (int16, error) {
+func toInt16(value any) (int16, error) {
 	switch v := value.(type) {
 	case int16:
 		return v, nil
 	default:
 		return 0, fmt.Errorf("invalid int16 type: %T", value)
 	}
+}
+
+func toEnum(value any) (byte, error) {
+	switch v := value.(type) {
+	case types.GXEnum:
+		return v.Value, nil
+	}
+	return 0, fmt.Errorf("invalid enum type: %T", value)
 }

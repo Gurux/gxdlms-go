@@ -431,7 +431,7 @@ func sfskParseCounterPairs(value any) ([]types.GXKeyValuePair[uint16, uint32], e
 	if value == nil {
 		return make([]types.GXKeyValuePair[uint16, uint32], 0), nil
 	}
-	rows, ok := value.(types.GXStructure)
+	rows, ok := value.(types.GXArray)
 	if !ok {
 		return nil, fmt.Errorf("invalid counter pair array: %T", value)
 	}
@@ -441,7 +441,7 @@ func sfskParseCounterPairs(value any) ([]types.GXKeyValuePair[uint16, uint32], e
 		if !ok || len(it) < 2 {
 			return nil, fmt.Errorf("invalid counter pair item: %T", row)
 		}
-		k32, err := toUint32(it[0])
+		k32, err := toUint16(it[0])
 		if err != nil {
 			return nil, err
 		}
@@ -449,7 +449,7 @@ func sfskParseCounterPairs(value any) ([]types.GXKeyValuePair[uint16, uint32], e
 		if err != nil {
 			return nil, err
 		}
-		ret = append(ret, *types.NewGXKeyValuePair(uint16(k32), v))
+		ret = append(ret, *types.NewGXKeyValuePair(k32, v))
 	}
 	return ret, nil
 }

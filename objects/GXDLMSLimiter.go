@@ -235,7 +235,7 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 				return nil, err
 			}
 		} else {
-			err = internal.SetData(settings, data, enums.DataTypeUint16, g.MonitoredValue.Base().ObjectType)
+			err = internal.SetData(settings, data, enums.DataTypeUint16, uint16(g.MonitoredValue.Base().ObjectType()))
 			if err != nil {
 				return nil, err
 			}
@@ -774,7 +774,7 @@ func (g *GXDLMSLimiter) GetDataType(index int) (enums.DataType, error) {
 // NewGXDLMSLimiter creates a new limiter object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSLimiter(ln string, sn int16) (*GXDLMSLimiter, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -77,6 +77,7 @@ func (g *GXDLMSIec8802LlcType3Setup) GetValue(settings *settings.GXDLMSSettings,
 	}
 }
 func (g *GXDLMSIec8802LlcType3Setup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -86,39 +87,19 @@ func (g *GXDLMSIec8802LlcType3Setup) SetValue(settings *settings.GXDLMSSettings,
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaximumOctetsACnPdu = uint16(v)
+		g.MaximumOctetsACnPdu, err = toUint16(e.Value)
 	case 3:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaximumTransmissions = v
+		g.MaximumTransmissions, err = toUint8(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.AcknowledgementTime = uint16(v)
+		g.AcknowledgementTime, err = toUint16(e.Value)
 	case 5:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ReceiveLifetime = uint16(v)
+		g.ReceiveLifetime, err = toUint16(e.Value)
 	case 6:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TransmitLifetime = uint16(v)
+		g.TransmitLifetime, err = toUint16(e.Value)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 func (g *GXDLMSIec8802LlcType3Setup) Load(reader *GXXmlReader) error {
 	var err error

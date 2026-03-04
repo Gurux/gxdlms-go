@@ -171,6 +171,7 @@ func (g *GXDLMSNtpSetup) GetValue(settings *settings.GXDLMSSettings, e *internal
 }
 
 func (g *GXDLMSNtpSetup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -180,11 +181,7 @@ func (g *GXDLMSNtpSetup) SetValue(settings *settings.GXDLMSSettings, e *internal
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toBool(e.Value)
-		if err != nil {
-			return err
-		}
-		g.Activated = v
+		g.Activated, err = toBool(e.Value)
 	case 3:
 		switch v := e.Value.(type) {
 		case nil:
@@ -197,21 +194,13 @@ func (g *GXDLMSNtpSetup) SetValue(settings *settings.GXDLMSSettings, e *internal
 			g.ServerAddress = ""
 		}
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.Port = uint16(v)
+		g.Port, err = toUint16(e.Value)
 	case 5:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.Authentication = enums.NtpAuthenticationMethod(v)
+		g.Authentication = enums.NtpAuthenticationMethod(e.Value.(types.GXEnum).Value)
 	case 6:
 		g.Keys = map[uint32][]byte{}
 		if e.Value != nil {
-			tmp, ok := e.Value.(types.GXStructure)
+			tmp, ok := e.Value.(types.GXArray)
 			if !ok {
 				return gxcommon.ErrInvalidArgument
 			}
@@ -238,7 +227,7 @@ func (g *GXDLMSNtpSetup) SetValue(settings *settings.GXDLMSSettings, e *internal
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSNtpSetup) Load(reader *GXXmlReader) error {

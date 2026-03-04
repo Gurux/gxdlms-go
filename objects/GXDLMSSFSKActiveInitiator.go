@@ -90,6 +90,7 @@ func (g *GXDLMSSFSKActiveInitiator) GetValue(settings *settings.GXDLMSSettings, 
 }
 
 func (g *GXDLMSSFSKActiveInitiator) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -103,34 +104,30 @@ func (g *GXDLMSSFSKActiveInitiator) SetValue(settings *settings.GXDLMSSettings, 
 			g.SystemTitle = nil
 			g.MacAddress = 0
 			g.LSapSelector = 0
-			return nil
+		} else {
+			tmp, ok := e.Value.(types.GXStructure)
+			if !ok || len(tmp) < 3 {
+				return fmt.Errorf("invalid active initiator value: %T", e.Value)
+			}
+			switch v := tmp[0].(type) {
+			case nil:
+				g.SystemTitle = nil
+			case []byte:
+				g.SystemTitle = v
+			default:
+				return fmt.Errorf("invalid system title type: %T", tmp[0])
+			}
+			g.MacAddress, err = toUint16(tmp[1])
+			lsap, err := toUint8(tmp[2])
+			if err != nil {
+				return err
+			}
+			g.LSapSelector = lsap
 		}
-		tmp, ok := e.Value.(types.GXStructure)
-		if !ok || len(tmp) < 3 {
-			return fmt.Errorf("invalid active initiator value: %T", e.Value)
-		}
-		switch v := tmp[0].(type) {
-		case nil:
-			g.SystemTitle = nil
-		case []byte:
-			g.SystemTitle = v
-		default:
-			return fmt.Errorf("invalid system title type: %T", tmp[0])
-		}
-		mac, err := toUint32(tmp[1])
-		if err != nil {
-			return err
-		}
-		g.MacAddress = uint16(mac)
-		lsap, err := toUint8(tmp[2])
-		if err != nil {
-			return err
-		}
-		g.LSapSelector = lsap
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSSFSKActiveInitiator) Load(reader *GXXmlReader) error {

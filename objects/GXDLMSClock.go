@@ -173,7 +173,7 @@ func (g *GXDLMSClock) GetValue(settings *settings.GXDLMSSettings, e *internal.Va
 	case 3:
 		ret = g.TimeZone
 	case 4:
-		ret = g.Status
+		ret = uint8(g.Status)
 	case 5:
 		ret = g.Begin
 	case 6:
@@ -183,7 +183,7 @@ func (g *GXDLMSClock) GetValue(settings *settings.GXDLMSSettings, e *internal.Va
 	case 8:
 		ret = g.Enabled
 	case 9:
-		ret = g.ClockBase
+		ret = uint8(g.ClockBase)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}

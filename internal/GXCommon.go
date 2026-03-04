@@ -971,7 +971,10 @@ func getUint16(buff *types.GXByteBuffer, info *GXDataInfo) uint16 {
 }
 
 func SetData(s any, buff *types.GXByteBuffer, dt enums.DataType, value any) error {
-	conf := s.(*settings.GXDLMSSettings)
+	var conf *settings.GXDLMSSettings
+	if s != nil {
+		conf = s.(*settings.GXDLMSSettings)
+	}
 	if err := buff.SetUint8(uint8(dt)); err != nil {
 		return err
 	}
@@ -1028,9 +1031,13 @@ func SetData(s any, buff *types.GXByteBuffer, dt enums.DataType, value any) erro
 	case enums.DataTypeFloat64:
 		return buff.SetDouble(value.(float64))
 	case enums.DataTypeString, enums.DataTypeStringUTF8:
-		s := value.(string)
-		types.SetObjectCount(len(s), buff)
-		return buff.Set([]byte(s))
+		if value == nil {
+			return types.SetObjectCount(0, buff)
+		} else {
+			s := value.(string)
+			types.SetObjectCount(len(s), buff)
+			return buff.Set([]byte(s))
+		}
 	case enums.DataTypeOctetString:
 		var b []byte
 		switch v := value.(type) {

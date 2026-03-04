@@ -197,11 +197,7 @@ func (g *GXDLMSImageTransfer) SetValue(settings *settings.GXDLMSSettings, e *int
 		}
 		g.ImageTransferEnabled = v
 	case 6:
-		v, err := toUint8(e.Value)
-		if err != nil {
-			return err
-		}
-		g.ImageTransferStatus = enums.ImageTransferStatus(v)
+		g.ImageTransferStatus = enums.ImageTransferStatus(e.Value.(types.GXEnum).Value)
 	case 7:
 		g.ImageActivateInfo, err = parseImageActivateInfo(e.Value.(types.GXArray))
 		if err != nil {

@@ -205,7 +205,7 @@ func (g *GXDLMSHdlcSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 	case 1:
 		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
-		ret = g.CommunicationSpeed
+		ret = byte(g.CommunicationSpeed)
 	case 3:
 		ret = g.windowSizeTransmit
 	case 4:
@@ -420,7 +420,7 @@ func (g *GXDLMSHdlcSetup) GetDataType(index int) (enums.DataType, error) {
 // NewGXDLMSHdlcSetup creates a new HDLC setup object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSHdlcSetup(ln string, sn int16) (*GXDLMSHdlcSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

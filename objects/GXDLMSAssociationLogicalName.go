@@ -550,7 +550,7 @@ func (g *GXDLMSAssociationLogicalName) getObjects(settings *settings.GXDLMSSetti
 			if err != nil {
 				return nil, err
 			}
-			err = internal.SetData(settings, &data, enums.DataTypeUint16, int(it.Base().ObjectType()))
+			err = internal.SetData(settings, &data, enums.DataTypeUint16, uint16(it.Base().ObjectType()))
 			if err != nil {
 				return nil, err
 			}
@@ -632,8 +632,14 @@ func (g *GXDLMSAssociationLogicalName) GetAccessRights(settings *settings.GXDLMS
 		if err != nil {
 			return err
 		}
-		internal.SetData(settings, data, enums.DataTypeInt8, e.Index)
-		internal.SetData(settings, data, enums.DataTypeEnum, m)
+		err = internal.SetData(settings, data, enums.DataTypeInt8, int8(e.Index))
+		if err != nil {
+			return err
+		}
+		err = internal.SetData(settings, data, enums.DataTypeEnum, m)
+		if err != nil {
+			return err
+		}
 		accessSelector := item.Base().GetAccessSelector(int(e.Index))
 		if accessSelector == 0 {
 			if _, ok := item.(*GXDLMSProfileGeneric); ok {
@@ -644,7 +650,7 @@ func (g *GXDLMSAssociationLogicalName) GetAccessRights(settings *settings.GXDLMS
 			var list []any
 			for index := 0; index != 8; index++ {
 				if (accessSelector & (1 << index)) != 0 {
-					list = append(list, index)
+					list = append(list, int32(index))
 				}
 			}
 			internal.SetData(settings, data, enums.DataTypeArray, list)
@@ -674,14 +680,20 @@ func (g *GXDLMSAssociationLogicalName) GetAccessRights(settings *settings.GXDLMS
 		}
 		err = data.SetUint8(uint8(enums.DataTypeStructure))
 		if err != nil {
-			return err
+			break
 		}
 		err = data.SetUint8(uint8(2))
 		if err != nil {
-			return err
+			break
 		}
-		internal.SetData(settings, data, enums.DataTypeInt8, pos+1)
-		internal.SetData(settings, data, enums.DataTypeEnum, m)
+		err = internal.SetData(settings, data, enums.DataTypeInt8, int8(pos+1))
+		if err != nil {
+			break
+		}
+		err = internal.SetData(settings, data, enums.DataTypeEnum, m)
+		if err != nil {
+			break
+		}
 	}
 	return err
 }
@@ -740,7 +752,7 @@ func (g *GXDLMSAssociationLogicalName) UpdateAccessRights(obj IGXDLMSBase, buff 
 }
 
 // getUserList returns the User list.
-func (g *GXDLMSAssociationLogicalName) getUserList(settings *settings.GXDLMSSettings) (*types.GXByteBuffer, error) {
+func (g *GXDLMSAssociationLogicalName) getUserList(settings *settings.GXDLMSSettings) (any, error) {
 	data := types.GXByteBuffer{}
 	// Add count only for first time.
 	if settings.Index == 0 {
@@ -774,7 +786,7 @@ func (g *GXDLMSAssociationLogicalName) getUserList(settings *settings.GXDLMSSett
 			}
 		}
 	}
-	return &data, nil
+	return data.Array(), nil
 }
 
 // GetValue returns the value of given attribute.
@@ -860,7 +872,7 @@ func (g *GXDLMSAssociationLogicalName) GetValue(settings *settings.GXDLMSSetting
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, &data, enums.DataTypeUint8, g.ApplicationContextName.ContextID)
+		err = internal.SetData(settings, &data, enums.DataTypeUint8, uint8(g.ApplicationContextName.ContextID))
 		if err != nil {
 			return nil, err
 		}
@@ -942,7 +954,7 @@ func (g *GXDLMSAssociationLogicalName) GetValue(settings *settings.GXDLMSSetting
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, &data, enums.DataTypeUint8, g.AuthenticationMechanismName.MechanismID)
+		err = internal.SetData(settings, &data, enums.DataTypeUint8, uint8(g.AuthenticationMechanismName.MechanismID))
 		if err != nil {
 			return nil, err
 		}
@@ -952,7 +964,7 @@ func (g *GXDLMSAssociationLogicalName) GetValue(settings *settings.GXDLMSSetting
 		return g.Secret, nil
 	}
 	if e.Index == 8 {
-		return g.AssociationStatus, nil
+		return uint8(g.AssociationStatus), nil
 	}
 	if e.Index == 9 {
 		return helpers.LogicalNameToBytes(g.SecuritySetupReference)

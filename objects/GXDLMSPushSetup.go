@@ -259,7 +259,7 @@ func (g *GXDLMSPushSetup) GetPushObjectList(settings *settings.GXDLMSSettings) (
 				return nil, err
 			}
 		}
-		if err := internal.SetData(settings, buff, enums.DataTypeUint16, int(it.Key.Base().ObjectType())); err != nil {
+		if err := internal.SetData(settings, buff, enums.DataTypeUint16, uint16(it.Key.Base().ObjectType())); err != nil {
 			return nil, err
 		}
 		ln, err := helpers.LogicalNameToBytes(it.Key.Base().LogicalName())
@@ -269,7 +269,7 @@ func (g *GXDLMSPushSetup) GetPushObjectList(settings *settings.GXDLMSSettings) (
 		if err = internal.SetData(settings, buff, enums.DataTypeOctetString, ln); err != nil {
 			return nil, err
 		}
-		if err = internal.SetData(settings, buff, enums.DataTypeInt8, it.Value.AttributeIndex); err != nil {
+		if err = internal.SetData(settings, buff, enums.DataTypeInt8, int8(it.Value.AttributeIndex)); err != nil {
 			return nil, err
 		}
 		if err = internal.SetData(settings, buff, enums.DataTypeUint16, it.Value.DataIndex); err != nil {
@@ -282,7 +282,7 @@ func (g *GXDLMSPushSetup) GetPushObjectList(settings *settings.GXDLMSSettings) (
 			if err = buff.SetUint8(2); err != nil {
 				return nil, err
 			}
-			if err = internal.SetData(settings, buff, enums.DataTypeEnum, it.Value.Restriction.Type); err != nil {
+			if err = internal.SetData(settings, buff, enums.DataTypeEnum, uint8(it.Value.Restriction.Type)); err != nil {
 				return nil, err
 			}
 			switch it.Value.Restriction.Type {
@@ -381,7 +381,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 		if err := buff.SetUint8(3); err != nil {
 			return nil, err
 		}
-		if err := internal.SetData(settings, buff, enums.DataTypeEnum, g.Service); err != nil {
+		if err := internal.SetData(settings, buff, enums.DataTypeEnum, uint8(g.Service)); err != nil {
 			return nil, err
 		}
 		if g.Destination != "" {
@@ -399,7 +399,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 		} else if err := internal.SetData(settings, buff, enums.DataTypeOctetString, nil); err != nil {
 			return nil, err
 		}
-		if err := internal.SetData(settings, buff, enums.DataTypeEnum, g.Message); err != nil {
+		if err := internal.SetData(settings, buff, enums.DataTypeEnum, uint8(g.Message)); err != nil {
 			return nil, err
 		}
 		return buff.Array(), nil
@@ -452,7 +452,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 		}
 		return buff.Array(), nil
 	case 8:
-		if g.PortReference.Base().LogicalName() == "" {
+		if g.PortReference == nil || g.PortReference.Base().LogicalName() == "" {
 			return nil, nil
 		}
 		return helpers.LogicalNameToBytes(g.PortReference.Base().LogicalName())
@@ -473,7 +473,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 			if err := buff.SetUint8(2); err != nil {
 				return nil, err
 			}
-			if err := internal.SetData(settings, buff, enums.DataTypeEnum, it.ProtectionType); err != nil {
+			if err := internal.SetData(settings, buff, enums.DataTypeEnum, uint8(it.ProtectionType)); err != nil {
 				return nil, err
 			}
 			if err := buff.SetUint8(uint8(enums.DataTypeStructure)); err != nil {
@@ -500,7 +500,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 			if err := buff.SetUint8(2); err != nil {
 				return nil, err
 			}
-			if err := internal.SetData(settings, buff, enums.DataTypeEnum, it.KeyInfo.DataProtectionKeyType); err != nil {
+			if err := internal.SetData(settings, buff, enums.DataTypeEnum, uint8(it.KeyInfo.DataProtectionKeyType)); err != nil {
 				return nil, err
 			}
 			if err := buff.SetUint8(uint8(enums.DataTypeStructure)); err != nil {
@@ -542,7 +542,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 		}
 		return buff.Array(), nil
 	case 11:
-		return g.PushOperationMethod, nil
+		return uint8(g.PushOperationMethod), nil
 	case 12:
 		buff := types.NewGXByteBuffer()
 		if err := buff.SetUint8(uint8(enums.DataTypeStructure)); err != nil {
@@ -567,59 +567,21 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 }
 
 func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
-	toSlice := func(v any) ([]any, bool) {
-		switch x := v.(type) {
-		case types.GXArray:
-			return []any(x), true
-		case types.GXStructure:
-			return []any(x), true
-		case []any:
-			return x, true
-		default:
-			return nil, false
-		}
-	}
-	toInt := func(v any) (int, error) {
-		switch x := v.(type) {
-		case int:
-			return x, nil
-		case int8:
-			return int(x), nil
-		case int16:
-			return int(x), nil
-		case int32:
-			return int(x), nil
-		case uint8:
-			return int(x), nil
-		case uint16:
-			return int(x), nil
-		case uint32:
-			return int(x), nil
-		case types.GXEnum:
-			return int(x.Value), nil
-		default:
-			return 0, fmt.Errorf("invalid integer value type: %T", v)
-		}
-	}
-
 	g.PushObjectList = make([]types.GXKeyValuePair[IGXDLMSBase, GXDLMSCaptureObject], 0)
 	if e.Value == nil {
 		return nil
 	}
-	list, ok := toSlice(e.Value)
+	list, ok := e.Value.(types.GXArray)
 	if !ok {
 		return fmt.Errorf("invalid push object list type: %T", e.Value)
 	}
 	objects := getObjectCollection(settings.Objects)
 	for _, item := range list {
-		it, ok := toSlice(item)
+		it, ok := item.(types.GXStructure)
 		if !ok || len(it) < 4 {
 			return fmt.Errorf("invalid push object item type: %T", item)
 		}
-		ot, err := toInt(it[0])
-		if err != nil {
-			return err
-		}
+		ot := it[0].(uint16)
 		ln, err := helpers.ToLogicalName(it[1])
 		if err != nil {
 			return err
@@ -631,22 +593,16 @@ func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *in
 				return err
 			}
 		}
-		ai, err := toInt(it[2])
-		if err != nil {
-			return err
-		}
-		di, err := toInt(it[3])
-		if err != nil {
-			return err
-		}
+		ai := it[2].(int8)
+		di := it[3].(uint16)
 		co := GXDLMSCaptureObject{
-			AttributeIndex: ai,
+			AttributeIndex: int(ai),
 			DataIndex:      di,
 		}
 		if g.Version > 1 && len(it) > 4 {
-			restriction, ok := toSlice(it[4])
+			restriction, ok := it[4].(types.GXStructure)
 			if ok && len(restriction) > 0 {
-				rt, err := toInt(restriction[0])
+				rt := restriction[0].(types.GXEnum).Value
 				if err != nil {
 					return err
 				}
@@ -665,17 +621,14 @@ func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *in
 				}
 			}
 			if len(it) > 5 {
-				columns, ok := toSlice(it[5])
+				columns, ok := it[5].(types.GXArray)
 				if ok {
 					for _, c := range columns {
-						column, ok := toSlice(c)
+						column, ok := c.(types.GXStructure)
 						if !ok || len(column) < 4 {
 							return fmt.Errorf("invalid push column type: %T", c)
 						}
-						columnObjectType, err := toInt(column[0])
-						if err != nil {
-							return err
-						}
+						columnObjectType := column[0].(uint16)
 						columnLN, err := helpers.ToLogicalName(column[1])
 						if err != nil {
 							return err
@@ -687,14 +640,8 @@ func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *in
 								return err
 							}
 						}
-						columnAI, err := toInt(column[2])
-						if err != nil {
-							return err
-						}
-						columnDI, err := toInt(column[3])
-						if err != nil {
-							return err
-						}
+						columnAI := column[2].(int)
+						columnDI := column[3].(uint16)
 						co.Columns = append(co.Columns, types.GXKeyValuePair[IGXDLMSBase, GXDLMSCaptureObject]{
 							Key: columnObj,
 							Value: GXDLMSCaptureObject{
@@ -715,136 +662,62 @@ func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *in
 }
 
 func (g *GXDLMSPushSetup) GetPushProtectionParameters(e *internal.ValueEventArgs) error {
-	toSlice := func(v any) ([]any, bool) {
-		switch x := v.(type) {
-		case types.GXArray:
-			return []any(x), true
-		case types.GXStructure:
-			return []any(x), true
-		case []any:
-			return x, true
-		default:
-			return nil, false
-		}
-	}
-	toInt := func(v any) (int, error) {
-		switch x := v.(type) {
-		case int:
-			return x, nil
-		case int8:
-			return int(x), nil
-		case int16:
-			return int(x), nil
-		case int32:
-			return int(x), nil
-		case uint8:
-			return int(x), nil
-		case uint16:
-			return int(x), nil
-		case uint32:
-			return int(x), nil
-		case types.GXEnum:
-			return int(x.Value), nil
-		default:
-			return 0, fmt.Errorf("invalid integer value type: %T", v)
-		}
-	}
-	toBytes := func(v any) ([]byte, error) {
-		switch x := v.(type) {
-		case []byte:
-			return x, nil
-		case string:
-			return []byte(x), nil
-		default:
-			return nil, fmt.Errorf("invalid byte string type: %T", v)
-		}
-	}
-
 	list := make([]GXPushProtectionParameters, 0)
 	if e.Value == nil {
 		g.PushProtectionParameters = list
 		return nil
 	}
-	items, ok := toSlice(e.Value)
+	items, ok := e.Value.(types.GXArray)
 	if !ok {
 		return fmt.Errorf("invalid push protection parameter type: %T", e.Value)
 	}
 	for _, item := range items {
-		it, ok := toSlice(item)
+		it, ok := item.(types.GXStructure)
 		if !ok || len(it) < 2 {
 			return fmt.Errorf("invalid push protection item type: %T", item)
 		}
-		protectionType, err := toInt(it[0])
-		if err != nil {
-			return err
-		}
-		options, ok := toSlice(it[1])
+		protectionType := it[0].(types.GXEnum).Value
+		options := it[1].(types.GXStructure)
 		if !ok || len(options) < 5 {
 			return fmt.Errorf("invalid push protection options type: %T", it[1])
 		}
 		p := GXPushProtectionParameters{
 			ProtectionType: enums.ProtectionType(protectionType),
 		}
-		if p.TransactionId, err = toBytes(options[0]); err != nil {
-			return err
-		}
-		if p.OriginatorSystemTitle, err = toBytes(options[1]); err != nil {
-			return err
-		}
-		if p.RecipientSystemTitle, err = toBytes(options[2]); err != nil {
-			return err
-		}
-		if p.OtherInformation, err = toBytes(options[3]); err != nil {
-			return err
-		}
-		keyInfo, ok := toSlice(options[4])
-		if !ok || len(keyInfo) < 2 {
+		p.TransactionId = options[0].([]byte)
+		p.OriginatorSystemTitle = options[1].([]byte)
+		p.RecipientSystemTitle = options[2].([]byte)
+		p.OtherInformation = options[3].([]byte)
+		keyInfo := options[4].(types.GXStructure)
+		if len(keyInfo) < 2 {
 			return fmt.Errorf("invalid data protection key info type: %T", options[4])
 		}
-		keyType, err := toInt(keyInfo[0])
-		if err != nil {
-			return err
-		}
+		keyType := keyInfo[0].(types.GXEnum).Value
 		p.KeyInfo.DataProtectionKeyType = enums.DataProtectionKeyType(keyType)
-		data, ok := toSlice(keyInfo[1])
+		data, ok := keyInfo[1].(types.GXStructure)
 		if !ok {
 			return fmt.Errorf("invalid data protection key data type: %T", keyInfo[1])
 		}
 		switch p.KeyInfo.DataProtectionKeyType {
 		case enums.DataProtectionKeyTypeIdentified:
 			if len(data) > 0 {
-				keyValue, err := toInt(data[0])
-				if err != nil {
-					return err
-				}
+				keyValue := data[0].(int)
 				p.KeyInfo.IdentifiedKey.KeyType = enums.DataProtectionIdentifiedKeyType(keyValue)
 			}
 		case enums.DataProtectionKeyTypeWrapped:
 			if len(data) > 0 {
-				keyValue, err := toInt(data[0])
-				if err != nil {
-					return err
-				}
+				keyValue := data[0].(int)
 				p.KeyInfo.WrappedKey.KeyType = enums.DataProtectionWrappedKeyType(keyValue)
 			}
 			if len(data) > 1 {
-				p.KeyInfo.WrappedKey.Key, err = toBytes(data[1])
-				if err != nil {
-					return err
-				}
+				p.KeyInfo.WrappedKey.Key = data[1].([]byte)
 			}
 		case enums.DataProtectionKeyTypeAgreed:
 			if len(data) > 0 {
-				p.KeyInfo.AgreedKey.Parameters, err = toBytes(data[0])
-				if err != nil {
-					return err
-				}
+				p.KeyInfo.AgreedKey.Parameters = data[0].([]byte)
 			}
 			if len(data) > 1 {
-				p.KeyInfo.AgreedKey.Data, err = toBytes(data[1])
-				if err != nil {
-					return err
-				}
+				p.KeyInfo.AgreedKey.Data = data[1].([]byte)
 			}
 		default:
 			return fmt.Errorf("invalid data protection key type: %v", p.KeyInfo.DataProtectionKeyType)
@@ -863,45 +736,7 @@ func (g *GXDLMSPushSetup) GetPushProtectionParameters(e *internal.ValueEventArgs
 //	settings: DLMS settings.
 //	e: Set parameters.
 func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
-	toSlice := func(v any) ([]any, bool) {
-		switch x := v.(type) {
-		case types.GXArray:
-			return []any(x), true
-		case types.GXStructure:
-			return []any(x), true
-		case []any:
-			return x, true
-		default:
-			return nil, false
-		}
-	}
-	toInt := func(v any) (int, error) {
-		switch x := v.(type) {
-		case int:
-			return x, nil
-		case int8:
-			return int(x), nil
-		case int16:
-			return int(x), nil
-		case int32:
-			return int(x), nil
-		case int64:
-			return int(x), nil
-		case uint8:
-			return int(x), nil
-		case uint16:
-			return int(x), nil
-		case uint32:
-			return int(x), nil
-		case uint64:
-			return int(x), nil
-		case types.GXEnum:
-			return int(x.Value), nil
-		default:
-			return 0, fmt.Errorf("invalid integer value type: %T", v)
-		}
-	}
-
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -913,14 +748,11 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 	case 2:
 		return g.SetPushObject(settings, e)
 	case 3:
-		tmp, ok := toSlice(e.Value)
+		tmp, ok := e.Value.(types.GXStructure)
 		if !ok || len(tmp) < 3 {
 			return fmt.Errorf("invalid destination and method structure: %T", e.Value)
 		}
-		service, err := toInt(tmp[0])
-		if err != nil {
-			return err
-		}
+		service := tmp[0].(types.GXEnum).Value
 		g.Service = enums.ServiceType(service)
 		if destinationBytes, ok := tmp[1].([]byte); ok {
 			if g.Service == enums.ServiceTypeHDLC && len(destinationBytes) == 6 && destinationBytes[5] == 0xFF {
@@ -943,22 +775,18 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 		} else {
 			return fmt.Errorf("invalid destination type: %T", tmp[1])
 		}
-		message, err := toInt(tmp[2])
-		if err != nil {
-			return err
-		}
-		g.Message = enums.MessageType(message)
+		g.Message = enums.MessageType(tmp[2].(types.GXEnum).Value)
 	case 4:
 		g.CommunicationWindow = make([]types.GXKeyValuePair[types.GXDateTime, types.GXDateTime], 0)
 		if e.Value == nil {
 			return nil
 		}
-		items, ok := toSlice(e.Value)
+		items, ok := e.Value.(types.GXArray)
 		if !ok {
 			return fmt.Errorf("invalid communication window type: %T", e.Value)
 		}
 		for _, item := range items {
-			it, ok := toSlice(item)
+			it, ok := item.(types.GXStructure)
 			if !ok || len(it) < 2 {
 				return fmt.Errorf("invalid communication window item type: %T", item)
 			}
@@ -991,44 +819,32 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 			g.CommunicationWindow = append(g.CommunicationWindow, types.GXKeyValuePair[types.GXDateTime, types.GXDateTime]{Key: start, Value: end})
 		}
 	case 5:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RandomisationStartInterval = uint16(value)
+		g.RandomisationStartInterval, err = toUint16(e.Value)
 	case 6:
-		value, err := toInt(e.Value)
-		if err != nil {
-			return err
-		}
-		g.NumberOfRetries = uint8(value)
+		g.NumberOfRetries, err = toUint8(e.Value)
 	case 7:
 		if g.Version < 2 {
-			value, err := toInt(e.Value)
-			if err != nil {
-				return err
-			}
-			g.RepetitionDelay = uint16(value)
+			g.RepetitionDelay, err = toUint16(e.Value)
 		} else {
-			s, ok := toSlice(e.Value)
+			s, ok := e.Value.(types.GXStructure)
 			if !ok || len(s) < 3 {
 				return fmt.Errorf("invalid repetition delay structure: %T", e.Value)
 			}
-			min, err := toInt(s[0])
+			min, err := toUint16(s[0])
 			if err != nil {
 				return err
 			}
-			exponent, err := toInt(s[1])
+			exponent, err := toUint16(s[1])
 			if err != nil {
 				return err
 			}
-			max, err := toInt(s[2])
+			max, err := toUint16(s[2])
 			if err != nil {
 				return err
 			}
-			g.RepetitionDelay2.Min = uint16(min)
-			g.RepetitionDelay2.Exponent = uint16(exponent)
-			g.RepetitionDelay2.Max = uint16(max)
+			g.RepetitionDelay2.Min = min
+			g.RepetitionDelay2.Exponent = exponent
+			g.RepetitionDelay2.Max = max
 		}
 	default:
 		if g.Version > 0 && e.Index == 8 {
@@ -1043,37 +859,31 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 			return nil
 		}
 		if g.Version > 0 && e.Index == 9 {
-			value, err := toInt(e.Value)
+			value, err := toInt8(e.Value)
 			if err != nil {
 				return err
 			}
-			g.PushClientSAP = int8(value)
+			g.PushClientSAP = value
 			return nil
 		}
 		if g.Version > 0 && e.Index == 10 {
 			return g.GetPushProtectionParameters(e)
 		}
 		if g.Version > 1 && e.Index == 11 {
-			value, err := toInt(e.Value)
-			if err != nil {
-				return err
-			}
-			g.PushOperationMethod = enums.PushOperationMethod(value)
-			return nil
+			g.PushOperationMethod = enums.PushOperationMethod(e.Value.(types.GXEnum).Value)
 		}
 		if g.Version > 1 && e.Index == 12 {
-			s, ok := toSlice(e.Value)
+			s, ok := e.Value.(types.GXStructure)
 			if !ok || len(s) < 2 {
 				e.Error = enums.ErrorCodeReadWriteDenied
 				return nil
 			}
 			g.ConfirmationParameters.StartDate = s[0].(types.GXDateTime)
-			interval, err := toInt(s[1])
+			interval, err := toUint32(s[1])
 			if err != nil {
 				return err
 			}
-			g.ConfirmationParameters.Interval = uint32(interval)
-			return nil
+			g.ConfirmationParameters.Interval = interval
 		}
 		if g.Version > 1 && e.Index == 13 {
 			if dt, ok := e.Value.(types.GXDateTime); ok {
@@ -1085,7 +895,7 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 		}
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 // Load returns the load object content from XML.
@@ -1119,7 +929,7 @@ func (g *GXDLMSPushSetup) Load(reader *GXXmlReader) error {
 			if err != nil {
 				return err
 			}
-			di, err := reader.ReadElementContentAsInt("DI", 0)
+			di, err := reader.ReadElementContentAsUInt16("DI", 0)
 			if err != nil {
 				return err
 			}
@@ -1524,21 +1334,9 @@ func (g *GXDLMSPushSetup) GetPushValues(client IGXDLMSClient, values []any) erro
 	if !ok {
 		return errors.New("client does not support UpdateValue")
 	}
-	toSlice := func(v any) ([]any, bool) {
-		switch x := v.(type) {
-		case []any:
-			return x, true
-		case types.GXArray:
-			return []any(x), true
-		case types.GXStructure:
-			return []any(x), true
-		default:
-			return nil, false
-		}
-	}
 	for pos, it := range g.PushObjectList {
 		if it.Value.AttributeIndex == 0 {
-			tmp, ok := toSlice(values[pos])
+			tmp, ok := values[pos].(types.GXStructure)
 			if !ok {
 				return fmt.Errorf("invalid push value type at index %d: %T", pos, values[pos])
 			}

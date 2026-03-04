@@ -91,6 +91,7 @@ func (g *GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters) GetValue(settings *settings.
 }
 
 func (g *GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+	var err error
 	switch e.Index {
 	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
@@ -100,33 +101,17 @@ func (g *GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters) SetValue(settings *settings.
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.CrcIncorrectCount = uint16(v)
+		g.CrcIncorrectCount, err = toUint16(e.Value)
 	case 3:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.CrcFailedCount = uint16(v)
+		g.CrcFailedCount, err = toUint16(e.Value)
 	case 4:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.TxDropCount = uint16(v)
+		g.TxDropCount, err = toUint16(e.Value)
 	case 5:
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.RxDropCount = uint16(v)
+		g.RxDropCount, err = toUint16(e.Value)
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
-	return nil
+	return err
 }
 
 func (g *GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters) Load(reader *GXXmlReader) error {

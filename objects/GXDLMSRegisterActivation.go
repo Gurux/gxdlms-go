@@ -216,7 +216,7 @@ func (g *GXDLMSRegisterActivation) GetValue(settings *settings.GXDLMSSettings, e
 				if err != nil {
 					return nil, err
 				}
-				err = internal.SetData(settings, data, enums.DataTypeUint16, it.ObjectType())
+				err = internal.SetData(settings, data, enums.DataTypeUint16, uint16(it.ObjectType()))
 				if err != nil {
 					return nil, err
 				}
@@ -586,7 +586,7 @@ func (g *GXDLMSRegisterActivation) GetDataType(index int) (enums.DataType, error
 // NewGXDLMSRegisterActivation creates a new register activation object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSRegisterActivation(ln string, sn int16) (*GXDLMSRegisterActivation, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

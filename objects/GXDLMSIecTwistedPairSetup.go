@@ -356,11 +356,9 @@ func (g *GXDLMSIecTwistedPairSetup) GetDataType(index int) (enums.DataType, erro
 	switch index {
 	case 1:
 		ret = enums.DataTypeOctetString
-	case 2:
-	case 3:
+	case 2, 3:
 		ret = enums.DataTypeEnum
-	case 4:
-	case 5:
+	case 4, 5:
 		ret = enums.DataTypeArray
 	default:
 		return 0, dlmserrors.ErrInvalidAttributeIndex
@@ -371,7 +369,7 @@ func (g *GXDLMSIecTwistedPairSetup) GetDataType(index int) (enums.DataType, erro
 // NewGXDLMSIecTwistedPairSetup creates a new Iec twisted pair setup object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSIecTwistedPairSetup(ln string, sn int16) (*GXDLMSIecTwistedPairSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

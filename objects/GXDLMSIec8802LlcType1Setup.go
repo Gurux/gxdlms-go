@@ -69,11 +69,7 @@ func (g *GXDLMSIec8802LlcType1Setup) SetValue(settings *settings.GXDLMSSettings,
 		return g.SetLogicalName(ln)
 	}
 	if e.Index == 2 {
-		v, err := toUint32(e.Value)
-		if err != nil {
-			return err
-		}
-		g.MaximumOctetsUiPdu = uint16(v)
+		g.MaximumOctetsUiPdu, _ = toUint16(e.Value)
 		return nil
 	}
 	e.Error = enums.ErrorCodeReadWriteDenied

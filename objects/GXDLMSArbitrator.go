@@ -236,7 +236,7 @@ func parseActions(value any) ([]GXDLMSActionItem, error) {
 			return nil, gxcommon.ErrArgumentOutOfRange
 		}
 		ln, _ := helpers.ToLogicalName(it[0])
-		ss, err := toUint32(it[1])
+		ss, err := toUint16(it[1])
 		if err != nil {
 			continue
 		}

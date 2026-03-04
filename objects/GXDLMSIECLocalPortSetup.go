@@ -172,13 +172,13 @@ func (g *GXDLMSIECLocalPortSetup) GetValue(settings *settings.GXDLMSSettings, e 
 	case 1:
 		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
-		ret = g.DefaultMode
+		ret = uint8(g.DefaultMode)
 	case 3:
-		ret = g.DefaultBaudrate
+		ret = uint8(g.DefaultBaudrate)
 	case 4:
-		ret = g.ProposedBaudrate
+		ret = uint8(g.ProposedBaudrate)
 	case 5:
-		ret = g.ResponseTime
+		ret = uint8(g.ResponseTime)
 	case 6:
 		if g.DeviceAddress == "" {
 			return nil, nil
@@ -406,7 +406,7 @@ func (g *GXDLMSIECLocalPortSetup) GetDataType(index int) (enums.DataType, error)
 // NewGXDLMSIECLocalPortSetup creates a new IEC local port setup object instance.
 //
 // The function validates `ln` before creating the object.
-//`ln` is the Logical Name and `sn` is the Short Name of the object.
+// `ln` is the Logical Name and `sn` is the Short Name of the object.
 func NewGXDLMSIECLocalPortSetup(ln string, sn int16) (*GXDLMSIECLocalPortSetup, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {
