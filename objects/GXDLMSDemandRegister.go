@@ -96,7 +96,7 @@ func (g *GXDLMSDemandRegister) Scaler() float64 {
 
 // SetScaler sets the scaler of COSEM Register object.
 func (g *GXDLMSDemandRegister) SetScaler(value float64) {
-	g.scaler = int8(math.Log10(value))
+	g.scaler = int8(math.Round(math.Log10(value)))
 }
 
 // GetAttributeIndexToRead returns the collection of attributes to read.

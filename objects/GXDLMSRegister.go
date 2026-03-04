@@ -72,7 +72,7 @@ func (g *GXDLMSRegister) Scaler() float64 {
 
 // SetScaler sets the scaler of COSEM Register object.
 func (g *GXDLMSRegister) SetScaler(value float64) {
-	g.scaler = int8(math.Log10(value))
+	g.scaler = int8(math.Round(math.Log10(value)))
 }
 
 // Invoke returns the invokes method.settings: DLMS settings.
