@@ -162,11 +162,7 @@ func (g *GXDLMSAutoConnect) GetValue(settings *settings.GXDLMSSettings, e *inter
 	var err error
 	var ret any
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	} else if e.Index == 2 {
 		ret = uint8(g.Mode)
 	} else if e.Index == 3 {
@@ -181,6 +177,9 @@ func (g *GXDLMSAutoConnect) GetValue(settings *settings.GXDLMSSettings, e *inter
 			return nil, err
 		}
 		err = types.SetObjectCount(cnt, data)
+		if err != nil {
+			return nil, err
+		}
 		if cnt != 0 {
 			for _, it := range g.CallingWindow {
 				err = data.SetUint8(uint8(enums.DataTypeStructure))
@@ -210,14 +209,23 @@ func (g *GXDLMSAutoConnect) GetValue(settings *settings.GXDLMSSettings, e *inter
 		}
 		if g.Destinations == nil {
 			err = types.SetObjectCount(0, data)
+			if err != nil {
+				return nil, err
+			}
 		} else {
 			cnt := len(g.Destinations)
 			err = types.SetObjectCount(cnt, data)
+			if err != nil {
+				return nil, err
+			}
 			for _, it := range g.Destinations {
 				if g.destinationsAsString {
 					err = internal.SetData(settings, data, enums.DataTypeString, it)
 				} else {
 					err = internal.SetData(settings, data, enums.DataTypeOctetString, []byte(it))
+				}
+				if err != nil {
+					return nil, err
 				}
 			}
 		}

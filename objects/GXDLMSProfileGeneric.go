@@ -397,13 +397,7 @@ func (g *GXDLMSProfileGeneric) getColumns(settings *settings.GXDLMSSettings) ([]
 func (g *GXDLMSProfileGeneric) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		if e.Index == 1 {
-			v, err := helpers.LogicalNameToBytes(g.LogicalName())
-			if err != nil {
-				e.Error = enums.ErrorCodeReadWriteDenied
-			}
-			return v, err
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return g.getProfileGenericData(settings, e)
@@ -788,6 +782,9 @@ func (g *GXDLMSProfileGeneric) Load(reader *GXXmlReader) error {
 		}
 		ot := enums.ObjectType(ret)
 		ln, err := reader.ReadElementContentAsString("LN", "")
+		if err != nil {
+			return err
+		}
 		g.SortObject = reader.Objects.FindByLN(ot, ln)
 		reader.ReadEndElement("SortObject")
 	}

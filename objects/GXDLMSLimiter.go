@@ -204,12 +204,10 @@ func (g *GXDLMSLimiter) GetMethodCount() int {
 func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	var ret any
-	if e.Index == 1 {
+	switch e.Index {
+	case 1:
 		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-	} else if e.Index == 2 {
+	case 2:
 		data := types.NewGXByteBuffer()
 		err = data.SetUint8(uint8(enums.DataTypeStructure))
 		if err != nil {
@@ -225,6 +223,9 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 				return nil, err
 			}
 			ln, err := helpers.LogicalNameToBytes("")
+			if err != nil {
+				return nil, err
+			}
 			err = internal.SetData(settings, data, enums.DataTypeOctetString, ln)
 			if err != nil {
 				return nil, err
@@ -239,6 +240,9 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 				return nil, err
 			}
 			ln, err := helpers.LogicalNameToBytes(g.MonitoredValue.Base().LogicalName())
+			if err != nil {
+				return nil, err
+			}
 			err = internal.SetData(settings, data, enums.DataTypeOctetString, ln)
 			if err != nil {
 				return nil, err
@@ -249,17 +253,17 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 			}
 		}
 		ret = data.Array()
-	} else if e.Index == 3 {
+	case 3:
 		ret = g.ThresholdActive
-	} else if e.Index == 4 {
+	case 4:
 		ret = g.ThresholdNormal
-	} else if e.Index == 5 {
+	case 5:
 		ret = g.ThresholdEmergency
-	} else if e.Index == 6 {
+	case 6:
 		ret = g.MinOverThresholdDuration
-	} else if e.Index == 7 {
+	case 7:
 		ret = g.MinUnderThresholdDuration
-	} else if e.Index == 8 {
+	case 8:
 		data := types.NewGXByteBuffer()
 		err = data.SetUint8(uint8(enums.DataTypeStructure))
 		if err != nil {
@@ -282,7 +286,7 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 			return nil, err
 		}
 		ret = data.Array()
-	} else if e.Index == 9 {
+	case 9:
 		data := types.NewGXByteBuffer()
 		err = data.SetUint8(uint8(enums.DataTypeArray))
 		if err != nil {
@@ -306,9 +310,9 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 			}
 		}
 		ret = data.Array()
-	} else if e.Index == 10 {
+	case 10:
 		ret = g.EmergencyProfileActive
-	} else if e.Index == 11 {
+	case 11:
 		data := types.NewGXByteBuffer()
 		err = data.SetUint8(uint8(enums.DataTypeStructure))
 		if err != nil {
@@ -363,7 +367,7 @@ func (g *GXDLMSLimiter) GetValue(settings *settings.GXDLMSSettings, e *internal.
 			return nil, err
 		}
 		ret = data.Array()
-	} else {
+	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
 	return ret, err
@@ -383,6 +387,9 @@ func (g *GXDLMSLimiter) SetValue(settings *settings.GXDLMSSettings, e *internal.
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	} else if e.Index == 2 {
 		tmp := e.Value.(types.GXStructure)
 		ot := enums.ObjectType(tmp[0].(uint16))
@@ -472,6 +479,9 @@ func (g *GXDLMSLimiter) SetValue(settings *settings.GXDLMSSettings, e *internal.
 //	reader: XML reader.
 func (g *GXDLMSLimiter) Load(reader *GXXmlReader) error {
 	b, err := reader.IsStartElementNamed("MonitoredValue", true)
+	if err != nil {
+		return err
+	}
 	if b {
 		ret, err := reader.ReadElementContentAsInt("ObjectType", 0)
 		if err != nil {
@@ -479,6 +489,9 @@ func (g *GXDLMSLimiter) Load(reader *GXXmlReader) error {
 		}
 		ot := enums.ObjectType(ret)
 		ln, err := reader.ReadElementContentAsString("LN", "")
+		if err != nil {
+			return err
+		}
 		ret, err = reader.ReadElementContentAsInt("Index", 0)
 		if err != nil {
 			return err
@@ -564,7 +577,11 @@ func (g *GXDLMSLimiter) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.EmergencyProfileActive = ret != 0
-	if b, err := reader.IsStartElementNamed("ActionOverThreshold", true); b {
+	b, err = reader.IsStartElementNamed("ActionOverThreshold", true)
+	if err != nil {
+		return err
+	}
+	if b {
 		g.ActionOverThreshold.LogicalName, err = reader.ReadElementContentAsString("LN", "")
 		if err != nil {
 			return err
@@ -576,7 +593,11 @@ func (g *GXDLMSLimiter) Load(reader *GXXmlReader) error {
 		g.ActionOverThreshold.ScriptSelector = uint16(ret)
 		reader.ReadEndElement("ActionOverThreshold")
 	}
-	if b, err := reader.IsStartElementNamed("ActionUnderThreshold", true); b {
+	b, err = reader.IsStartElementNamed("ActionUnderThreshold", true)
+	if err != nil {
+		return err
+	}
+	if b {
 		g.ActionUnderThreshold.LogicalName, err = reader.ReadElementContentAsString("LN", "")
 		if err != nil {
 			return err

@@ -42,14 +42,14 @@ import (
 // Activity Calendar's Day profile is defined on the standard.
 type GXDLMSDayProfile struct {
 	// User defined identifier, identifying the currentday_profile.
-	DayId uint8
+	DayID uint8
 
 	DaySchedules []GXDLMSDayProfileAction
 }
 
 func (g *GXDLMSDayProfile) String() string {
 	str := strings.Builder{}
-	str.WriteString(fmt.Sprintf("%d", g.DayId))
+	str.WriteString(fmt.Sprintf("%d", g.DayID))
 	for _, it := range g.DaySchedules {
 		str.WriteString(" ")
 		str.WriteString(it.String())

@@ -174,11 +174,7 @@ func (g *GXDLMSTokenGateway) GetValue(settings *settings.GXDLMSSettings, e *inte
 	var err error
 	switch e.Index {
 	case 1:
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.Token
 	case 3:

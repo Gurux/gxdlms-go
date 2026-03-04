@@ -724,35 +724,36 @@ func parseApplicationContextName(settings *settings.GXDLMSSettings,
 	}
 	name := tmp[6]
 	if xml != nil {
-		if name == 1 {
+		switch name {
+		case 1:
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "LN")
 			} else {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "1")
 			}
 			settings.SetUseLogicalNameReferencing(true)
-		} else if name == 3 {
+		case 3:
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "LN_WITH_CIPHERING")
 			} else {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "3")
 			}
 			settings.SetUseLogicalNameReferencing(true)
-		} else if name == 2 {
+		case 2:
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "SN")
 			} else {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "2")
 			}
 			settings.SetUseLogicalNameReferencing(false)
-		} else if name == 4 {
+		case 4:
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "SN_WITH_CIPHERING")
 			} else {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "", "4")
 			}
 			settings.SetUseLogicalNameReferencing(false)
-		} else {
+		default:
 			if xml.OutputType() == enums.TranslatorOutputTypeSimpleXML {
 				xml.AppendLineFromTag(int(constants.TranslatorGeneralTagsApplicationContextName), "Value", "UNKNOWN")
 			} else {

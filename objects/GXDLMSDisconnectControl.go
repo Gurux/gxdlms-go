@@ -141,11 +141,7 @@ func (g *GXDLMSDisconnectControl) GetMethodCount() int {
 //	Value of the attribute index.
 func (g *GXDLMSDisconnectControl) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return g.OutputState, nil
@@ -168,19 +164,23 @@ func (g *GXDLMSDisconnectControl) GetValue(settings *settings.GXDLMSSettings, e 
 //	settings: DLMS settings.
 //	e: Set parameters.
 func (g *GXDLMSDisconnectControl) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
-	if e.Index == 1 {
+	switch e.Index {
+	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
 		if err != nil {
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
-	} else if e.Index == 2 {
+		if err != nil {
+			return err
+		}
+	case 2:
 		g.OutputState = e.Value.(bool)
-	} else if e.Index == 3 {
+	case 3:
 		g.ControlState = enums.ControlState(e.Value.(types.GXEnum).Value)
-	} else if e.Index == 4 {
+	case 4:
 		g.ControlMode = enums.ControlMode(e.Value.(types.GXEnum).Value)
-	} else {
+	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
 	return nil

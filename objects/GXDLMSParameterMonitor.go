@@ -552,6 +552,9 @@ func (g *GXDLMSParameterMonitor) Insert(client IGXDLMSClient, entry *GXDLMSTarge
 		return nil, err
 	}
 	ln, err := helpers.LogicalNameToBytes(entry.Target.Base().LogicalName())
+	if err != nil {
+		return nil, err
+	}
 	err = internal.SetData(nil, bb, enums.DataTypeOctetString, ln)
 	if err != nil {
 		return nil, err

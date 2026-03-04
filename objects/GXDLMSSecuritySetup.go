@@ -763,11 +763,7 @@ func (g *GXDLMSSecuritySetup) getSertificates() ([]byte, error) {
 //	Value of the attribute index.
 func (g *GXDLMSSecuritySetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return g.SecurityPolicy, nil
@@ -946,6 +942,9 @@ func (g *GXDLMSSecuritySetup) Load(reader *GXXmlReader) error {
 			}
 			it.Type = enums.CertificateType(ret)
 			ret2, err := reader.ReadElementContentAsString("SerialNumber", "")
+			if err != nil {
+				return err
+			}
 			if ret2 != "" {
 				ret, ok := new(big.Int).SetString(ret2, 10)
 				if !ok {
@@ -1222,6 +1221,9 @@ func (g *GXDLMSSecuritySetup) ApplyKeys(settings *settings.GXDLMSSettings, e *in
 			settings.Kek = key
 		default:
 			e.Error = enums.ErrorCodeReadWriteDenied
+		}
+		if err != nil {
+			return err
 		}
 	}
 	return nil
@@ -1813,6 +1815,9 @@ func (g *GXDLMSSecuritySetup) UpdateEphemeralKeysFromByteBuffer(client IGXDLMSCl
 		log.Printf("Shared secret: %s\n", types.ToHex(z, true))
 		kdf := types.GXByteBuffer{}
 		ret3, err := settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
+		if err != nil {
+			return nil, err
+		}
 		err = kdf.Set(ret3)
 		if err != nil {
 			return nil, err

@@ -170,11 +170,7 @@ func (g *GXDLMSIECLocalPortSetup) GetValue(settings *settings.GXDLMSSettings, e 
 	var ret any
 	switch e.Index {
 	case 1:
-		ln, err := helpers.ToLogicalName(e.Value)
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		err = g.SetLogicalName(ln)
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.DefaultMode
 	case 3:
@@ -224,6 +220,9 @@ func (g *GXDLMSIECLocalPortSetup) SetValue(settings *settings.GXDLMSSettings, e 
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	case 2:
 		g.DefaultMode = enums.OpticalProtocolMode(e.Value.(types.GXEnum).Value)
 	case 3:
@@ -237,9 +236,8 @@ func (g *GXDLMSIECLocalPortSetup) SetValue(settings *settings.GXDLMSSettings, e 
 			ret, err := internal.ChangeTypeFromByteArray(settings, v, enums.DataTypeString)
 			if err != nil {
 				return err
-			} else {
-				g.DeviceAddress = ret.(string)
 			}
+			g.DeviceAddress = ret.(string)
 		} else {
 			g.DeviceAddress = fmt.Sprint(e.Value)
 		}

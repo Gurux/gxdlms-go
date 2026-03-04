@@ -93,8 +93,6 @@ func (g *GXDLMSAssociationShortName) GetAttributeIndexToRead(all bool) []int {
 		if all || !g.IsRead(4) {
 			attributes = append(attributes, 4)
 		}
-		if g.Version > 2 {
-		}
 	}
 	return attributes
 }
@@ -301,13 +299,7 @@ func (g *GXDLMSAssociationShortName) GetValue(settings *settings.GXDLMSSettings,
 	var err error
 	switch e.Index {
 	case 1:
-		if e.Index == 1 {
-			v, err := helpers.LogicalNameToBytes(g.LogicalName())
-			if err != nil {
-				e.Error = enums.ErrorCodeReadWriteDenied
-			}
-			return v, err
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret, err := g.getObjects(settings, e)
 		if err != nil {

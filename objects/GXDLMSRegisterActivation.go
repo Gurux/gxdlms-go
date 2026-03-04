@@ -192,11 +192,7 @@ func (g *GXDLMSRegisterActivation) GetMethodCount() int {
 func (g *GXDLMSRegisterActivation) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		data := types.NewGXByteBuffer()
@@ -272,6 +268,9 @@ func (g *GXDLMSRegisterActivation) GetValue(settings *settings.GXDLMSSettings, e
 				data.SetUint8(byte(len(it.Value)))
 				for _, b := range it.Value {
 					err = internal.SetData(settings, data, enums.DataTypeUint8, b)
+					if err != nil {
+						return nil, err
+					}
 				}
 			}
 		}
@@ -388,6 +387,9 @@ func (g *GXDLMSRegisterActivation) Load(reader *GXXmlReader) error {
 			}
 			mask := types.HexToBytes(ret)
 			ret, err = reader.ReadElementContentAsString("Index", "")
+			if err != nil {
+				return err
+			}
 			i := types.HexToBytes(ret)
 			g.MaskList = append(g.MaskList, *types.NewGXKeyValuePair(mask, i))
 		}
@@ -522,6 +524,9 @@ func (g *GXDLMSRegisterActivation) AddMask(client IGXDLMSClient, name []byte, in
 		return nil, err
 	}
 	err = internal.SetData(nil, bb, enums.DataTypeOctetString, name)
+	if err != nil {
+		return nil, err
+	}
 	err = bb.SetUint8(enums.DataTypeArray)
 	if err != nil {
 		return nil, err
@@ -532,6 +537,9 @@ func (g *GXDLMSRegisterActivation) AddMask(client IGXDLMSClient, name []byte, in
 	}
 	for _, it := range indexes {
 		err = internal.SetData(nil, bb, enums.DataTypeUint8, it)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return client.Method(g, 2, bb.Array(), enums.DataTypeArray)
 }

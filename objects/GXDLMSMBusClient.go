@@ -215,11 +215,7 @@ func (g *GXDLMSMBusClient) GetMethodCount() int {
 func (g *GXDLMSMBusClient) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return helpers.LogicalNameToBytes(g.MBusPortReference)
@@ -308,6 +304,9 @@ func (g *GXDLMSMBusClient) SetValue(settings *settings.GXDLMSSettings, e *intern
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	} else if e.Index == 2 {
 		g.MBusPortReference, err = helpers.ToLogicalName(e.Value)
 	} else if e.Index == 3 {

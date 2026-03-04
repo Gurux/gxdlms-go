@@ -34,17 +34,10 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-// Charge per unit scaling.
-// Online help:
-// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
+// GXChargePerUnitScaling contains information from charge per unit scaling.
 type GXChargePerUnitScaling struct {
-	// Commodity scale.
-	// Online help:
-	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
+	// CommodityScale contains commodity scale.
 	CommodityScale int8
-
-	// Price scale.
-	// Online help:
-	// https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
+	// PriceScale contains price scale.
 	PriceScale int8
 }

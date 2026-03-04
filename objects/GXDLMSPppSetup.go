@@ -295,6 +295,9 @@ func (g *GXDLMSPppSetup) SetValue(settings *settings.GXDLMSSettings, e *internal
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	} else if e.Index == 2 {
 		g.PHYReference, err = helpers.ToLogicalName(e.Value)
 		if err != nil {

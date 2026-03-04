@@ -202,11 +202,7 @@ func (g *GXDLMSCommunicationPortProtection) GetValue(settings *settings.GXDLMSSe
 	var err error
 	switch e.Index {
 	case 1:
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return ret, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.ProtectionMode
 	case 3:
@@ -340,6 +336,9 @@ func (g *GXDLMSCommunicationPortProtection) Load(reader *GXXmlReader) error {
 		}
 	}
 	i, err = reader.ReadElementContentAsInt("ProtectionStatus", 0)
+	if err != nil {
+		return err
+	}
 	g.ProtectionStatus = enums.ProtectionStatus(i)
 	l, err = reader.ReadElementContentAsLong("FailedAttempts", 0)
 	if err != nil {

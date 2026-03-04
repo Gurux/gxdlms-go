@@ -201,29 +201,26 @@ func (g *GXDLMSHdlcSetup) GetMethodCount() int {
 func (g *GXDLMSHdlcSetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var ret any
 	var err error
-	if e.Index == 1 {
+	switch e.Index {
+	case 1:
 		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-	}
-	if e.Index == 2 {
+	case 2:
 		ret = g.CommunicationSpeed
-	} else if e.Index == 3 {
+	case 3:
 		ret = g.windowSizeTransmit
-	} else if e.Index == 4 {
+	case 4:
 		ret = g.windowSizeReceive
-	} else if e.Index == 5 {
+	case 5:
 		ret = g.maximumInfoLengthTransmit
-	} else if e.Index == 6 {
+	case 6:
 		ret = g.maximumInfoLengthReceive
-	} else if e.Index == 7 {
+	case 7:
 		ret = g.InterCharachterTimeout
-	} else if e.Index == 8 {
+	case 8:
 		ret = g.InactivityTimeout
-	} else if e.Index == 9 {
+	case 9:
 		ret = g.DeviceAddress
-	} else {
+	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
 	return ret, err
@@ -244,6 +241,9 @@ func (g *GXDLMSHdlcSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	} else if e.Index == 2 {
 		g.CommunicationSpeed = enums.BaudRate(e.Value.(types.GXEnum).Value)
 	} else if e.Index == 3 {

@@ -34,10 +34,10 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-// Data protection agreed key.
+// GXDLMSDataProtectionAgreedKey included data protection agreed key.
 type GXDLMSDataProtectionAgreedKey struct {
-	// Key parameters.
+	// Parameters includes key parameters.
 	Parameters []byte
-	// Key ciphered data.
+	// Data includes Key ciphered data.
 	Data []byte
 }

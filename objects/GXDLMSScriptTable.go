@@ -134,11 +134,7 @@ func (g *GXDLMSScriptTable) GetMethodCount() int {
 func (g *GXDLMSScriptTable) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		cnt := len(g.Scripts)
@@ -148,6 +144,9 @@ func (g *GXDLMSScriptTable) GetValue(settings *settings.GXDLMSSettings, e *inter
 			return nil, err
 		}
 		err = types.SetObjectCount(cnt, data)
+		if err != nil {
+			return nil, err
+		}
 		for _, it := range g.Scripts {
 			err = data.SetUint8(uint8(enums.DataTypeStructure))
 			if err != nil {

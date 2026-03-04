@@ -183,11 +183,7 @@ func (g *GXDLMSDemandRegister) GetMethodCount() int {
 func (g *GXDLMSDemandRegister) GetValue(settings *settings.GXDLMSSettings,
 	e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		// If client set new value.
@@ -298,9 +294,9 @@ func (g *GXDLMSDemandRegister) SetValue(settings *settings.GXDLMSSettings, e *in
 				e.Value, err = internal.ChangeTypeFromByteArray(settings, v, enums.DataTypeDateTime)
 			} else if _, ok := e.Value.(string); ok {
 				e.Value, err = types.NewGXDateTimeFromString(e.Value.(string), nil)
-				if err != nil {
-					return err
-				}
+			}
+			if err != nil {
+				return err
 			}
 			ret := e.Value.(types.GXDateTime)
 			g.CaptureTime = &ret

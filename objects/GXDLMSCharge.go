@@ -359,10 +359,7 @@ func (g *GXDLMSCharge) GetValue(settings *settings.GXDLMSSettings, e *internal.V
 	var err error
 	switch e.Index {
 	case 1:
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.TotalAmountPaid
 	case 3:
@@ -602,6 +599,9 @@ func (g *GXDLMSCharge) Load(reader *GXXmlReader) error {
 		return err
 	}
 	g.UnitChargeActivationTime, err = reader.ReadElementContentAsGXDateTime("UnitChargeActivationTime")
+	if err != nil {
+		return err
+	}
 	g.Period, err = reader.ReadElementContentAsUInt32("Period", 0)
 	if err != nil {
 		return err

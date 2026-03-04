@@ -123,9 +123,6 @@ func (g *GXDLMSMacAddressSetup) GetValue(settings *settings.GXDLMSSettings, e *i
 	switch e.Index {
 	case 1:
 		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
 	case 2:
 		ret = types.HexToBytes(g.MacAddress)
 	default:
@@ -151,6 +148,9 @@ func (g *GXDLMSMacAddressSetup) SetValue(settings *settings.GXDLMSSettings, e *i
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	case 2:
 		if v, ok := e.Value.([]byte); ok {
 			g.MacAddress = types.ToHex(v, true)

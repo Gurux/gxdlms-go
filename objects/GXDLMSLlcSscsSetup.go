@@ -143,9 +143,6 @@ func (g *GXDLMSLlcSscsSetup) GetValue(settings *settings.GXDLMSSettings, e *inte
 	switch e.Index {
 	case 1:
 		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
 	case 2:
 		ret = g.ServiceNodeAddress
 	case 3:

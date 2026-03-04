@@ -128,11 +128,7 @@ func (g *GXDLMSRegisterMonitor) GetMethodCount() int {
 func (g *GXDLMSRegisterMonitor) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return g.Thresholds, nil
@@ -148,6 +144,9 @@ func (g *GXDLMSRegisterMonitor) GetValue(settings *settings.GXDLMSSettings, e *i
 			return nil, err
 		}
 		err = internal.SetData(settings, data, enums.DataTypeUint16, g.MonitoredValue.ObjectType)
+		if err != nil {
+			return nil, err
+		}
 		ln, err := helpers.LogicalNameToBytes(g.MonitoredValue.LogicalName)
 		if err != nil {
 			return nil, err

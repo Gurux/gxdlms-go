@@ -113,10 +113,7 @@ func (g *GXDLMSData) GetValue(settings *settings.GXDLMSSettings, e *internal.Val
 	var err error
 	switch e.Index {
 	case 1:
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.Value
 	default:

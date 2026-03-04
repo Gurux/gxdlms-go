@@ -107,10 +107,7 @@ func (g *GXDLMSExtendedRegister) GetValue(settings *settings.GXDLMSSettings, e *
 	var err error
 	switch e.Index {
 	case 1:
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		// If client set new value.
 		if !settings.IsServer() && g.scaler != 1 && g.Value != nil {

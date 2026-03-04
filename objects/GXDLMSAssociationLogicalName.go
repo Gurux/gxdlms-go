@@ -324,9 +324,7 @@ func (g *GXDLMSAssociationLogicalName) addObject(settings *settings.GXDLMSSettin
 				ln.XDLMSContextInfo.Conformance = g.XDLMSContextInfo.Conformance
 				ln.XDLMSContextInfo.MaxReceivePduSize = g.XDLMSContextInfo.MaxReceivePduSize
 				ln.XDLMSContextInfo.MaxSendPduSize = g.XDLMSContextInfo.MaxSendPduSize
-				if exists == nil {
-					ln.ObjectList.Add(ln)
-				}
+				ln.ObjectList.Add(ln)
 			} else if ss, ok := obj.(*GXDLMSSecuritySetup); ok {
 				// Update server system title and keys.
 				ss.ServerSystemTitle = settings.Cipher.SystemTitle()
@@ -553,13 +551,25 @@ func (g *GXDLMSAssociationLogicalName) getObjects(settings *settings.GXDLMSSetti
 				return nil, err
 			}
 			err = internal.SetData(settings, &data, enums.DataTypeUint16, int(it.Base().ObjectType()))
+			if err != nil {
+				return nil, err
+			}
 			err = internal.SetData(settings, &data, enums.DataTypeUint8, it.Base().Version)
+			if err != nil {
+				return nil, err
+			}
 			ln, err := helpers.LogicalNameToBytes(it.Base().LogicalName())
 			if err != nil {
 				return nil, err
 			}
 			err = internal.SetData(settings, &data, enums.DataTypeOctetString, ln)
+			if err != nil {
+				return nil, err
+			}
 			err = g.GetAccessRights(settings, it, e.Server, &data)
+			if err != nil {
+				return nil, err
+			}
 			settings.Index++
 			if settings.IsServer() {
 				// If PDU is full.
@@ -780,11 +790,7 @@ func (g *GXDLMSAssociationLogicalName) getUserList(settings *settings.GXDLMSSett
 //	Value of the attribute index.
 func (g *GXDLMSAssociationLogicalName) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		e.ByteArray = true
@@ -1052,9 +1058,15 @@ func (g *GXDLMSAssociationLogicalName) SetValue(settings *settings.GXDLMSSetting
 			if ret == 0x60 {
 				// BB 11.4.
 				val, err := arr.Uint8()
+				if err != nil {
+					return err
+				}
 				g.ApplicationContextName.JointIsoCtt = (byte)((val - 16) / 40)
 				g.ApplicationContextName.Country = 16
 				tmp, err := arr.Uint16()
+				if err != nil {
+					return err
+				}
 				tmp = ((tmp & 0x7F00) >> 1) | (tmp & 0x7F)
 				g.ApplicationContextName.CountryName = uint16(tmp)
 
@@ -1752,7 +1764,7 @@ func (g *GXDLMSAssociationLogicalName) Load(reader *GXXmlReader) error {
 	}
 	g.UserList = g.UserList[:0]
 	if ret, _ := reader.IsStartElementNamed("Users", true); ret {
-		for true {
+		for {
 			ret, err := reader.IsStartElementNamed("Item", true)
 			if err != nil {
 				return err
@@ -2358,7 +2370,7 @@ func (g *GXDLMSAssociationLogicalName) IsAccessRightSet(target IGXDLMSBase) bool
 	return g.accessRights[target] != nil
 }
 
-// GetAccess returns the access mode for given object.
+// GetObjectAccess returns the access mode for given object.
 //
 // Parameters:
 //

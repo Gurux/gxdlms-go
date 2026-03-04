@@ -134,11 +134,7 @@ func (g *GXDLMSModemConfiguration) GetMethodCount() int {
 func (g *GXDLMSModemConfiguration) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return g.CommunicationSpeed, nil
@@ -215,15 +211,19 @@ func (g *GXDLMSModemConfiguration) GetValue(settings *settings.GXDLMSSettings, e
 //	settings: DLMS settings.
 //	e: Set parameters.
 func (g *GXDLMSModemConfiguration) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
-	if e.Index == 1 {
+	switch e.Index {
+	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
 		if err != nil {
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
-	} else if e.Index == 2 {
+		if err != nil {
+			return err
+		}
+	case 2:
 		g.CommunicationSpeed = enums.BaudRate(e.Value.(types.GXEnum).Value)
-	} else if e.Index == 3 {
+	case 3:
 		g.InitialisationStrings = nil
 		if e.Value != nil {
 			items := []GXDLMSModemInitialisation{}
@@ -239,7 +239,7 @@ func (g *GXDLMSModemConfiguration) SetValue(settings *settings.GXDLMSSettings, e
 			}
 			g.InitialisationStrings = items
 		}
-	} else if e.Index == 4 {
+	case 4:
 		g.ModemProfile = nil
 		if e.Value != nil {
 			items := []string{}
@@ -252,7 +252,7 @@ func (g *GXDLMSModemConfiguration) SetValue(settings *settings.GXDLMSSettings, e
 			}
 			g.ModemProfile = items
 		}
-	} else {
+	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
 	return nil

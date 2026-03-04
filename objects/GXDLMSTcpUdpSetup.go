@@ -165,11 +165,7 @@ func (g *GXDLMSTcpUdpSetup) GetMethodCount() int {
 //	Value of the attribute index.
 func (g *GXDLMSTcpUdpSetup) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	} else if e.Index == 2 {
 		return g.Port, nil
 	} else if e.Index == 3 {

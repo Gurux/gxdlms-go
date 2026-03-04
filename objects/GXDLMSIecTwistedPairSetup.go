@@ -152,11 +152,7 @@ func (g *GXDLMSIecTwistedPairSetup) GetValue(settings *settings.GXDLMSSettings, 
 	var err error
 	switch e.Index {
 	case 1:
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = uint8(g.Mode)
 	case 3:
@@ -221,7 +217,7 @@ func (g *GXDLMSIecTwistedPairSetup) GetValue(settings *settings.GXDLMSSettings, 
 		e.Error = enums.ErrorCodeReadWriteDenied
 		ret = nil
 	}
-	return ret, nil
+	return ret, err
 }
 
 // SetValue returns the set value of given attribute.
@@ -239,6 +235,9 @@ func (g *GXDLMSIecTwistedPairSetup) SetValue(settings *settings.GXDLMSSettings, 
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	case 2:
 		g.Mode = enums.IecTwistedPairSetupMode(e.Value.(types.GXEnum).Value)
 	case 3:

@@ -225,6 +225,9 @@ func (g *GXDLMSSchedule) addEntry(settings *settings.GXDLMSSettings,
 		return err
 	}
 	err = internal.SetData(settings, data, enums.DataTypeOctetString, it.SwitchTime)
+	if err != nil {
+		return err
+	}
 	err = data.SetUint8(uint8(enums.DataTypeUint16))
 	if err != nil {
 		return err
@@ -266,11 +269,7 @@ func (g *GXDLMSSchedule) addEntry(settings *settings.GXDLMSSettings,
 //	Value of the attribute index.
 func (g *GXDLMSSchedule) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		data := types.NewGXByteBuffer()
@@ -403,6 +402,9 @@ func (g *GXDLMSSchedule) Load(reader *GXXmlReader) error {
 				return err
 			}
 			it.SwitchTime, err = reader.ReadElementContentAsTime("SwitchTime")
+			if err != nil {
+				return err
+			}
 			it.ValidityWindow, err = reader.ReadElementContentAsUInt16("ValidityWindow", 0)
 			if err != nil {
 				return err
@@ -552,8 +554,14 @@ func (g *GXDLMSSchedule) Delete(client IGXDLMSClient, entry *GXScheduleEntry) ([
 	}
 	//firstIndex
 	err = internal.SetData(nil, data, enums.DataTypeUint16, entry.Index)
+	if err != nil {
+		return nil, err
+	}
 	//lastIndex
 	err = internal.SetData(nil, data, enums.DataTypeUint16, entry.Index)
+	if err != nil {
+		return nil, err
+	}
 	return client.Method(g, 3, data.Array(), enums.DataTypeStructure)
 }
 

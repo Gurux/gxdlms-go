@@ -177,9 +177,15 @@ func (g *GXDLMSActivityCalendar) GetSeasonProfile(settings *settings.GXDLMSSetti
 	}
 	if target == nil {
 		err = types.SetObjectCount(0, data)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		cnt := len(target)
 		err = types.SetObjectCount(cnt, data)
+		if err != nil {
+			return nil, err
+		}
 		for _, it := range target {
 			err = data.SetUint8(uint8(enums.DataTypeStructure))
 			if err != nil {
@@ -190,12 +196,21 @@ func (g *GXDLMSActivityCalendar) GetSeasonProfile(settings *settings.GXDLMSSetti
 				return nil, err
 			}
 			err = internal.SetData(settings, data, enums.DataTypeOctetString, it.Name)
+			if err != nil {
+				return nil, err
+			}
 			if useOctetString {
 				err = internal.SetData(settings, data, enums.DataTypeOctetString, it.Start)
 			} else {
 				err = internal.SetData(settings, data, enums.DataTypeDateTime, it.Start)
 			}
+			if err != nil {
+				return nil, err
+			}
 			err = internal.SetData(settings, data, enums.DataTypeOctetString, it.WeekName)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	return data, nil
@@ -209,6 +224,9 @@ func (g *GXDLMSActivityCalendar) GetWeekProfileTable(settings *settings.GXDLMSSe
 	}
 	cnt := len(target)
 	err = types.SetObjectCount(cnt, data)
+	if err != nil {
+		return nil, err
+	}
 	for _, it := range target {
 		err = data.SetUint8(uint8(enums.DataTypeStructure))
 		if err != nil {
@@ -219,13 +237,37 @@ func (g *GXDLMSActivityCalendar) GetWeekProfileTable(settings *settings.GXDLMSSe
 			return nil, err
 		}
 		err = internal.SetData(settings, data, enums.DataTypeOctetString, it.Name)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Monday)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Tuesday)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Wednesday)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Thursday)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Friday)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Saturday)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, it.Sunday)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return data.Array(), nil
 }
@@ -239,6 +281,9 @@ func (g *GXDLMSActivityCalendar) GetDayProfileTable(settings *settings.GXDLMSSet
 	cnt := len(target)
 	//Add count
 	err = types.SetObjectCount(cnt, data)
+	if err != nil {
+		return nil, err
+	}
 	for _, it := range target {
 		err = data.SetUint8(uint8(enums.DataTypeStructure))
 		if err != nil {
@@ -248,7 +293,7 @@ func (g *GXDLMSActivityCalendar) GetDayProfileTable(settings *settings.GXDLMSSet
 		if err != nil {
 			return nil, err
 		}
-		err = internal.SetData(settings, data, enums.DataTypeUint8, it.DayId)
+		err = internal.SetData(settings, data, enums.DataTypeUint8, it.DayID)
 		if err != nil {
 			return nil, err
 		}
@@ -303,11 +348,7 @@ func (g *GXDLMSActivityCalendar) GetDayProfileTable(settings *settings.GXDLMSSet
 //	Value of the attribute index.
 func (g *GXDLMSActivityCalendar) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		if g.isSec(settings) {
@@ -407,7 +448,7 @@ func (g *GXDLMSActivityCalendar) SetDayProfileTable(settings *settings.GXDLMSSet
 		for _, tmp := range value.(types.GXArray) {
 			item := tmp.(types.GXStructure)
 			it := GXDLMSDayProfile{}
-			it.DayId = item[0].(uint8)
+			it.DayID = item[0].(uint8)
 			var actions []GXDLMSDayProfileAction
 			for _, tmp2 := range item[1].(types.GXArray) {
 				it2 := tmp2.(types.GXStructure)
@@ -622,7 +663,7 @@ func (g *GXDLMSActivityCalendar) LoadDayProfileTable(reader *GXXmlReader, name s
 			if err != nil {
 				return nil, err
 			}
-			it.DayId = uint8(ret)
+			it.DayID = uint8(ret)
 			list = append(list, it)
 			var actions []GXDLMSDayProfileAction
 			if ret, err := reader.IsStartElementNamed("Actions", true); ret && err == nil {
@@ -775,7 +816,7 @@ func (g *GXDLMSActivityCalendar) SaveDayProfileTable(writer *GXXmlWriter, list [
 		writer.WriteStartElement(name)
 		for _, it := range list {
 			writer.WriteStartElement("Item")
-			err = writer.WriteElementString("DayId", it.DayId)
+			err = writer.WriteElementString("DayId", it.DayID)
 			if err != nil {
 				return err
 			}

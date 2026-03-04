@@ -165,14 +165,9 @@ func (g *GXDLMSClock) GetMethodCount() int {
 //	Value of the attribute index.
 func (g *GXDLMSClock) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var ret any
-	var err error
 	switch e.Index {
 	case 1:
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-			return nil, err
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.Time
 	case 3:
@@ -294,6 +289,9 @@ func (g *GXDLMSClock) Load(reader *GXXmlReader) error {
 	var err error
 	var val int
 	g.Time, err = reader.ReadElementContentAsGXDateTime("Time")
+	if err != nil {
+		return err
+	}
 	val, err = reader.ReadElementContentAsInt("TimeZone", 0)
 	if err != nil {
 		return err

@@ -131,10 +131,7 @@ func (g *GXDLMSGprsSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 	var ret any
 	var err error
 	if e.Index == 1 {
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	} else if e.Index == 2 {
 		if g.APN != "" {
 			ret = []byte(g.APN)
@@ -230,6 +227,9 @@ func (g *GXDLMSGprsSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	case 2:
 		if v, ok := e.Value.(string); ok {
 			g.APN = v

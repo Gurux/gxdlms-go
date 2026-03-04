@@ -38,7 +38,7 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// Used currency.
+// GXCurrency includes information from the used currency.
 type GXCurrency struct {
 	// Currency name.
 	Name string

@@ -186,6 +186,9 @@ func (g *GXDLMSMBusSlavePortSetup) SetValue(settings *settings.GXDLMSSettings, e
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
+		if err != nil {
+			return err
+		}
 	} else if e.Index == 2 {
 		if e.Value == nil {
 			g.DefaultBaud = enums.BaudRate300

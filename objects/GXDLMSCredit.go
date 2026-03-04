@@ -225,10 +225,7 @@ func (g *GXDLMSCredit) GetValue(settings *settings.GXDLMSSettings, e *internal.V
 	var ret any
 	switch e.Index {
 	case 1:
-		ret, err = helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		ret = g.CurrentCreditAmount
 	case 3:

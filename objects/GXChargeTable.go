@@ -34,7 +34,7 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-// Charge table.
+// GXChargeTable contains charge table information.
 // Online help:
 // https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
 type GXChargeTable struct {

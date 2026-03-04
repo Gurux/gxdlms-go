@@ -192,12 +192,7 @@ func anyToUInt32(v any) uint32 {
 func (g *GXDLMSGSMDiagnostic) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	switch e.Index {
 	case 1:
-		ret, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-			return nil, err
-		}
-		return ret, nil
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
 		if g.Operator == "" {
 			return nil, nil

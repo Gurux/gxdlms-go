@@ -161,11 +161,7 @@ func (g *GXDLMSAutoAnswer) GetMethodCount() int {
 func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) (any, error) {
 	var err error
 	if e.Index == 1 {
-		v, err := helpers.LogicalNameToBytes(g.LogicalName())
-		if err != nil {
-			e.Error = enums.ErrorCodeReadWriteDenied
-		}
-		return v, err
+		return helpers.LogicalNameToBytes(g.LogicalName())
 	}
 	if e.Index == 2 {
 		return g.Mode, nil
@@ -178,6 +174,9 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 			return nil, err
 		}
 		err = types.SetObjectCount(cnt, data)
+		if err != nil {
+			return nil, err
+		}
 		if cnt != 0 {
 			for _, it := range g.ListeningWindow {
 				err = data.SetUint8(uint8(enums.DataTypeStructure))
@@ -189,7 +188,14 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 					return nil, err
 				}
 				err = internal.SetData(settings, data, enums.DataTypeOctetString, it.Key)
+				if err != nil {
+					return nil, err
+				}
+
 				err = internal.SetData(settings, data, enums.DataTypeOctetString, it.Value)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 		return data.Array(), nil
@@ -207,8 +213,17 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 			return nil, err
 		}
 		err = types.SetObjectCount(2, data)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, g.NumberOfRingsInListeningWindow)
+		if err != nil {
+			return nil, err
+		}
 		err = internal.SetData(settings, data, enums.DataTypeUint8, g.NumberOfRingsOutListeningWindow)
+		if err != nil {
+			return nil, err
+		}
 		return data.Array(), nil
 	}
 	if e.Index == 7 {
@@ -219,6 +234,9 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 			return nil, err
 		}
 		err = types.SetObjectCount(cnt, data)
+		if err != nil {
+			return nil, err
+		}
 		if cnt != 0 {
 			for _, it := range g.AllowedCallers {
 				err = data.SetUint8(uint8(enums.DataTypeStructure))
@@ -253,15 +271,19 @@ func (g *GXDLMSAutoAnswer) GetValue(settings *settings.GXDLMSSettings, e *intern
 //	settings: DLMS settings.
 //	e: Set parameters.
 func (g *GXDLMSAutoAnswer) SetValue(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
-	if e.Index == 1 {
+	switch e.Index {
+	case 1:
 		ln, err := helpers.ToLogicalName(e.Value)
 		if err != nil {
 			e.Error = enums.ErrorCodeReadWriteDenied
 		}
 		err = g.SetLogicalName(ln)
-	} else if e.Index == 2 {
+		if err != nil {
+			return err
+		}
+	case 2:
 		g.Mode = enums.AutoAnswerMode(e.Value.(types.GXEnum).Value)
-	} else if e.Index == 3 {
+	case 3:
 		g.ListeningWindow = g.ListeningWindow[:0]
 		if e.Value != nil {
 			for _, tmp := range e.Value.(types.GXArray) {
@@ -277,11 +299,11 @@ func (g *GXDLMSAutoAnswer) SetValue(settings *settings.GXDLMSSettings, e *intern
 				g.ListeningWindow = append(g.ListeningWindow, *types.NewGXKeyValuePair(start.(types.GXDateTime), end.(types.GXDateTime)))
 			}
 		}
-	} else if e.Index == 4 {
+	case 4:
 		g.Status = enums.AutoAnswerStatus(e.Value.(types.GXEnum).Value)
-	} else if e.Index == 5 {
+	case 5:
 		g.NumberOfCalls = e.Value.(uint8)
-	} else if e.Index == 6 {
+	case 6:
 		g.NumberOfRingsInListeningWindow = 0
 		g.NumberOfRingsOutListeningWindow = 0
 
@@ -290,17 +312,17 @@ func (g *GXDLMSAutoAnswer) SetValue(settings *settings.GXDLMSSettings, e *intern
 			g.NumberOfRingsInListeningWindow = arr[0].(uint8)
 			g.NumberOfRingsOutListeningWindow = arr[1].(uint8)
 		}
-	} else if e.Index == 7 {
+	case 7:
 		g.AllowedCallers = g.AllowedCallers[:0]
 		if e.Value != nil {
 			for _, tmp := range e.Value.(types.GXArray) {
 				item := tmp.(types.GXStructure)
-				callerId := string(item[0].([]uint8))
+				callerID := string(item[0].([]uint8))
 				callType := enums.CallType(item[1].(types.GXEnum).Value)
-				g.AllowedCallers = append(g.AllowedCallers, *types.NewGXKeyValuePair(callerId, callType))
+				g.AllowedCallers = append(g.AllowedCallers, *types.NewGXKeyValuePair(callerID, callType))
 			}
 		}
-	} else {
+	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}
 	return nil
@@ -380,7 +402,7 @@ func (g *GXDLMSAutoAnswer) Load(reader *GXXmlReader) error {
 				break
 			}
 
-			callerId, err := reader.ReadElementContentAsString("Id", "")
+			callerID, err := reader.ReadElementContentAsString("Id", "")
 			if err != nil {
 				return err
 			}
@@ -389,7 +411,7 @@ func (g *GXDLMSAutoAnswer) Load(reader *GXXmlReader) error {
 				return err
 			}
 			callType := enums.CallType(ret)
-			g.AllowedCallers = append(g.AllowedCallers, *types.NewGXKeyValuePair(callerId, callType))
+			g.AllowedCallers = append(g.AllowedCallers, *types.NewGXKeyValuePair(callerID, callType))
 		}
 		reader.ReadEndElement("AllowedCallers")
 	}
