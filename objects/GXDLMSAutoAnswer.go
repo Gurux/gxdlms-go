@@ -488,7 +488,7 @@ func (g *GXDLMSAutoAnswer) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSAutoAnswer) GetValues() []any {
 	return []any{g.LogicalName(), g.Mode, g.ListeningWindow, g.Status, g.NumberOfCalls,
 		fmt.Sprintf("%d/%d", g.NumberOfRingsInListeningWindow, g.NumberOfRingsOutListeningWindow), g.AllowedCallers}

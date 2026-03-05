@@ -267,7 +267,7 @@ func (g *GXDLMSDisconnectControl) RemoteReconnect(client IGXDLMSClient) ([][]uin
 	return client.Method(g, 2, int8(0), enums.DataTypeInt8)
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSDisconnectControl) GetValues() []any {
 	return []any{g.LogicalName(), g.OutputState, g.ControlState, g.ControlMode}
 }

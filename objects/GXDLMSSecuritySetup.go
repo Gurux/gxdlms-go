@@ -1228,7 +1228,7 @@ func (g *GXDLMSSecuritySetup) ApplyKeys(settings *settings.GXDLMSSettings, e *in
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSSecuritySetup) GetValues() []any {
 	return []any{g.LogicalName(), g.securityPolicy, g.SecuritySuite, g.ClientSystemTitle, g.ServerSystemTitle, g.Certificates}
 }

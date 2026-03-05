@@ -464,7 +464,7 @@ func (g *GXDLMSRegisterMonitor) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSRegisterMonitor) GetValues() []any {
 	return []any{g.LogicalName(), g.Thresholds, g.MonitoredValue, g.Actions}
 }

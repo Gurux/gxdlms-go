@@ -36,10 +36,10 @@ package types
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
+	"github.com/Gurux/gxcommon-go"
 	"github.com/Gurux/gxdlms-go/enums"
 	"golang.org/x/text/language"
 )
@@ -81,24 +81,11 @@ var dateTimeFormats = map[string]string{
 	"SV": "02/01/2006 15:04:05.000 -0700",
 }
 
-// currentLanguage returns current user language.
-func currentLanguage() *language.Tag {
-	langEnv := os.Getenv("LANG")
-	if langEnv == "" {
-		return &language.AmericanEnglish
-	}
-	langEnv = strings.Split(langEnv, ".")[0]
-	tag, err := language.Parse(langEnv)
-	if err != nil {
-		return &language.AmericanEnglish
-	}
-	return &tag
-}
-
 // getDateTimeFormat returns a date-time layout for the given language and skipped fields.
 func getDateTimeFormat(language *language.Tag, skip enums.DateTimeSkips) string {
 	if language == nil {
-		language = currentLanguage()
+		l := gxcommon.CurrentLanguage()
+		language = &l
 	}
 	region, _ := language.Region()
 	format, ok := dateTimeFormats[region.String()]
@@ -372,6 +359,27 @@ func getDateTimeToken(format string, index int) (string, enums.DateTimeSkips) {
 	return "", enums.DateTimeSkipsNone
 }
 
+func updateSingleDigitParts(value string, layout string) string {
+	v := strings.FieldsFunc(value, func(r rune) bool {
+		return r == '/' || r == '.' || r == '-' || r == ':' || r == ' '
+	})
+
+	l := strings.FieldsFunc(layout, func(r rune) bool {
+		return r == '/' || r == '.' || r == '-' || r == ':' || r == ' '
+	})
+
+	for i := 0; i < len(v) && i < len(l); i++ {
+		part := l[i]
+		switch part {
+		case "02", "01", "03", "04", "05":
+			if len(v[i]) != len(part) {
+				layout = strings.ReplaceAll(layout, l[i], l[i][1:])
+			}
+		}
+	}
+	return layout
+}
+
 // parseInternal parses a date-time string into GXDateTime, GXDate, or GXTime targets.
 func parseInternal(target any, value string, language *language.Tag) error {
 	addTimeZone := true
@@ -470,9 +478,11 @@ func parseInternal(target any, value string, language *language.Tag) error {
 				}
 			}
 		}
+		format = updateSingleDigitParts(value, format)
 		// If time zone is used.
 		pos := timeZonePosition(value)
 		if !addTimeZone || pos == -1 {
+			g.Skip |= enums.DateTimeSkipsDeviation
 			format = remove(format, "-0700", timeSeparator)
 			// Trim
 			format = strings.TrimSpace(format)
@@ -490,6 +500,7 @@ func parseInternal(target any, value string, language *language.Tag) error {
 		g.Value, err = parseWithLayout(format)
 		if err != nil && g.Skip&enums.DateTimeSkipsMs == 0 {
 			//Remove ms.
+			g.Skip |= enums.DateTimeSkipsMs
 			format = remove(format, ".000", "")
 			// Trim
 			format = strings.TrimSpace(format)
@@ -508,7 +519,15 @@ func parseInternal(target any, value string, language *language.Tag) error {
 			}
 		}
 		if err != nil {
-			return err
+			g.Value = time.Date(2006, 1, 2, 3, 4, 5, 0, time.Local)
+			expected := g.ToFormatString(language, true)
+			expected = strings.ReplaceAll(expected, "2006", "yyyy")
+			expected = strings.ReplaceAll(expected, "01", "MM")
+			expected = strings.ReplaceAll(expected, "02", "dd")
+			expected = strings.ReplaceAll(expected, "03", "hh")
+			expected = strings.ReplaceAll(expected, "04", "mm")
+			expected = strings.ReplaceAll(expected, "05", "ss")
+			return fmt.Errorf("parsing '%s' failed. Expected format: '%s'", value, expected)
 		}
 		if strings.Contains(value, "AM") {
 			g.Value = g.Value.Add(-12 * time.Hour)

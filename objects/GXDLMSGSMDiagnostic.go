@@ -561,7 +561,7 @@ func (g *GXDLMSGSMDiagnostic) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSGSMDiagnostic) GetValues() []any {
 	return []any{g.LogicalName(), g.Operator, g.Status,
 		g.CircuitSwitchStatus, g.PacketSwitchStatus,

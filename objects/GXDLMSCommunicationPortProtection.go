@@ -428,7 +428,7 @@ func (g *GXDLMSCommunicationPortProtection) Reset(client IGXDLMSClient) ([][]byt
 	return client.Method(g, 1, int8(0), enums.DataTypeInt8)
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSCommunicationPortProtection) GetValues() []any {
 	return []any{g.LogicalName(), g.ProtectionMode, g.AllowedFailedAttempts, g.InitialLockoutTime, g.SteepnessFactor,
 		g.MaxLockoutTime, g.Port, g.ProtectionStatus, g.FailedAttempts, g.CumulativeFailedAttempts}

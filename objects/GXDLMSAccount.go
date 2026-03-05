@@ -1003,7 +1003,7 @@ func (g *GXDLMSAccount) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSAccount) GetValues() []any {
 	return []any{g.LogicalName(), []any{g.PaymentMode, g.AccountStatus}, g.CurrentCreditInUse, g.CurrentCreditStatus,
 		g.AvailableCredit, g.AmountToClear, g.ClearanceThreshold, g.AggregatedDebt,

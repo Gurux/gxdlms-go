@@ -389,7 +389,7 @@ func (g *GXDLMSClock) GetUIDataType(index int) enums.DataType {
 	return enums.DataTypeNone
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSClock) GetValues() []any {
 	return []any{g.LogicalName(), g.Time, g.TimeZone, g.Status, g.Begin, g.End, g.Deviation, g.Enabled, g.ClockBase}
 }

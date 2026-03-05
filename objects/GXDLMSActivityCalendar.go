@@ -872,7 +872,7 @@ func (g *GXDLMSActivityCalendar) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSActivityCalendar) GetValues() []any {
 	return []any{g.LogicalName(), g.CalendarNameActive, g.SeasonProfileActive, g.WeekProfileTableActive, g.DayProfileTableActive, g.CalendarNamePassive, g.SeasonProfilePassive, g.WeekProfileTablePassive, g.DayProfileTablePassive, g.Time}
 }

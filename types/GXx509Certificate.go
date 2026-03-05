@@ -51,8 +51,7 @@ import (
 	"github.com/Gurux/gxdlms-go/internal/constants"
 )
 
-// x509 Certificate.
-// https://tools.ietf.org/html/rfc5280
+// GXx509Certificate represents a DLMS x509 certificate (RFC 5280).
 type GXx509Certificate struct {
 	// Loaded x509Certificate as raw data.
 	rawData []byte
@@ -127,7 +126,7 @@ type GXx509Certificate struct {
 	KeyUsage enums.KeyUsage
 }
 
-// Constructor from byte array.
+// NewGXx509Certificate parses a DER-encoded certificate.
 func NewGXx509Certificate(data []byte) (*GXx509Certificate, error) {
 	ret := &GXx509Certificate{}
 	err := ret.Init(data)
@@ -137,22 +136,23 @@ func NewGXx509Certificate(data []byte) (*GXx509Certificate, error) {
 	return ret, nil
 }
 
-// Loaded x509Certificate as raw data.
+// RawData returns the original certificate bytes.
 func (g *GXx509Certificate) RawData() []byte {
 	return g.rawData
 }
 
-// Raw Issuer in ASN1 format.
+// IssuerRaw returns the issuer field encoded as ASN.1.
 func (g *GXx509Certificate) IssuerRaw() []byte {
 	return g.issuerRaw
 }
 
-// Version.
-// Version is read-only because DLMS supports only v3.
+// Version returns the certificate version.
+// The value is read-only because DLMS supports only v3 certificates.
 func (g *GXx509Certificate) Version() enums.CertificateVersion {
 	return g.version
 }
 
+// Encoded returns the certificate encoded as DER bytes.
 func (g *GXx509Certificate) Encoded() ([]byte, error) {
 	if g.rawData != nil {
 		return g.rawData, nil
@@ -178,6 +178,7 @@ func (g *GXx509Certificate) Encoded() ([]byte, error) {
 	return g.rawData, nil
 }
 
+// Init parses and validates DER certificate bytes into this instance.
 func (g *GXx509Certificate) Init(data []byte) error {
 	g.rawData = data
 	ret, err := Asn1FromByteArray(data)
@@ -575,6 +576,7 @@ func asn1OidString(value any) (string, bool) {
 	}
 }
 
+// GetDataList returns the TBSCertificate fields as an ASN.1 value list.
 func (g *GXx509Certificate) GetDataList() ([]any, error) {
 	if g.Issuer == "" {
 		return nil, errors.New("Issuer is empty.")
@@ -830,30 +832,14 @@ func (g *GXx509Certificate) GetFilePath(cert *GXx509Certificate) (string, error)
 	return path, nil
 }
 
-// FromHexString returns the create x509Certificate from hex string.
-//
-// Parameters:
-//
-//	data: Hex string.
-//
-// Returns:
-//
-//	x509 certificate
+// FromHexString parses a certificate from a hexadecimal DER string.
 func (g *GXx509Certificate) FromHexString(data string) GXx509Certificate {
 	cert := GXx509Certificate{}
 	cert.Init(buffer.HexToBytes(data))
 	return cert
 }
 
-// x509CertificateFromPem returns the create x509Certificate from PEM string.
-//
-// Parameters:
-//
-//	data: PEM string.
-//
-// Returns:
-//
-//	x509 certificate
+// X509CertificateFromPem parses a certificate from PEM text.
 func X509CertificateFromPem(data string) (*GXx509Certificate, error) {
 	data = strings.ReplaceAll(data, "\r\n", "\n")
 	const START = "CERTIFICATE-----"
@@ -871,15 +857,7 @@ func X509CertificateFromPem(data string) (*GXx509Certificate, error) {
 	return X509CertificateFromDer(data[0:end])
 }
 
-// x509CertificateFromDer returns the create x509Certificate from DER Base64 encoded string.
-//
-// Parameters:
-//
-//	der: Base64 DER string.
-//
-// Returns:
-//
-//	x509 certificate
+// X509CertificateFromDer parses a certificate from a base64-encoded DER string.
 func X509CertificateFromDer(der string) (*GXx509Certificate, error) {
 	der = strings.ReplaceAll(der, "\r\n", "")
 	der = strings.ReplaceAll(der, "\n", "")
@@ -895,7 +873,7 @@ func X509CertificateFromDer(der string) (*GXx509Certificate, error) {
 	return &cert, nil
 }
 
-// GetData returns the get data as byte array.
+// GetData returns the certificate body bytes without the signature wrapper.
 func (g *GXx509Certificate) GetData() []byte {
 	ret, err := g.GetDataList()
 	if err != nil {
@@ -908,7 +886,7 @@ func (g *GXx509Certificate) GetData() []byte {
 	return ret2
 }
 
-// String returns the string representation of the x509 certificate.
+// String returns a human-readable summary of the certificate.
 func (g *GXx509Certificate) String() string {
 	bb := strings.Builder{}
 	switch g.ExtendedKeyUsage {
@@ -988,15 +966,7 @@ func (g *GXx509Certificate) String() string {
 	return bb.String()
 }
 
-// Load returns the load x509 certificate from the PEM file.
-//
-// Parameters:
-//
-//	path: File path.
-//
-// Returns:
-//
-//	Created GXx509Certificate object.
+// X509CertificateLoad loads a PEM certificate from a file path.
 func X509CertificateLoad(path string) (*GXx509Certificate, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -1005,11 +975,7 @@ func X509CertificateLoad(path string) (*GXx509Certificate, error) {
 	return X509CertificateFromPem(string(data))
 }
 
-// Save returns the x509 certificate to PEM file.
-//
-// Parameters:
-//
-//	path: File path.
+// Save writes the certificate to a PEM file.
 func (g *GXx509Certificate) Save(path string) error {
 	ret, err := g.ToPem()
 	if err != nil {
@@ -1018,11 +984,7 @@ func (g *GXx509Certificate) Save(path string) error {
 	return os.WriteFile(path, []byte(ret), 0644)
 }
 
-// ToPem returns the x509 certificate in PEM format.
-//
-// Returns:
-//
-//	Public key as in PEM string.
+// ToPem returns the certificate in PEM format.
 func (g *GXx509Certificate) ToPem() (string, error) {
 	sb := strings.Builder{}
 	if g.PublicKey == nil {
@@ -1034,11 +996,7 @@ func (g *GXx509Certificate) ToPem() (string, error) {
 	return sb.String(), nil
 }
 
-// ToDer returns the x509 certificate in DER format.
-//
-// Returns:
-//
-//	Public key as in PEM string.
+// ToDer returns the certificate in base64-encoded DER format.
 func (g *GXx509Certificate) ToDer() string {
 	ret, err := g.Encoded()
 	if err != nil {
@@ -1055,15 +1013,7 @@ func (g *GXx509Certificate) Equals(obj any) bool {
 	return false
 }
 
-// IsCertified returns the test is x509 file certified by the certifier.
-//
-// Parameters:
-//
-//	certifier: Public key of the certifier.
-//
-// Returns:
-//
-//	True, if certifier has certified the certificate.
+// IsCertified verifies that certifier signed this certificate.
 func (g *GXx509Certificate) IsCertified(certifier *GXPublicKey) (bool, error) {
 	if certifier == nil {
 		return false, errors.New("certifier")
@@ -1121,16 +1071,7 @@ func (g *GXx509Certificate) IsCertified(certifier *GXPublicKey) (bool, error) {
 	return e.Verify(bb.Array(), tmp4)
 }
 
-// X509CertificateSearch returns the search x509 Certificate from the PEM file in given folder.
-//
-// Parameters:
-//
-//	folder: Folder to search.
-//	type: Certificate type.
-//
-// Returns:
-//
-//	Created GXPkcs8 object.
+// X509CertificateSearch finds certificates in a folder matching type and system title.
 func X509CertificateSearch(folder string, type_ enums.CertificateType, systemtitle []byte) []GXx509Certificate {
 	var usage enums.KeyUsage
 	if type_ == enums.CertificateTypeDigitalSignature {

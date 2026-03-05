@@ -734,7 +734,7 @@ func (g *GXDLMSCharge) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSCharge) GetValues() []any {
 	return []any{g.LogicalName(), g.TotalAmountPaid, g.ChargeType, g.Priority,
 		g.UnitChargeActive, g.UnitChargePassive, g.UnitChargeActivationTime, g.Period,

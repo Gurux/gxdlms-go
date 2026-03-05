@@ -234,7 +234,8 @@ func (g *GXDLMSPushSetup) GetMethodCount() int {
 	return 2
 }
 
-func (g *GXDLMSPushSetup) GetPushObjectList(settings *settings.GXDLMSSettings) (any, error) {
+// getPushObjectList serializes PushObjectList to DLMS array data.
+func (g *GXDLMSPushSetup) getPushObjectList(settings *settings.GXDLMSSettings) (any, error) {
 	buff := types.NewGXByteBuffer()
 	if err := buff.SetUint8(uint8(enums.DataTypeArray)); err != nil {
 		return nil, err
@@ -372,7 +373,7 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 	case 1:
 		return helpers.LogicalNameToBytes(g.LogicalName())
 	case 2:
-		return g.GetPushObjectList(settings)
+		return g.getPushObjectList(settings)
 	case 3:
 		buff := types.NewGXByteBuffer()
 		if err := buff.SetUint8(uint8(enums.DataTypeStructure)); err != nil {
@@ -566,7 +567,8 @@ func (g *GXDLMSPushSetup) GetValue(settings *settings.GXDLMSSettings, e *interna
 	}
 }
 
-func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
+// setPushObject deserializes attribute 2 and updates PushObjectList.
+func (g *GXDLMSPushSetup) setPushObject(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) error {
 	g.PushObjectList = make([]types.GXKeyValuePair[IGXDLMSBase, GXDLMSCaptureObject], 0)
 	if e.Value == nil {
 		return nil
@@ -661,7 +663,8 @@ func (g *GXDLMSPushSetup) SetPushObject(settings *settings.GXDLMSSettings, e *in
 	return nil
 }
 
-func (g *GXDLMSPushSetup) GetPushProtectionParameters(e *internal.ValueEventArgs) error {
+// getPushProtectionParameters deserializes push protection settings from attribute data.
+func (g *GXDLMSPushSetup) getPushProtectionParameters(e *internal.ValueEventArgs) error {
 	list := make([]GXPushProtectionParameters, 0)
 	if e.Value == nil {
 		g.PushProtectionParameters = list
@@ -746,7 +749,7 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 		}
 		return g.SetLogicalName(ln)
 	case 2:
-		return g.SetPushObject(settings, e)
+		return g.setPushObject(settings, e)
 	case 3:
 		tmp, ok := e.Value.(types.GXStructure)
 		if !ok || len(tmp) < 3 {
@@ -867,7 +870,7 @@ func (g *GXDLMSPushSetup) SetValue(settings *settings.GXDLMSSettings, e *interna
 			return nil
 		}
 		if g.Version > 0 && e.Index == 10 {
-			return g.GetPushProtectionParameters(e)
+			return g.getPushProtectionParameters(e)
 		}
 		if g.Version > 1 && e.Index == 11 {
 			g.PushOperationMethod = enums.PushOperationMethod(e.Value.(types.GXEnum).Value)
@@ -1297,7 +1300,7 @@ func (g *GXDLMSPushSetup) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSPushSetup) GetValues() []any {
 	if g.Version == 0 {
 		return []any{g.LogicalName(), g.PushObjectList, []any{g.Service, g.Destination, g.Message},
@@ -1313,7 +1316,7 @@ func (g *GXDLMSPushSetup) GetValues() []any {
 		g.PushClientSAP, g.PushProtectionParameters, g.PushOperationMethod, g.ConfirmationParameters, g.LastConfirmationDateTime}
 }
 
-// GetPushValues returns the get received objects from push message.
+// GetPushValues maps received push values to target COSEM objects.
 //
 // Parameters:
 //
@@ -1358,7 +1361,7 @@ func (g *GXDLMSPushSetup) GetPushValues(client IGXDLMSClient, values []any) erro
 	return nil
 }
 
-// Push returns the activates the push process.
+// Push invokes the push action (method 1).
 //
 // Parameters:
 //
@@ -1371,7 +1374,7 @@ func (g *GXDLMSPushSetup) Push(client IGXDLMSClient) ([][]uint8, error) {
 	return client.Method(g, 1, int8(0), enums.DataTypeInt8)
 }
 
-// Reset returns the reset the push process.
+// Reset invokes the reset action (method 2).
 //
 // Parameters:
 //

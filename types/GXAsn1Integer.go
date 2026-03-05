@@ -41,20 +41,20 @@ import (
 	"github.com/Gurux/gxdlms-go/internal/buffer"
 )
 
-// ASN1 integer value.
+// GXAsn1Integer stores an ASN.1 INTEGER value in encoded byte order.
 type GXAsn1Integer struct {
-	// Bit string.
+	// value holds the ASN.1 INTEGER bytes.
 	value []byte
 }
 
-// Constructor from byte array.
+// NewGXAsn1Integer creates an ASN.1 integer from raw bytes.
 func NewGXAsn1Integer(value []byte) *GXAsn1Integer {
 	tmp := make([]byte, len(value))
 	copy(tmp, value)
 	return &GXAsn1Integer{value: tmp}
 }
 
-// Constructor from big integer.
+// NewGXAsn1IntegerFromBigInteger creates an ASN.1 integer from a big.Int value.
 func NewGXAsn1IntegerFromBigInteger(value big.Int) *GXAsn1Integer {
 	g := &GXAsn1Integer{}
 	g.value = value.Bytes()
@@ -62,7 +62,7 @@ func NewGXAsn1IntegerFromBigInteger(value big.Int) *GXAsn1Integer {
 	return g
 }
 
-// Bit string.
+// Value returns the underlying ASN.1 INTEGER bytes.
 func (g *GXAsn1Integer) Value() []byte {
 	return g.value
 }

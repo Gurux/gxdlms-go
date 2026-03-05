@@ -374,7 +374,7 @@ func (g *GXDLMSSpecialDaysTable) Delete(client IGXDLMSClient, entry *GXDLMSSpeci
 	return client.Method(g, 2, uint16(entry.Index), enums.DataTypeUint16)
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSSpecialDaysTable) GetValues() []any {
 	return []any{g.LogicalName(), g.Entries}
 }

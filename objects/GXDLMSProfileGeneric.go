@@ -923,7 +923,7 @@ func (g *GXDLMSProfileGeneric) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSProfileGeneric) GetValues() []any {
 	return []any{g.LogicalName(), g.Buffer, g.CaptureObjects,
 		g.CapturePeriod, g.SortMethod,

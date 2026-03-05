@@ -505,7 +505,7 @@ func (g *GXDLMSPppSetup) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSPppSetup) GetValues() []any {
 	sb := strings.Builder{}
 	if g.UserName != nil {

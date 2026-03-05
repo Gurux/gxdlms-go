@@ -364,7 +364,7 @@ func (g *GXDLMSIECLocalPortSetup) PostLoad(reader *GXXmlReader) error {
 	return nil
 }
 
-// GetValues returns the an array containing the COSEM object's attribute values.
+// GetValues returns an array containing the object's current attribute values.
 func (g *GXDLMSIECLocalPortSetup) GetValues() []any {
 	return []any{g.LogicalName(), g.DefaultMode, g.DefaultBaudrate, g.ProposedBaudrate,
 		g.ResponseTime, g.DeviceAddress, g.Password1, g.Password2, g.Password5}
