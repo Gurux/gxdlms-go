@@ -1,4 +1,14 @@
-// Package objects implements all DLMS cosem classes.
+// Package objects implements all DLMS/COSEM classes and their
+// behaviour required by the protocol.  Each file in this package
+// corresponds to a COSEM interface class (e.g. Association, Clock,
+// ActivityCalendar, etc.).  Types defined here provide helpers for
+// encoding/decoding attribute and method values, handling actions, and
+// serialising object instances to/from byte streams.
+//
+// Consumers of the higher‑level client and server APIs generally work
+// with these types indirectly; however the package is public to allow
+// advanced users to construct custom objects, extend the library with
+// vendor‑specific classes, or inspect values at a low level.
 package objects
 
 // --------------------------------------------------------------------------

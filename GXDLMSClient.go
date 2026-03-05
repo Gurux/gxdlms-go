@@ -1321,11 +1321,22 @@ func (g *GXDLMSClient) ParseAAREResponse(reply *types.GXByteBuffer) error {
 }
 
 // GetApplicationAssociationRequest returns the get challenge request if HLS authentication is used.
+// GetApplicationAssociationRequest constructs the request packets
+// used to initiate an association with a DLMS/COSEM server using the
+// currently configured logical or short name settings.
+//
+// The returned slice contains one or more frames that should be sent
+// to the meter in sequence. The caller is responsible for handling the
+// response and performing the next steps of the association handshake.
 func (g *GXDLMSClient) GetApplicationAssociationRequest() ([][]byte, error) {
 	return g.GetApplicationAssociationRequestWithLogicalName("")
 }
 
 // GetApplicationAssociationRequestWithLogicalName returns the get challenge request if HLS authentication is used.
+// GetApplicationAssociationRequestWithLogicalName is like
+// GetApplicationAssociationRequest but forces the use of a custom
+// logical name. This is useful when the target device's logical name
+// differs from the one stored in the client's settings.
 func (g *GXDLMSClient) GetApplicationAssociationRequestWithLogicalName(ln string) ([][]byte, error) {
 	if g.settings.Authentication != enums.AuthenticationHighECDSA &&
 		g.settings.Authentication != enums.AuthenticationHighGMAC &&
@@ -3343,15 +3354,29 @@ func (g *GXDLMSClient) CanInvoke(target *objects.GXDLMSObject, index int) bool {
 	return true
 }
 
-// NewGXDLMSClient returns the new DLMS client.
+// NewGXDLMSClient creates and initializes a client instance suitable for
+// communicating with a DLMS/COSEM server.  The caller must supply the
+// desired addressing mode, authentication settings and interface type; the
+// returned object is ready to use for building association requests and
+// exchanging application layer messages.
+//
+// The function performs basic validation of the provided addresses and
+// authentication parameters.  If any value is invalid the call returns an
+// error and no client instance is created.
 //
 // Parameters:
 //
-//	useLogicalNameReferencing: Use logical name referencing.
-//	serverAddress: Server address.
-//	authentication: Authentication type.
-//	password: User password.
-//	interfaceType: Interface type.
+//   useLogicalNameReferencing - if true the client will use logical-name
+//     referencing (IEC 62056‑53); false selects short-name mode.
+//   clientAddress - the HDLC/LLC address of the client (source).
+//   serverAddress - the HDLC/LLC address of the target device (destination).
+//   authentication - one of the enums.Authentication constants indicating the
+//     credential type the client will use during association.
+//   password - optional user password required for some authentication modes.
+//   interfaceType - physical interface (HDLC, SNRM, GPRS, etc.)
+//
+// Returns the initialized *GXDLMSClient or an error if parameters were
+// invalid.
 func NewGXDLMSClient(useLogicalNameReferencing bool, clientAddress int, serverAddress int, authentication enums.Authentication,
 	password []byte, interfaceType enums.InterfaceType) (*GXDLMSClient, error) {
 	ret := &GXDLMSClient{}

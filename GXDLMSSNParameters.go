@@ -70,6 +70,26 @@ type GXDLMSSNParameters struct {
 	BlockIndex uint16
 }
 
+// NewGXDLMSSNParameters builds a parameter structure used when creating
+// a short-name (SN) encoded message.  It populates the passed settings
+// object with the command and copies relevant fields such as the block
+// index from the settings.  The resulting struct is consumed by the
+// SN message encoder routines found elsewhere in the library.
+//
+// The arguments mirror the DLMS protocol fields:
+//
+//   settings     - active DLMS settings instance (may be nil for tests).
+//   command      - one of the enums.Command constants describing the
+//                  service (read, write, action, etc.).
+//   count        - number of items being accessed in this command.
+//   commandType  - application layer request type (variableAccess, block
+//                  number, etc.).
+//   attributeDescriptor - optional buffer containing the attribute
+//                  descriptor for variable access commands.
+//   data         - optional payload buffer for write/execute operations.
+//
+// Returns a populated *GXDLMSSNParameters ready to be passed to
+// getSnMessages or other helpers.
 func NewGXDLMSSNParameters(settings *settings.GXDLMSSettings, command enums.Command, count int, commandType byte, attributeDescriptor *types.GXByteBuffer, data *types.GXByteBuffer) *GXDLMSSNParameters {
 	ret := &GXDLMSSNParameters{
 		Settings:            settings,

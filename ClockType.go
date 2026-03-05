@@ -1,3 +1,8 @@
+// Package dlms implements DLMS/COSEM client and server functionality.
+//
+// The ClockType enumeration represents the different clock formats
+// supported by DLMS devices. It is used when encoding or decoding
+// time values exchanged with meters.
 package dlms
 
 //
