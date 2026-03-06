@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -38,7 +38,9 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// Certificate request
+// GXCertificateRequest represents a request to generate or issue a certificate.
+//
+// It contains a certificate type, optional key usage details, and a PKCS#10 request.
 type GXCertificateRequest struct {
 	// Certificate type.
 	CertificateType enums.CertificateType
@@ -46,11 +48,11 @@ type GXCertificateRequest struct {
 	// Indicates the purpose for which the certified public key is used.
 	ExtendedKeyUsage enums.ExtendedKeyUsage
 
-	// Certificate Signing Request.
+	// Certificate Signing Request (PKCS#10).
 	Certificate *GXPkcs10
 }
 
-// Constructor for Certificate request.
+// NewGXCertificateRequest creates a new GXCertificateRequest.
 func NewGXCertificateRequest(certificateType enums.CertificateType, certificate *GXPkcs10) GXCertificateRequest {
 	return GXCertificateRequest{
 		CertificateType: certificateType,

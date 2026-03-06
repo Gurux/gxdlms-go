@@ -36,13 +36,14 @@ package types
 
 import "fmt"
 
-// This class is used in DLMS data parsing.
+// GXDeltaUInt8 is used during DLMS parsing to represent an 8-bit delta value.
+// It implements fmt.Stringer for convenient string conversion.
 type GXDeltaUInt8 struct {
-	// Enumeration value.
+	// Value is the 8-bit delta value.
 	Value uint8
 }
 
-// String implements the fmt.Stringer interface.
+// String returns the decimal representation of the wrapped value.
 func (g GXDeltaUInt8) String() string {
 	return fmt.Sprint(g.Value)
 }

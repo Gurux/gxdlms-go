@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -40,53 +40,43 @@ import (
 	"strings"
 )
 
-// BitString class is used with Bit strings.
+// GXBitString represents an ASN.1 BIT STRING.
+//
+// The bit string is stored as a byte slice and a padBits count indicates how many
+// bits at the end are unused and should be ignored.
 type GXBitString struct {
 	// Number of extra bits at the end of the string.
 	padBits int
 
-	// Bit string.
+	// Bit string bytes.
 	value []byte
 }
 
-// NewGXBitString creates new GXBitString struct and initializes it with given parameters.
+// NewGXBitStringFromString creates a bit string value from a string of '0' and '1' characters.
 //
-// Parameters:
-//
-//	value: Bit string.
-//	padBits: Number of extra bits at the end of the string.
+// NOTE: The input is not validated and must only contain '0' and '1' characters.
 func NewGXBitStringFromString(value string) (*GXBitString, error) {
-	//TODO: Check that string contains only '0' and '1' characters.
+	// TODO: Validate that string contains only '0' and '1' characters.
 	return &GXBitString{value: []byte(value), padBits: 0}, nil
 }
 
-// NewGXBitString creates new GXBitString struct and initializes it with given parameters.
-//
-// Parameters:
-//
-//	value: Bit string.
-//	padBits: Number of extra bits at the end of the string.
+// NewGXBitString creates a GXBitString from raw bytes and a pad bit count.
 func NewGXBitString(value []byte, padBits int) (*GXBitString, error) {
 	return &GXBitString{value: value, padBits: padBits}, nil
 }
 
-// NewGXBitStringFromByteArray creates new GXBitString struct and initializes it with given parameters.
+// NewGXBitStringFromByteArray creates a GXBitString from an ASN.1 BIT STRING encoded value.
 //
-// Parameters:
-//
-//	value: Bit string.
-//	padBits: Number of extra bits at the end of the string.
+// The first byte is treated as the pad bit count, and the remaining bytes are the bit string.
 func NewGXBitStringFromByteArray(value []byte) (*GXBitString, error) {
 	padBits := int(value[0])
 	return NewGXBitString(value[1:], padBits)
 }
 
-// NewGXBitStringFromInteger creates new GXBitString struct and initializes it with given parameters.
+// NewGXBitStringFromInteger creates a GXBitString from an integer value.
 //
-// Parameters:
-//
-//	value: Integer value that is converted to bit string.
-//	padCount: Number of bits in the bit string.
+// The integer bits are converted into a bit string. padCount specifies the total
+// number of bits to include, and any unused bits at the end are represented using padBits.
 func NewGXBitStringFromInteger(value int, padCount int) (*GXBitString, error) {
 	padBits := padCount % 8
 	arr := make([]byte, padCount/8+padBits)
@@ -97,12 +87,12 @@ func NewGXBitStringFromInteger(value int, padCount int) (*GXBitString, error) {
 	return &GXBitString{value: arr, padBits: padBits}, nil
 }
 
-// PadBits returns the number of extra bits at the end of the string.
+// PadBits returns the number of unused bits at the end of the bit string.
 func (g *GXBitString) PadBits() int {
 	return g.padBits
 }
 
-// SetPadBits sets the number of extra bits at the end of the string.
+// SetPadBits sets the number of unused bits at the end of the bit string.
 func (g *GXBitString) SetPadBits(value int) error {
 	if value < 0 {
 		return errors.New("PadBits")
@@ -111,12 +101,12 @@ func (g *GXBitString) SetPadBits(value int) error {
 	return nil
 }
 
-// Bit string.
+// Value returns the underlying byte slice of the bit string.
 func (g *GXBitString) Value() []byte {
 	return g.value
 }
 
-// Length returns the number of extra bits at the end of the string.
+// Length returns the number of valid bits in the bit string.
 func (g *GXBitString) Length() int {
 	if len(g.value) == 0 {
 		return 0
@@ -124,12 +114,7 @@ func (g *GXBitString) Length() int {
 	return (8 * len(g.value)) - g.padBits
 }
 
-// AppendZeros returns the append zeroes to the buffer.
-//
-// Parameters:
-//
-//	sb: Buffer where zeros are added.
-//	count: Amount of zeroes.
+// AppendZeros appends 'count' zero characters to the provided string builder.
 func (g *GXBitString) AppendZeros(sb *strings.Builder, count int) {
 	for pos := 0; pos != count; pos++ {
 		sb.WriteString("0")
@@ -159,15 +144,9 @@ func ToBitString(sb *strings.Builder, value byte, count int) {
 	}
 }
 
-// String produces convert bit string to string.
+// ToString converts the bit string into a textual representation of '0' and '1'.
 //
-// Parameters:
-//
-//	showBits: Is the number of the bits shown.
-//
-// Returns:
-//
-//	Bit string as an string.
+// If showBits is true, the output is prefixed with the bit count (e.g., "8 bit 01010101").
 func (g *GXBitString) ToString(showBits bool) string {
 	if len(g.value) == 0 {
 		return ""
@@ -186,7 +165,9 @@ func (g *GXBitString) ToString(showBits bool) string {
 	return tmp
 }
 
-// ToInteger returns the converts ASN1 bit-string to integer value.
+// ToInteger converts the bit string into an integer value.
+//
+// The bit string is treated as a little-endian integer (lowest-order byte first).
 func (g *GXBitString) ToInteger() int {
 	ret := uint32(0)
 	if g.value != nil {
@@ -201,7 +182,9 @@ func (g *GXBitString) ToInteger() int {
 	return int(ret)
 }
 
-// Reserved for internal use.
+// SwapBits reverses the bit order in a byte (least significant bit becomes most significant).
+//
+// This is used internally when converting between integer values and bit-string representations.
 func SwapBits(value byte) byte {
 	var ret byte = 0
 	for pos := 0; pos != 8; pos++ {

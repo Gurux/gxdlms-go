@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -43,25 +43,30 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
+// GXAsn1ObjectIdentifier represents an ASN.1 object identifier (OID).
+//
+// It stores the dotted-string form (e.g. "1.2.840.10045.3.1.7") and can encode/decode
+// the value to/from ASN.1 byte sequences.
 type GXAsn1ObjectIdentifier struct {
 	objectIdentifier string
 }
 
-// ObjectIdentifier returns the unique identifier for the associated object.
+// ObjectIdentifier returns the dotted-string representation of the OID.
 func (g *GXAsn1ObjectIdentifier) ObjectIdentifier() string {
 	return g.objectIdentifier
 }
 
+// Encoded returns the ASN.1 DER encoding of the OID.
 func (g *GXAsn1ObjectIdentifier) Encoded() ([]byte, error) {
 	return g.OidStringtoBytes(g.objectIdentifier)
 }
 
-// NewGXAsn1ObjectIdentifier creates a new object identifier.
+// NewGXAsn1ObjectIdentifier creates a new object identifier from a dotted string.
 func NewGXAsn1ObjectIdentifier(objectIdentifier string) *GXAsn1ObjectIdentifier {
 	return &GXAsn1ObjectIdentifier{objectIdentifier: objectIdentifier}
 }
 
-// NewGXAsn1ObjectIdentifier creates a new object identifier.
+// NewGXAsn1ObjectIdentifierFromByteBuffer reads an OID from a byte buffer.
 func NewGXAsn1ObjectIdentifierFromByteBuffer(bb *GXByteBuffer, count int) *GXAsn1ObjectIdentifier {
 	objectIdentifier, err := oidStringFromByteArray(bb, count)
 	if err != nil {
@@ -70,7 +75,9 @@ func NewGXAsn1ObjectIdentifierFromByteBuffer(bb *GXByteBuffer, count int) *GXAsn
 	return &GXAsn1ObjectIdentifier{objectIdentifier: objectIdentifier}
 }
 
-// Description returns a human-readable description of the object identifier.
+// Description returns a human-readable description for known OIDs.
+//
+// If the OID is not recognized, an error is returned.
 func (g *GXAsn1ObjectIdentifier) Description() (string, error) {
 	n := X509NameFromString(g.objectIdentifier)
 	if n != enums.X509NameNone {
@@ -95,20 +102,13 @@ func (g *GXAsn1ObjectIdentifier) Description() (string, error) {
 	return "", fmt.Errorf("Description not found for OID: %s", g.objectIdentifier)
 }
 
-// oidStringFromByteArray  returns the get OID string from bytes.
+// oidStringFromByteArray decodes an OID from a byte buffer.
 //
-// Parameters:
-//
-//	bb: converted bytes.
-//	len: byte count.
-//
-// Returns:
-//
-//	OID string.
-func oidStringFromByteArray(bb *GXByteBuffer, len int) (string, error) {
+// It reads 'count' bytes from the buffer and converts them into the dotted OID string.
+func oidStringFromByteArray(bb *GXByteBuffer, count int) (string, error) {
 	value := 0
 	sb := strings.Builder{}
-	if len != 0 {
+	if count != 0 {
 		// Get first byte.
 		tmp, err := bb.Uint8()
 		if err != nil {
@@ -117,7 +117,7 @@ func oidStringFromByteArray(bb *GXByteBuffer, len int) (string, error) {
 		sb.WriteString(strconv.Itoa(int(tmp / 40)))
 		sb.WriteString(".")
 		sb.WriteString(strconv.Itoa(int(tmp % 40)))
-		for pos := 1; pos != len; pos++ {
+		for pos := 1; pos != count; pos++ {
 			tmp, err := bb.Uint8()
 			if err != nil {
 				return "", err
@@ -136,7 +136,7 @@ func oidStringFromByteArray(bb *GXByteBuffer, len int) (string, error) {
 	return sb.String(), nil
 }
 
-// OidStringtoBytes returns the convert OID string to bytes.
+// OidStringtoBytes encodes a dotted OID string into ASN.1 DER bytes.
 func (g *GXAsn1ObjectIdentifier) OidStringtoBytes(oid string) ([]byte, error) {
 	var value int64
 	arr := strings.Split(strings.TrimSpace(oid), ".")

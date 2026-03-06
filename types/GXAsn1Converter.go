@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -47,23 +47,24 @@ import (
 	"github.com/Gurux/gxdlms-go/internal/constants"
 )
 
-// ASN1 converter. This class is used to convert public and private keys to byte array and vice verse.
+// GXAsn1Converter is a helper for encoding/decoding ASN.1 structures used in DLMS/COSEM.
+//
+// It is primarily used for converting public/private keys, certificates, and other ASN.1 encoded
+// objects between byte representations and Go values.
 type GXAsn1Converter struct {
 }
 
-// getValue parses ASN.1 encoded data from a byte buffer and adds parsed objects to the objects list.
-// It handles various BER types including sequences, context tags, strings, integers, and time values.
+// getValue parses ASN.1 BER/DER encoded data from a byte buffer and appends parsed objects.
+//
+// It supports ASN.1 structures such as sequences, sets, context-specific tags, OIDs, strings,
+// integers, time values, and more.
 //
 // Parameters:
 //
-//	bb: Byte buffer containing ASN.1 encoded data.
-//	objects: List to store parsed objects.
-//	s: Optional XML settings for debug output.
-//	getNext: If true, stops after parsing one object.
-//
-// Returns:
-//
-//	Error if parsing fails due to invalid data or insufficient buffer space.
+//	bb: Byte buffer containing ASN.1-encoded data.
+//	objects: Destination slice for parsed values.
+//	s: Optional settings used for generating XML-style debug output (can be nil).
+//	getNext: If true, parsing stops after a single object is decoded.
 func getValue(bb *GXByteBuffer, objects *[]any, s *gxAsn1Settings, getNext bool) error {
 	var len_ int
 	var tmp []any
@@ -669,6 +670,11 @@ func getBytes(bb *GXByteBuffer, target any) (int, error) {
 	return bb.Size() - start, nil
 }
 
+// Asn1GetSubject converts an ASN.1 subject sequence into a human-readable string.
+//
+// The input should be a sequence of key/value pairs (GXKeyValuePair) where keys are
+// OID strings (e.g., "2.5.4.3" for commonName). The returned string has the form
+// "CN=... , O=...".
 func Asn1GetSubject(values *GXAsn1Sequence) string {
 	sb := strings.Builder{}
 	for _, v := range *values {

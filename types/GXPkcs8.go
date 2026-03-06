@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -44,13 +44,17 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// Pkcs8 certification request. Private key is saved using this format.
-// https://tools.ietf.org/html/rfc5208
+// GXPkcs8 represents a PKCS #8 private key container.
+//
+// It holds the raw encoded form as well as decoded private/public key objects.
+// This type supports parsing from DER/PEM and serializing back to those formats.
+//
+// See: https://tools.ietf.org/html/rfc5208
 type GXPkcs8 struct {
-	// Loaded PKCS #8 certificate as a raw data.
+	// Loaded PKCS #8 certificate as raw bytes.
 	_rawData []byte
 
-	// Algorithm.
+	// Algorithm holds the key algorithm identifier.
 	algorithm enums.X9ObjectIdentifier
 
 	// Private key.
@@ -59,14 +63,14 @@ type GXPkcs8 struct {
 	// Public key.
 	publicKey *GXPublicKey
 
-	// Description is extra metadata that is saved to PEM file.
+	// Description is optional metadata stored in the PEM comment header.
 	Description string
 
-	// Private key version.
+	// Version is the PKCS #8 version value.
 	Version enums.CertificateVersion
 }
 
-// Constructor from byte array.
+// NewGXPkcs8 parses a PKCS #8 blob and returns a GXPkcs8 instance.
 func NewGXPkcs8(data []byte) (*GXPkcs8, error) {
 	ret := &GXPkcs8{}
 	err := ret.init(data)
@@ -76,7 +80,7 @@ func NewGXPkcs8(data []byte) (*GXPkcs8, error) {
 	return ret, nil
 }
 
-// Constructor from byte array.
+// NewGXPkcs8FromKeys creates a GXPkcs8 object from an existing public/private key pair.
 func NewGXPkcs8FromKeys(keyValuePair *GXKeyValuePair[*GXPublicKey, *GXPrivateKey]) (*GXPkcs8, error) {
 	ret := &GXPkcs8{}
 	ret.publicKey = keyValuePair.Key
@@ -84,17 +88,17 @@ func NewGXPkcs8FromKeys(keyValuePair *GXKeyValuePair[*GXPublicKey, *GXPrivateKey
 	return ret, nil
 }
 
-// Private key.
+// PrivateKey returns the wrapped private key.
 func (g *GXPkcs8) PrivateKey() *GXPrivateKey {
 	return g.privateKey
 }
 
-// Public key.
+// PublicKey returns the wrapped public key.
 func (g *GXPkcs8) PublicKey() *GXPublicKey {
 	return g.publicKey
 }
 
-// / encoded returns the PKCS #8 encoded byte array.
+// encoded returns the PKCS #8 DER-encoded byte array for this instance.
 func (g *GXPkcs8) encoded() ([]byte, error) {
 	if g._rawData != nil {
 		return g._rawData, nil
@@ -197,17 +201,9 @@ func (g *GXPkcs8) init(data []byte) error {
 	return err
 }
 
-// GetFilePath returns the default file path.
+// GetFilePathFromSystemTitle returns the default file path for storing a PKCS #8 key.
 //
-// Parameters:
-//
-//	scheme: Used scheme.
-//	certificateType: Certificate type.
-//	systemTitle: System title.
-//
-// Returns:
-//
-//	File path.
+// The returned path includes a prefix based on certificateType and the systemTitle.
 func (g *GXPkcs8) GetFilePathFromSystemTitle(scheme enums.Ecc, certificateType enums.CertificateType, systemTitle []byte) (string, error) {
 	var path string
 	switch certificateType {
@@ -229,12 +225,9 @@ func (g *GXPkcs8) GetFilePathFromSystemTitle(scheme enums.Ecc, certificateType e
 	return path, nil
 }
 
-// GetFilePath returns the default file path.
+// GetFilePath returns the default file path for storing the PKCS #8 key.
 //
-// Parameters:
-//
-//	scheme: Used scheme.
-//	certificateType: Certificate type.
+// The returned path differs based on certificate type and the key's unique identifier.
 func (g *GXPkcs8) GetFilePath(scheme enums.Ecc, certificateType enums.CertificateType) (string, error) {
 	var path string
 	switch certificateType {
@@ -258,9 +251,9 @@ func (g *GXPkcs8) GetFilePath(scheme enums.Ecc, certificateType enums.Certificat
 
 // FromPem returns the create PKCS #8 from PEM string.
 //
-// Parameters:
+// Pkcs8FromPem parses a PEM-encoded PKCS #8 key and returns a GXPkcs8 instance.
 //
-//	data: PEM string.
+// The input should include the "-----BEGIN PRIVATE KEY-----" header.
 func Pkcs8FromPem(data string) (*GXPkcs8, error) {
 	const START = "PRIVATE KEY-----"
 	const END = "-----END"
@@ -279,24 +272,16 @@ func Pkcs8FromPem(data string) (*GXPkcs8, error) {
 
 // FromHexString returns the create PKCS 8 from hex string.
 //
-// Parameters:
-//
-//	data: Hex string.
-//
-// Returns:
-//
-//	PKCS 8
+// FromHexString parses a hex-encoded PKCS #8 value and returns a GXPkcs8.
 func (g *GXPkcs8) FromHexString(data string) GXPkcs8 {
 	cert := GXPkcs8{}
 	cert.init(HexToBytes(data))
 	return cert
 }
 
-// Pkcs8FromDer returns the create PKCS #8 from DER Base64 encoded string.
+// Pkcs8FromDer parses a Base64-encoded DER PKCS #8 key and returns a GXPkcs8.
 //
-// Parameters:
-//
-//	der: Base64 DER string.
+// The input should be the Base64 encoding of an ASN.1 DER PKCS #8 structure.
 func Pkcs8FromDer(der string) (*GXPkcs8, error) {
 	der = strings.ReplaceAll(der, "\r\n", "")
 	der = strings.ReplaceAll(der, "\n", "")
@@ -312,6 +297,7 @@ func Pkcs8FromDer(der string) (*GXPkcs8, error) {
 	return &cert, nil
 }
 
+// String implements fmt.Stringer and returns a compact description of the PKCS #8 key.
 func (g *GXPkcs8) String() string {
 	bb := strings.Builder{}
 	bb.WriteString("PKCS #8:")
@@ -326,15 +312,7 @@ func (g *GXPkcs8) String() string {
 	return bb.String()
 }
 
-// Load returns the load private key from the PEM file.
-//
-// Parameters:
-//
-//	path: File path.
-//
-// Returns:
-//
-//	Created GXPkcs8 object.
+// Pkcs8Load reads a PEM file and returns a parsed GXPkcs8 instance.
 func Pkcs8Load(path string) (*GXPkcs8, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -343,11 +321,7 @@ func Pkcs8Load(path string) (*GXPkcs8, error) {
 	return Pkcs8FromPem(string(data))
 }
 
-// Save returns the save private key to PEM file.
-//
-// Parameters:
-//
-//	path: File path.
+// Save writes the PKCS #8 key to a PEM file at the given path.
 func (g *GXPkcs8) Save(path string) error {
 	ret, err := g.ToPem()
 	if err != nil {
@@ -356,11 +330,7 @@ func (g *GXPkcs8) Save(path string) error {
 	return os.WriteFile(path, []byte(ret), 0644)
 }
 
-// ToPem returns the private key in PEM format.
-//
-// Returns:
-//
-//	Private key as in PEM string.
+// ToPem returns the private key encoded as a PEM string.
 func (g *GXPkcs8) ToPem() (string, error) {
 	sb := strings.Builder{}
 	if g.privateKey == nil {
@@ -372,11 +342,7 @@ func (g *GXPkcs8) ToPem() (string, error) {
 	return sb.String(), nil
 }
 
-// ToDer returns the private key in DER format.
-//
-// Returns:
-//
-//	Private key as in DER string.
+// ToDer returns the PKCS #8 key as a Base64-encoded DER string.
 func (g *GXPkcs8) ToDer() string {
 	ret, err := g.encoded()
 	if err != nil {
@@ -385,7 +351,9 @@ func (g *GXPkcs8) ToDer() string {
 	return base64.StdEncoding.EncodeToString(ret)
 }
 
-// Import returns the import certificate from string.
+// Import parses a PKCS #8 key from a string in PEM, DER (base64), or raw private-key formats.
+//
+// The method attempts multiple parsing strategies until one succeeds.
 func (g *GXPkcs8) Import(value string) (*GXPkcs8, error) {
 	ret, err := Pkcs8FromPem(value)
 	if err == nil {
@@ -425,7 +393,7 @@ func (g *GXPkcs8) Import(value string) (*GXPkcs8, error) {
 	return nil, errors.New("Invalid private key format.")
 }
 
-// Equals determines whether the specified object is equal to the current GXPkcs8 instance.
+// Equals reports whether the specified object represents the same PKCS #8 key.
 func (g *GXPkcs8) Equals(obj any) bool {
 	if o, ok := obj.(GXPkcs8); ok {
 		return g.privateKey.Equals(o.PrivateKey())

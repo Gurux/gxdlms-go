@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -34,19 +34,24 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+// GXAsn1Utf8String represents an ASN.1 UTF8String value.
+//
+// It stores the string value and implements fmt.Stringer.
 type GXAsn1Utf8String struct {
 	value string
 }
 
+// Value returns the stored UTF-8 string.
 func (g *GXAsn1Utf8String) Value() string {
 	return g.value
 }
 
+// String implements fmt.Stringer.
 func (g *GXAsn1Utf8String) String() string {
 	return g.value
 }
 
-// Constructor.
+// NewGXAsn1Utf8String creates a new GXAsn1Utf8String.
 func NewGXAsn1Utf8String(value string) *GXAsn1Utf8String {
 	return &GXAsn1Utf8String{value: value}
 }

@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -48,77 +48,85 @@ import (
 	"github.com/Gurux/gxdlms-go/internal/helpers"
 )
 
-// Pkcs10 Certificate Signing Request.
-// https://tools.ietf.org/html/rfc2986
+// GXPkcs10 represents a PKCS#10 Certificate Signing Request (CSR).
+//
+// A CSR contains the requestor's public key, subject information, and a
+// signature binding the request to the private key.
+//
+// See: https://tools.ietf.org/html/rfc2986
 type GXPkcs10 struct {
-	// Loaded PKCS #10 certificate as a raw data.
+	// Raw PKCS#10 data (DER encoded) if loaded from an existing request.
 	rawData []byte
 
 	// Certificate version.
 	version enums.CertificateVersion
 
-	// Subject.
+	// Subject distinguished name.
 	subject string
 
-	// Collection of attributes providing additional information about the subject of the certificate.
+	// Collection of attributes providing additional information about the subject.
 	attributes []GXKeyValuePair[enums.PkcsObjectIdentifier, []any]
 
-	// Algorithm.
+	// Public key algorithm identifier (usually an OID).
 	algorithm enums.X9ObjectIdentifier
 
 	// Subject public key.
 	publicKey *GXPublicKey
 
-	// Signature algorithm.
+	// Signature algorithm used to sign the request.
 	signatureAlgorithm enums.HashAlgorithm
 
-	// Signature parameters.
+	// Optional signature parameters.
 	signatureParameters any
 
-	// Signature.
+	// Signature over the request data.
 	signature []byte
 }
 
-// Certificate version.
+// Version returns the certificate version.
 func (g *GXPkcs10) Version() enums.CertificateVersion {
 	return g.version
 }
 
-// Subject.
+// Subject returns the distinguished name of the CSR subject.
 func (g *GXPkcs10) Subject() string {
 	return g.subject
 }
 
-// Collection of attributes providing additional information about the subject of the certificate.
+// Attributes returns the CSR attribute collection.
 func (g *GXPkcs10) Attributes() []GXKeyValuePair[enums.PkcsObjectIdentifier, []any] {
 	return g.attributes
 }
 
-// Algorithm.
+// Algorithm returns the public key algorithm identifier.
 func (g *GXPkcs10) Algorithm() enums.X9ObjectIdentifier {
 	return g.algorithm
 }
 
-// Subject public key.
+// PublicKey returns the subject public key.
 func (g *GXPkcs10) PublicKey() *GXPublicKey {
 	return g.publicKey
 }
 
-// Signature algorithm.
+// SignatureAlgorithm returns the signature algorithm used to sign the CSR.
 func (g *GXPkcs10) SignatureAlgorithm() enums.HashAlgorithm {
 	return g.signatureAlgorithm
 }
 
-// Signature parameters.
+// SignatureParameters returns any optional signature parameters.
 func (g *GXPkcs10) SignatureParameters() any {
 	return g.signatureParameters
 }
 
-// Signature.
+// Signature returns the CSR signature bytes.
 func (g *GXPkcs10) Signature() []byte {
 	return g.signature
 }
 
+// Encoded returns the DER-encoded bytes for the CSR.
+//
+// If the CSR was loaded from existing raw data, that raw data is returned.
+// Otherwise it is generated from the current CSR fields (including signature).
 func (g *GXPkcs10) Encoded() ([]byte, error) {
 	if g.rawData != nil {
 		return g.rawData, nil
@@ -140,6 +148,7 @@ func (g *GXPkcs10) Encoded() ([]byte, error) {
 	return Asn1ToByteArray(list)
 }
 
+// init parses raw DER data into the CSR fields.
 func (g *GXPkcs10) init(data []byte) error {
 	g.rawData = data
 	ret, err := Asn1FromByteArray(data)
@@ -262,6 +271,7 @@ func (g *GXPkcs10) init(data []byte) error {
 	return nil
 }
 
+// getData constructs the ASN.1 structure used for CSR signing.
 func (g *GXPkcs10) getData() []any {
 	var alg *GXAsn1ObjectIdentifier
 	if g.publicKey.Scheme() == enums.EccP256 {
@@ -296,12 +306,12 @@ func (g *GXPkcs10) getData() []any {
 	return []any{int8(g.version), ret, []any{tmp, subjectPKInfo}, attributes}
 }
 
-// Sign returns the sign
+// Sign signs the CSR using the provided ECDSA private key and hash algorithm.
 //
 // Parameters:
 //
-//	key: Private key.
-//	hashAlgorithm: Used algorithm for signing.
+//	key: Private key used for signing.
+//	hashAlgorithm: Hash algorithm used to compute the signature.
 func (g *GXPkcs10) Sign(key *GXPrivateKey, hashAlgorithm enums.HashAlgorithm) error {
 	data, err := Asn1ToByteArray(g.getData())
 	if err != nil {
@@ -340,41 +350,41 @@ func (g *GXPkcs10) Sign(key *GXPrivateKey, hashAlgorithm enums.HashAlgorithm) er
 	return nil
 }
 
-// FromHexString returns the create PKCS 10 from hex string.
+// NewGXPkcs10 creates a GXPkcs10 object from raw DER bytes.
 //
 // Parameters:
 //
-//	data: Hex string.
+//	data: DER-encoded CSR.
 //
 // Returns:
 //
-//	PKCS 10
+//	A parsed PKCS#10 request.
 func NewGXPkcs10(data []byte) (*GXPkcs10, error) {
 	cert := GXPkcs10{}
 	err := cert.init(data)
 	return &cert, err
 }
 
-// FromHexString returns the create PKCS 10 from hex string.
+// Pkcs10FromHexString parses a PKCS#10 CSR from a hex-encoded string.
 //
 // Parameters:
 //
-//	data: Hex string.
+//	data: Hex string representing the DER-encoded CSR.
 //
 // Returns:
 //
-//	PKCS 10
+//	A parsed PKCS#10 request.
 func Pkcs10FromHexString(data string) (*GXPkcs10, error) {
 	cert := GXPkcs10{}
 	err := cert.init(HexToBytes(data))
 	return &cert, err
 }
 
-// FromPem returns the create x509Certificate from PEM string.
+// Pkcs10FromPem parses a PKCS#10 CSR from a PEM string.
 //
 // Parameters:
 //
-//	data: PEM string.
+//	data: PEM-encoded CSR data.
 func Pkcs10FromPem(data string) (*GXPkcs10, error) {
 	const START = "CERTIFICATE REQUEST-----"
 	const END = "-----END"
@@ -391,11 +401,11 @@ func Pkcs10FromPem(data string) (*GXPkcs10, error) {
 	return Pkcs10FromDer(strings.TrimSpace(data[0:end]))
 }
 
-// FromDer returns the create x509Certificate from DER Base64 encoded string.
+// Pkcs10FromDer parses a PKCS#10 CSR from a Base64-encoded DER string.
 //
 // Parameters:
 //
-//	der: Base64 DER string.
+//	der: Base64-encoded DER data.
 func Pkcs10FromDer(der string) (*GXPkcs10, error) {
 	der = strings.ReplaceAll(der, "\r\n", "")
 	der = strings.ReplaceAll(der, "\n", "")
@@ -408,7 +418,7 @@ func Pkcs10FromDer(der string) (*GXPkcs10, error) {
 	return &cert, err
 }
 
-// String returns the PKCS#10 certificate request as a string.
+// String returns a human-readable string representation of the PKCS#10 CSR.
 func (g *GXPkcs10) String() string {
 	var bb strings.Builder
 	bb.WriteString("PKCS #10 certificate request:\n")
@@ -442,16 +452,16 @@ func (g *GXPkcs10) String() string {
 	return bb.String()
 }
 
-// Pkcs10CreateCertificateSigningRequest returns the create Certificate Signing Request.
+// Pkcs10CreateCertificateSigningRequest creates a new PKCS#10 CSR for the given key pair and subject.
 //
 // Parameters:
 //
-//	kp: KeyPair
-//	subject: Subject.
+//	kp: Public/private key pair (public key is used inside the CSR).
+//	subject: Distinguished name string (must include "CN=").
 //
 // Returns:
 //
-//	Created GXPkcs10.
+//	A signed PKCS#10 request.
 func Pkcs10CreateCertificateSigningRequest(kp *GXKeyValuePair[*GXPublicKey, *GXPrivateKey], subject string) (*GXPkcs10, error) {
 	if !strings.Contains(subject, "CN=") {
 		return nil, errors.New("subject")
@@ -473,16 +483,16 @@ func Pkcs10CreateCertificateSigningRequest(kp *GXKeyValuePair[*GXPublicKey, *GXP
 	return &pkc10, nil
 }
 
-// GetCertificate requests the Gurux certificate server to generate new certificates.
+// GetCertificate requests signed certificates from the Gurux certificate server.
 //
 // Parameters:
 //
-//	address: Certificate server address.
-//	certifications: List of certification requests.
+//	address: Certificate server URL.
+//	certifications: List of certificate signing requests with key usage options.
 //
 // Returns:
 //
-//	Generated certificate(s) or error if request fails.
+//	Signed X.509 certificates corresponding to the provided requests.
 func (g *GXPkcs10) GetCertificate(address string, certifications []GXCertificateRequest) ([]GXx509Certificate, error) {
 	var usage strings.Builder
 	for _, it := range certifications {
@@ -573,15 +583,15 @@ func (g *GXPkcs10) GetCertificate(address string, certifications []GXCertificate
 	return certs, nil
 }
 
-// Load returns the load Pkcs10 Certificate Signing Request from the PEM (.csr) file.
+// Load reads a PKCS#10 CSR from a PEM-formatted file.
 //
 // Parameters:
 //
-//	path: File path.
+//	path: File path to the PEM (.csr) file.
 //
 // Returns:
 //
-//	Created GXPkcs10 object.
+//	A parsed PKCS#10 request.
 func (g *GXPkcs10) Load(path string) (*GXPkcs10, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -590,11 +600,11 @@ func (g *GXPkcs10) Load(path string) (*GXPkcs10, error) {
 	return Pkcs10FromPem(string(data))
 }
 
-// Save returns the save Pkcs #10 Certificate Signing Request to PEM file.
+// Save writes the PKCS#10 CSR to a PEM file.
 //
 // Parameters:
 //
-//	path: File path.
+//	path: File path to write.
 func (g *GXPkcs10) Save(path string) error {
 	ret, err := g.ToPem()
 	if err != nil {
@@ -603,11 +613,11 @@ func (g *GXPkcs10) Save(path string) error {
 	return os.WriteFile(path, []byte(ret), 0644)
 }
 
-// ToPem returns the pkcs #10 Certificate Signing Request in DER format.
+// ToPem returns the CSR as a PEM-formatted string.
 //
 // Returns:
 //
-//	Public key as in PEM string.
+//	The PEM encoded CSR.
 func (g *GXPkcs10) ToPem() (string, error) {
 	sb := strings.Builder{}
 	sb.WriteString("-----BEGIN CERTIFICATE REQUEST-----")
@@ -616,11 +626,11 @@ func (g *GXPkcs10) ToPem() (string, error) {
 	return sb.String(), nil
 }
 
-// ToDer returns the pkcs #10 Certificate Signing Request in DER format.
+// ToDer returns the CSR in Base64-encoded DER format.
 //
 // Returns:
 //
-//	Public key as in PEM string.
+//	Base64-encoded DER string.
 func (g *GXPkcs10) ToDer() string {
 	if g.rawData != nil {
 		return base64.StdEncoding.EncodeToString([]byte(g.rawData))

@@ -34,4 +34,5 @@ package types
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+// GXStructure is a generic container used by DLMS/COSEM parsing to represent an structure data.
 type GXStructure []any

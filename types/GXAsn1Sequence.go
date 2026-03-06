@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 import (
 	"fmt"
@@ -39,8 +39,12 @@ import (
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+// GXAsn1Sequence represents an ASN.1 SEQUENCE value.
+//
+// It is a generic container for decoded ASN.1 objects and implements fmt.Stringer for debugging.
 type GXAsn1Sequence []any
 
+// String implements fmt.Stringer and returns a human-readable representation of the sequence.
 func (s *GXAsn1Sequence) String() string {
 	var sb strings.Builder
 	sb.WriteString("Sequence {")

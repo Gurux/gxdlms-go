@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -46,7 +46,10 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// Public key.
+// GXPublicKey represents an elliptic curve public key.
+//
+// It stores the key's raw encoded value along with the curve scheme.
+// SystemTitle is auxiliary metadata used for debugging and is not serialized.
 type GXPublicKey struct {
 	// Used scheme.
 	scheme enums.Ecc
@@ -59,17 +62,17 @@ type GXPublicKey struct {
 	SystemTitle []byte
 }
 
-// Used scheme.
+// Scheme returns the elliptic curve scheme for this public key.
 func (g *GXPublicKey) Scheme() enums.Ecc {
 	return g.scheme
 }
 
-// Private key raw value.
+// RawValue returns the raw byte encoding of the public key (uncompressed point format).
 func (g *GXPublicKey) RawValue() []byte {
 	return g.rawValue
 }
 
-// X returns the x Coordinate.
+// X returns the X coordinate of the elliptic curve public point.
 func (g *GXPublicKey) X() []byte {
 	pk := GXByteBuffer{}
 	pk.Set(g.rawValue)
@@ -81,7 +84,7 @@ func (g *GXPublicKey) X() []byte {
 	return val
 }
 
-// Y returns the y Coordinate.
+// Y returns the Y coordinate of the elliptic curve public point.
 func (g *GXPublicKey) Y() []byte {
 	pk := GXByteBuffer{}
 	pk.Set(g.rawValue)
@@ -93,15 +96,15 @@ func (g *GXPublicKey) Y() []byte {
 	return val
 }
 
-// FromRawBytes returns the create the public key from raw bytes.
+// PublicKeyFromRawBytes parses a raw elliptic curve public key byte sequence.
 //
 // Parameters:
 //
-//	key: Raw data
+//	key: Raw public key bytes (uncompressed point format, with or without leading 0x04).
 //
 // Returns:
 //
-//	Public key.
+//	Parsed GXPublicKey or an error if the format is invalid.
 func PublicKeyFromRawBytes(key []byte) (*GXPublicKey, error) {
 	value := GXPublicKey{}
 	if len(key) == 65 {
@@ -126,15 +129,15 @@ func PublicKeyFromRawBytes(key []byte) (*GXPublicKey, error) {
 	return &value, nil
 }
 
-// FromDer returns the create the public key from DER.
+// PublicKeyFromDer parses a public key from a Base64-encoded DER string.
 //
 // Parameters:
 //
-//	der: DER Base64 coded string.
+//	der: Base64-encoded DER data.
 //
 // Returns:
 //
-//	Public key.
+//	Parsed GXPublicKey.
 func PublicKeyFromDer(der string) (*GXPublicKey, error) {
 	der = strings.ReplaceAll(der, "\r\n", "")
 	der = strings.ReplaceAll(der, "\n", "")
@@ -173,15 +176,15 @@ func PublicKeyFromDer(der string) (*GXPublicKey, error) {
 	return &value, nil
 }
 
-// FromPem returns the create the public key from PEM.
+// PublicKeyFromPem parses a public key from a PEM-formatted string.
 //
 // Parameters:
 //
-//	pem: PEM Base64 coded string.
+//	pem: PEM-encoded public key.
 //
 // Returns:
 //
-//	Public key.
+//	Parsed GXPublicKey.
 func PublicKeyFromPem(pem string) (*GXPublicKey, error) {
 	pem = strings.ReplaceAll(pem, "\r\n", "\n")
 	const START = "-----BEGIN PUBLIC KEY-----"
@@ -199,7 +202,7 @@ func PublicKeyFromPem(pem string) (*GXPublicKey, error) {
 	return PublicKeyFromDer(tmp)
 }
 
-// Load returns the create the public key from PEM file.
+// PublicKeyLoad reads a PEM-formatted public key file and parses it.
 //
 // Parameters:
 //
@@ -207,7 +210,7 @@ func PublicKeyFromPem(pem string) (*GXPublicKey, error) {
 //
 // Returns:
 //
-//	Public key.
+//	Parsed GXPublicKey.
 func PublicKeyLoad(path string) (*GXPublicKey, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -216,7 +219,7 @@ func PublicKeyLoad(path string) (*GXPublicKey, error) {
 	return PublicKeyFromPem(string(data))
 }
 
-// Save returns the save public key to PEM file.
+// Save writes the public key to a PEM-formatted file.
 //
 // Parameters:
 //
@@ -229,12 +232,12 @@ func (g *GXPublicKey) Save(path string) error {
 	return os.WriteFile(path, []byte(ret), 0644)
 }
 
-// ToHex returns the the public key as a hex string.
+// ToHex returns the public key as a hex string.
 func (g *GXPublicKey) ToHex() string {
 	return ToHex(g.rawValue, true)
 }
 
-// ToDer returns the get public key as DER format.
+// ToDer returns the public key encoded in Base64 DER format.
 func (g *GXPublicKey) ToDer() (string, error) {
 	ret, err := g.ToEncoded()
 	if err != nil {
@@ -243,7 +246,7 @@ func (g *GXPublicKey) ToDer() (string, error) {
 	return base64.URLEncoding.EncodeToString(ret), nil
 }
 
-// ToEncoded returns the get public key as encoded format.
+// ToEncoded returns the public key in ASN.1 DER encoded format.
 func (g *GXPublicKey) ToEncoded() ([]byte, error) {
 	// Subject Public Key Info.
 	d := GXAsn1Sequence{}
@@ -266,7 +269,7 @@ func (g *GXPublicKey) ToEncoded() ([]byte, error) {
 	return Asn1ToByteArray(d)
 }
 
-// ToPem returns the get public key as PEM format.
+// ToPem returns the public key in PEM format.
 func (g *GXPublicKey) ToPem() (string, error) {
 	der, err := g.ToDer()
 	if err != nil {
@@ -275,7 +278,7 @@ func (g *GXPublicKey) ToPem() (string, error) {
 	return "-----BEGIN PUBLIC KEY-----\n" + der + "\n-----END PUBLIC KEY-----\n", nil
 }
 
-// Returns a string that represents the current elliptic curve public key, including the scheme and public coordinates.
+// String returns a human-readable representation of the public key (scheme and coordinates).
 func (g *GXPublicKey) String() string {
 	sb := strings.Builder{}
 	sb.WriteString("ECC Public Key:\n")
@@ -299,7 +302,7 @@ func (g *GXPublicKey) String() string {
 	return sb.String()
 }
 
-// Determines whether the specified object is equal to the current GXPublicKey instance.
+// Equals reports whether the supplied object contains the same raw public key bytes.
 func (g *GXPublicKey) Equals(obj any) bool {
 	if o, ok := obj.(GXPublicKey); ok {
 		return bytes.Equal(g.rawValue, o.rawValue)
