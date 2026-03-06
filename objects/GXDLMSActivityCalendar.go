@@ -952,10 +952,9 @@ func (g *GXDLMSActivityCalendar) GetDataType(index int) (enums.DataType, error) 
 
 // NewGXDLMSActivityCalendar creates a new activity calendar object instance.
 //
-// The function validates `ln` before creating the object.
 // `ln` is the Logical Name and `sn` is the Short Name of the object.
-// An error is returned if the logical name is invalid per COSEM
-// rules.
+// The function validates `ln` before creating the object and
+// an error is returned if the logical name is invalid per COSEM rules.
 func NewGXDLMSActivityCalendar(ln string, sn int16) (*GXDLMSActivityCalendar, error) {
 	err := ValidateLogicalName(ln)
 	if err != nil {

@@ -707,13 +707,13 @@ func Asn1GetCertificateType(data []byte, seq GXAsn1Sequence) (enums.PkcsType, er
 			seq = ps
 		}
 	}
-	if _, ok := seq[0].(GXAsn1Sequence); ok {
+	if _, ok := seq[0].(*GXAsn1Sequence); ok {
 		_, err := NewGXx509Certificate(data)
 		if err == nil {
 			return enums.PkcsTypex509Certificate, nil
 		}
 	}
-	if _, ok := seq[0].(GXAsn1Sequence); ok {
+	if _, ok := seq[0].(*GXAsn1Sequence); ok {
 		_, err := NewGXPkcs10(data)
 		if err == nil {
 			return enums.PkcsTypePkcs10, nil

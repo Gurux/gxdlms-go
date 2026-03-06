@@ -39,9 +39,20 @@ Development
 
 You do not necessary need to use Gurux media component like gurux.net or gurux.serial 
 You can use any connection library you want to.
-Gurux.DLMS classes only generate and parse the DLMS data.
+gxdlms-go classes only generate and parse the DLMS data.
 
-You can get [source codes](https://github.com/Gurux/gxdlms-go)
+You can get source codes from http://www.github.com/gurux/gxdlms-go or add reference to your project:
+
+For complete API documentation refer to the GoDoc site
+(https://pkg.go.dev/github.com/Gurux/gxdlms-go). 
+Example client that reads DLMS meters (https://github.com/Gurux/examples-go).
+
+Installation
+============
+
+```go
+go get github.com/Gurux/gxdlms-go
+```
 
 Reading the meter
 =========================== 

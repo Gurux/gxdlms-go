@@ -69,7 +69,7 @@ type GXPkcs8 struct {
 // Constructor from byte array.
 func NewGXPkcs8(data []byte) (*GXPkcs8, error) {
 	ret := &GXPkcs8{}
-	err := ret.Init(data)
+	err := ret.init(data)
 	if err != nil {
 		return nil, err
 	}
@@ -139,19 +139,19 @@ func (g *GXPkcs8) encoded() ([]byte, error) {
 	return g._rawData, nil
 }
 
-func (g *GXPkcs8) Init(data []byte) error {
+func (g *GXPkcs8) init(data []byte) error {
 	g._rawData = data
 	ret, err := Asn1FromByteArray(data)
 	if err != nil {
 		return err
 	}
-	seq := ret.(GXAsn1Sequence)
+	seq := *ret.(*GXAsn1Sequence)
 	var tmp GXAsn1Sequence
 	var tmp2 []any
 	if len(seq) < 3 {
 		return errors.New("Wrong number of elements in sequence.")
 	}
-	if _, ok := seq[0].(int8); ok {
+	if _, ok := seq[0].(int8); !ok {
 		type_, err := Asn1GetCertificateType(data, seq)
 		if err != nil {
 			return err
@@ -168,9 +168,10 @@ func (g *GXPkcs8) Init(data []byte) error {
 	if _, ok := seq[1].([]byte); ok {
 		return errors.New("Invalid Certificate. This looks more like private key, not PKCS 8.")
 	}
-	tmp = seq[1].(GXAsn1Sequence)
-	g.algorithm = X9ObjectIdentifierFromString(tmp[0].(string))
-	s := seq[2].(GXAsn1Sequence)
+	tmp = *seq[1].(*GXAsn1Sequence)
+	oi := tmp[0].(*GXAsn1ObjectIdentifier)
+	g.algorithm = X9ObjectIdentifierFromString(oi.String())
+	s := *seq[2].(*GXAsn1Sequence)
 	g.privateKey, err = PrivateKeyFromRawBytes(s[1].([]byte))
 	if err != nil {
 		return err
@@ -179,9 +180,9 @@ func (g *GXPkcs8) Init(data []byte) error {
 		return errors.New("Invalid private key.")
 	}
 	// If public key is not included.
-	tmp2 = ([]any)(seq[2].(GXAsn1Sequence))
+	tmp2 = ([]any)(*seq[2].(*GXAsn1Sequence))
 	if len(tmp2) > 2 {
-		bs := tmp2[2].(GXAsn1Context).Items[0].(GXBitString)
+		bs := tmp2[2].(*GXAsn1Context).Items[0].(*GXBitString)
 		g.publicKey, err = PublicKeyFromRawBytes(bs.Value())
 		if err != nil {
 			return err
@@ -287,7 +288,7 @@ func Pkcs8FromPem(data string) (*GXPkcs8, error) {
 //	PKCS 8
 func (g *GXPkcs8) FromHexString(data string) GXPkcs8 {
 	cert := GXPkcs8{}
-	cert.Init(HexToBytes(data))
+	cert.init(HexToBytes(data))
 	return cert
 }
 
@@ -304,7 +305,7 @@ func Pkcs8FromDer(der string) (*GXPkcs8, error) {
 		return nil, err
 	}
 	cert := GXPkcs8{}
-	err = cert.Init(key)
+	err = cert.init(key)
 	if err != nil {
 		return nil, err
 	}
