@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -45,7 +45,7 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// ECDSA asynchronous ciphering.
+// GXEcdsa provides helpers for ECDSA signing, verification, and key agreement.
 type GXEcdsa struct {
 	// Public key.
 	publicKey *GXPublicKey
@@ -56,6 +56,9 @@ type GXEcdsa struct {
 	curve *gxCurve
 }
 
+// NewGXEcdsaFromPublicKey creates an ECDSA helper from an existing public key.
+//
+// The returned object can be used to verify signatures.
 func NewGXEcdsaFromPublicKey(key *GXPublicKey) (*GXEcdsa, error) {
 	ret := GXEcdsa{}
 	var err error
@@ -67,6 +70,9 @@ func NewGXEcdsaFromPublicKey(key *GXPublicKey) (*GXEcdsa, error) {
 	return &ret, nil
 }
 
+// NewGXEcdsaFromPrivateKey creates an ECDSA helper from a private key.
+//
+// The returned object can be used to sign and verify data.
 func NewGXEcdsaFromPrivateKey(key *GXPrivateKey) (*GXEcdsa, error) {
 	ret := GXEcdsa{}
 	var err error
@@ -78,7 +84,7 @@ func NewGXEcdsaFromPrivateKey(key *GXPrivateKey) (*GXEcdsa, error) {
 	return &ret, nil
 }
 
-// schemeSize returns the get scheme size in bytes.
+// schemeSize returns the key size in bytes for the given ECDSA curve scheme.
 func schemeSize(scheme enums.Ecc) int {
 	if scheme == enums.EccP256 {
 		return 32
@@ -86,15 +92,15 @@ func schemeSize(scheme enums.Ecc) int {
 	return 48
 }
 
-// getRandomNumber returns the generate random number.
+// getRandomNumber returns a cryptographically secure random integer for the given curve scheme.
 //
 // Parameters:
 //
-//	N: N
+//	scheme: Curve scheme.
 //
 // Returns:
 //
-//	Random number.
+//	A random big integer and any error encountered.
 func getRandomNumber(scheme enums.Ecc) (*big.Int, error) {
 	size := schemeSize(scheme)
 	bytes := make([]byte, size)
@@ -105,7 +111,9 @@ func getRandomNumber(scheme enums.Ecc) (*big.Int, error) {
 	return new(big.Int).SetBytes(bytes), nil
 }
 
-// Sign returns the signature of the given data using the private key.
+// Sign computes an ECDSA signature over the provided data using the private key.
+//
+// The signature is returned as raw bytes in the form (r || s).
 //
 // Parameters:
 //
@@ -113,7 +121,7 @@ func getRandomNumber(scheme enums.Ecc) (*big.Int, error) {
 //
 // Returns:
 //
-//	Signature bytes or error.
+//	Signature bytes or an error.
 func (g *GXEcdsa) Sign(data []byte) ([]byte, error) {
 	if g.privateKey == nil {
 		return nil, fmt.Errorf("invalid private key")
@@ -167,15 +175,15 @@ func (g *GXEcdsa) Sign(data []byte) ([]byte, error) {
 	return signature.Array(), nil
 }
 
-// GenerateSecret returns the generate shared secret from public and private key.
+// GenerateSecret computes a shared secret using ECDH between the private key and the provided public key.
 //
 // Parameters:
 //
-//	publicKey: Public key.
+//	publicKey: Public key to use in the key agreement.
 //
 // Returns:
 //
-//	Generated secret.
+//	Shared secret bytes or an error.
 func (g *GXEcdsa) GenerateSecret(publicKey *GXPublicKey) ([]byte, error) {
 	if g.privateKey == nil {
 		return nil, errors.New("Invalid private key.")
@@ -210,11 +218,11 @@ func (g *GXEcdsa) GenerateSecret(publicKey *GXPublicKey) ([]byte, error) {
 	return ret.x.Bytes(), nil
 }
 
-// GenerateKeyPair returns the generate public and private key pair.
+// GXEcdsaGenerateKeyPair generates a new ECDSA public/private key pair for the given curve scheme.
 //
 // Returns:
 //
-//	Generated public and private keys.
+//	The generated public and private keys (wrapped in a key/value pair) or an error.
 func GXEcdsaGenerateKeyPair(scheme enums.Ecc) (*GXKeyValuePair[*GXPublicKey, *GXPrivateKey], error) {
 	raw, err := getRandomNumber(scheme)
 	if err != nil {
@@ -231,16 +239,16 @@ func GXEcdsaGenerateKeyPair(scheme enums.Ecc) (*GXKeyValuePair[*GXPublicKey, *GX
 	return NewGXKeyValuePair(pub, pk), nil
 }
 
-// Verify verifies that signature matches the data.
+// Verify checks whether the given signature is valid for the provided data.
 //
 // Parameters:
 //
-//	signature: Generated signature.
-//	data: Data to validate.
+//	signature: Signature bytes in (r || s) form.
+//	data: Data that was signed.
 //
 // Returns:
 //
-//	True if the signature is valid; otherwise, false.
+//	True if the signature is valid; otherwise false.
 func (g *GXEcdsa) Verify(signature []byte, data []byte) (bool, error) {
 	var msg *big.Int
 	if g.publicKey == nil {
@@ -297,8 +305,9 @@ func (g *GXEcdsa) Verify(signature []byte, data []byte) (bool, error) {
 	return tmp.x.Cmp(sigR) == 0, nil
 }
 
-// Validate returns the check that this is correct public key.
-// This method can be used to verify that public and private key are on the curve.
+// EcdsaValidate checks that the given public key lies on the expected elliptic curve.
+//
+// This can be used to verify that a public key is valid for the curve implied by its scheme.
 func EcdsaValidate(publicKey *GXPublicKey) error {
 	if publicKey == nil {
 		return errors.New("Invalid public key.")

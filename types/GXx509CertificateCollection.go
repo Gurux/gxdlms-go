@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -44,7 +44,10 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// List of x509 certificates.
+// GXx509CertificateCollection is a helper slice type for working with multiple X.509 certificates.
+//
+// It provides convenience lookup and filtering methods for common selection criteria,
+// such as serial number, common name, key usage, or system title.
 type GXx509CertificateCollection []*GXx509Certificate
 
 // Clear removes all certificates from the collection.
@@ -52,11 +55,9 @@ func (g *GXx509CertificateCollection) Clear() {
 	*g = (*g)[:0]
 }
 
-// Remove removes first occurrence of the specified certificate from the collection.
+// Remove deletes the first certificate from the collection that is pointer-equal to the given value.
 //
-// Parameters:
-//
-//	value: Certificate to remove.
+// The comparison is pointer-based (it checks for the same certificate instance).
 func (g *GXx509CertificateCollection) Remove(value *GXx509Certificate) {
 	for i, v := range *g {
 		if v == value {
@@ -66,15 +67,15 @@ func (g *GXx509CertificateCollection) Remove(value *GXx509Certificate) {
 	}
 }
 
-// Find returns the find public key certificate by public key.
+// Find returns the first certificate whose public key matches the provided certificate.
 //
 // Parameters:
 //
-//	key: X509 certificate to search for.
+//	key: An X.509 certificate whose public key is used for matching.
 //
 // Returns:
 //
-//	Certificate found or nil, if the certificate is not found.
+//	The matching certificate, or nil if none is found.
 func (g *GXx509CertificateCollection) Find(key *GXx509Certificate) *GXx509Certificate {
 	for _, it := range *g {
 		if it.PublicKey.Equals(key) {
@@ -84,16 +85,16 @@ func (g *GXx509CertificateCollection) Find(key *GXx509Certificate) *GXx509Certif
 	return nil
 }
 
-// FindBySerial returns the find public key certificate by serial number.
+// FindBySerial returns the first certificate matching the given serial number and issuer.
 //
 // Parameters:
 //
-//	serialNumber: X509 certificate serial number to search for.
-//	issuer: X509 certificate issuer.
+//	serialNumber: X.509 certificate serial number to search for.
+//	issuer: X.509 certificate issuer.
 //
 // Returns:
 //
-//	Found certificate or nil if certificate is not found.
+//	The matching certificate, or nil if none is found.
 func (g *GXx509CertificateCollection) FindBySerial(serialNumber *big.Int, issuer string) *GXx509Certificate {
 	for _, it := range *g {
 		if it.SerialNumber.Cmp(serialNumber) == 0 && it.Issuer == issuer {
@@ -103,16 +104,17 @@ func (g *GXx509CertificateCollection) FindBySerial(serialNumber *big.Int, issuer
 	return nil
 }
 
-// FindBySystemTitle returns the find public key certificate by system title.
+// FindBySystemTitle returns the first certificate whose subject matches the provided
+// system title (converted to a common name) and whose key usage matches the provided usage.
 //
 // Parameters:
 //
-//	systemTitle: System title.
+//	systemTitle: ASN.1 system title.
 //	usage: Key usage.
 //
 // Returns:
 //
-//	Found certificate or nil if certificate is not found.
+//	The matching certificate, or nil if none is found.
 func (g *GXx509CertificateCollection) FindBySystemTitle(systemTitle []byte, usage enums.KeyUsage) *GXx509Certificate {
 	var commonName string
 	if len(systemTitle) != 0 {
@@ -121,7 +123,7 @@ func (g *GXx509CertificateCollection) FindBySystemTitle(systemTitle []byte, usag
 	return g.FindByCommonName(commonName, usage)
 }
 
-// GetCertificates returns the find certificates by key usage.
+// GetCertificates returns all certificates in the collection that match the specified key usage.
 //
 // Parameters:
 //
@@ -129,7 +131,7 @@ func (g *GXx509CertificateCollection) FindBySystemTitle(systemTitle []byte, usag
 //
 // Returns:
 //
-//	>Found certificates.
+//	Slice of matching certificates (empty if none match).
 func (g *GXx509CertificateCollection) GetCertificates(usage enums.KeyUsage) []*GXx509Certificate {
 	certificates := []*GXx509Certificate{}
 	for _, it := range *g {
@@ -140,16 +142,17 @@ func (g *GXx509CertificateCollection) GetCertificates(usage enums.KeyUsage) []*G
 	return certificates
 }
 
-// FindByCommonName returns the find public key certificate by common name (CN).
+// FindByCommonName returns the first certificate whose subject contains the given
+// common name and that matches the specified key usage.
 //
 // Parameters:
 //
-//	commonName: Common name.
+//	commonName: Common name substring to match.
 //	usage: Key usage.
 //
 // Returns:
 //
-//	Found certificate or nil if certificate is not found.
+//	The matching certificate, or nil if none is found.
 func (g *GXx509CertificateCollection) FindByCommonName(commonName string, usage enums.KeyUsage) *GXx509Certificate {
 	for _, it := range *g {
 		if (usage == enums.KeyUsageNone || (it.KeyUsage&usage) != 0) && strings.Contains(it.Subject, commonName) {
@@ -159,7 +162,9 @@ func (g *GXx509CertificateCollection) FindByCommonName(commonName string, usage 
 	return nil
 }
 
-// Importx509Collection returns the import certificates from the given folder.
+// Importx509Collection reads X.509 certificates from the specified directory.
+//
+// Supported file extensions are .pem and .cer. Files that fail to load are skipped and logged.
 func Importx509Collection(path string) (GXx509CertificateCollection, error) {
 	entries, err := os.ReadDir(path)
 	if err != nil {

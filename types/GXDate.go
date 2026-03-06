@@ -40,12 +40,18 @@ import (
 	"golang.org/x/text/language"
 )
 
-// GXDate represents a COSEM date value where time fields are skipped.
+// GXDate represents a COSEM date-only value (time fields are skipped).
+//
+// It embeds GXDateTime and configures the Skip flags so that hour/minute/second
+// and timezone components are omitted when formatting or serializing.
 type GXDate struct {
 	GXDateTime
 }
 
-// NewGXDateFromString creates a GXDate by parsing the given string.
+// NewGXDateFromString parses a date string and returns a GXDate instance.
+//
+// The returned value will have its time and timezone components skipped, and the
+// parsing uses the provided language tag to determine date formatting rules.
 func NewGXDateFromString(value string, language *language.Tag) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Skip = enums.DateTimeSkipsHour | enums.DateTimeSkipsMinute | enums.DateTimeSkipsSecond | enums.DateTimeSkipsDeviation | enums.DateTimeSkipsMs
@@ -56,7 +62,9 @@ func NewGXDateFromString(value string, language *language.Tag) (*GXDate, error) 
 	return ret, err
 }
 
-// NewGXDateFromTime creates a GXDate from time.Time.
+// NewGXDateFromTime creates a GXDate from a Go time.Time.
+//
+// The time components are ignored and the returned value will represent only the date.
 func NewGXDateFromTime(value time.Time) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Value = value
@@ -74,6 +82,9 @@ func NewGXDateFromDateTime(value *GXDateTime) *GXDate {
 }
 
 // NewGXDate creates a GXDate from year, month, and day.
+//
+// The returned value always skips time and timezone components and marks the day-of-week
+// as skipped as well.
 func NewGXDate(year int, month int, day int) (*GXDate, error) {
 	ret := &GXDate{}
 	ret.Value = time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)

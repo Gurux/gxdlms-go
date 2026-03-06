@@ -39,10 +39,10 @@ import (
 	"strings"
 )
 
-// This class is used to save arrays.
+// GXArray is a generic container used by DLMS/COSEM.
 type GXArray []any
 
-// String implements the fmt.Stringer interface.
+// String implements fmt.Stringer and formats the array as a comma-separated list.
 func (g GXArray) String() string {
 	var sb strings.Builder
 	sb.WriteString("{")

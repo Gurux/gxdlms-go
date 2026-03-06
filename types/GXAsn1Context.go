@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -36,17 +36,21 @@
 
 import "fmt"
 
-// GXAsn1Context ASN.1 context class.
+// GXAsn1Context represents a BER/DER context-specific tagged value.
+//
+// It is used when decoding ASN.1 data to store the items contained within a
+// context tag. The Index is the context tag number (0-15), and Constructed
+// indicates whether the tag is constructed (contains nested elements) or primitive.
 type GXAsn1Context struct {
-	//Context items.
+	// Items contains decoded child elements within the context.
 	Items []any
-	//Context index.
+	// Index is the numeric context tag identifier.
 	Index int
-	//Is constructed type.
+	// Constructed indicates whether the context tag is constructed (true) or primitive.
 	Constructed bool
 }
 
-// String implements the fmt.Stringer interface.
+// String implements fmt.Stringer and provides a brief debug representation.
 func (g *GXAsn1Context) String() string {
 	if g.Constructed {
 		return fmt.Sprintf("[%d] (Constructed) (%d) elem", g.Index, len(g.Items))
@@ -54,7 +58,7 @@ func (g *GXAsn1Context) String() string {
 	return fmt.Sprintf("[%d] (%d) elem", g.Index, len(g.Items))
 }
 
-// Constructor.
+// NewGXAsn1Context creates a new constructed ASN.1 context tag container.
 func NewGXAsn1Context() *GXAsn1Context {
 	return &GXAsn1Context{
 		Items:       make([]any, 0),

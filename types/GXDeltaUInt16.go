@@ -38,13 +38,14 @@ import (
 	"fmt"
 )
 
-// This class is used in DLMS delta UInt16 value.
+// GXDeltaUInt16 is used during DLMS parsing to represent a 16-bit unsigned delta value.
+// It implements fmt.Stringer for convenient formatting.
 type GXDeltaUInt16 struct {
-	// Delta value.
+	// Value is the 16-bit unsigned delta.
 	Value uint16
 }
 
-// String implements the fmt.Stringer interface.
+// String returns the decimal representation of the wrapped value.
 func (g GXDeltaUInt16) String() string {
 	return fmt.Sprint(g.Value)
 }

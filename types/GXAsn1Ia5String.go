@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -34,12 +34,15 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+// GXAsn1Ia5String represents an ASN.1 IA5String value.
+//
+// IA5String is a restricted character set (essentially 7-bit ASCII) used in ASN.1 encoding.
 type GXAsn1Ia5String struct {
-	// IA5 string.
+	// Value contains the decoded string.
 	Value string
 }
 
-// String implements the fmt.Stringer interface.
+// String implements fmt.Stringer.
 func (g *GXAsn1Ia5String) String() string {
 	return g.Value
 }

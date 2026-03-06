@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -41,13 +41,15 @@ import (
 	"github.com/Gurux/gxdlms-go/internal/buffer"
 )
 
-// ASN1 Public key.
+// GXAsn1PublicKey represents an ASN.1 public key encoded as a fixed-length byte array.
+//
+// This type is used when decoding X.509/PKCS keys embedded within ASN.1 structures.
 type GXAsn1PublicKey struct {
-	// Public key.
+	// value holds the raw public key bytes.
 	value []byte
 }
 
-// Public key.
+// Value returns the raw public key bytes.
 func (g *GXAsn1PublicKey) Value() []byte {
 	return g.value
 }
@@ -61,7 +63,7 @@ func (g *GXAsn1PublicKey) init(key []byte) error {
 	return nil
 }
 
-// String returns public key as hex string.
+// String implements fmt.Stringer and returns the hex encoding of the public key.
 func (g *GXAsn1PublicKey) String() string {
 	if len(g.value) == 0 {
 		return ""
@@ -69,6 +71,7 @@ func (g *GXAsn1PublicKey) String() string {
 	return buffer.ToHex(g.value, false)
 }
 
+// NewGXAsn1PublicKey creates a GXAsn1PublicKey from the raw public key bytes.
 func NewGXAsn1PublicKey(key []byte) (*GXAsn1PublicKey, error) {
 	g := &GXAsn1PublicKey{}
 	err := g.init(key)
@@ -78,6 +81,7 @@ func NewGXAsn1PublicKey(key []byte) (*GXAsn1PublicKey, error) {
 	return g, nil
 }
 
+// NewGXAsn1PublicKeyFromBitString creates a public key from an ASN.1 BIT STRING.
 func NewGXAsn1PublicKeyFromBitString(data *GXBitString) (*GXAsn1PublicKey, error) {
 	if data == nil {
 		return nil, errors.New("data is nil")

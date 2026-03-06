@@ -1,4 +1,4 @@
-﻿package types
+package types
 
 //
 // --------------------------------------------------------------------------
@@ -46,7 +46,13 @@ import (
 	"github.com/Gurux/gxdlms-go/enums"
 )
 
-// Private key.
+// GXPrivateKey represents an EC private key used in DLMS/COSEM security.
+//
+// It includes a referenced public key (when available) and optional system title
+// metadata used mainly for debugging.
+//
+// The private key bytes are stored in rawValue, and scheme indicates whether the key is
+// P-256 or P-384.
 type GXPrivateKey struct {
 	// Used scheme.
 	scheme enums.Ecc
@@ -56,30 +62,24 @@ type GXPrivateKey struct {
 
 	publicKey *GXPublicKey
 
-	// SystemTitle is an extra information that can be used in debugging.
-	// SystemTitle is not serialized.
+	// SystemTitle is extra information that can be used in debugging.
+	// It is not serialized.
 	SystemTitle []byte
 }
 
-// Used scheme.
+// Scheme returns the ECC curve scheme used by the key.
 func (g *GXPrivateKey) Scheme() enums.Ecc {
 	return g.scheme
 }
 
-// Private key raw value.
+// RawValue returns the private key bytes.
 func (g *GXPrivateKey) RawValue() []byte {
 	return g.rawValue
 }
 
-// FromRawBytes returns the create the private key from raw bytes.
+// PrivateKeyFromRawBytes creates a GXPrivateKey from raw private key bytes.
 //
-// Parameters:
-//
-//	key: Raw data
-//
-// Returns:
-//
-//	Private key.
+// The length of key must be either 32 (P-256) or 48 (P-384).
 func PrivateKeyFromRawBytes(key []byte) (*GXPrivateKey, error) {
 	value := GXPrivateKey{}
 	// If private key is given
@@ -95,15 +95,9 @@ func PrivateKeyFromRawBytes(key []byte) (*GXPrivateKey, error) {
 	return &value, nil
 }
 
-// FromDer returns the create the private key from DER.
+// PrivateKeyFromDer parses a DER-encoded (base64) private key and returns a GXPrivateKey.
 //
-// Parameters:
-//
-//	key: DER Base64 coded string.
-//
-// Returns:
-//
-//	Private key.
+// The DER payload is expected to follow PKCS#8 private key encoding.
 func PrivateKeyFromDer(der string) (*GXPrivateKey, error) {
 	der = strings.ReplaceAll(der, "\r\n", "")
 	der = strings.ReplaceAll(der, "\n", "")
@@ -156,15 +150,9 @@ func PrivateKeyFromDer(der string) (*GXPrivateKey, error) {
 	return &value, nil
 }
 
-// FromPem returns the create the private key from PEM.
+// PrivateKeyFromPem parses a PEM-encoded private key string and returns a GXPrivateKey.
 //
-// Parameters:
-//
-//	pem: PEM in Base64 coded string.
-//
-// Returns:
-//
-//	Private key.
+// The input should include the "-----BEGIN PRIVATE KEY-----" and "-----END PRIVATE KEY-----" markers.
 func PrivateKeyFromPem(pem string) (*GXPrivateKey, error) {
 	pem = strings.ReplaceAll(pem, "\r\n", "\n")
 	const START = "-----BEGIN PRIVATE KEY-----"
@@ -181,15 +169,7 @@ func PrivateKeyFromPem(pem string) (*GXPrivateKey, error) {
 	return PrivateKeyFromDer(pem[0:index])
 }
 
-// PrivateKeyLoad returns the create the private key from PEM file.
-//
-// Parameters:
-//
-//	path: Path to the PEM file.
-//
-// Returns:
-//
-//	Private key.
+// PrivateKeyLoad reads a PEM file from disk and returns the decoded GXPrivateKey.
 func PrivateKeyLoad(path string) (*GXPrivateKey, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -198,11 +178,7 @@ func PrivateKeyLoad(path string) (*GXPrivateKey, error) {
 	return PrivateKeyFromPem(string(data))
 }
 
-// Save returns the save private key to PEM file.
-//
-// Parameters:
-//
-//	path: File path.
+// Save writes the private key to a PEM file at the provided path.
 func (g *GXPrivateKey) Save(path string) error {
 	ret, err := g.ToPem()
 	if err != nil {
@@ -211,7 +187,7 @@ func (g *GXPrivateKey) Save(path string) error {
 	return os.WriteFile(path, []byte(ret), 0644)
 }
 
-// ToDer returns the get private key as DER format.
+// ToDer encodes the private key in DER (PKCS#8) format and returns it as a base64 string.
 func (g *GXPrivateKey) ToDer() (string, error) {
 	d := GXAsn1Sequence{}
 	d = append(d, int8(enums.CertificateVersionVersion2))
@@ -244,7 +220,7 @@ func (g *GXPrivateKey) ToDer() (string, error) {
 	return base64.StdEncoding.EncodeToString(v), nil
 }
 
-// ToPem returns the get private key as PEM format.
+// ToPem returns the private key in PEM format.
 func (g *GXPrivateKey) ToPem() (string, error) {
 	ret, err := g.ToDer()
 	if err != nil {
@@ -253,11 +229,9 @@ func (g *GXPrivateKey) ToPem() (string, error) {
 	return "-----BEGIN EC PRIVATE KEY-----\n" + ret + "\n-----END EC PRIVATE KEY-----", nil
 }
 
-// GetPublicKey returns the get public key from private key.
+// GetPublicKey returns the corresponding public key for this private key.
 //
-// Returns:
-//
-//	Public key.
+// The public key is derived from the private key if it has not already been computed.
 func (g *GXPrivateKey) GetPublicKey() (*GXPublicKey, error) {
 	if g.publicKey == nil {
 		// Public key = private key multiple by curve.G.
@@ -292,16 +266,12 @@ func (g *GXPrivateKey) GetPublicKey() (*GXPublicKey, error) {
 	return g.publicKey, nil
 }
 
-// ToHex returns the the private key as a hex string.
-//
-// Returns:
-//
-//	Private key as hex string.
+// ToHex returns the private key bytes as a hexadecimal string.
 func (g *GXPrivateKey) ToHex() string {
 	return ToHex(g.rawValue, true)
 }
 
-// Determines whether the specified object is equal to the current GXPrivateKey instance.
+// Equals reports whether obj represents the same private key.
 func (g *GXPrivateKey) Equals(obj any) bool {
 	if o, ok := obj.(GXPrivateKey); ok {
 		return bytes.Equal(g.rawValue, o.rawValue)
@@ -309,7 +279,7 @@ func (g *GXPrivateKey) Equals(obj any) bool {
 	return false
 }
 
-// Returns a string that represents the current elliptic curve private key.
+// String implements fmt.Stringer by returning the key as a hex string.
 func (g *GXPrivateKey) String() string {
 	return g.ToHex()
 }

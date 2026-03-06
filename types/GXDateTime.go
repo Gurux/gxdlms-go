@@ -44,21 +44,30 @@ import (
 	"golang.org/x/text/language"
 )
 
-// GXDateTime represents a COSEM date-time value where selected fields can be skipped.
+// GXDateTime represents a COSEM date/time value where individual fields can be omitted (skipped).
+//
+// It wraps a Go time.Time and provides COSEM-specific serialization and parsing behavior,
+// including support for skipping year/month/day/hour/minute/second fields, handling meter
+// timezone formatting, and encoding additional clock status info.
+//
+// The Skip field controls which components are treated as omitted when converting to/from
+// string or binary representations. The Extra field carries COSEM-specific markers such as
+// DST transition hints or "last day" rules. DayOfWeek and Status reflect additional clock
+// state information.
 type GXDateTime struct {
-	// Used date time value.
+	// Value is the underlying date/time value.
 	Value time.Time
 
-	// Skip selected date time fields.
+	// Skip indicates which date/time fields are omitted.
 	Skip enums.DateTimeSkips
 
-	// Date time extra information.
+	// Extra provides COSEM date/time extra information (DST begin/end, last day markers).
 	Extra enums.DateTimeExtraInfo
 
-	// Day of week.
+	// DayOfWeek is the COSEM day-of-week value (1=Monday..7=Sunday), or 0xFF if unknown.
 	DayOfWeek int
 
-	// Status of the clock.
+	// Status indicates the clock status (e.g. daylight saving active).
 	Status enums.ClockStatus
 }
 
@@ -162,7 +171,11 @@ func remove(value string, tag string, sep string) string {
 	return value
 }
 
-// String returns the date-time as a localized string using local time.
+// String implements fmt.Stringer and returns a localized string representation of the value.
+//
+// It formats the value in the current locale (when language is nil) and uses the local
+// timezone. Skipped components (such as year, month, day, hour, minute, second) are
+// rendered as '*' according to COSEM conventions.
 func (g *GXDateTime) String() string {
 	return g.ToString(nil, true)
 }
@@ -205,8 +218,13 @@ func detectSeparators(layout string, timeSeparator *string, dateSeparator *strin
 	}
 }
 
-// ToString returns the date-time formatted for the given language.
-// If useLocalTime is true, the value is formatted using the local timezone.
+// ToString returns a localized string representation of the date/time.
+//
+// The output format is selected based on the provided language tag. If language is nil,
+// the current system language is used. Skipped components are shown as '*' and the
+// formatting follows COSEM conventions.
+//
+// If useLocalTime is true, the value is converted to the local timezone before formatting.
 func (g *GXDateTime) ToString(language *language.Tag, useLocalTime bool) string {
 	return toString(g, language, useLocalTime, false)
 }
@@ -287,13 +305,19 @@ func toString(target any, language *language.Tag, useLocalTime bool, useFormat b
 	return value.Format(format)
 }
 
-// ToFormatString returns the date-time using a full fixed output format.
-// If useLocalTime is true, the value is formatted using the local timezone.
+// ToFormatString returns the date/time using a deterministic, fixed output format.
+//
+// The returned string is not localized (it always uses a consistent layout), but the
+// date/time components are still influenced by the Skip flags. If useLocalTime is true,
+// the value is converted to the local timezone before formatting.
 func (g *GXDateTime) ToFormatString(language *language.Tag, useLocalTime bool) string {
 	return toString(g, language, useLocalTime, true)
 }
 
-// ToFormatMeterString returns the date-time using meter timezone formatting.
+// ToFormatMeterString returns the date/time using meter timezone formatting.
+//
+// Meter timezone formatting uses a fixed layout and includes the meter's timezone offset
+// ("+/-HHMM"). This is typically required when interacting with DLMS/COSEM meters.
 func (g *GXDateTime) ToFormatMeterString(language *language.Tag) string {
 	return toString(g, language, false, true)
 }
@@ -542,7 +566,11 @@ func parseInternal(target any, value string, language *language.Tag) error {
 	return nil
 }
 
-// NewGXDateTimeFromString creates a GXDateTime by parsing the given string.
+// NewGXDateTimeFromString parses a string using COSEM date/time formatting rules and
+// returns a GXDateTime instance.
+//
+// The output format is determined by the provided language (if non-nil) and may include
+// skipped components represented as '*'.
 func NewGXDateTimeFromString(value string, language *language.Tag) (*GXDateTime, error) {
 	g := &GXDateTime{}
 	err := parseInternal(g, value, language)
@@ -552,7 +580,10 @@ func NewGXDateTimeFromString(value string, language *language.Tag) (*GXDateTime,
 	return g, nil
 }
 
-// NewGXDateTimeFromTime creates a GXDateTime from time.Time.
+// NewGXDateTimeFromTime creates a GXDateTime from a Go time.Time value.
+//
+// The resulting GXDateTime will not have any Skip flags set; it represents the full
+// date and time carried by the provided value.
 func NewGXDateTimeFromTime(value time.Time) *GXDateTime {
 	return &GXDateTime{Value: value}
 }
