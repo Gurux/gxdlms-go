@@ -35,12 +35,16 @@ package types
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/Gurux/gxdlms-go/enums"
 )
@@ -48,24 +52,17 @@ import (
 // GXEcdsa provides helpers for ECDSA signing, verification, and key agreement.
 type GXEcdsa struct {
 	// Public key.
-	publicKey *GXPublicKey
+	publicKey *ecdsa.PublicKey
 
 	// Private key.
-	privateKey *GXPrivateKey
-
-	curve *gxCurve
+	privateKey *ecdsa.PrivateKey
 }
 
 // NewGXEcdsaFromPublicKey creates an ECDSA helper from an existing public key.
 //
 // The returned object can be used to verify signatures.
-func NewGXEcdsaFromPublicKey(key *GXPublicKey) (*GXEcdsa, error) {
+func NewGXEcdsaFromPublicKey(key *ecdsa.PublicKey) (*GXEcdsa, error) {
 	ret := GXEcdsa{}
-	var err error
-	ret.curve, err = newGxCurve(key.scheme)
-	if err != nil {
-		return nil, err
-	}
 	ret.publicKey = key
 	return &ret, nil
 }
@@ -73,13 +70,8 @@ func NewGXEcdsaFromPublicKey(key *GXPublicKey) (*GXEcdsa, error) {
 // NewGXEcdsaFromPrivateKey creates an ECDSA helper from a private key.
 //
 // The returned object can be used to sign and verify data.
-func NewGXEcdsaFromPrivateKey(key *GXPrivateKey) (*GXEcdsa, error) {
+func NewGXEcdsaFromPrivateKey(key *ecdsa.PrivateKey) (*GXEcdsa, error) {
 	ret := GXEcdsa{}
-	var err error
-	ret.curve, err = newGxCurve(key.scheme)
-	if err != nil {
-		return nil, err
-	}
 	ret.privateKey = key
 	return &ret, nil
 }
@@ -92,23 +84,14 @@ func schemeSize(scheme enums.Ecc) int {
 	return 48
 }
 
-// getRandomNumber returns a cryptographically secure random integer for the given curve scheme.
-//
-// Parameters:
-//
-//	scheme: Curve scheme.
-//
-// Returns:
-//
-//	A random big integer and any error encountered.
-func getRandomNumber(scheme enums.Ecc) (*big.Int, error) {
-	size := schemeSize(scheme)
-	bytes := make([]byte, size)
-	_, err := rand.Read(bytes)
+func PublicKeyFromECDSAPrivate(priv *ecdsa.PrivateKey) (*ecdsa.PublicKey, error) {
+	ecdhPriv, err := priv.ECDH()
 	if err != nil {
 		return nil, err
 	}
-	return new(big.Int).SetBytes(bytes), nil
+
+	raw := ecdhPriv.PublicKey().Bytes()
+	return ecdsa.ParseUncompressedPublicKey(priv.Curve, raw)
 }
 
 // Sign computes an ECDSA signature over the provided data using the private key.
@@ -126,53 +109,29 @@ func (g *GXEcdsa) Sign(data []byte) ([]byte, error) {
 	if g.privateKey == nil {
 		return nil, fmt.Errorf("invalid private key")
 	}
-	var msg *big.Int
-	switch g.privateKey.scheme {
-	case enums.EccP256:
-		hash := sha256.Sum256(data)
-		msg = new(big.Int).SetBytes(hash[:])
-	case enums.EccP384:
-		hash := sha512.Sum384(data)
-		msg = new(big.Int).SetBytes(hash[:])
+	pub, err := PublicKeyFromECDSAPrivate(g.privateKey)
+	if err != nil {
+		return nil, err
+	}
+	if pub == nil {
+		return nil, errors.New("invalid public key")
+	}
+	var digest []byte
+	switch g.privateKey.Curve.Params().BitSize {
+	case 256:
+		sum := sha256.Sum256(data)
+		digest = sum[:]
+	case 384:
+		sum := sha512.Sum384(data)
+		digest = sum[:]
 	default:
-		return nil, fmt.Errorf("invalid private key scheme")
+		return nil, errors.New("unsupported ECC scheme")
 	}
-
-	// R = k * G, r = R[x]
-	k, err := getRandomNumber(g.privateKey.scheme)
+	sig, err := ecdsa.SignASN1(rand.Reader, g.privateKey, digest)
 	if err != nil {
 		return nil, err
 	}
-
-	pk := new(big.Int).SetBytes(g.privateKey.rawValue)
-	R := gxEccPoint{x: new(big.Int), y: new(big.Int)}
-	shamirsPointMulti(g.curve, &R, &g.curve.g, k)
-
-	r := new(big.Int).Set(R.x)
-	r.Mod(r, g.curve.n)
-
-	// s = (k^-1 * (e + d * r)) mod n
-	s := new(big.Int).Set(pk)
-	s.Mul(s, r)
-	s.Add(s, msg)
-
-	kinv := new(big.Int).ModInverse(k, g.curve.n)
-	if kinv == nil {
-		return nil, fmt.Errorf("failed to compute modular inverse")
-	}
-	s.Mul(s, kinv)
-	s.Mod(s, g.curve.n)
-
-	signature := GXByteBuffer{}
-	err = signature.Set(r.Bytes())
-	if err != nil {
-		return nil, err
-	}
-	err = signature.Set(s.Bytes())
-	if err != nil {
-		return nil, err
-	}
-	return signature.Array(), nil
+	return sig, nil
 }
 
 // GenerateSecret computes a shared secret using ECDH between the private key and the provided public key.
@@ -184,38 +143,29 @@ func (g *GXEcdsa) Sign(data []byte) ([]byte, error) {
 // Returns:
 //
 //	Shared secret bytes or an error.
-func (g *GXEcdsa) GenerateSecret(publicKey *GXPublicKey) ([]byte, error) {
+func (g *GXEcdsa) GenerateSecret(publicKey *ecdsa.PublicKey) ([]byte, error) {
 	if g.privateKey == nil {
 		return nil, errors.New("Invalid private key.")
 	}
-	if g.privateKey.scheme != publicKey.Scheme() {
+	if publicKey == nil {
+		return nil, errors.New("invalid public key")
+	}
+	if g.privateKey.Curve.Params().BitSize != publicKey.Curve.Params().BitSize {
 		return nil, errors.New("Private key scheme is different than public key.")
 	}
-	pk := new(big.Int).SetBytes(g.privateKey.rawValue)
-	bb := GXByteBuffer{}
-	err := bb.Set(publicKey.RawValue())
+	ecdhPriv, err := g.privateKey.ECDH()
 	if err != nil {
 		return nil, err
 	}
-	size := schemeSize(g.privateKey.scheme)
-	v, err := bb.SubArray(1, size)
+	ecdhPub, err := publicKey.ECDH()
 	if err != nil {
 		return nil, err
 	}
-	x := new(big.Int).SetBytes(v)
-	v, err = bb.SubArray(1+size, size)
+	secret, err := ecdhPriv.ECDH(ecdhPub)
 	if err != nil {
 		return nil, err
 	}
-	y := new(big.Int).SetBytes(v)
-	p := &gxEccPoint{x, y}
-	curve, err := newGxCurve(g.privateKey.scheme)
-	if err != nil {
-		return nil, err
-	}
-	ret := &gxEccPoint{}
-	shamirsPointMulti(curve, ret, p, pk)
-	return ret.x.Bytes(), nil
+	return secret, nil
 }
 
 // GXEcdsaGenerateKeyPair generates a new ECDSA public/private key pair for the given curve scheme.
@@ -223,16 +173,20 @@ func (g *GXEcdsa) GenerateSecret(publicKey *GXPublicKey) ([]byte, error) {
 // Returns:
 //
 //	The generated public and private keys (wrapped in a key/value pair) or an error.
-func GXEcdsaGenerateKeyPair(scheme enums.Ecc) (*GXKeyValuePair[*GXPublicKey, *GXPrivateKey], error) {
-	raw, err := getRandomNumber(scheme)
+func GXEcdsaGenerateKeyPair(scheme enums.Ecc) (*GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey], error) {
+
+	var curve elliptic.Curve
+	switch scheme {
+	case enums.EccP256:
+		curve = elliptic.P256()
+	case enums.EccP384:
+		curve = elliptic.P384()
+	}
+	pk, err := ecdsa.GenerateKey(curve, rand.Reader)
 	if err != nil {
 		return nil, err
 	}
-	pk, err := PrivateKeyFromRawBytes(raw.Bytes())
-	if err != nil {
-		return nil, err
-	}
-	pub, err := pk.GetPublicKey()
+	pub, err := PublicKeyFromECDSAPrivate(pk)
 	if err != nil {
 		return nil, err
 	}
@@ -250,99 +204,146 @@ func GXEcdsaGenerateKeyPair(scheme enums.Ecc) (*GXKeyValuePair[*GXPublicKey, *GX
 //
 //	True if the signature is valid; otherwise false.
 func (g *GXEcdsa) Verify(signature []byte, data []byte) (bool, error) {
-	var msg *big.Int
 	if g.publicKey == nil {
 		if g.privateKey == nil {
 			return false, fmt.Errorf("invalid private key")
 		}
 		var err error
-		g.publicKey, err = g.privateKey.GetPublicKey()
+		g.publicKey, err = PublicKeyFromECDSAPrivate(g.privateKey)
 		if err != nil {
 			return false, err
 		}
 	}
-	if g.publicKey.scheme == enums.EccP256 {
-		hash := sha256.Sum256(data)
-		msg = new(big.Int).SetBytes(hash[:])
-	} else {
-		hash := sha512.Sum384(data)
-		msg = new(big.Int).SetBytes(hash[:])
-	}
-
-	bb := GXByteBuffer{}
-	err := bb.Set(signature)
+	var digest []byte
+	var size int
+	sc, err := PublicKeyScheme(g.publicKey)
 	if err != nil {
 		return false, err
 	}
-
-	size := schemeSize(g.publicKey.scheme)
-	sigRBytes, err := bb.SubArray(0, size)
-	if err != nil {
-		return false, err
+	switch sc {
+	case enums.EccP256:
+		sum := sha256.Sum256(data)
+		//Convert array to slice ([]byte).
+		digest = sum[:]
+		size = 32
+	case enums.EccP384:
+		sum := sha512.Sum384(data)
+		//Convert array to slice ([]byte).
+		digest = sum[:]
+		size = 48
+	default:
+		return false, errors.New("unsupported ECC scheme")
 	}
-	sigR := new(big.Int).SetBytes(sigRBytes)
-
-	sigSBytes, err := bb.SubArray(size, size)
-	if err != nil {
-		return false, err
-	}
-	sigS := new(big.Int).SetBytes(sigSBytes)
-
-	w := new(big.Int).Set(sigS)
-	w.ModInverse(w, g.curve.n)
-	if w == nil {
-		return false, fmt.Errorf("failed to compute modular inverse")
-	}
-	u1 := new(big.Int).Set(msg)
-	u1.Mul(u1, w)
-	u1.Mod(u1, g.curve.n)
-	u2 := new(big.Int).Set(sigR)
-	u2.Mul(u2, w)
-	u2.Mod(u2, g.curve.n)
-	tmp := gxEccPoint{x: new(big.Int), y: new(big.Int)}
-	shamirsTrick(g.curve, g.publicKey, &tmp, u1, u2)
-	tmp.x.Mod(tmp.x, g.curve.n)
-	return tmp.x.Cmp(sigR) == 0, nil
+	r := new(big.Int).SetBytes(signature[:size])
+	s := new(big.Int).SetBytes(signature[size:])
+	ok := ecdsa.Verify(g.publicKey, digest, r, s)
+	return ok, nil
 }
 
-// EcdsaValidate checks that the given public key lies on the expected elliptic curve.
-//
-// This can be used to verify that a public key is valid for the curve implied by its scheme.
-func EcdsaValidate(publicKey *GXPublicKey) error {
-	if publicKey == nil {
-		return errors.New("Invalid public key.")
+func PublicKeyScheme(key *ecdsa.PublicKey) (enums.Ecc, error) {
+	switch key.Curve.Params().BitSize {
+	case 256:
+		return enums.EccP256, nil
+	case 384:
+		return enums.EccP384, nil
+	default:
+		return enums.EccP256, errors.New("unsupported ECC scheme")
 	}
-	bb := GXByteBuffer{}
-	err := bb.Set(publicKey.RawValue())
+}
+
+func PrivateKeyScheme(key *ecdsa.PrivateKey) (enums.Ecc, error) {
+	switch key.Curve.Params().BitSize {
+	case 256:
+		return enums.EccP256, nil
+	case 384:
+		return enums.EccP384, nil
+	default:
+		return enums.EccP256, errors.New("unsupported ECC scheme")
+	}
+}
+
+func PrivateKeyFromRawBytes(raw []byte) (*ecdsa.PrivateKey, error) {
+	var curve elliptic.Curve
+	switch 8 * len(raw) {
+	case 256:
+		curve = elliptic.P256()
+	case 384:
+		curve = elliptic.P384()
+	default:
+		return nil, errors.New("unsupported ECC scheme")
+	}
+	d := new(big.Int).SetBytes(raw)
+	priv := &ecdsa.PrivateKey{
+		D: d,
+	}
+	priv.Curve = curve
+	ret, err := PublicKeyFromECDSAPrivate(priv)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	size := schemeSize(publicKey.Scheme())
-	v, err := bb.SubArray(1, size)
+	priv.PublicKey = *ret
+	return priv, nil
+}
+
+func PublicKeyFromRawBytes(raw []byte) (*ecdsa.PublicKey, error) {
+	var curve elliptic.Curve
+	switch len(raw) {
+	case 65, 64:
+		//Compression tag is not send in DLMS messages and size is 64.
+		curve = elliptic.P256()
+	case 97, 96:
+		//Compression tag is not send in DLMS messages and size is 96.
+		curve = elliptic.P384()
+	default:
+		return nil, errors.New("unsupported ECC scheme")
+	}
+	pub, err := ecdsa.ParseUncompressedPublicKey(curve, raw)
 	if err != nil {
-		return err
+		return nil, errors.New("public key validate failed. public key is not valid ECDSA public key")
 	}
-	x := new(big.Int).SetBytes(v)
-	v, err = bb.SubArray(1+size, size)
-	if err != nil {
-		return err
+	return pub, nil
+}
+
+func PrivateKeyToBytes(priv *ecdsa.PrivateKey) []byte {
+	size := (priv.Curve.Params().BitSize + 7) / 8
+	b := priv.D.Bytes()
+	data := make([]byte, size)
+	copy(data[size-len(b):], b)
+	return data
+}
+
+func PublicKeyToBytes(pub *ecdsa.PublicKey) []byte {
+	data := pub.X.Bytes()
+	size := (pub.Curve.Params().BitSize + 7) / 8
+	if len(data) < size {
+		newData := make([]byte, size)
+		copy(newData[size-len(data):], data)
+		data = newData
 	}
-	y := new(big.Int).SetBytes(v)
-	curve, err := newGxCurve(publicKey.Scheme())
-	if err != nil {
-		return err
+	return data
+}
+
+func PrivateKeyToHex(value *ecdsa.PrivateKey) string {
+	if value == nil {
+		return ""
 	}
-	y.Mul(y, y)
-	y.Mod(y, curve.p)
-	tmpX := new(big.Int).Set(x)
-	tmpX.Mul(x, x)
-	tmpX.Mod(tmpX, curve.p)
-	tmpX.Add(tmpX, curve.a)
-	tmpX.Mul(x, x)
-	tmpX.Add(tmpX, curve.b)
-	tmpX.Mod(tmpX, curve.p)
-	if y.Cmp(tmpX) != 0 {
-		return errors.New("Public key validate failed. Public key is not valid ECDSA public key.")
+	size := (value.Curve.Params().BitSize + 7) / 8
+	b := value.D.Bytes()
+	data := make([]byte, size)
+	copy(data[size-len(b):], b)
+	return strings.ToUpper(hex.EncodeToString(data))
+}
+
+func PublicKeyToHex(value *ecdsa.PublicKey) string {
+	if value == nil {
+		return ""
 	}
-	return nil
+	data := value.X.Bytes()
+	size := (value.Curve.Params().BitSize + 7) / 8
+	if len(data) < size {
+		newData := make([]byte, size)
+		copy(newData[size-len(data):], data)
+		data = newData
+	}
+	return strings.ToUpper(hex.EncodeToString(data))
 }

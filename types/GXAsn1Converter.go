@@ -47,14 +47,8 @@ import (
 	"github.com/Gurux/gxdlms-go/internal/constants"
 )
 
-// GXAsn1Converter is a helper for encoding/decoding ASN.1 structures used in DLMS/COSEM.
-//
-// It is primarily used for converting public/private keys, certificates, and other ASN.1 encoded
-// objects between byte representations and Go values.
-type GXAsn1Converter struct {
-}
-
-// getValue parses ASN.1 BER/DER encoded data from a byte buffer and appends parsed objects.
+// getValue parses ASN.1 BER/DER data from bb and appends decoded values
+// to objects.
 //
 // It supports ASN.1 structures such as sequences, sets, context-specific tags, OIDs, strings,
 // integers, time values, and more.
@@ -179,31 +173,25 @@ func getValue(bb *GXByteBuffer, objects *[]any, s *gxAsn1Settings, getNext bool)
 			s.Append(oi.String())
 		}
 
-	case uint8(constants.BerTypePrintableString):
-		str, err := bb.StringWithRange(bb.Position(), len_)
+	case uint8(constants.BerTypePrintableString), uint8(constants.BerTypeBmpString):
+		tmp := make([]byte, len_)
+		err := bb.Get(tmp)
 		if err != nil {
 			return err
 		}
-		*objects = append(*objects, str)
-		if s != nil {
-			s.Append(str)
-		}
-
-	case uint8(constants.BerTypeBmpString):
-		str, err := bb.StringWithRange(bb.Position(), len_)
-		if err != nil {
-			return err
-		}
+		str := string(tmp)
 		*objects = append(*objects, str)
 		if s != nil {
 			s.Append(str)
 		}
 
 	case uint8(constants.BerTypeUtf8String):
-		str, err := bb.StringWithRange(bb.Position(), len_)
+		tmp := make([]byte, len_)
+		err := bb.Get(tmp)
 		if err != nil {
 			return err
 		}
+		str := string(tmp)
 		utf8Str := NewGXAsn1Utf8String(str)
 		*objects = append(*objects, utf8Str)
 		if s != nil {
@@ -211,10 +199,12 @@ func getValue(bb *GXByteBuffer, objects *[]any, s *gxAsn1Settings, getNext bool)
 		}
 
 	case uint8(constants.BerTypeIa5String):
-		str, err := bb.StringWithRange(bb.Position(), len_)
+		tmp := make([]byte, len_)
+		err := bb.Get(tmp)
 		if err != nil {
 			return err
 		}
+		str := string(tmp)
 		ia5Str := &GXAsn1Ia5String{Value: str}
 		*objects = append(*objects, ia5Str)
 		if s != nil {
@@ -254,12 +244,12 @@ func getValue(bb *GXByteBuffer, objects *[]any, s *gxAsn1Settings, getNext bool)
 		*objects = append(*objects, nil)
 
 	case uint8(constants.BerTypeBitString):
-		bitData, err := bb.SubArray(bb.Position(), len_)
+		bitData := make([]byte, len_)
+		err := bb.Get(bitData)
 		if err != nil {
 			return err
 		}
-		bb.SetPosition(bb.Position() + len_)
-		bitStr, err := NewGXBitString(bitData, 0)
+		bitStr, err := NewGXBitStringFromByteArray(bitData)
 		if err != nil {
 			return err
 		}
@@ -359,6 +349,7 @@ func getValue(bb *GXByteBuffer, objects *[]any, s *gxAsn1Settings, getNext bool)
 	return nil
 }
 
+// getUtcTime parses an ASN.1 UTCTime string and returns the corresponding time.
 func getUtcTime(dateString string) (time.Time, error) {
 	v, err := strconv.Atoi(dateString[0:2])
 	if err != nil {
@@ -407,6 +398,9 @@ func getUtcTime(dateString string) (time.Time, error) {
 	return time.Date(year, time.Month(month), day, hour, minute, second, 0, time.UTC), nil
 }
 
+// getGeneralizedTime parses an ASN.1 GeneralizedTime string.
+//
+// It returns the parsed time and the timezone offset in minutes.
 func getGeneralizedTime(dateString string) (time.Time, int, error) {
 	if len(dateString) < 12 {
 		return time.Time{}, 0, fmt.Errorf("dateString too short: %q", dateString)
@@ -468,6 +462,7 @@ func getGeneralizedTime(dateString string) (time.Time, int, error) {
 	return t, offsetMinutes, nil
 }
 
+// dateToString formats a time as an ASN.1 UTCTime string in UTC.
 func dateToString(date time.Time) string {
 	sb := strings.Builder{}
 	sb.WriteString(fmt.Sprintf("%02d", date.Year()-2000))
@@ -480,16 +475,16 @@ func dateToString(date time.Time) string {
 	return sb.String()
 }
 
-// getBytes returns the add ASN1 object to byte buffer.
+// getBytes serializes target as ASN.1 and appends it to bb.
 //
 // Parameters:
 //
-//	bb: Byte buffer where ANS1 object is serialized.
-//	target: ANS1 object
+//	bb: Byte buffer where the ASN.1 object is serialized.
+//	target: ASN.1 object to serialize.
 //
 // Returns:
 //
-//	Size of object.
+//	Number of bytes written.
 func getBytes(bb *GXByteBuffer, target any) (int, error) {
 	cnt := 0
 	tmp := GXByteBuffer{}
@@ -670,40 +665,49 @@ func getBytes(bb *GXByteBuffer, target any) (int, error) {
 	return bb.Size() - start, nil
 }
 
-// Asn1GetSubject converts an ASN.1 subject sequence into a human-readable string.
+// Asn1GetSubject converts an ASN.1 subject sequence to a human-readable
+// subject string.
 //
 // The input should be a sequence of key/value pairs (GXKeyValuePair) where keys are
 // OID strings (e.g., "2.5.4.3" for commonName). The returned string has the form
-// "CN=... , O=...".
+// "CN=..., O=...".
 func Asn1GetSubject(values *GXAsn1Sequence) string {
 	sb := strings.Builder{}
 	for _, v := range *values {
-		it := v.(GXKeyValuePair[any, any])
-		sb.WriteString(X509NameFromString(it.Key.(string)).String())
+		it := v.(*GXKeyValuePair[interface{}, interface{}])
+		k := it.Key.(*GXAsn1ObjectIdentifier)
+		sb.WriteString(X509NameFromString(k.String()).String())
 		sb.WriteString("=")
-		sb.WriteString(fmt.Sprintf("%v", it.Value))
+		switch v := it.Value.(type) {
+		case string:
+			sb.WriteString(v)
+		case *GXAsn1Utf8String:
+			sb.WriteString(v.String())
+		case *GXAsn1Ia5String:
+			sb.WriteString(v.String())
+		}
 		sb.WriteString(", ")
 	}
 	// Remove last comma.
 	if sb.Len() != 0 {
 		tmp := sb.String()
-		sb.Reset()
-		sb.WriteString(tmp[0 : len(tmp)-2])
+		return tmp[0 : len(tmp)-2]
 	}
 	return sb.String()
 }
 
-// Asn1GetCertificateType returns the get certificate type from byte array.
+// asn1GetCertificateType detects the certificate container type from ASN.1
+// data.
 //
 // Parameters:
 //
-//	data: Byte array.
-//	seq: Byte array.
+//	data: ASN.1-encoded input bytes.
+//	seq: Optional pre-parsed ASN.1 sequence. If nil, it is parsed from data.
 //
 // Returns:
 //
-//	Certificate type.
-func Asn1GetCertificateType(data []byte, seq GXAsn1Sequence) (enums.PkcsType, error) {
+//	Detected PKCS/X.509 type.
+func asn1GetCertificateType(data []byte, seq GXAsn1Sequence) (enums.PkcsType, error) {
 	if seq == nil {
 		ret, err := Asn1FromByteArray(data)
 		if err != nil {
@@ -735,18 +739,18 @@ func Asn1GetCertificateType(data []byte, seq GXAsn1Sequence) (enums.PkcsType, er
 	return enums.PkcsTypeNone, nil
 }
 
-// GetFilePath returns the default file path.
+// GetFilePath builds the default certificate file path.
 //
 // Parameters:
 //
-//	scheme: Used scheme.
+//	scheme: ECC scheme.
 //	certificateType: Certificate type.
 //	systemTitle: System title.
 //
 // Returns:
 //
-//	File path.
-func (g *GXAsn1Converter) GetFilePath(scheme enums.Ecc, certificateType enums.CertificateType, systemTitle []byte) (string, error) {
+//	Relative file path under the key directory.
+func GetFilePath(scheme enums.Ecc, certificateType enums.CertificateType, systemTitle []byte) (string, error) {
 	var path string
 	switch certificateType {
 	case enums.CertificateTypeDigitalSignature:
@@ -767,7 +771,7 @@ func (g *GXAsn1Converter) GetFilePath(scheme enums.Ecc, certificateType enums.Ce
 	return path, nil
 }
 
-// EncodeSubject converts a subject string into a list of key-value pairs with
+// Asn1EncodeSubject converts a subject string into key-value pairs with
 // object identifiers and values formatted for X.509 certificate use.
 //
 // Parameters:
@@ -777,8 +781,10 @@ func (g *GXAsn1Converter) GetFilePath(scheme enums.Ecc, certificateType enums.Ce
 //
 // Returns:
 //
-//	List of GXKeyValuePair with GXAsn1ObjectIdentifier keys and string/ASN1 values.
-//	Returns error if subject format is invalid or X509Name parsing fails.
+//	List of GXKeyValuePair values with GXAsn1ObjectIdentifier keys and
+//	string/ASN.1 values.
+//	An error is returned if the subject format is invalid or X509Name
+//	parsing fails.
 func Asn1EncodeSubject(value string) ([]*GXKeyValuePair[*GXAsn1ObjectIdentifier, any], error) {
 	list := make([]*GXKeyValuePair[*GXAsn1ObjectIdentifier, any], 0)
 
@@ -831,7 +837,8 @@ func Asn1EncodeSubject(value string) ([]*GXKeyValuePair[*GXAsn1ObjectIdentifier,
 	return list, nil
 }
 
-// Asn1FromByteArray returns the convert byte array to ASN1 objects.
+// Asn1FromByteArray parses ASN.1-encoded bytes and returns the first decoded
+// top-level value.
 //
 // Parameters:
 //
@@ -839,7 +846,7 @@ func Asn1EncodeSubject(value string) ([]*GXKeyValuePair[*GXAsn1ObjectIdentifier,
 //
 // Returns:
 //
-//	Parsed objects.
+//	Parsed ASN.1 value.
 func Asn1FromByteArray(data []byte) (any, error) {
 	bb := GXByteBuffer{}
 	bb.Set(data)
@@ -856,7 +863,7 @@ func Asn1FromByteArray(data []byte) (any, error) {
 	return objects[0], nil
 }
 
-// Asn1GetNext returns the get next ASN1 value from the byte buffer.
+// Asn1GetNext parses and returns the next ASN.1 value from data.
 func Asn1GetNext(data *GXByteBuffer) (any, error) {
 	objects := []any{}
 	err := getValue(data, &objects, nil, true)
@@ -866,7 +873,7 @@ func Asn1GetNext(data *GXByteBuffer) (any, error) {
 	return objects[0], nil
 }
 
-// Asn1ToByteArray returns the convert ASN1 objects to byte array.
+// Asn1ToByteArray serializes an ASN.1 value to bytes.
 //
 // Parameters:
 //
@@ -874,7 +881,7 @@ func Asn1GetNext(data *GXByteBuffer) (any, error) {
 //
 // Returns:
 //
-//	ASN.1 objects as byte array.
+//	ASN.1 value as a byte array.
 func Asn1ToByteArray(objects any) ([]byte, error) {
 	bb := GXByteBuffer{}
 	_, err := getBytes(&bb, objects)
@@ -884,7 +891,7 @@ func Asn1ToByteArray(objects any) ([]byte, error) {
 	return bb.Array(), nil
 }
 
-// Asn1SystemTitleToSubject returns the convert system title to subject.
+// Asn1SystemTitleToSubject converts a system title to a subject string.
 //
 // Parameters:
 //
@@ -892,12 +899,12 @@ func Asn1ToByteArray(objects any) ([]byte, error) {
 //
 // Returns:
 //
-//	Subject.
+//	Subject string in the form "CN=<hex>".
 func Asn1SystemTitleToSubject(systemTitle []byte) string {
 	return "CN=" + ToHex(systemTitle, false)
 }
 
-// SystemTitleFromSubject returns the get system title from the subject.
+// SystemTitleFromSubject parses a system title from a subject string.
 //
 // Parameters:
 //
@@ -905,7 +912,7 @@ func Asn1SystemTitleToSubject(systemTitle []byte) string {
 //
 // Returns:
 //
-//	System title.
+//	System title bytes.
 func SystemTitleFromSubject(subject string) ([]byte, error) {
 	hex, err := HexSystemTitleFromSubject(subject)
 	if err != nil {
@@ -914,7 +921,8 @@ func SystemTitleFromSubject(subject string) ([]byte, error) {
 	return HexToBytes(hex), nil
 }
 
-// HexSystemTitleFromSubject returns the get system title in hex string from the subject.
+// HexSystemTitleFromSubject extracts the hexadecimal system title from a
+// subject string.
 //
 // Parameters:
 //
@@ -922,7 +930,7 @@ func SystemTitleFromSubject(subject string) ([]byte, error) {
 //
 // Returns:
 //
-//	System title.
+//	System title as a hexadecimal string.
 func HexSystemTitleFromSubject(subject string) (string, error) {
 	index := strings.Index(subject, "CN=")
 	if index == -1 {
@@ -931,79 +939,16 @@ func HexSystemTitleFromSubject(subject string) (string, error) {
 	return subject[index+3 : index+19], nil
 }
 
-// CertificateTypeToKeyUsage returns the convert ASN1 certificate type to DLMS key usage.
+// Asn1GetCertificateTypeFromDer decodes a base64 DER payload and detects its
+// certificate type.
 //
 // Parameters:
 //
-//	type: Certificate type.
-//
-// Returns:
-//
-//	Key usage.
-func (g *GXAsn1Converter) CertificateTypeToKeyUsage(type_ enums.CertificateType) enums.KeyUsage {
-	var k enums.KeyUsage
-	switch type_ {
-	case enums.CertificateTypeDigitalSignature:
-		k = enums.KeyUsageDigitalSignature
-	case enums.CertificateTypeKeyAgreement:
-		k = enums.KeyUsageKeyAgreement
-	case enums.CertificateTypeTLS:
-		k = enums.KeyUsageKeyCertSign
-	case enums.CertificateTypeOther:
-		k = enums.KeyUsageCrlSign
-	default:
-		k = enums.KeyUsageNone
-	}
-	return k
-}
-
-// getCertificateTypeInternal returns certificate type from byte array.
-// If seq is nil, it will be parsed from data.
-func getCertificateTypeInternal(data []byte, seq *GXAsn1Sequence) enums.PkcsType {
-	if seq == nil {
-		root, err := Asn1FromByteArray(data)
-		if err == nil {
-			if s, ok := root.(GXAsn1Sequence); ok {
-				seq = &s
-			} else if ps, ok := root.(*GXAsn1Sequence); ok && ps != nil {
-				seq = ps
-			}
-		}
-	}
-
-	if len(*seq) == 0 {
-		return enums.PkcsTypeNone
-	}
-	if _, ok := (*seq)[0].(GXAsn1Sequence); ok {
-		if _, err := NewGXx509Certificate(data); err == nil {
-			return enums.PkcsTypex509Certificate
-		}
-		// ok if fails
-	}
-	if _, ok := (*seq)[0].(GXAsn1Sequence); ok {
-		if _, err := NewGXPkcs10(data); err == nil {
-			return enums.PkcsTypePkcs10
-		}
-		// ok if fails
-	}
-	if _, ok := (*seq)[0].(int8); ok {
-		if _, err := NewGXPkcs8(data); err == nil {
-			return enums.PkcsTypePkcs8
-		}
-		// ok if fails
-	}
-	return enums.PkcsTypeNone
-}
-
-// Asn1GetCertificateTypeFromDer returns the get certificate type from DER string.
-//
-// Parameters:
-//
-//	der: DER string
+//	der: Base64-encoded DER data.
 func Asn1GetCertificateTypeFromDer(der string) (enums.PkcsType, error) {
 	ret, err := base64.StdEncoding.DecodeString(der)
 	if err != nil {
 		return enums.PkcsTypeNone, err
 	}
-	return Asn1GetCertificateType(ret, nil)
+	return asn1GetCertificateType(ret, nil)
 }

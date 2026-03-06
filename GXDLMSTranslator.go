@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"errors"
 	"strings"
 
@@ -110,16 +111,16 @@ type GXDLMSTranslator struct {
 
 	// Public/private key signing key pair.
 	// Private key is for the initializer and Public key is for the target.
-	SigningKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	SigningKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Public/private key TLS key pair.
 	// Private key is for the initializer and Public key is for the target.
-	TlsKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	TlsKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 	// Ephemeral key pair.
-	EphemeralKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	EphemeralKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Public/private key key agreement key pair.
-	KeyAgreementKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	KeyAgreementKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	serverSystemTitle []byte
 	dedicatedKey      []byte

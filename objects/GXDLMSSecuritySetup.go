@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"errors"
 	"fmt"
 	"log"
@@ -62,13 +63,13 @@ type GXDLMSSecuritySetup struct {
 	securityPolicy enums.SecurityPolicy
 
 	// Signing key of the server.
-	signingKey *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	signingKey *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Key agreement key of the server.
-	keyAgreementKey *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	keyAgreementKey *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// TLS pair of the server.
-	tlsKey *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	tlsKey *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	serverCertificates types.GXx509CertificateCollection
 
@@ -211,23 +212,6 @@ func (g *GXDLMSSecuritySetup) VerifyIssuer(issuer []byte) error {
 	return err
 }
 
-func certificateTypeToKeyUsage(type_ enums.CertificateType) enums.KeyUsage {
-	var k enums.KeyUsage
-	switch type_ {
-	case enums.CertificateTypeDigitalSignature:
-		k = enums.KeyUsageDigitalSignature
-	case enums.CertificateTypeKeyAgreement:
-		k = enums.KeyUsageKeyAgreement
-	case enums.CertificateTypeTLS:
-		k = enums.KeyUsageDigitalSignature | enums.KeyUsageKeyAgreement
-	case enums.CertificateTypeOther:
-		k = enums.KeyUsageCrlSign
-	default:
-		k = enums.KeyUsageNone
-	}
-	return k
-}
-
 // FindCertificateByEntity returns the find certificate using entity information.
 //
 // Parameters:
@@ -241,7 +225,7 @@ func (g *GXDLMSSecuritySetup) FindCertificateByEntity(certificates types.GXx509C
 	type_ enums.CertificateType,
 	systemtitle []byte) *types.GXx509Certificate {
 	subject := types.Asn1SystemTitleToSubject(systemtitle)
-	k := certificateTypeToKeyUsage(type_)
+	k := internal.CertificateTypeToKeyUsage(type_)
 	for _, it := range certificates {
 		if (it.KeyUsage&k) != 0 && strings.Contains(it.Subject, subject) {
 			return it
@@ -415,7 +399,7 @@ func (g *GXDLMSSecuritySetup) generateKeyPair(e *internal.ValueEventArgs) error 
 
 func (g *GXDLMSSecuritySetup) generateCertificateRequest(settings *settings.GXDLMSSettings, e *internal.ValueEventArgs) ([]byte, error) {
 	key := enums.CertificateType(e.Parameters.(int))
-	var kp *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	var kp *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 	st := g.ServerSystemTitle
 	if st == nil {
 		st = settings.Cipher.SystemTitle()
@@ -488,7 +472,7 @@ func (g *GXDLMSSecuritySetup) invokeKeyAgreement(settings *settings.GXDLMSSettin
 		if err != nil {
 			return nil, err
 		}
-		var pk *types.GXPublicKey
+		var pk *ecdsa.PublicKey
 		subject := types.Asn1SystemTitleToSubject(settings.SourceSystemTitle())
 		for _, it := range settings.Cipher.Certificates() {
 			if (it.KeyUsage&enums.KeyUsageDigitalSignature) != 0 && it.Subject == subject {
@@ -978,8 +962,8 @@ func (g *GXDLMSSecuritySetup) Load(reader *GXXmlReader) error {
 			return err
 		}
 		g.signingKey = types.NewGXKeyValuePair(pk.PublicKey(), pk.PrivateKey())
-		log.Printf("Signing Private Key: %s", pk.PrivateKey().ToHex())
-		log.Printf("Signing Public Key: %s", pk.PublicKey().ToHex())
+		log.Printf("Signing Private Key: %s", types.PrivateKeyToHex(pk.PrivateKey()))
+		log.Printf("Signing Public Key: %s", types.PublicKeyToHex(pk.PublicKey()))
 	}
 	str, err = reader.ReadElementContentAsString("KeyAgreement", "")
 	if err != nil {
@@ -1377,7 +1361,11 @@ func (g *GXDLMSSecuritySetup) KeyAgreementFromClient(client IGXDLMSClient) ([][]
 	}
 	bb := types.GXByteBuffer{}
 	ek := getCipheting(client).EphemeralKeyPair()
-	err = bb.SetAt(ek.Value.RawValue(), 1, len(ek.Value.RawValue())-1)
+	raw, err := ek.Value.Bytes()
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetAt(raw, 1, len(raw)-1)
 	if err != nil {
 		return nil, err
 	}

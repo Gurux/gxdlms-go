@@ -631,6 +631,9 @@ func primeDcHandleSetRequestWithDataBlock(settings *settings.GXDLMSSettings,
 	if ret != 0 {
 		p.attributeDescriptor = types.NewGXByteBuffer()
 		err = p.attributeDescriptor.SetUint8(ret)
+		if err != nil {
+			return err
+		}
 	}
 	p.multipleBlocks = true
 	return nil
@@ -843,7 +846,8 @@ func primeDcMethodRequestNextDataBlock2(settings *settings.GXDLMSSettings,
 						if err != nil {
 							return err
 						}
-						dt, err := internal.GetDLMSDataType(reflect.TypeOf(value))
+						var dt enums.DataType
+						dt, err = internal.GetDLMSDataType(reflect.TypeOf(value))
 						if err != nil {
 							return err
 						}
@@ -852,9 +856,9 @@ func primeDcMethodRequestNextDataBlock2(settings *settings.GXDLMSSettings,
 						p.requestType = 1
 						p.status = uint8(arg.Error)
 						err = bb.SetUint8(0)
-						if err != nil {
-							return err
-						}
+					}
+					if err != nil {
+						return err
 					}
 				}
 				moreData = settings.Index != settings.Count
@@ -1034,6 +1038,9 @@ func primeDcHandleEventNotification(settings *settings.GXDLMSSettings,
 			v := internal.NewValueEventArgs3(obj, index, 0, nil)
 			v.Value = value
 			err = obj.SetValue(settings, v)
+			if err != nil {
+				return err
+			}
 			list = append(list, types.NewGXKeyValuePair[objects.IGXDLMSBase, int](obj, int(index)))
 		}
 	}
@@ -1157,7 +1164,9 @@ func primeDcHandleSetRequest(settings *settings.GXDLMSSettings,
 		settings.ResetBlockIndex()
 		p.status = byte(enums.ErrorCodeReadWriteDenied)
 	}
-
+	if err != nil {
+		return err
+	}
 	if xml != nil {
 		if type_ < 6 {
 			xml.AppendEndTag(int(enums.CommandSetRequest)<<8|int(type_), true)
@@ -1319,7 +1328,8 @@ func primeDcMethodRequest(settings *settings.GXDLMSSettings,
 					if err != nil {
 						return err
 					}
-					dt, err := internal.GetDLMSDataType(reflect.TypeOf(actionReply))
+					var dt enums.DataType
+					dt, err = internal.GetDLMSDataType(reflect.TypeOf(actionReply))
 					if err != nil {
 						return err
 					}
@@ -1327,9 +1337,9 @@ func primeDcMethodRequest(settings *settings.GXDLMSSettings,
 				} else {
 					error_ = int(e.Error)
 					err = bb.SetUint8(0)
-					if err != nil {
-						return err
-					}
+				}
+				if err != nil {
+					return err
 				}
 			}
 		}
@@ -1782,7 +1792,7 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 		xml.AppendEndTag(int(internal.TranslatorTagsAccessRequestBody), true)
 		xml.AppendEndTag(int(enums.CommandAccessRequest), true)
 	} else {
-		err := bb.SetByteBuffer(results)
+		err = bb.SetByteBuffer(results)
 		if err != nil {
 			return err
 		}

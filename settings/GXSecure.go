@@ -3,6 +3,7 @@ package settings
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/ecdsa"
 	"crypto/md5"
 	"crypto/rand"
 	"crypto/sha1"
@@ -345,12 +346,11 @@ func DecryptAesGcm(p *AesGcmParameter, data *types.GXByteBuffer) ([]byte, error)
 	}
 }
 
-func GetEphemeralPublicKeyData(keyID int, ephemeralKey *types.GXPublicKey) ([]byte, error) {
+func GetEphemeralPublicKeyData(keyID int, ephemeralKey *ecdsa.PublicKey) ([]byte, error) {
 	if ephemeralKey == nil {
 		return nil, errors.New("ephemeral key is nil")
 	}
-	raw := make([]byte, len(ephemeralKey.RawValue()))
-	copy(raw, ephemeralKey.RawValue())
+	raw := types.PublicKeyToBytes(ephemeralKey)
 	if len(raw) == 0 {
 		return nil, errors.New("ephemeral key raw value is empty")
 	}
@@ -358,7 +358,7 @@ func GetEphemeralPublicKeyData(keyID int, ephemeralKey *types.GXPublicKey) ([]by
 	return raw, nil
 }
 
-func GetEphemeralPublicKeySignature(keyID int, ephemeralKey *types.GXPublicKey, signKey *types.GXPrivateKey) ([]byte, error) {
+func GetEphemeralPublicKeySignature(keyID int, ephemeralKey *ecdsa.PublicKey, signKey *ecdsa.PrivateKey) ([]byte, error) {
 	epk, err := GetEphemeralPublicKeyData(keyID, ephemeralKey)
 	if err != nil {
 		return nil, err
@@ -370,7 +370,7 @@ func GetEphemeralPublicKeySignature(keyID int, ephemeralKey *types.GXPublicKey, 
 	return signer.Sign(epk)
 }
 
-func ValidateEphemeralPublicKeySignature(data []byte, sign []byte, publicSigningKey *types.GXPublicKey) (bool, error) {
+func ValidateEphemeralPublicKeySignature(data []byte, sign []byte, publicSigningKey *ecdsa.PublicKey) (bool, error) {
 	verifier, err := types.NewGXEcdsaFromPublicKey(publicSigningKey)
 	if err != nil {
 		return false, err

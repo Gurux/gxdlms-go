@@ -36,6 +36,7 @@
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"errors"
 	"fmt"
 	"strconv"
@@ -194,15 +195,15 @@ func (g *GXDLMSAssociationLogicalName) replyToHlsAuthentication(s *settings.GXDL
 		key := s.Cipher.SigningKeyPair().Value
 		pub := s.Cipher.SigningKeyPair().Key
 		if key == nil {
-			key = s.GetKey(enums.CertificateTypeDigitalSignature, s.Cipher.SystemTitle(), true).(*types.GXPrivateKey)
+			key = s.GetKey(enums.CertificateTypeDigitalSignature, s.Cipher.SystemTitle(), true).(*ecdsa.PrivateKey)
 			s.Cipher.SetKeyAgreementKeyPair(types.NewGXKeyValuePair(pub, key))
 		}
 		if pub == nil {
-			pub = s.GetKey(enums.CertificateTypeDigitalSignature, s.SourceSystemTitle(), false).(*types.GXPublicKey)
+			pub = s.GetKey(enums.CertificateTypeDigitalSignature, s.SourceSystemTitle(), false).(*ecdsa.PublicKey)
 			s.Cipher.SetKeyAgreementKeyPair(types.NewGXKeyValuePair(pub, key))
 		}
 		if pub == nil {
-			pub = s.GetKey(enums.CertificateTypeDigitalSignature, s.SourceSystemTitle(), false).(*types.GXPublicKey)
+			pub = s.GetKey(enums.CertificateTypeDigitalSignature, s.SourceSystemTitle(), false).(*ecdsa.PublicKey)
 			s.Cipher.SetKeyAgreementKeyPair(types.NewGXKeyValuePair(pub, key))
 		}
 		if key == nil {

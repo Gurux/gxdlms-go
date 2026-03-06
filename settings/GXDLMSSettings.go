@@ -35,6 +35,7 @@ package settings
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"errors"
 	"log"
 
@@ -99,7 +100,7 @@ type GXDLMSSettings struct {
 	Index uint32
 
 	// TargetEphemeralKey is the target ephemeral public key.
-	TargetEphemeralKey interface{} // TODO: Replace with actual GXPublicKey type when implemented
+	TargetEphemeralKey *ecdsa.PublicKey
 
 	maxReceivePDUSize uint16
 

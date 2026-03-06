@@ -35,6 +35,7 @@ package types
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -71,7 +72,7 @@ type GXPkcs10 struct {
 	algorithm enums.X9ObjectIdentifier
 
 	// Subject public key.
-	publicKey *GXPublicKey
+	publicKey *ecdsa.PublicKey
 
 	// Signature algorithm used to sign the request.
 	signatureAlgorithm enums.HashAlgorithm
@@ -104,7 +105,7 @@ func (g *GXPkcs10) Algorithm() enums.X9ObjectIdentifier {
 }
 
 // PublicKey returns the subject public key.
-func (g *GXPkcs10) PublicKey() *GXPublicKey {
+func (g *GXPkcs10) PublicKey() *ecdsa.PublicKey {
 	return g.publicKey
 }
 
@@ -155,12 +156,12 @@ func (g *GXPkcs10) init(data []byte) error {
 	if err != nil {
 		return err
 	}
-	seq := ret.(GXAsn1Sequence)
+	seq := *ret.(*GXAsn1Sequence)
 	if len(seq) < 3 {
 		return errors.New("Wrong number of elements in sequence.")
 	}
-	if _, ok := seq[0].(GXAsn1Sequence); ok {
-		ret, err := Asn1GetCertificateType(data, seq)
+	if _, ok := seq[0].(*GXAsn1Sequence); !ok {
+		ret, err := asn1GetCertificateType(data, seq)
 		if err != nil {
 			return err
 		}
@@ -173,16 +174,16 @@ func (g *GXPkcs10) init(data []byte) error {
 		}
 		return errors.New("Invalid Certificate Version.")
 	}
-	reqInfo := seq[0].(GXAsn1Sequence)
+	reqInfo := *seq[0].(*GXAsn1Sequence)
 	g.version = enums.CertificateVersion(reqInfo[0].(int8))
 	g.subject = Asn1GetSubject(reqInfo[1].(*GXAsn1Sequence))
 	// subject Public key info.
-	subjectPKInfo := reqInfo[2].(GXAsn1Sequence)
+	subjectPKInfo := *reqInfo[2].(*GXAsn1Sequence)
 	if len(reqInfo) > 3 {
-		for _, i := range reqInfo[3].(GXAsn1Context).Items {
-			it := i.(GXAsn1Sequence)
+		for _, i := range reqInfo[3].(*GXAsn1Context).Items {
+			it := *i.(*GXAsn1Sequence)
 			values := []any{}
-			t := it[1].(GXKeyValuePair[any, any])
+			t := it[1].(*GXKeyValuePair[any, any])
 			for _, v := range t.Key.([]any) {
 				values = append(values, v)
 			}
@@ -190,8 +191,8 @@ func (g *GXPkcs10) init(data []byte) error {
 			g.attributes = append(g.attributes, *NewGXKeyValuePair(id_, values))
 		}
 	}
-	tmp := subjectPKInfo[0].(GXAsn1Sequence)
-	g.algorithm = X9ObjectIdentifierFromString(tmp[0].(string))
+	tmp := *subjectPKInfo[0].(*GXAsn1Sequence)
+	g.algorithm = X9ObjectIdentifierFromString(tmp[0].(*GXAsn1ObjectIdentifier).ObjectIdentifier())
 	if g.algorithm != enums.X9ObjectIdentifierIdECPublicKey {
 		var algorithm int
 		algorithm = int(g.algorithm)
@@ -208,13 +209,9 @@ func (g *GXPkcs10) init(data []byte) error {
 		return err
 	}
 	g.publicKey = pub
-	err = EcdsaValidate(g.publicKey)
-	if err != nil {
-		return err
-	}
 	// signatureAlgorithm
-	sign := seq[1].(GXAsn1Sequence)
-	g.signatureAlgorithm = HashAlgorithmFromString(sign[0].(string))
+	sign := *seq[1].(*GXAsn1Sequence)
+	g.signatureAlgorithm = HashAlgorithmFromString(sign[0].(*GXAsn1ObjectIdentifier).ObjectIdentifier())
 	if g.signatureAlgorithm != enums.HashAlgorithmSha256WithEcdsa && g.signatureAlgorithm != enums.HashAlgorithmSha384WithEcdsa {
 		return fmt.Errorf("Invalid signature algorithm. %s", sign[0].(string))
 	}
@@ -227,7 +224,10 @@ func (g *GXPkcs10) init(data []byte) error {
 	if err != nil {
 		return err
 	}
-	Asn1GetNext(&tmp2)
+	_, err = Asn1GetNext(&tmp2)
+	if err != nil {
+		return err
+	}
 	tmp2.SetSize(tmp2.Position())
 	tmp2.SetPosition(1)
 	GetObjectCount(&tmp2)
@@ -237,7 +237,10 @@ func (g *GXPkcs10) init(data []byte) error {
 		return err
 	}
 	ret, err = Asn1FromByteArray(g.signature)
-	tmp3 := ret.(GXAsn1Sequence)
+	if err != nil {
+		return err
+	}
+	tmp3 := *ret.(*GXAsn1Sequence)
 	bb := GXByteBuffer{}
 	var size int
 	var add int
@@ -274,12 +277,16 @@ func (g *GXPkcs10) init(data []byte) error {
 // getData constructs the ASN.1 structure used for CSR signing.
 func (g *GXPkcs10) getData() []any {
 	var alg *GXAsn1ObjectIdentifier
-	if g.publicKey.Scheme() == enums.EccP256 {
+	s, err := PublicKeyScheme(g.publicKey)
+	if err != nil {
+		return nil
+	}
+	if s == enums.EccP256 {
 		alg = NewGXAsn1ObjectIdentifier("1.2.840.10045.3.1.7")
 	} else {
 		alg = NewGXAsn1ObjectIdentifier("1.3.132.0.34")
 	}
-	subjectPKInfo, err := NewGXBitString(g.publicKey.RawValue(), 0)
+	subjectPKInfo, err := NewGXBitString(PublicKeyToBytes(g.publicKey), 0)
 	if err != nil {
 		return nil
 	}
@@ -312,7 +319,7 @@ func (g *GXPkcs10) getData() []any {
 //
 //	key: Private key used for signing.
 //	hashAlgorithm: Hash algorithm used to compute the signature.
-func (g *GXPkcs10) Sign(key *GXPrivateKey, hashAlgorithm enums.HashAlgorithm) error {
+func (g *GXPkcs10) Sign(key *ecdsa.PrivateKey, hashAlgorithm enums.HashAlgorithm) error {
 	data, err := Asn1ToByteArray(g.getData())
 	if err != nil {
 		return err
@@ -324,6 +331,9 @@ func (g *GXPkcs10) Sign(key *GXPrivateKey, hashAlgorithm enums.HashAlgorithm) er
 	g.signatureAlgorithm = hashAlgorithm
 	bb := GXByteBuffer{}
 	ret, err := e.Sign(data)
+	if err != nil {
+		return err
+	}
 	err = bb.Set(ret)
 	if err != nil {
 		return err
@@ -434,9 +444,7 @@ func (g *GXPkcs10) String() string {
 	bb.WriteString(g.algorithm.String())
 	bb.WriteString("\n")
 	bb.WriteString("Public Key: ")
-	if g.publicKey != nil {
-		bb.WriteString(g.publicKey.String())
-	}
+	bb.WriteString(PublicKeyToHex(g.publicKey))
 	bb.WriteString("\n")
 	bb.WriteString("Signature algorithm: ")
 	bb.WriteString(g.signatureAlgorithm.String())
@@ -462,7 +470,7 @@ func (g *GXPkcs10) String() string {
 // Returns:
 //
 //	A signed PKCS#10 request.
-func Pkcs10CreateCertificateSigningRequest(kp *GXKeyValuePair[*GXPublicKey, *GXPrivateKey], subject string) (*GXPkcs10, error) {
+func Pkcs10CreateCertificateSigningRequest(kp *GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey], subject string) (*GXPkcs10, error) {
 	if !strings.Contains(subject, "CN=") {
 		return nil, errors.New("subject")
 	}
@@ -471,12 +479,16 @@ func Pkcs10CreateCertificateSigningRequest(kp *GXKeyValuePair[*GXPublicKey, *GXP
 	pkc10.publicKey = kp.Key
 	pkc10.subject = subject
 	var alg enums.HashAlgorithm
-	if kp.Key.Scheme() == enums.EccP256 {
+	s, err := PublicKeyScheme(kp.Key)
+	if err != nil {
+		return nil, err
+	}
+	if s == enums.EccP256 {
 		alg = enums.HashAlgorithmSha256WithEcdsa
 	} else {
 		alg = enums.HashAlgorithmSha384WithEcdsa
 	}
-	err := pkc10.Sign(kp.Value, alg)
+	err = pkc10.Sign(kp.Value, alg)
 	if err != nil {
 		return nil, err
 	}
@@ -574,12 +586,11 @@ func (g *GXPkcs10) GetCertificate(address string, certifications []GXCertificate
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse certificate: %w", err)
 		}
-		if !helpers.Compare(certifications[i].Certificate.PublicKey().RawValue(), x509.PublicKey.RawValue()) {
+		if !helpers.Compare(PublicKeyToBytes(certifications[i].Certificate.PublicKey()), PublicKeyToBytes(x509.PublicKey)) {
 			return nil, fmt.Errorf("certificate signing request generated wrong public key")
 		}
 		certs = append(certs, *x509)
 	}
-
 	return certs, nil
 }
 
@@ -620,9 +631,9 @@ func (g *GXPkcs10) Save(path string) error {
 //	The PEM encoded CSR.
 func (g *GXPkcs10) ToPem() (string, error) {
 	sb := strings.Builder{}
-	sb.WriteString("-----BEGIN CERTIFICATE REQUEST-----")
+	sb.WriteString("-----BEGIN CERTIFICATE REQUEST-----\n")
 	sb.WriteString(g.ToDer())
-	sb.WriteString("-----END CERTIFICATE REQUEST-----")
+	sb.WriteString("\n-----END CERTIFICATE REQUEST-----\n")
 	return sb.String(), nil
 }
 

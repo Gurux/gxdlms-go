@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"errors"
 	"fmt"
 	"strconv"
@@ -1693,7 +1694,7 @@ func handleCertificate(settings *settings.GXDLMSSettings,
 	if settings.Cipher != nil {
 		if cert.KeyUsage&enums.KeyUsageKeyCertSign != 0 {
 			kp := settings.Cipher.KeyAgreementKeyPair()
-			var priv *types.GXPrivateKey
+			var priv *ecdsa.PrivateKey
 			if kp != nil {
 				priv = kp.Value
 			}
@@ -1702,7 +1703,7 @@ func handleCertificate(settings *settings.GXDLMSSettings,
 		}
 		if cert.KeyUsage&enums.KeyUsageDigitalSignature != 0 {
 			kp := settings.Cipher.SigningKeyPair()
-			var priv *types.GXPrivateKey
+			var priv *ecdsa.PrivateKey
 			if kp != nil {
 				priv = kp.Value
 			}
@@ -2074,6 +2075,9 @@ func generateAARE(conf *settings.GXDLMSSettings,
 			return err
 		}
 		err = tmp.SetUint8(uint8(len(conf.Gateway.PhysicalDeviceAddress)))
+		if err != nil {
+			return err
+		}
 		err = tmp.Set(conf.Gateway.PhysicalDeviceAddress)
 		if err != nil {
 			return err

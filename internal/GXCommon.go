@@ -1653,3 +1653,30 @@ func Decrypt(kek []byte, input []byte) ([]byte, error) {
 	}
 	return block, nil
 }
+
+// CertificateTypeToKeyUsage maps an ASN.1 certificate type to a DLMS key
+// usage flag.
+//
+// Parameters:
+//
+//	type: Certificate type.
+//
+// Returns:
+//
+//	Mapped key usage.
+func CertificateTypeToKeyUsage(type_ enums.CertificateType) enums.KeyUsage {
+	var k enums.KeyUsage
+	switch type_ {
+	case enums.CertificateTypeDigitalSignature:
+		k = enums.KeyUsageDigitalSignature
+	case enums.CertificateTypeKeyAgreement:
+		k = enums.KeyUsageKeyAgreement
+	case enums.CertificateTypeTLS:
+		k = enums.KeyUsageDigitalSignature | enums.KeyUsageKeyAgreement
+	case enums.CertificateTypeOther:
+		k = enums.KeyUsageCrlSign
+	default:
+		k = enums.KeyUsageNone
+	}
+	return k
+}

@@ -997,6 +997,9 @@ func (g *GXDLMSClient) Write2(name any, value any, type_ enums.DataType, objectT
 			return nil, err
 		}
 		ln, err := LogicalNameToBytes(name.(string))
+		if err != nil {
+			return nil, err
+		}
 		err = attributeDescriptor.Set(ln)
 		if err != nil {
 			return nil, err
@@ -1049,7 +1052,8 @@ func (g *GXDLMSClient) Read2(name any, objectType enums.ObjectType, attributeOrd
 		if err != nil {
 			return nil, err
 		}
-		ln, err := LogicalNameToBytes(name.(string))
+		var ln []byte
+		ln, err = LogicalNameToBytes(name.(string))
 		if err != nil {
 			return nil, err
 		}
@@ -1091,6 +1095,9 @@ func (g *GXDLMSClient) Read2(name any, objectType enums.ObjectType, attributeOrd
 		}
 		p := NewGXDLMSSNParameters(g.settings, enums.CommandReadRequest, 1, requestType, &attributeDescriptor, data)
 		reply, err = getSnMessages(p)
+	}
+	if err != nil {
+		return nil, err
 	}
 	return reply, err
 }
@@ -1386,16 +1393,16 @@ func (g *GXDLMSClient) GetApplicationAssociationRequestWithLogicalName(ln string
 	} else if g.settings.Authentication == enums.AuthenticationHighECDSA {
 		/*TODO:
 		if g.settings.Cipher.SigningKeyPair() == nil {
-		Settings.Cipher.SigningKeyPair = types.NewGXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey](
-		 (GXPublicKey)Settings.GetKey(DLMS.Objects.Enums.CertificateType.DigitalSignature,
+		Settings.Cipher.SigningKeyPair = types.NewGXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey](
+		 (ecdsa.PublicKey)Settings.GetKey(DLMS.Objects.Enums.CertificateType.DigitalSignature,
 		 Settings.SourceSystemTitle, false),
 		 Settings.Cipher.SigningKeyPair.Value)
 		 }
 		 Settings.Cipher.SigningKeyPair.Key
 		// if (Settings.Cipher.SigningKeyPair.Value == nil)
 		// {
-		// Settings.Cipher.SigningKeyPair = types.NewGXKeyValuePair<GXPublicKey, GXPrivateKey>(Settings.Cipher.SigningKeyPair.Key,
-		// (GXPrivateKey)Settings.GetKey(DLMS.Objects.Enums.CertificateType.DigitalSignature,
+		// Settings.Cipher.SigningKeyPair = types.NewGXKeyValuePair<ecdsa.PublicKey, ecdsa.PrivateKey>(Settings.Cipher.SigningKeyPair.Key,
+		// (ecdsa.PrivateKey)Settings.GetKey(DLMS.Objects.Enums.CertificateType.DigitalSignature,
 		// Settings.Cipher.SystemTitle, true))
 		// }
 		// Settings.Cipher.SigningKeyPair.Value
@@ -1448,6 +1455,9 @@ func (g *GXDLMSClient) ParseApplicationAssociationResponse(reply *types.GXByteBu
 		info := internal.GXDataInfo{}
 		equals := false
 		value, err := internal.GetData(g.settings, reply, &info)
+		if err != nil {
+			return err
+		}
 		if value != nil {
 			if g.settings.Authentication == enums.AuthenticationHighECDSA {
 				if g.settings.Cipher.SigningKeyPair() == nil {
@@ -1638,6 +1648,9 @@ func (g *GXDLMSClient) ParseRelease(value *types.GXByteBuffer) error {
 		return errors.New("Invalid release response.")
 	}
 	len_, err := types.GetObjectCount(value)
+	if err != nil {
+		return err
+	}
 	if value.Available() < len_ {
 		return errors.New("MemoryError")
 	}
@@ -2125,7 +2138,9 @@ func (g *GXDLMSClient) ReadList(list []types.GXKeyValuePair[objects.IGXDLMSBase,
 		}
 		for _, it := range list {
 			err := data.SetUint16(uint16(it.Key.Base().ObjectType()))
-
+			if err != nil {
+				return nil, err
+			}
 			ln, err := LogicalNameToBytes(it.Key.Base().LogicalName())
 			if err != nil {
 				return nil, err
@@ -2278,6 +2293,9 @@ func (g *GXDLMSClient) WriteList(list []types.GXKeyValuePair[objects.IGXDLMSBase
 				}
 			}
 			err = internal.SetData(g.settings, &data, type_, value)
+			if err != nil {
+				return nil, err
+			}
 		}
 		if err != nil {
 			return nil, err

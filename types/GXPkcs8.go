@@ -35,6 +35,7 @@ package types
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"encoding/base64"
 	"errors"
 	"os"
@@ -58,10 +59,10 @@ type GXPkcs8 struct {
 	algorithm enums.X9ObjectIdentifier
 
 	// Private key.
-	privateKey *GXPrivateKey
+	privateKey *ecdsa.PrivateKey
 
 	// Public key.
-	publicKey *GXPublicKey
+	publicKey *ecdsa.PublicKey
 
 	// Description is optional metadata stored in the PEM comment header.
 	Description string
@@ -81,7 +82,7 @@ func NewGXPkcs8(data []byte) (*GXPkcs8, error) {
 }
 
 // NewGXPkcs8FromKeys creates a GXPkcs8 object from an existing public/private key pair.
-func NewGXPkcs8FromKeys(keyValuePair *GXKeyValuePair[*GXPublicKey, *GXPrivateKey]) (*GXPkcs8, error) {
+func NewGXPkcs8FromKeys(keyValuePair *GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) (*GXPkcs8, error) {
 	ret := &GXPkcs8{}
 	ret.publicKey = keyValuePair.Key
 	ret.privateKey = keyValuePair.Value
@@ -89,12 +90,12 @@ func NewGXPkcs8FromKeys(keyValuePair *GXKeyValuePair[*GXPublicKey, *GXPrivateKey
 }
 
 // PrivateKey returns the wrapped private key.
-func (g *GXPkcs8) PrivateKey() *GXPrivateKey {
+func (g *GXPkcs8) PrivateKey() *ecdsa.PrivateKey {
 	return g.privateKey
 }
 
 // PublicKey returns the wrapped public key.
-func (g *GXPkcs8) PublicKey() *GXPublicKey {
+func (g *GXPkcs8) PublicKey() *ecdsa.PublicKey {
 	return g.publicKey
 }
 
@@ -112,7 +113,11 @@ func (g *GXPkcs8) encoded() ([]byte, error) {
 	}
 	d1 = append(d1, NewGXAsn1ObjectIdentifier(s))
 	var alg GXAsn1ObjectIdentifier
-	if g.publicKey.Scheme() == enums.EccP256 {
+	sc, err := PublicKeyScheme(g.publicKey)
+	if err != nil {
+		return nil, err
+	}
+	if sc == enums.EccP256 {
 		alg = *NewGXAsn1ObjectIdentifier("1.2.840.10045.3.1.7")
 	} else {
 		alg = *NewGXAsn1ObjectIdentifier("1.3.132.0.34")
@@ -121,10 +126,10 @@ func (g *GXPkcs8) encoded() ([]byte, error) {
 	d = append(d, d1)
 	d2 := GXAsn1Sequence{}
 	d2 = append(d2, int8(1))
-	d2 = append(d2, g.privateKey.RawValue())
+	d2 = append(d2, PrivateKeyToBytes(g.privateKey))
 	d3 := GXAsn1Context{}
 	d3.Index = 1
-	bs, err := NewGXBitString(g.publicKey.RawValue(), 0)
+	bs, err := NewGXBitString(PublicKeyToBytes(g.publicKey), 0)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +161,7 @@ func (g *GXPkcs8) init(data []byte) error {
 		return errors.New("Wrong number of elements in sequence.")
 	}
 	if _, ok := seq[0].(int8); !ok {
-		type_, err := Asn1GetCertificateType(data, seq)
+		type_, err := asn1GetCertificateType(data, seq)
 		if err != nil {
 			return err
 		}
@@ -191,9 +196,8 @@ func (g *GXPkcs8) init(data []byte) error {
 		if err != nil {
 			return err
 		}
-		err = EcdsaValidate(g.publicKey)
 	} else {
-		g.publicKey, err = g.privateKey.GetPublicKey()
+		g.publicKey, err = PublicKeyFromECDSAPrivate(g.privateKey)
 		if err != nil {
 			return err
 		}
@@ -240,7 +244,7 @@ func (g *GXPkcs8) GetFilePath(scheme enums.Ecc, certificateType enums.Certificat
 	default:
 		return "", errors.New("Unknown certificate type.")
 	}
-	path = path + g.privateKey.String()[1:] + ".pem"
+	path = path + PrivateKeyToHex(g.privateKey)[1:] + ".pem"
 	if scheme == enums.EccP256 {
 		path = filepath.Join("Certificates", path)
 	} else {
@@ -306,9 +310,9 @@ func (g *GXPkcs8) String() string {
 	bb.WriteString("Algorithm: ")
 	bb.WriteString(g.algorithm.String())
 	bb.WriteString("PrivateKey: ")
-	bb.WriteString(g.privateKey.ToHex())
+	bb.WriteString(PrivateKeyToHex(g.privateKey))
 	bb.WriteString("PublicKey: ")
-	bb.WriteString(g.publicKey.String())
+	bb.WriteString(PublicKeyToHex(g.publicKey))
 	return bb.String()
 }
 
@@ -336,7 +340,7 @@ func (g *GXPkcs8) ToPem() (string, error) {
 	if g.privateKey == nil {
 		return "", errors.New("Public or private key is not set.")
 	}
-	sb.WriteString("-----BEGIN PRIVATE KEY----- \n")
+	sb.WriteString("-----BEGIN PRIVATE KEY-----\n")
 	sb.WriteString(g.ToDer())
 	sb.WriteString("\n-----END PRIVATE KEY-----\n")
 	return sb.String(), nil
@@ -363,30 +367,12 @@ func (g *GXPkcs8) Import(value string) (*GXPkcs8, error) {
 	if err == nil {
 		return ret, nil
 	}
-	pk, err := PrivateKeyFromPem(value)
-	if err == nil {
-		pub, err := pk.GetPublicKey()
-		if err != nil {
-			return nil, err
-		}
-		ret = &GXPkcs8{privateKey: pk, publicKey: pub}
-		return ret, nil
-	}
-	pk, err = PrivateKeyFromDer(value)
-	if err == nil {
-		pub, err := pk.GetPublicKey()
-		if err != nil {
-			return nil, err
-		}
-		ret = &GXPkcs8{privateKey: pk, publicKey: pub}
-		return ret, nil
-	}
 	ret = &GXPkcs8{}
 	ret.privateKey, err = PrivateKeyFromRawBytes(HexToBytes(value))
 	if err == nil {
 		return ret, nil
 	}
-	ret.publicKey, err = pk.GetPublicKey()
+	ret.publicKey, err = PublicKeyFromRawBytes(HexToBytes(value))
 	if err != nil {
 		return nil, err
 	}
@@ -396,7 +382,10 @@ func (g *GXPkcs8) Import(value string) (*GXPkcs8, error) {
 // Equals reports whether the specified object represents the same PKCS #8 key.
 func (g *GXPkcs8) Equals(obj any) bool {
 	if o, ok := obj.(GXPkcs8); ok {
-		return g.privateKey.Equals(o.PrivateKey())
+		if g.privateKey.Curve == o.PrivateKey().Curve &&
+			g.privateKey.D.Cmp(o.PrivateKey().D) == 0 {
+			return true
+		}
 	}
 	return false
 }

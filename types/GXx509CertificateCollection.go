@@ -78,7 +78,9 @@ func (g *GXx509CertificateCollection) Remove(value *GXx509Certificate) {
 //	The matching certificate, or nil if none is found.
 func (g *GXx509CertificateCollection) Find(key *GXx509Certificate) *GXx509Certificate {
 	for _, it := range *g {
-		if it.PublicKey.Equals(key) {
+		if it.PublicKey.Curve == key.PublicKey.Curve &&
+			it.PublicKey.X.Cmp(key.PublicKey.X) == 0 &&
+			it.PublicKey.Y.Cmp(key.PublicKey.Y) == 0 {
 			return it
 		}
 	}

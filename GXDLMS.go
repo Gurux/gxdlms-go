@@ -434,7 +434,11 @@ func getLLCBytes(server bool, data *types.GXByteBuffer) bool {
 	return data.Compare(internal.LLCReplyBytes)
 }
 
-func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GXByteBuffer, data *GXReplyData, notify *GXReplyData) (uint8, error) {
+func getHdlcData(server bool,
+	settings *settings.GXDLMSSettings,
+	reply *types.GXByteBuffer,
+	data *GXReplyData,
+	notify *GXReplyData) (uint8, error) {
 	ch := uint8(0)
 	var err error
 	packetStartID := reply.Position()
@@ -457,6 +461,9 @@ func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GX
 	isNotify := false
 	for pos := reply.Position(); pos < reply.Size(); pos++ {
 		ch, err = reply.Uint8()
+		if err != nil {
+			return 0, err
+		}
 		if ch == internal.HDLCFrameStartEnd {
 			packetStartID = pos
 			break
@@ -472,6 +479,9 @@ func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GX
 		return 0, nil
 	}
 	frame, err := reply.Uint8()
+	if err != nil {
+		return 0, err
+	}
 	if (frame & 0xF0) != 0xA0 {
 		reply.SetPosition(reply.Position() - 1)
 		return getHdlcData(server, settings, reply, data, notify)
@@ -483,6 +493,9 @@ func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GX
 		frameLen = ret
 	}
 	ch, err = reply.Uint8()
+	if err != nil {
+		return 0, err
+	}
 	frameLen = frameLen + int(ch)
 	if reply.Size()-reply.Position()+1 < frameLen {
 		data.isComplete = false
@@ -492,6 +505,10 @@ func getHdlcData(server bool, settings *settings.GXDLMSSettings, reply *types.GX
 	}
 	eopPos := frameLen + packetStartID + 1
 	ch, err = reply.Uint8At(eopPos)
+	if err != nil {
+		return 0, err
+	}
+
 	if ch != internal.HDLCFrameStartEnd {
 		reply.SetPosition(2)
 		return getHdlcData(server, settings, reply, data, notify)
@@ -934,18 +951,30 @@ func getWiredMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffe
 				data.isComplete = true
 				// Control field (C-Field)
 				tmp, err := buff.Uint8()
+				if err != nil {
+					data.isComplete = false
+					buff.SetPosition(packetStartID)
+					return
+				}
 				cmd := constants.MBusCommand(tmp & 0xF)
 				// Address (A-field)
 				id, err := buff.Uint8()
+				if err != nil {
+					data.isComplete = false
+					buff.SetPosition(packetStartID)
+					return
+				}
 				// The Control Information Field (CI-field)
 				ci, err := buff.Uint8()
+				if err != nil {
+					data.isComplete = false
+					buff.SetPosition(packetStartID)
+					return
+				}
 				if ci == 0x0 {
 					data.moreData = enums.RequestTypesFrame
 				} else if (ci >> 4) == (ci & 0xf) {
 					data.moreData &= ^enums.RequestTypesFrame
-				}
-				// If M-Bus data header is present
-				if ci != 0 {
 				}
 				if (tmp & 0x40) != 0 {
 
@@ -999,7 +1028,9 @@ func getWiredMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffe
 //	settings: DLMS settings.
 //	buff: Received data.
 //	data: Reply information.
-func getWirelessMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, data *GXReplyData) error {
+func getWirelessMBusData(settings *settings.GXDLMSSettings,
+	buff *types.GXByteBuffer,
+	data *GXReplyData) error {
 	// L-field.
 	len_, err := buff.Uint8()
 	if err != nil {
@@ -1093,7 +1124,9 @@ func getWirelessMBusData(settings *settings.GXDLMSSettings, buff *types.GXByteBu
 //	settings: DLMS settings.
 //	buff: Received data.
 //	data: Reply information.
-func getPlcData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer, data *GXReplyData) error {
+func getPlcData(settings *settings.GXDLMSSettings,
+	buff *types.GXByteBuffer,
+	data *GXReplyData) error {
 	if buff.Available() < 9 {
 		data.isComplete = false
 		return nil
@@ -1226,6 +1259,9 @@ func getPlcHdlcData(settings *settings.GXDLMSSettings, buff *types.GXByteBuffer,
 		}
 		// MAC Addresses.
 		mac, err := buff.Uint24()
+		if err != nil {
+			return 0, err
+		}
 		// SA.
 		sa := (mac >> 12)
 		// DA.
@@ -2508,9 +2544,9 @@ func receiverReady(settings *settings.GXDLMSSettings, reply *GXReplyData) ([]byt
 		} else {
 			p := NewGXDLMSSNParameters(settings, enums.Command(cmd), 1, uint8(constants.VariableAccessSpecificationBlockNumberAccess), bb, nil)
 			data, err = getSnMessages(p)
-			if err != nil {
-				return nil, err
-			}
+		}
+		if err != nil {
+			return nil, err
 		}
 	}
 	return data[0], nil
@@ -2657,6 +2693,9 @@ func getCipheringParameters(p *GXDLMSLNParameters) (*settings.AesGcmParameter, e
 					return nil, err
 				}
 				key, err = getBlockCipherKey(p.settings)
+				if err != nil {
+					return nil, err
+				}
 			}
 		} else {
 			if p.settings.Cipher.DedicatedKey() != nil {
@@ -2665,6 +2704,9 @@ func getCipheringParameters(p *GXDLMSLNParameters) (*settings.AesGcmParameter, e
 			} else {
 				cmd = byte(enums.CommandGeneralGloCiphering)
 				key, err = getBlockCipherKey(p.settings)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	} else {
@@ -2676,10 +2718,16 @@ func getCipheringParameters(p *GXDLMSLNParameters) (*settings.AesGcmParameter, e
 			key, err = getBlockCipherKey(p.settings)
 		} else if p.settings.Cipher.DedicatedKey() == nil || isGloMessage(p.cipheredCommand) {
 			cmd, err = getGloMessage(p.command)
+			if err != nil {
+				return nil, err
+			}
 			key, err = getBlockCipherKey(p.settings)
 		} else {
 			cmd, err = getDedMessage(p.command)
 			key = cipher.DedicatedKey()
+		}
+		if err != nil {
+			return nil, err
 		}
 	}
 	ak, err := getAuthenticationKey(p.settings)
@@ -3359,6 +3407,9 @@ func getSNPdu(p *GXDLMSSNParameters, reply *types.GXByteBuffer) error {
 
 		cipher := p.Settings.Cipher
 		tag, err := getGloMessage(p.Command)
+		if err != nil {
+			return err
+		}
 		bk, err := getBlockCipherKey(p.Settings)
 		if err != nil {
 			return err
@@ -3600,6 +3651,9 @@ func getHdlcFrame(settings *settings.GXDLMSSettings, frame uint8, data *types.GX
 			return nil, err
 		}
 		secondaryAddress, err = getHdlcAddressBytes(settings.ServerAddress, settings.ServerAddressSize)
+		if err != nil {
+			return nil, err
+		}
 		len_ = len(secondaryAddress)
 	} else {
 		primaryAddress, err = getHdlcAddressBytes(settings.ServerAddress, settings.ServerAddressSize)
@@ -3864,6 +3918,9 @@ func getHdlcAddressInfo(reply *types.GXByteBuffer, target *int, source *int, typ
 		frameLen = (int(frame&0x7) << 8)
 	}
 	ch, err := reply.Uint8()
+	if err != nil {
+		return err
+	}
 	frameLen = frameLen + int(ch)
 	if reply.Size()-reply.Position()+1 < frameLen {
 		reply.SetPosition(packetStartID)
@@ -4134,6 +4191,9 @@ func handleGbt(settings *settings.GXDLMSSettings, data *GXReplyData) error {
 		return err
 	}
 	bna, err := data.Data.Uint16()
+	if err != nil {
+		return err
+	}
 	if data.xml == nil {
 		// Remove existing data when first block is received.
 		if bn == 1 {
@@ -4813,6 +4873,9 @@ func GetPdu(conf *settings.GXDLMSSettings, data *GXReplyData) error {
 				data.command = enums.CommandNone
 				return errors.New("Invalid enums Command")
 			}
+		}
+		if err != nil {
+			return err
 		}
 	} else if (data.moreData & enums.RequestTypesFrame) == 0 {
 		// Is whole block is read and if last packet and data is not try to peek.

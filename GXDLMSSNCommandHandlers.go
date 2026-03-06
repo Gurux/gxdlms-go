@@ -490,6 +490,9 @@ func handleReadRequest(settings *settings.GXDLMSSettings, server *GXDLMSServer,
 			}
 			if type_ == uint8(constants.VariableAccessSpecificationBlockNumberAccess) || type_ == uint8(constants.VariableAccessSpecificationParameterisedAccess) {
 				err = handleRead(settings, server, type_, data, list, reads, replyData, xml, cipheredCommand)
+				if err != nil {
+					return err
+				}
 			} else if type_ == uint8(constants.VariableAccessSpecificationBlockNumberAccess) {
 				err = handleReadBlockNumberAccess(settings, server, data, replyData, xml)
 				if xml != nil {

@@ -35,6 +35,7 @@ package types
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -90,7 +91,7 @@ type GXx509Certificate struct {
 	SignatureParameters any
 
 	// Public key.
-	PublicKey *GXPublicKey
+	PublicKey *ecdsa.PublicKey
 
 	// Public Key algorithm.
 	PublicKeyAlgorithm enums.HashAlgorithm
@@ -129,7 +130,7 @@ type GXx509Certificate struct {
 // NewGXx509Certificate parses a DER-encoded certificate.
 func NewGXx509Certificate(data []byte) (*GXx509Certificate, error) {
 	ret := &GXx509Certificate{}
-	err := ret.Init(data)
+	err := ret.init(data)
 	if err != nil {
 		return nil, err
 	}
@@ -178,8 +179,8 @@ func (g *GXx509Certificate) Encoded() ([]byte, error) {
 	return g.rawData, nil
 }
 
-// Init parses and validates DER certificate bytes into this instance.
-func (g *GXx509Certificate) Init(data []byte) error {
+// init parses and validates DER certificate bytes into this instance.
+func (g *GXx509Certificate) init(data []byte) error {
 	g.rawData = data
 	ret, err := Asn1FromByteArray(data)
 	if err != nil {
@@ -193,7 +194,7 @@ func (g *GXx509Certificate) Init(data []byte) error {
 		return errors.New("Invalid Certificate Version. Wrong number of elements in sequence.")
 	}
 	if _, ok := asn1Sequence((*seq)[0]); !ok {
-		type_, err := Asn1GetCertificateType(data, *seq)
+		type_, err := asn1GetCertificateType(data, *seq)
 		if err != nil {
 			return err
 		}
@@ -310,10 +311,6 @@ func (g *GXx509Certificate) Init(data []byte) error {
 	if err != nil {
 		return err
 	}
-	if err := EcdsaValidate(g.PublicKey); err != nil {
-		return err
-	}
-
 	basicConstraintsExists := false
 	if len(*reqInfo) > 7 {
 		ctx, ok := (*reqInfo)[7].(*GXAsn1Context)
@@ -734,6 +731,9 @@ func (g *GXx509Certificate) GetDataList() ([]any, error) {
 		ignore++
 	}
 	bs, err := NewGXBitString([]byte{value}, ignore%8)
+	if err != nil {
+		return nil, err
+	}
 	tmp, err := Asn1ToByteArray(bs)
 	if err != nil {
 		return nil, err
@@ -769,7 +769,11 @@ func (g *GXx509Certificate) GetDataList() ([]any, error) {
 	valid = append(valid, g.ValidTo)
 
 	var alg *GXAsn1ObjectIdentifier
-	if g.PublicKey.Scheme() == enums.EccP256 {
+	sc, err := PublicKeyScheme(g.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+	if sc == enums.EccP256 {
 		alg = NewGXAsn1ObjectIdentifier("1.2.840.10045.3.1.7")
 	} else {
 		alg = NewGXAsn1ObjectIdentifier("1.3.132.0.34")
@@ -779,7 +783,7 @@ func (g *GXx509Certificate) GetDataList() ([]any, error) {
 	tmp4 := NewGXAsn1Context()
 	tmp4.Index = 3
 	tmp4.Items = append(tmp4.Items, extensions)
-	bs, err = NewGXBitString(g.PublicKey.RawValue(), 0)
+	bs, err = NewGXBitString(PublicKeyToBytes(g.PublicKey), 0)
 	if err != nil {
 		return nil, err
 	}
@@ -819,12 +823,16 @@ func (g *GXx509Certificate) GetFilePath(cert *GXx509Certificate) (string, error)
 	default:
 		return "", errors.New("Unknown certificate type.")
 	}
+	sc, err := PublicKeyScheme(g.PublicKey)
+	if err != nil {
+		return "", err
+	}
 	ret, err := HexSystemTitleFromSubject(strings.TrimSpace(cert.Subject))
 	if err != nil {
 		return "", err
 	}
 	path = filepath.Join(path, ret+".pem")
-	if g.PublicKey.Scheme() == enums.EccP256 {
+	if sc == enums.EccP256 {
 		path = filepath.Join("Certificates", path)
 	} else {
 		path = filepath.Join("Certificates384", path)
@@ -835,7 +843,7 @@ func (g *GXx509Certificate) GetFilePath(cert *GXx509Certificate) (string, error)
 // FromHexString parses a certificate from a hexadecimal DER string.
 func (g *GXx509Certificate) FromHexString(data string) GXx509Certificate {
 	cert := GXx509Certificate{}
-	cert.Init(buffer.HexToBytes(data))
+	cert.init(buffer.HexToBytes(data))
 	return cert
 }
 
@@ -866,7 +874,7 @@ func X509CertificateFromDer(der string) (*GXx509Certificate, error) {
 		return nil, err
 	}
 	cert := GXx509Certificate{}
-	err = cert.Init(key)
+	err = cert.init(key)
 	if err != nil {
 		return nil, err
 	}
@@ -910,6 +918,10 @@ func (g *GXx509Certificate) String() string {
 		log.Println("Error in String(): " + err.Error())
 		return ""
 	}
+	sc, err := PublicKeyScheme(g.PublicKey)
+	if err != nil {
+		return ""
+	}
 	bb.WriteString(ret)
 	bb.WriteString("\n")
 	bb.WriteString("Issuer: ")
@@ -927,12 +939,12 @@ func (g *GXx509Certificate) String() string {
 	bb.WriteString(g.PublicKeyAlgorithm.String())
 	bb.WriteString("\n")
 	bb.WriteString("Key: ")
-	bb.WriteString(g.PublicKey.ToHex())
+	bb.WriteString(PublicKeyToHex(g.PublicKey))
 	bb.WriteString("\n")
-	if g.PublicKey.Scheme() == enums.EccP256 {
+	if sc == enums.EccP256 {
 		bb.WriteString("ASN1 OID: prime256v1\n")
 		bb.WriteString("NIST CURVE: P-256")
-	} else if g.PublicKey.Scheme() == enums.EccP384 {
+	} else {
 		bb.WriteString("ASN1 OID: prime384v1\n")
 		bb.WriteString("\n")
 		bb.WriteString("NIST CURVE: P-384")
@@ -1014,7 +1026,7 @@ func (g *GXx509Certificate) Equals(obj any) bool {
 }
 
 // IsCertified verifies that certifier signed this certificate.
-func (g *GXx509Certificate) IsCertified(certifier *GXPublicKey) (bool, error) {
+func (g *GXx509Certificate) IsCertified(certifier *ecdsa.PublicKey) (bool, error) {
 	if certifier == nil {
 		return false, errors.New("certifier")
 	}

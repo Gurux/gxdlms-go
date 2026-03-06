@@ -34,6 +34,7 @@ package secure
 // ---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 
 	"github.com/Gurux/gxdlms-go/enums"
@@ -83,16 +84,16 @@ type GXCiphering struct {
 	sertificates []types.GXx509Certificate
 
 	// Public/private key signing key pair.
-	signingKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	signingKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Public/private key TLS key pair.
-	tlsKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	tlsKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Ephemeral key pair.
-	ephemeralKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	ephemeralKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Public/private key key agreement key pair.
-	keyAgreementKeyPair *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	keyAgreementKeyPair *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Ephemeral private key of the client.
 	ClientEphemeralPrivateKey *types.GXPkcs8
@@ -339,7 +340,7 @@ func (g *GXCiphering) Certificates() []types.GXx509Certificate {
 }
 
 // EphemeralKeyPair returns the ephemeral key pair.
-func (g *GXCiphering) EphemeralKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey] {
+func (g *GXCiphering) EphemeralKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey] {
 	return g.ephemeralKeyPair
 }
 
@@ -349,7 +350,7 @@ func (g *GXCiphering) InvocationCounter() uint32 {
 }
 
 // Public/private key key agreement key pair.
-func (g *GXCiphering) KeyAgreementKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey] {
+func (g *GXCiphering) KeyAgreementKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey] {
 	return g.keyAgreementKeyPair
 }
 
@@ -359,13 +360,13 @@ func (g *GXCiphering) Security() enums.Security {
 }
 
 // Ephemeral key pair.
-func (g *GXCiphering) SetEphemeralKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error {
+func (g *GXCiphering) SetEphemeralKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error {
 	g.ephemeralKeyPair = value
 	return nil
 }
 
 // SetKeyAgreementKeyPair sets the public/private key key agreement key pair.
-func (g *GXCiphering) SetKeyAgreementKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error {
+func (g *GXCiphering) SetKeyAgreementKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error {
 	g.keyAgreementKeyPair = value
 	return nil
 }
@@ -377,13 +378,13 @@ func (g *GXCiphering) SetSecurity(value enums.Security) error {
 }
 
 // Signing key pair.
-func (g *GXCiphering) SetSigningKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error {
+func (g *GXCiphering) SetSigningKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error {
 	g.signingKeyPair = value
 	return nil
 }
 
 // SetTLSKeyPair sets the TLS signing key pair.
-func (g *GXCiphering) SetTLSKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error {
+func (g *GXCiphering) SetTLSKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error {
 	g.tlsKeyPair = value
 	return nil
 }
@@ -416,11 +417,11 @@ func (g *GXCiphering) SignInitiateRequestResponse() bool {
 }
 
 // Public/private key signing key pair.
-func (g *GXCiphering) SigningKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey] {
+func (g *GXCiphering) SigningKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey] {
 	return g.signingKeyPair
 }
 
 // Public/private key TLS key pair.
-func (g *GXCiphering) TLSKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey] {
+func (g *GXCiphering) TLSKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey] {
 	return g.tlsKeyPair
 }

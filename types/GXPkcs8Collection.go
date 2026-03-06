@@ -35,6 +35,7 @@ package types
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
 	"log"
 	"os"
 	"path/filepath"
@@ -45,9 +46,11 @@ import (
 type GXPkcs8Collection []GXPkcs8
 
 // Find returns the find private key certificate by public name.
-func (g *GXPkcs8Collection) Find(key *GXPublicKey) *GXPkcs8 {
+func (g *GXPkcs8Collection) Find(key *ecdsa.PublicKey) *GXPkcs8 {
 	for _, it := range *g {
-		if it.PublicKey().Equals(key) {
+		if it.PublicKey().Curve == key.Curve &&
+			it.PublicKey().X.Cmp(key.X) == 0 &&
+			it.PublicKey().Y.Cmp(key.Y) == 0 {
 			return &it
 		}
 	}

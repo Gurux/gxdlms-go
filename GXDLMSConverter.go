@@ -597,7 +597,13 @@ func (g *GXDLMSConverter) GetObjects() error {
 			str, _ := strconv.Atoi(items[0])
 			ot := enums.ObjectType(str)
 			tmp, err = LogicalNameToBytes(items[1])
+			if err != nil {
+				return err
+			}
 			obis, err = ToLogicalName(tmp)
+			if err != nil {
+				return err
+			}
 			desc := items[3]
 			code := GXStandardObisCode{OBIS: []string{obis}, Description: desc,
 				Interfaces: ot.String()}
@@ -766,14 +772,9 @@ func (g *GXDLMSConverter) KeyUsageToCertificateType(value enums.KeyUsage) (enums
 //	Returns:
 //	    Certificate type.
 func (g *GXDLMSConverter) CertificateTypeToKeyUsage(value enums.CertificateType) (enums.KeyUsage, error) {
-	switch value {
-	case enums.CertificateTypeDigitalSignature:
-		return enums.KeyUsageDigitalSignature, nil
-	case enums.CertificateTypeKeyAgreement:
-		return enums.KeyUsageKeyAgreement, nil
-	case enums.CertificateTypeTLS:
-		return enums.KeyUsageDigitalSignature | enums.KeyUsageKeyAgreement, nil
-	default:
+	ret := internal.CertificateTypeToKeyUsage(value)
+	if ret == 0 {
 		return 0, fmt.Errorf("invalid certificate type: %v", value)
 	}
+	return ret, nil
 }

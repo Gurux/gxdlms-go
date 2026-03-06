@@ -35,6 +35,8 @@
 //---------------------------------------------------------------------------
 
 import (
+	"crypto/ecdsa"
+
 	"github.com/Gurux/gxdlms-go/enums"
 	"github.com/Gurux/gxdlms-go/types"
 )
@@ -85,19 +87,19 @@ type GXICipher interface {
 	TransactionId() []byte
 
 	// Ephemeral key pair.
-	EphemeralKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	EphemeralKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Client's key agreement key pair.
-	KeyAgreementKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	KeyAgreementKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Available certificates.
 	Certificates() []types.GXx509Certificate
 
 	// Signing key pair.
-	SigningKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	SigningKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// TLS signing key pair.
-	TLSKeyPair() *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]
+	TLSKeyPair() *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]
 
 	// Used signing.
 	Signing() enums.Signing
@@ -118,16 +120,16 @@ type GXICipher interface {
 	SetSecuritySuite(value enums.SecuritySuite) error
 
 	// Ephemeral key pair.
-	SetEphemeralKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error
+	SetEphemeralKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error
 
 	// Client's key agreement key pair.
-	SetKeyAgreementKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error
+	SetKeyAgreementKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error
 
 	// Signing key pair.
-	SetSigningKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error
+	SetSigningKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error
 
 	// TLS signing key pair.
-	SetTLSKeyPair(value *types.GXKeyValuePair[*types.GXPublicKey, *types.GXPrivateKey]) error
+	SetTLSKeyPair(value *types.GXKeyValuePair[*ecdsa.PublicKey, *ecdsa.PrivateKey]) error
 
 	// SetBlockCipherKey sets the block cipher key.
 	SetBlockCipherKey(value []byte) error

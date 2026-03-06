@@ -119,6 +119,9 @@ func getRequestNormal(settings *settings.GXDLMSSettings,
 	settings.Index = 0
 	settings.ResetBlockIndex()
 	ret, err := data.Uint16()
+	if err != nil {
+		return err
+	}
 	// CI
 	ci := enums.ObjectType(ret)
 	if data.Available() < 6 {
@@ -166,6 +169,9 @@ func getRequestNormal(settings *settings.GXDLMSSettings,
 	}
 	if selection != 0 {
 		parameters, err = internal.GetData(settings, data, &info)
+		if err != nil {
+			return err
+		}
 	}
 	ln2, err := helpers.ToLogicalName(ln)
 	if err != nil {
@@ -835,7 +841,8 @@ func methodRequestNextDataBlock(settings *settings.GXDLMSSettings,
 						if err != nil {
 							return err
 						}
-						ret, err := internal.GetDLMSDataType(reflect.TypeOf(value))
+						var ret enums.DataType
+						ret, err = internal.GetDLMSDataType(reflect.TypeOf(value))
 						if err != nil {
 							return err
 						}
@@ -844,9 +851,9 @@ func methodRequestNextDataBlock(settings *settings.GXDLMSSettings,
 						p.requestType = 1
 						p.status = uint8(arg.Error)
 						err = bb.SetUint8(0)
-						if err != nil {
-							return err
-						}
+					}
+					if err != nil {
+						return err
 					}
 				}
 				moreData = settings.Index != settings.Count
@@ -1142,6 +1149,9 @@ func handleSetRequest(settings *settings.GXDLMSSettings,
 		settings.ResetBlockIndex()
 		p.status = byte(enums.ErrorCodeReadWriteDenied)
 	}
+	if err != nil {
+		return err
+	}
 	if xml != nil {
 		if type_ < 6 {
 			xml.AppendEndTag(int(enums.CommandSetRequest)<<8|int(type_), false)
@@ -1202,6 +1212,9 @@ func methodRequest(settings *settings.GXDLMSSettings,
 		if selection != 0 {
 			info := internal.GXDataInfo{}
 			parameters, err = internal.GetData(settings, data, &info)
+			if err != nil {
+				return err
+			}
 		}
 	} else if type_ == constants.ActionRequestTypeWithFirstBlock {
 		p.requestType = uint8(constants.ActionResponseTypeNextBlock)
@@ -1467,7 +1480,8 @@ func methodRequestNextBlock(settings *settings.GXDLMSSettings,
 					if err != nil {
 						return err
 					}
-					ret, err := internal.GetDLMSDataType(reflect.TypeOf(value))
+					var ret enums.DataType
+					ret, err = internal.GetDLMSDataType(reflect.TypeOf(value))
 					if err != nil {
 						return err
 					}
@@ -1475,9 +1489,9 @@ func methodRequestNextBlock(settings *settings.GXDLMSSettings,
 				} else {
 					p.status = uint8(arg.Error)
 					err = bb.SetUint8(0)
-					if err != nil {
-						return err
-					}
+				}
+				if err != nil {
+					return err
 				}
 			}
 			server.SetTransaction(nil)
