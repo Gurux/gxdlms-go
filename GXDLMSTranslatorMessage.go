@@ -48,7 +48,7 @@ type GXDLMSTranslatorMessage struct {
 	exception error
 
 	// Message to convert to XML.
-	Message types.GXByteBuffer
+	Message *types.GXByteBuffer
 
 	// Converted XML.
 	Xml string

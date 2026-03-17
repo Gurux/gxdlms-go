@@ -1328,14 +1328,9 @@ func (g *GXDLMSSecuritySetup) KeyAgreement(client IGXDLMSClient,
 	return client.Method(g, 3, bb.Array(), enums.DataTypeArray)
 }
 
-func getSettings(client IGXDLMSClient) *settings.GXDLMSSettings {
-
-	return client.Settings().(*settings.GXDLMSSettings)
-}
-
 func getCipheting(client IGXDLMSClient) settings.GXICipher {
 
-	return getSettings(client).Cipher
+	return client.Settings().Cipher
 }
 
 // KeyAgreement returns the agree on global unicast encryption key.
@@ -1801,7 +1796,8 @@ func (g *GXDLMSSecuritySetup) UpdateEphemeralKeysFromByteBuffer(client IGXDLMSCl
 		}
 		log.Printf("Shared secret: %s\n", types.ToHex(z, true))
 		kdf := types.GXByteBuffer{}
-		ret3, err := settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
+		ret3, err := settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128,
+			chipering.SystemTitle(), client.Settings().SourceSystemTitle(), nil, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -1811,7 +1807,8 @@ func (g *GXDLMSSecuritySetup) UpdateEphemeralKeysFromByteBuffer(client IGXDLMSCl
 		}
 		log.Printf("Shared secret: %s\n", types.ToHex(z, true))
 		kdf = types.GXByteBuffer{}
-		ret3, err = settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128, chipering.SystemTitle(), getSettings(client).SourceSystemTitle(), nil, nil)
+		ret3, err = settings.GenerateKDFWithInfo(chipering.SecuritySuite(), z, enums.AlgorithmIDAesGcm128,
+			chipering.SystemTitle(), client.Settings().SourceSystemTitle(), nil, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -1826,17 +1823,16 @@ func (g *GXDLMSSecuritySetup) UpdateEphemeralKeysFromByteBuffer(client IGXDLMSCl
 		}
 		list = append(list, types.NewGXKeyValuePair(enums.GlobalKeyType(keyId), ret3))
 	}
-	s := getSettings(client)
 	for _, v := range list {
 		switch v.Key {
 		case enums.GlobalKeyTypeUnicastEncryption:
-			s.EphemeralBlockCipherKey = v.Value
+			client.Settings().EphemeralBlockCipherKey = v.Value
 		case enums.GlobalKeyTypeBroadcastEncryption:
-			s.EphemeralBroadcastBlockCipherKey = v.Value
+			client.Settings().EphemeralBroadcastBlockCipherKey = v.Value
 		case enums.GlobalKeyTypeAuthentication:
-			s.EphemeralAuthenticationKey = v.Value
+			client.Settings().EphemeralAuthenticationKey = v.Value
 		case enums.GlobalKeyTypeKek:
-			s.EphemeralKek = v.Value
+			client.Settings().EphemeralKek = v.Value
 		}
 	}
 	return list, nil

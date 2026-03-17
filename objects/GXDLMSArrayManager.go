@@ -95,18 +95,35 @@ func (g *GXDLMSArrayManager) ParseNumberOfEntriesFromBuffer(reply *types.GXByteB
 
 // RetrieveEntries returns entries from the given range.
 func (g *GXDLMSArrayManager) RetrieveEntries(client IGXDLMSClient, id uint8, from uint16, to uint16) ([][]byte, error) {
-	conf, _ := client.Settings().(*settings.GXDLMSSettings)
-	if conf == nil {
-		conf = &settings.GXDLMSSettings{}
-	}
 	bb := types.NewGXByteBuffer()
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint8, id)
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint16, from)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint16, to)
+	err := bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint8, id)
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint16, from)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint16, to)
+	if err != nil {
+		return nil, err
+	}
 	return client.Method(g, 2, bb.Array(), enums.DataTypeStructure)
 }
 
@@ -125,60 +142,111 @@ func (g *GXDLMSArrayManager) ParseEntries(reply *types.GXByteBuffer) (types.GXAr
 
 // InsertEntry inserts a new entry.
 func (g *GXDLMSArrayManager) InsertEntry(client IGXDLMSClient, id uint8, index uint16, entry any) ([][]byte, error) {
-	conf, _ := client.Settings().(*settings.GXDLMSSettings)
-	if conf == nil {
-		conf = &settings.GXDLMSSettings{}
-	}
 	bb := types.NewGXByteBuffer()
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint8, id)
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint16, index)
+	err := bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint8, id)
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint16, index)
+	if err != nil {
+		return nil, err
+	}
 	dt, err := internal.GetDLMSDataType(reflectTypeOf(entry))
 	if err != nil {
 		return nil, err
 	}
-	_ = internal.SetData(conf, bb, dt, entry)
+	err = internal.SetData(client.Settings(), bb, dt, entry)
+	if err != nil {
+		return nil, err
+	}
 	return client.Method(g, 3, bb.Array(), enums.DataTypeStructure)
 }
 
 // UpdateEntry updates an entry.
 func (g *GXDLMSArrayManager) UpdateEntry(client IGXDLMSClient, id uint8, index uint16, entry any) ([][]byte, error) {
-	conf, _ := client.Settings().(*settings.GXDLMSSettings)
-	if conf == nil {
-		conf = &settings.GXDLMSSettings{}
-	}
 	bb := types.NewGXByteBuffer()
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint8, id)
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint16, index)
+	err := bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint8, id)
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint16, index)
+	if err != nil {
+		return nil, err
+	}
 	dt, err := internal.GetDLMSDataType(reflectTypeOf(entry))
 	if err != nil {
 		return nil, err
 	}
-	_ = internal.SetData(conf, bb, dt, entry)
+	err = internal.SetData(client.Settings(), bb, dt, entry)
+	if err != nil {
+		return nil, err
+	}
 	return client.Method(g, 4, bb.Array(), enums.DataTypeStructure)
 }
 
 // RemoveEntries removes entries from the given range.
 func (g *GXDLMSArrayManager) RemoveEntries(client IGXDLMSClient, id uint8, from uint16, to uint16) ([][]byte, error) {
-	conf, _ := client.Settings().(*settings.GXDLMSSettings)
-	if conf == nil {
-		conf = &settings.GXDLMSSettings{}
-	}
 	bb := types.NewGXByteBuffer()
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint8, id)
-	_ = bb.SetUint8(uint8(enums.DataTypeStructure))
-	_ = bb.SetUint8(2)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint16, from)
-	_ = internal.SetData(conf, bb, enums.DataTypeUint16, to)
+	err := bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint8, id)
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(uint8(enums.DataTypeStructure))
+	if err != nil {
+		return nil, err
+	}
+	err = bb.SetUint8(2)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint16, from)
+	if err != nil {
+		return nil, err
+	}
+	err = internal.SetData(client.Settings(), bb, enums.DataTypeUint16, to)
+	if err != nil {
+		return nil, err
+	}
 	return client.Method(g, 5, bb.Array(), enums.DataTypeStructure)
 }
 

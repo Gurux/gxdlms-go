@@ -1,6 +1,9 @@
 package objects
 
-import "github.com/Gurux/gxdlms-go/enums"
+import (
+	"github.com/Gurux/gxdlms-go/enums"
+	"github.com/Gurux/gxdlms-go/settings"
+)
 
 // --------------------------------------------------------------------------
 //
@@ -37,7 +40,7 @@ import "github.com/Gurux/gxdlms-go/enums"
 
 // IGXDLMSBase corresponds to Gurux.DLMS.Objects.IGXDLMSBase.
 type IGXDLMSClient interface {
-	Settings() any
+	Settings() *settings.GXDLMSSettings
 
 	// GetDataType returns the device data type of selected attribute index.
 	// Write returns the generates a write message.

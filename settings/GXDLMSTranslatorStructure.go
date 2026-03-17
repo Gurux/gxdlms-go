@@ -338,3 +338,19 @@ func (g *GXDLMSTranslatorStructure) IntegerToHex(value any, desimals int, forceH
 	}
 	return fmt.Sprint(value)
 }
+
+func NewGXDLMSTranslatorStructure(outputType enums.TranslatorOutputType,
+	omitNameSpace bool,
+	numericsAshex bool,
+	hex bool,
+	comments bool,
+	list map[int]string) *GXDLMSTranslatorStructure {
+	return &GXDLMSTranslatorStructure{
+		outputType:        outputType,
+		omitNameSpace:     omitNameSpace,
+		showNumericsAsHex: numericsAshex,
+		ShowStringAsHex:   hex,
+		Comments:          comments,
+		tags:              list,
+	}
+}

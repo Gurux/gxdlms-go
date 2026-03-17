@@ -2034,8 +2034,8 @@ func (g *GXDLMSClient) GetObjectsRequest2(ln string) ([][]byte, error) {
 //
 //	item: object to write.
 //	index: Attribute index where data is write.
-func (g *GXDLMSClient) Method(item *objects.GXDLMSObject, index int, data any) ([][]byte, error) {
-	return g.Method2(item.Name(), item.ObjectType(), index, data, enums.DataTypeNone, 0)
+func (g *GXDLMSClient) Method(item objects.IGXDLMSBase, index int, data any, dt enums.DataType) ([][]byte, error) {
+	return g.Method2(item.Base().Name(), item.Base().ObjectType(), index, data, dt, 0)
 }
 
 // Write returns the generates a write message.
@@ -3252,12 +3252,12 @@ func GetHdlcAddressInfo(reply *types.GXByteBuffer, target *int, source *int, typ
 // Returns:
 //
 //	True, if read is allowed.
-func (g *GXDLMSClient) CanRead(target *objects.GXDLMSObject, index int) bool {
+func (g *GXDLMSClient) CanRead(target objects.IGXDLMSBase, index int) bool {
 	// Handle access rights for Association LN Version < 3.
-	access := target.GetAccess(index)
+	access := target.Base().GetAccess(index)
 	if (access&enums.AccessModeRead) == 0 && access != enums.AccessModeAuthenticatedRead && access != enums.AccessModeAuthenticatedReadWrite {
 		// If bit mask is used.
-		m := target.GetAccess3(index)
+		m := target.Base().GetAccess3(index)
 		if (m & enums.AccessMode3Read) == 0 {
 			return false
 		}
@@ -3296,12 +3296,12 @@ func (g *GXDLMSClient) CanRead(target *objects.GXDLMSObject, index int) bool {
 // Returns:
 //
 //	True, if write is allowed.
-func (g *GXDLMSClient) CanWrite(target *objects.GXDLMSObject, index int) bool {
+func (g *GXDLMSClient) CanWrite(target objects.IGXDLMSBase, index int) bool {
 	// Handle access rights for Association LN Version < 3.
-	access := target.GetAccess(index)
+	access := target.Base().GetAccess(index)
 	if (access&enums.AccessModeWrite) == 0 && access != enums.AccessModeAuthenticatedWrite && access != enums.AccessModeAuthenticatedReadWrite {
 		// If bit mask is used.
-		m := target.GetAccess3(index)
+		m := target.Base().GetAccess3(index)
 		if (m & enums.AccessMode3Write) == 0 {
 			return false
 		}
@@ -3340,11 +3340,11 @@ func (g *GXDLMSClient) CanWrite(target *objects.GXDLMSObject, index int) bool {
 // Returns:
 //
 //	True, if client can access meter methods.
-func (g *GXDLMSClient) CanInvoke(target *objects.GXDLMSObject, index int) bool {
+func (g *GXDLMSClient) CanInvoke(target objects.IGXDLMSBase, index int) bool {
 	// Handle access rights for Association LN Version < 3.
-	if target.GetMethodAccess(index) == enums.MethodAccessModeNoAccess {
+	if target.Base().GetMethodAccess(index) == enums.MethodAccessModeNoAccess {
 		// If bit mask is used.
-		m := target.GetMethodAccess3(index)
+		m := target.Base().GetMethodAccess3(index)
 		if (m & enums.MethodAccessMode3Access) == 0 {
 			return false
 		}
@@ -3384,14 +3384,14 @@ func (g *GXDLMSClient) CanInvoke(target *objects.GXDLMSObject, index int) bool {
 //
 // Parameters:
 //
-//   useLogicalNameReferencing - if true the client will use logical-name
-//     referencing (IEC 62056‑53); false selects short-name mode.
-//   clientAddress - the HDLC/LLC address of the client (source).
-//   serverAddress - the HDLC/LLC address of the target device (destination).
-//   authentication - one of the enums.Authentication constants indicating the
-//     credential type the client will use during association.
-//   password - optional user password required for some authentication modes.
-//   interfaceType - physical interface (HDLC, SNRM, GPRS, etc.)
+//	useLogicalNameReferencing - if true the client will use logical-name
+//	  referencing (IEC 62056‑53); false selects short-name mode.
+//	clientAddress - the HDLC/LLC address of the client (source).
+//	serverAddress - the HDLC/LLC address of the target device (destination).
+//	authentication - one of the enums.Authentication constants indicating the
+//	  credential type the client will use during association.
+//	password - optional user password required for some authentication modes.
+//	interfaceType - physical interface (HDLC, SNRM, GPRS, etc.)
 //
 // Returns the initialized *GXDLMSClient or an error if parameters were
 // invalid.

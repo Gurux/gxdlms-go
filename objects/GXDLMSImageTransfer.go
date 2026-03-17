@@ -329,10 +329,8 @@ func (g *GXDLMSImageTransfer) ImageTransferInitiate(client IGXDLMSClient, imageI
 	if g.ImageBlockSize == 0 {
 		return nil, errors.New("invalid image block size")
 	}
-	if s, ok := client.Settings().(*settings.GXDLMSSettings); ok {
-		if g.ImageBlockSize > uint32(s.MaxPduSize()) {
-			return nil, errors.New("image block size is bigger than max PDU size")
-		}
+	if g.ImageBlockSize > uint32(client.Settings().MaxPduSize()) {
+		return nil, errors.New("image block size is bigger than max PDU size")
 	}
 	params := types.GXStructure{imageIdentifier, imageSize}
 	return client.Method(g, 1, params, enums.DataTypeStructure)

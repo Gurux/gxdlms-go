@@ -528,7 +528,7 @@ func (g *GXDLMSSchedule) GetValues() []any {
 //	Action bytes.
 func (g *GXDLMSSchedule) Insert(client IGXDLMSClient, entry *GXScheduleEntry) ([][]uint8, error) {
 	data := types.NewGXByteBuffer()
-	g.addEntry(client.Settings().(*settings.GXDLMSSettings), entry, data)
+	g.addEntry(client.Settings(), entry, data)
 	return client.Method(g, 2, data.Array(), enums.DataTypeStructure)
 }
 
