@@ -583,12 +583,12 @@ func handleWriteRequest(conf *settings.GXDLMSSettings,
 				targets = append(targets, info)
 				// If target is unknown.
 				if info.Item == nil {
-					err = results.SetUint8(enums.ErrorCodeUndefinedObject)
+					err = results.SetUint8(byte(enums.ErrorCodeUndefinedObject))
 					if err != nil {
 						return err
 					}
 				} else {
-					err = results.SetUint8(enums.ErrorCodeOk)
+					err = results.SetUint8(byte(enums.ErrorCodeOk))
 					if err != nil {
 						return err
 					}
@@ -605,7 +605,7 @@ func handleWriteRequest(conf *settings.GXDLMSSettings,
 				return nil
 			}
 		} else {
-			err = results.SetUint8(enums.ErrorCodeHardwareFault)
+			err = results.SetUint8(byte(enums.ErrorCodeHardwareFault))
 			if err != nil {
 				return err
 			}

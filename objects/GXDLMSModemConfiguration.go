@@ -234,7 +234,7 @@ func (g *GXDLMSModemConfiguration) SetValue(settings *settings.GXDLMSSettings, e
 				item.Request = string(it[0].([]byte))
 				item.Response = string(it[1].([]byte))
 				if len(it) > 2 {
-					item.Delay = uint16(it[2].(int))
+					item.Delay = it[2].(uint16)
 				}
 				items = append(items, item)
 			}

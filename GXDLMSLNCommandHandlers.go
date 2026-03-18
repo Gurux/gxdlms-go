@@ -237,7 +237,7 @@ func getRequestNormal(settings *settings.GXDLMSSettings,
 					}
 				}
 				server.NotifyPostRead([]*internal.ValueEventArgs{e})
-				status = int(e.Error)
+				status = enums.ErrorCode(e.Error)
 			}
 		}
 	}
@@ -1723,7 +1723,7 @@ func handleAccessRequest(settings *settings.GXDLMSSettings,
 				if err != nil {
 					return err
 				}
-				err = results.SetUint8(enums.ErrorCodeUnavailableObject)
+				err = results.SetUint8(byte(enums.ErrorCodeUnavailableObject))
 				if err != nil {
 					return err
 				}
@@ -1737,7 +1737,7 @@ func handleAccessRequest(settings *settings.GXDLMSSettings,
 						if err != nil {
 							return err
 						}
-						err = results.SetUint8(enums.ErrorCodeReadWriteDenied)
+						err = results.SetUint8(byte(enums.ErrorCodeReadWriteDenied))
 						if err != nil {
 							return err
 						}
@@ -1759,7 +1759,7 @@ func handleAccessRequest(settings *settings.GXDLMSSettings,
 							if err != nil {
 								return err
 							}
-							err = results.SetUint8(enums.ErrorCodeReadWriteDenied)
+							err = results.SetUint8(byte(enums.ErrorCodeReadWriteDenied))
 							if err != nil {
 								return err
 							}
@@ -1773,19 +1773,19 @@ func handleAccessRequest(settings *settings.GXDLMSSettings,
 								appendData(settings, it.Target, it.Index, bb, value)
 							}
 							server.NotifyPostRead([]*internal.ValueEventArgs{e})
-							err = results.SetUint8(enums.ErrorCodeOk)
+							err = results.SetUint8(byte(enums.ErrorCodeOk))
 							if err != nil {
 								return err
 							}
 						}
 					}
 				} else if it.Command == enums.AccessServiceCommandTypeSet {
-					err = results.SetUint8(enums.ErrorCodeOk)
+					err = results.SetUint8(byte(enums.ErrorCodeOk))
 					if err != nil {
 						return err
 					}
 				} else {
-					err = results.SetUint8(enums.ErrorCodeOk)
+					err = results.SetUint8(byte(enums.ErrorCodeOk))
 					if err != nil {
 						return err
 					}

@@ -778,7 +778,7 @@ func getStringFromAsn1(value []byte) (string, error) {
 	return fmt.Sprint(issuer), nil
 }
 
-func (g *GXDLMSSecuritySetup) updateSertificates(list []any) error {
+func (g *GXDLMSSecuritySetup) updateSertificates(list types.GXArray) error {
 	var err error
 	g.Certificates.Clear()
 	for _, tmp := range list {
@@ -840,7 +840,7 @@ func (g *GXDLMSSecuritySetup) SetValue(settings *settings.GXDLMSSettings, e *int
 	case 5:
 		g.ServerSystemTitle = e.Value.([]byte)
 	case 6:
-		err = g.updateSertificates(e.Value.([]any))
+		err = g.updateSertificates(e.Value.(types.GXArray))
 	default:
 		e.Error = enums.ErrorCodeReadWriteDenied
 	}

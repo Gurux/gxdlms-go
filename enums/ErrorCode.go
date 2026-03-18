@@ -49,43 +49,43 @@ const (
 	// ErrorCodeDisconnectMode defines that the disconnect Mode error has occurred.
 	ErrorCodeDisconnectMode ErrorCode = -4
 	// ErrorCodeReceiveNotReady defines that the Receive Not Ready.
-	ErrorCodeReceiveNotReady = -3
+	ErrorCodeReceiveNotReady ErrorCode = -3
 	// ErrorCodeRejected defines that the connection is rejected.
-	ErrorCodeRejected = -2
+	ErrorCodeRejected ErrorCode = -2
 	// ErrorCodeUnacceptableFrame defines that the unacceptable frame.
-	ErrorCodeUnacceptableFrame = -1
+	ErrorCodeUnacceptableFrame ErrorCode = -1
 	// ErrorCodeOk defines that no error has occurred.
-	ErrorCodeOk = 0
+	ErrorCodeOk ErrorCode = 0
 	// ErrorCodeHardwareFault defines that the device reports a hardware fault error has occurred.
-	ErrorCodeHardwareFault = 1
+	ErrorCodeHardwareFault ErrorCode = 1
 	// ErrorCodeTemporaryFailure defines that the Device reports a temporary failure error has occurred.
-	ErrorCodeTemporaryFailure = 2
+	ErrorCodeTemporaryFailure ErrorCode = 2
 	// ErrorCodeReadWriteDenied defines that the Device reports Read-Write denied error has occurred.
-	ErrorCodeReadWriteDenied = 3
+	ErrorCodeReadWriteDenied ErrorCode = 3
 	// ErrorCodeUndefinedObject defines that the Device reports a undefined object error has occurred.
-	ErrorCodeUndefinedObject = 4
+	ErrorCodeUndefinedObject ErrorCode = 4
 	// ErrorCodeInconsistentClass defines that the device reports a inconsistent Class or object error has occurred.
-	ErrorCodeInconsistentClass = 9
+	ErrorCodeInconsistentClass ErrorCode = 9
 	// ErrorCodeUnavailableObject defines that the device reports a unavailable object error has occurred.
-	ErrorCodeUnavailableObject = 11
+	ErrorCodeUnavailableObject ErrorCode = 11
 	// ErrorCodeUnmatchedType defines that the device reports a unmatched type error has occurred.
-	ErrorCodeUnmatchedType = 12
+	ErrorCodeUnmatchedType ErrorCode = 12
 	// ErrorCodeAccessViolated defines that the device reports scope of access violated error has occurred.
-	ErrorCodeAccessViolated = 13
+	ErrorCodeAccessViolated ErrorCode = 13
 	// ErrorCodeDataBlockUnavailable defines that the data Block Unavailable error has occurred.
-	ErrorCodeDataBlockUnavailable = 14
+	ErrorCodeDataBlockUnavailable ErrorCode = 14
 	// ErrorCodeLongGetOrReadAborted defines that the long Get Or Read Aborted error has occurred.
-	ErrorCodeLongGetOrReadAborted = 15
+	ErrorCodeLongGetOrReadAborted ErrorCode = 15
 	// ErrorCodeNoLongGetOrReadInProgress defines that the no Long Get Or Read In Progress error has occurred.
-	ErrorCodeNoLongGetOrReadInProgress = 16
+	ErrorCodeNoLongGetOrReadInProgress ErrorCode = 16
 	// ErrorCodeLongSetOrWriteAborted defines that the long Set Or Write Aborted error has occurred.
-	ErrorCodeLongSetOrWriteAborted = 17
+	ErrorCodeLongSetOrWriteAborted ErrorCode = 17
 	// ErrorCodeNoLongSetOrWriteInProgress defines that the no Long Set Or Write In Progress error has occurred.
-	ErrorCodeNoLongSetOrWriteInProgress = 18
+	ErrorCodeNoLongSetOrWriteInProgress ErrorCode = 18
 	// ErrorCodeDataBlockNumberInvalid defines that the data Block Number Invalid error has occurred.
-	ErrorCodeDataBlockNumberInvalid = 19
+	ErrorCodeDataBlockNumberInvalid ErrorCode = 19
 	// ErrorCodeOtherReason defines that the other Reason error has occurred.
-	ErrorCodeOtherReason = 250
+	ErrorCodeOtherReason ErrorCode = 250
 )
 
 // ErrorCodeParse converts the given string into a ErrorCode value.
@@ -214,5 +214,53 @@ func AllErrorCode() []ErrorCode {
 		ErrorCodeNoLongSetOrWriteInProgress,
 		ErrorCodeDataBlockNumberInvalid,
 		ErrorCodeOtherReason,
+	}
+}
+
+// Error returns the string representation of the ErrorCode.
+func (e ErrorCode) Error() string {
+	switch e {
+	case ErrorCodeDisconnectMode:
+		return "disconnect mode"
+	case ErrorCodeReceiveNotReady:
+		return "receive not ready"
+	case ErrorCodeRejected:
+		return "connection rejected"
+	case ErrorCodeUnacceptableFrame:
+		return "unacceptable frame"
+	case ErrorCodeOk:
+		return "ok"
+	case ErrorCodeHardwareFault:
+		return "hardware fault"
+	case ErrorCodeTemporaryFailure:
+		return "temporary failure"
+	case ErrorCodeReadWriteDenied:
+		return "read-write denied"
+	case ErrorCodeUndefinedObject:
+		return "undefined object"
+	case ErrorCodeInconsistentClass:
+		return "inconsistent class"
+	case ErrorCodeUnavailableObject:
+		return "unavailable object"
+	case ErrorCodeUnmatchedType:
+		return "unmatched type"
+	case ErrorCodeAccessViolated:
+		return "access violated"
+	case ErrorCodeDataBlockUnavailable:
+		return "data block unavailable"
+	case ErrorCodeLongGetOrReadAborted:
+		return "long get/read aborted"
+	case ErrorCodeNoLongGetOrReadInProgress:
+		return "no long get/read in progress"
+	case ErrorCodeLongSetOrWriteAborted:
+		return "long set/write aborted"
+	case ErrorCodeNoLongSetOrWriteInProgress:
+		return "no long set/write in progress"
+	case ErrorCodeDataBlockNumberInvalid:
+		return "data block number invalid"
+	case ErrorCodeOtherReason:
+		return "other reason"
+	default:
+		return fmt.Sprintf("unknown error code: %d", int(e))
 	}
 }

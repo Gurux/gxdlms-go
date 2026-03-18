@@ -1335,8 +1335,8 @@ func primeDcMethodRequest(settings *settings.GXDLMSSettings,
 					}
 					err = internal.SetData(settings, &bb, dt, actionReply)
 				} else {
-					error_ = int(e.Error)
-					err = bb.SetUint8(0)
+					error_ = enums.ErrorCode(e.Error)
+					err = bb.SetUint8(byte(e.Error))
 				}
 				if err != nil {
 					return err
@@ -1714,7 +1714,7 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 				if err != nil {
 					return err
 				}
-				err = results.SetUint8(enums.ErrorCodeUnavailableObject)
+				err = results.SetUint8(byte(enums.ErrorCodeUnavailableObject))
 				if err != nil {
 					return err
 				}
@@ -1727,7 +1727,7 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 						if err != nil {
 							return err
 						}
-						err = results.SetUint8(enums.ErrorCodeReadWriteDenied)
+						err = results.SetUint8(byte(enums.ErrorCodeReadWriteDenied))
 						if err != nil {
 							return err
 						}
@@ -1750,7 +1750,7 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 							if err != nil {
 								return err
 							}
-							err = results.SetUint8(enums.ErrorCodeReadWriteDenied)
+							err = results.SetUint8(byte(enums.ErrorCodeReadWriteDenied))
 							if err != nil {
 								return err
 							}
@@ -1764,19 +1764,19 @@ func primeDcHandleAccessRequest(settings *settings.GXDLMSSettings,
 								return err
 							}
 							server.NotifyPostRead([]*internal.ValueEventArgs{e})
-							err = results.SetUint8(enums.ErrorCodeOk)
+							err = results.SetUint8(byte(enums.ErrorCodeOk))
 							if err != nil {
 								return err
 							}
 						}
 					}
 				} else if it.Command == enums.AccessServiceCommandTypeSet {
-					err = results.SetUint8(enums.ErrorCodeOk)
+					err = results.SetUint8(byte(enums.ErrorCodeOk))
 					if err != nil {
 						return err
 					}
 				} else {
-					err = results.SetUint8(enums.ErrorCodeOk)
+					err = results.SetUint8(byte(enums.ErrorCodeOk))
 					if err != nil {
 						return err
 					}

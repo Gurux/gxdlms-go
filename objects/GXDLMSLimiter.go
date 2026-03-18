@@ -438,7 +438,11 @@ func (g *GXDLMSLimiter) SetValue(settings *settings.GXDLMSSettings, e *internal.
 		if err != nil {
 			return err
 		}
-		g.EmergencyProfile.ActivationTime = ret.(types.GXDateTime)
+		if ret != nil {
+			g.EmergencyProfile.ActivationTime = ret.(types.GXDateTime)
+		} else {
+			g.EmergencyProfile.ActivationTime = types.GXDateTime{}
+		}
 		g.EmergencyProfile.Duration = tmp[2].(uint32)
 	} else if e.Index == 9 {
 		var list []uint16
