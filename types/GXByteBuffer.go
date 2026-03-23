@@ -776,7 +776,7 @@ func (g *GXByteBuffer) SetByteBufferByCount(value *GXByteBuffer, count int) erro
 	if count != 0 {
 		copy(g.data[g.size:g.size+count], value.data[value.position:value.position+count])
 		g.size += count
-		err = value.SetPosition(count)
+		err = value.SetPosition(value.position + count)
 	}
 	return err
 }
