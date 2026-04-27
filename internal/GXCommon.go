@@ -1073,19 +1073,7 @@ func SetData(s any, buff *types.GXByteBuffer, dt enums.DataType, value any) erro
 		types.SetObjectCount(len(b), buff)
 		return buff.Set(b)
 	case enums.DataTypeBitString:
-		bs, ok := value.(*types.GXBitString)
-		if !ok {
-			v, ok2 := value.(types.GXBitString)
-			if !ok2 {
-				return fmt.Errorf("invalid bit string value: %T", value)
-			}
-			bs = &v
-		}
-		types.SetObjectCount(len(bs.Value())+1, buff)
-		if err := buff.SetUint8(uint8(bs.PadBits())); err != nil {
-			return err
-		}
-		return buff.Set(bs.Value())
+		return setBitString(buff, value, true)
 	case enums.DataTypeDate, enums.DataTypeTime, enums.DataTypeDateTime:
 		return fmt.Errorf("%v serialization is not implemented", dt)
 	default:
