@@ -4856,20 +4856,20 @@ func GetPdu(conf *settings.GXDLMSSettings, data *GXReplyData) error {
 			enums.CommandRegisterRequest:
 			break
 		default:
-			/*TODO:
-			if settings.customPdu != nil {
+			if conf.CustomPdu != nil {
 				data.Data.SetPosition(data.Data.Position() - 1)
-				// GXCustomPduArgs e = new GXCustomPduArgs()
-				// {
-				// Data = data.Data.Remaining()
-				// }
-				// Tyypin Gurux.LanguageConverter.UnknownDataTypeException poikkeus.
-				// settings.customPdu(e)
-				// data.Value = e.Data
+				e := &settings.GXCustomPduArgs{}
+				e.Data, err = data.Data.Remaining()
+				if err != nil {
+					return err
+				}
+				err = conf.CustomPdu(e)
+				if err != nil {
+					return err
+				}
+				data.Value = e.Data
 				return nil
-			} else
-			*/
-			{
+			} else {
 				data.command = enums.CommandNone
 				return errors.New("Invalid enums Command")
 			}

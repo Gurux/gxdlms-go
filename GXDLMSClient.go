@@ -3143,6 +3143,50 @@ func (g *GXDLMSClient) CustomHdlcFrameRequest(command uint8, data *types.GXByteB
 	return getHdlcFrame(g.settings, command, data, true)
 }
 
+// / <summary>
+// / Generates a custom HDLC frame.
+// / </summary>
+// / <param name="command">HDLC command.</param>
+// / <param name="data">data</param>
+// / <returns>HDLC frame request, as byte array.</returns>
+// / <remarks>
+// / This method can be used for sending custom HDLC frames example in testing.
+// / </remarks>
+func (g *GXDLMSClient) CustomFrameRequest(command enums.Command, data *types.GXByteBuffer) ([][]byte, error) {
+	if useHdlc(g.settings.InterfaceType) || g.settings.InterfaceType == enums.InterfaceTypeWRAPPER {
+		var reply [][]byte
+		var err error
+		if command == enums.CommandNone {
+			messages := make([][]byte, 0)
+			if g.settings.InterfaceType == enums.InterfaceTypeWRAPPER {
+				tmp, err := getWrapperFrame(g.settings, command, data)
+				if err != nil {
+					return nil, err
+				}
+				messages = append(messages, tmp)
+			} else if useHdlc(g.settings.InterfaceType) {
+				tmp, err := getHdlcFrame(g.settings, byte(command), data, true)
+				if err != nil {
+					return nil, err
+				}
+				messages = append(messages, tmp)
+			}
+			reply = messages
+		} else if g.UseLogicalNameReferencing() {
+			p := NewGXDLMSLNParameters(g.settings, 0, command, 0, data, nil, 0xff, enums.CommandNone)
+			reply, err = getLnMessages(p)
+		} else {
+			reply, err = getSnMessages(NewGXDLMSSNParameters(g.settings, command, 0, 0, nil, data))
+		}
+		return reply, err
+	}
+	return nil, errors.New("This method can be used only to generate HDLC or WRAPPER custom frames")
+}
+
+func (g *GXDLMSClient) SetCustomPduHandler(handler settings.CustomPduEventHandler) {
+	g.settings.CustomPdu = handler
+}
+
 // GetFrameSize returns the get size of the frame.
 // When WRAPPER is used this method can be used to check how many bytes we need to read.
 //

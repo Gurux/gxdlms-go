@@ -265,10 +265,10 @@ type GXDLMSSettings struct {
 	CryptoNotifier interface{} // TODO: Replace with GXCryptoNotifier when implemented
 
 	// customObject is the event invoked when custom manufacturer object is created.
-	customObject interface{} // TODO: Replace with ObjectCreateEventHandler when implemented
+	CustomObject ObjectCreateEventHandler
 
 	// customPdu is the event invoked when custom PDU is handled.
-	customPdu interface{} // TODO: Replace with CustomPduEventHandler when implemented
+	CustomPdu CustomPduEventHandler
 }
 
 // NewGXDLMSSettings creates a new DLMS settings instance with default values.
