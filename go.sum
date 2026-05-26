@@ -1,6 +1,6 @@
 github.com/Gurux/gxcommon-go v1.0.16 h1:JUJkc1UO8LqH9nWY4Qlpx9Sm1iHoxeD1MnEfoJcBd8k=
 github.com/Gurux/gxcommon-go v1.0.16/go.mod h1:IdoHSZqqKPZ9/wqC8ILE/OviqdOvCgbqUKH2RHOmVhc=
-golang.org/x/sys v0.44.0 h1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=
-golang.org/x/sys v0.44.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+golang.org/x/sys v0.45.0 h1:dO4czNzziLiiXplLQgBCEpCvXQ3dnkn0SdaZSYdQ+FY=
+golang.org/x/sys v0.45.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
 golang.org/x/text v0.37.0 h1:Cqjiwd9eSg8e0QAkyCaQTNHFIIzWtidPahFWR83rTrc=
 golang.org/x/text v0.37.0/go.mod h1:a5sjxXGs9hsn/AJVwuElvCAo9v8QYLzvavO5z2PiM38=

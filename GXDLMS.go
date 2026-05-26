@@ -510,7 +510,7 @@ func getHdlcData(server bool,
 	}
 
 	if ch != internal.HDLCFrameStartEnd {
-		reply.SetPosition(2)
+		reply.SetPosition(reply.Position() - 2)
 		return getHdlcData(server, settings, reply, data, notify)
 	}
 	// Check addresses.
@@ -526,8 +526,14 @@ func getHdlcData(server bool,
 
 	if !ret {
 		// If not notify.
-		ch1, _ := reply.Uint8At(reply.Position())
-		ch2, _ := reply.Uint8At(reply.Position() + 1)
+		ch1, err := reply.Uint8At(reply.Position())
+		if err != nil {
+			return 0, err
+		}
+		ch2, err := reply.Uint8At(reply.Position() + 1)
+		if err != nil {
+			return 0, err
+		}
 		if !(reply.Position() < reply.Size() && (ch1 == 0x13 || ch2 == 0x3)) {
 			reply.SetPosition(1 + eopPos)
 			return getHdlcData(server, settings, reply, data, notify)
@@ -540,9 +546,15 @@ func getHdlcData(server bool,
 	}
 	// Is there more data available.
 	moreData := (frame & 0x8) != 0
-	frame, _ = reply.Uint8()
+	frame, err = reply.Uint8()
+	if err != nil {
+		return 0, err
+	}
 	if data.xml == nil && !settings.CheckFrame(frame, data.xml) {
-		reply.SetPosition(eopPos + 1)
+		err = reply.SetPosition(eopPos + 1)
+		if err != nil {
+			return 0, err
+		}
 		return getHdlcData(server, settings, reply, data, notify)
 	}
 	// If server is using same client and server address for notifications.
@@ -570,7 +582,10 @@ func getHdlcData(server bool,
 		}
 	}
 	crc = countFCS16(reply.Array(), int(packetStartID+1), int(reply.Position()-packetStartID-1))
-	crcRead, _ = reply.Uint16()
+	crcRead, err = reply.Uint16()
+	if err != nil {
+		return 0, err
+	}
 	if crc != crcRead {
 		if reply.Size()-reply.Position() > 8 {
 			return getHdlcData(server, settings, reply, data, notify)
@@ -583,7 +598,10 @@ func getHdlcData(server bool,
 	// Check that packet CRC match only if there is a data part.
 	if reply.Position() != packetStartID+frameLen+1 {
 		crc = countFCS16(reply.Array(), int(packetStartID+1), int(frameLen-2))
-		crcRead, _ = reply.Uint16At(int(packetStartID + frameLen - 1))
+		crcRead, err = reply.Uint16At(int(packetStartID + frameLen - 1))
+		if err != nil {
+			return 0, err
+		}
 		if crc != crcRead {
 			if data.xml == nil {
 				return 0, errors.New("Invalid data checksum.")
